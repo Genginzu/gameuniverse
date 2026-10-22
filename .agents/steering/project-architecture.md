@@ -59,9 +59,9 @@ resource par entité dans `resources/`), useAdminAuth, useAdminTranslations
 useAdminEntityForm (configs dans `src/lib/admin-resource/forms/`),
 useCharacterForm, useGameForm
 
-### Jeux (7)
+### Jeux (6)
 
-useGameDetails, useGenres, usePlatforms, useGameLibraryStatus, useGameOverrides,
+useGenres, usePlatforms, useGameLibraryStatus, useGameOverrides,
 useGameSync, useBackgroundSync
 
 ### Listings (3)
@@ -69,14 +69,14 @@ useGameSync, useBackgroundSync
 useListingQuery (module `src/lib/listing/`), useEsportGameOptions,
 useDebouncedCallback
 
-### Personnages (5)
+### Personnages (4)
 
 useCharacterFavorite, useCharacterFavorites, useCharacterFilters,
-useCharacterOverrides, useCharacterSync
+useCharacterSync
 
-### Joueurs (8)
+### Joueurs (7)
 
-usePlayerActivity, usePlayerAchievementManager, usePlayerCollections,
+usePlayerActivity, usePlayerAchievementManager,
 usePlayerPlaytime, usePlayerPosts, usePlayerReviews, usePostImageUpload,
 useProfile
 
@@ -95,23 +95,23 @@ useComments, useReviews, useReviewVote, useMentionAutocomplete
 
 ### UI & Utilitaires
 
-useAuth, useCropEditor, useDebouncedValue, useImageLoading,
-useImageUpload, useInView, useLocaleManager, usePriceHistory, useGlobalSearch,
-useDismissableLayer, useWebhookEvents, useWebhookRegistrations, useAchievements,
+useAuth, useCropEditor, useDebouncedValue, useImageUpload, useInView,
+usePriceHistory, useGlobalSearch, useDismissableLayer, useWebhookEvents,
+useWebhookRegistrations, useAchievements,
 useRecommendations, usePersonalRecommendations
 
 ## Composants UI (`src/components/ui/`)
 
 Button, Input, Textarea, Select, Checkbox, Label, Badge, Card, Dialog, Form,
-Carousel, Skeleton, Spinner, Toast, LazyImage, LoadingButton, LoadingSpinner,
-LoadingState, PageLoading, FormSkeleton, ListSkeleton, NavigationProgress,
-IconPicker, GameUniverseLogo
+Skeleton, Spinner, Toast, LazyImage, LoadingButton, LoadingSpinner,
+NavigationProgress, IconPicker, GameUniverseLogo
 
 ## Composants partagés (`src/components/shared/`)
 
 SearchBar, Pagination, FilterPanel, FilterButton, FilterChip, FilterSection,
-EntityCard, EntitySkeleton, GridSkeleton, PageBanner, CropEditor, ImageUploader,
-ErrorBoundary, ErrorFallback, LanguageSwitcher, Footer
+EntityCard, EntitySkeleton, GridSkeleton, CropEditor, ImageUploader,
+ErrorBoundary, ErrorFallback, LanguageSwitcher, GlobalSearchGameItem,
+GlobalSearchCharacterItem, Footer
 
 ## Services clés (`src/lib/services/`)
 

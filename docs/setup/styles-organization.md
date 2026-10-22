@@ -35,7 +35,6 @@ src/app/styles/
 ├── animations.css       # @keyframes (pulse, slide, fade, scale, shimmer, float)
 │                        # + .animate-*, .hover-lift, .glow-effect, .focus-visible
 ├── neon.css             # .neon-glow, .neon-border, .neon-text, .neon-btn
-├── landing-grid.css     # .landing-grid-bg + @keyframes gridPulse (legacy)
 ├── glass-deprecated.css # .glass-*, .topbar, .dashboard-bg, scrollbar (legacy admin)
 └── editorial/
     ├── typography.css   # SpotlightCard, .editorial-display/-light, .editorial-kicker,
@@ -59,7 +58,7 @@ L'ordre dans `globals.css` reflète la cascade :
 1. **Tailwind utilities** (`@import "tailwindcss"`) en premier.
 2. **Animations + keyframes** (utilisables par tous les modules).
 3. **Neon utilities**.
-4. **Legacy** (`landing-grid`, `glass-deprecated`) avant l'éditorial.
+4. **Legacy** (`glass-deprecated`) avant l'éditorial.
 5. **Éditorial** (typography → layout → header → header-user → search →
    game-card → games-listing → pagination → sort-menu → filters → home).
 

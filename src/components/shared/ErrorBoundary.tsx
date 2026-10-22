@@ -124,10 +124,3 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
-
-// Hook pour utiliser l'Error Boundary de manière déclarative
-export function useErrorBoundaryHandler() {
-  return (error: Error, _errorInfo?: ErrorInfo) => {
-    throw error; // Re-throw pour que l'Error Boundary puisse l'attraper
-  };
-}

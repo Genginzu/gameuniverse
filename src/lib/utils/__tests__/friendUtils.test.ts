@@ -1,12 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  computePagination,
-  filterFriendsByName,
-  getButtonState,
-  getAriaLabel,
-  countAcceptedFriends,
-  sortFriendsByDate,
-} from "@/lib/utils/friendUtils";
+import { filterFriendsByName, getButtonState, getAriaLabel } from "@/lib/utils/friendUtils";
 import type { FriendSummary } from "@/types/friendship";
 
 function makeFriend(overrides: Partial<FriendSummary> = {}): FriendSummary {
@@ -20,28 +13,6 @@ function makeFriend(overrides: Partial<FriendSummary> = {}): FriendSummary {
     ...overrides,
   };
 }
-
-describe("computePagination", () => {
-  it("returns totalPages=1 when totalCount is 0", () => {
-    const result = computePagination(0, 1, 20);
-    expect(result).toEqual({ currentPage: 1, totalPages: 1, hasNextPage: false });
-  });
-
-  it("computes correct pages for exact multiple", () => {
-    const result = computePagination(40, 1, 20);
-    expect(result).toEqual({ currentPage: 1, totalPages: 2, hasNextPage: true });
-  });
-
-  it("computes correct pages for non-exact multiple", () => {
-    const result = computePagination(25, 2, 20);
-    expect(result).toEqual({ currentPage: 2, totalPages: 2, hasNextPage: false });
-  });
-
-  it("hasNextPage is false on last page", () => {
-    const result = computePagination(10, 1, 20);
-    expect(result.hasNextPage).toBe(false);
-  });
-});
 
 describe("filterFriendsByName", () => {
   const friends = [
@@ -101,43 +72,5 @@ describe("getAriaLabel", () => {
   it("includes the action", () => {
     const label = getAriaLabel("Decline", "Bob");
     expect(label).toBe("Decline Bob");
-  });
-});
-
-describe("countAcceptedFriends", () => {
-  it("returns 0 for empty array", () => {
-    expect(countAcceptedFriends([])).toBe(0);
-  });
-
-  it("counts only accepted friendships", () => {
-    const friendships = [
-      { status: "accepted" },
-      { status: "pending" },
-      { status: "accepted" },
-      { status: "declined" },
-    ];
-    expect(countAcceptedFriends(friendships)).toBe(2);
-  });
-});
-
-describe("sortFriendsByDate", () => {
-  it("sorts by acceptedAt descending", () => {
-    const friends = [
-      makeFriend({ id: "1", acceptedAt: "2024-01-01T00:00:00Z" }),
-      makeFriend({ id: "2", acceptedAt: "2024-03-01T00:00:00Z" }),
-      makeFriend({ id: "3", acceptedAt: "2024-02-01T00:00:00Z" }),
-    ];
-    const sorted = sortFriendsByDate(friends);
-    expect(sorted.map((f) => f.id)).toEqual(["2", "3", "1"]);
-  });
-
-  it("does not mutate the original array", () => {
-    const friends = [
-      makeFriend({ acceptedAt: "2024-02-01T00:00:00Z" }),
-      makeFriend({ acceptedAt: "2024-01-01T00:00:00Z" }),
-    ];
-    const original = [...friends];
-    sortFriendsByDate(friends);
-    expect(friends).toEqual(original);
   });
 });

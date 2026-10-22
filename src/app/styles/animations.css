@@ -146,8 +146,7 @@
   .animate-scale-in,
   .animate-shimmer,
   .animate-page-enter,
-  .dashboard-bg,
-  .landing-grid-bg {
+  .dashboard-bg {
     animation: none;
   }
 

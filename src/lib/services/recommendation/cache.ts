@@ -36,11 +36,6 @@ export function cacheSet<T>(key: string, data: T, ttlMs = DEFAULT_TTL_MS): void 
   cache.set(key, { data, expiry: Date.now() + ttlMs });
 }
 
-/** Invalidate a specific cache entry */
-export function cacheInvalidate(key: string): void {
-  cache.delete(key);
-}
-
 /** Clear the entire cache (useful for testing) */
 export function cacheClear(): void {
   cache.clear();

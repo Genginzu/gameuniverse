@@ -56,9 +56,6 @@ Sans paramètre `page`, l'endpoint conserve son comportement d'origine
 | -------------------------------------------------------- | ------------------------------------------ |
 | `src/types/playerCollection.ts`                          | Types partagés                             |
 | `src/lib/services/playerCollectionsServerService.ts`     | Service serveur (requêtes Supabase)        |
-| `src/lib/services/playerCollectionsService.ts`           | Service client + fonctions pures           |
-| `src/hooks/usePlayerCollections.ts`                      | Hook React                                 |
-| `src/components/players/PlayerCollectionsStats.tsx`      | Composant statistiques                     |
 | `src/components/players/PlayerCollectionsFeed.tsx`       | Composant principal (feed + scroll infini) |
 
 ## Fichiers modifiés

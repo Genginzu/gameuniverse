@@ -33,15 +33,13 @@ src/components/
 │   ├── FilterButton.tsx       # Bouton toggle filtres
 │   ├── EmptyState.tsx         # État vide générique (Iconify + gradient)
 │   ├── EntityCard.tsx         # Carte générique (jeux, joueurs, personnages)
-│   ├── entityCardPresets.tsx  # Presets de configuration EntityCard
 │   ├── EntitySkeleton.tsx     # Skeleton configurable par entité
 │   ├── GridSkeleton.tsx       # Grille de skeletons
-│   ├── PageBanner.tsx         # Bannière de page contextuelle
 │   ├── IconPicker.tsx         # Sélecteur d'icônes Iconify
 │   ├── NavigationProgress.tsx # Barre de progression navigation
 │   ├── ImageUploader.tsx      # Upload d'image avec drag & drop
 │   ├── CropEditor.tsx         # Éditeur de recadrage d'image
-│   ├── GlobalSearch*.tsx      # Composants de recherche globale
+│   ├── GlobalSearch*Item.tsx  # Résultats jeu/personnage (aperçu landing)
 │   ├── Notification*.tsx      # Composants de notifications
 │   ├── ErrorBoundary.tsx      # Error Boundary React
 │   └── ErrorFallback.tsx      # Fallback d'erreur déclaratif
@@ -49,8 +47,8 @@ src/components/
 ├── ui/                        # Primitives UI (shadcn/ui)
 │   ├── button.tsx, input.tsx, textarea.tsx, select.tsx
 │   ├── dialog.tsx, card.tsx, badge.tsx, form.tsx
-│   ├── loading-spinner.tsx, loading-state.tsx, loading-button.tsx
-│   ├── lazy-image.tsx, carousel.tsx, toast.tsx
+│   ├── loading-spinner.tsx, loading-button.tsx
+│   ├── lazy-image.tsx, toast.tsx
 │   └── ...
 │
 ├── games/                     # Composants page jeux publique

@@ -112,7 +112,6 @@ infini permet de charger les messages plus anciens via pagination cursor-based.
 | Fichier                       | Rôle                                      |
 | ----------------------------- | ----------------------------------------- |
 | `src/hooks/useDiscussions.ts` | État conversations + messages + mutations |
-| `src/hooks/useUnreadCount.ts` | Compteur global non lus pour la sidebar   |
 
 ### Composants
 
@@ -154,7 +153,6 @@ infini permet de charger les messages plus anciens via pagination cursor-based.
 | `test/unit/lib/services/discussionServerService.test.ts`        | Unit           | Service serveur (Properties 4, 5, 10, 12, 14, 15)                        |
 | `test/unit/api/discussions/route.test.ts`                       | Unit           | API routes, auth 401 (Property 13)                                       |
 | `test/unit/hooks/useDiscussions.test.ts`                        | Unit           | Hook discussions (chargement, erreurs)                                   |
-| `test/unit/hooks/useUnreadCount.test.ts`                        | Unit           | Hook compteur non lus                                                    |
 | `test/unit/components/discussions/MessageBubble.test.tsx`       | Unit           | Alignement messages (Property 9)                                         |
 | `test/unit/components/discussions/MessageInput.test.tsx`        | Unit           | Validation saisie, blocage envoi vide                                    |
 | `test/unit/components/discussions/ConversationList.test.tsx`    | Unit           | Rendu liste, état vide, sélection                                        |

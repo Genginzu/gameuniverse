@@ -2,12 +2,9 @@ import { describe, it, expect } from "vitest";
 import {
   transformIgdbToDlcExtensionRow,
   collectDlcExtensionIds,
-  sortDlcExtensions,
-  groupDlcExtensionsByCategory,
   gameTypeToDlcCategory,
 } from "@/lib/utils/dlcExtensionUtils";
 import type { IGDBDlcExtension, IGDBGame } from "@/types/igdb";
-import type { GameDlcExtension } from "@/types/game";
 
 describe("transformIgdbToDlcExtensionRow", () => {
   const baseExtension: IGDBDlcExtension = {
@@ -123,120 +120,6 @@ describe("collectDlcExtensionIds", () => {
       expansions: [50],
     };
     expect(collectDlcExtensionIds(game)).toEqual([{ id: 50, sourceCategory: "expansion" }]);
-  });
-});
-
-describe("sortDlcExtensions", () => {
-  const makeExtension = (
-    category: GameDlcExtension["category"],
-    releaseDate: string | null,
-    name: string
-  ): GameDlcExtension => ({
-    id: crypto.randomUUID(),
-    igdbId: Math.random(),
-    name,
-    slug: name.toLowerCase().replace(/\s/g, "-"),
-    summary: null,
-    category,
-    coverImageUrl: null,
-    releaseDate,
-    gameSlug: null,
-  });
-
-  it("sorts by category order: dlc < expansion < bundle < remake", () => {
-    const extensions = [
-      makeExtension("remake", "2020-01-01", "Remake A"),
-      makeExtension("bundle", "2020-01-01", "Bundle A"),
-      makeExtension("dlc", "2020-01-01", "DLC A"),
-      makeExtension("expansion", "2020-01-01", "Expansion A"),
-    ];
-
-    const sorted = sortDlcExtensions(extensions);
-
-    expect(sorted.map((e) => e.category)).toEqual(["dlc", "expansion", "bundle", "remake"]);
-  });
-
-  it("sorts by release date within the same category", () => {
-    const extensions = [
-      makeExtension("dlc", "2021-06-01", "DLC B"),
-      makeExtension("dlc", "2020-01-15", "DLC A"),
-      makeExtension("dlc", "2022-12-25", "DLC C"),
-    ];
-
-    const sorted = sortDlcExtensions(extensions);
-
-    expect(sorted.map((e) => e.name)).toEqual(["DLC A", "DLC B", "DLC C"]);
-  });
-
-  it("places null release dates last within a category", () => {
-    const extensions = [
-      makeExtension("dlc", null, "DLC No Date"),
-      makeExtension("dlc", "2020-01-01", "DLC With Date"),
-    ];
-
-    const sorted = sortDlcExtensions(extensions);
-
-    expect(sorted.map((e) => e.name)).toEqual(["DLC With Date", "DLC No Date"]);
-  });
-
-  it("does not mutate the original array", () => {
-    const extensions = [
-      makeExtension("bundle", "2020-01-01", "B"),
-      makeExtension("dlc", "2020-01-01", "A"),
-    ];
-    const original = [...extensions];
-    sortDlcExtensions(extensions);
-    expect(extensions).toEqual(original);
-  });
-
-  it("returns empty array for empty input", () => {
-    expect(sortDlcExtensions([])).toEqual([]);
-  });
-});
-
-describe("groupDlcExtensionsByCategory", () => {
-  const makeExtension = (
-    category: GameDlcExtension["category"],
-    name: string
-  ): GameDlcExtension => ({
-    id: crypto.randomUUID(),
-    igdbId: 1,
-    name,
-    slug: name.toLowerCase(),
-    summary: null,
-    category,
-    coverImageUrl: null,
-    releaseDate: null,
-    gameSlug: null,
-  });
-
-  it("groups extensions by category", () => {
-    const extensions = [
-      makeExtension("dlc", "DLC 1"),
-      makeExtension("dlc", "DLC 2"),
-      makeExtension("expansion", "Exp 1"),
-      makeExtension("bundle", "Bundle 1"),
-    ];
-
-    const groups = groupDlcExtensionsByCategory(extensions);
-
-    expect(groups.dlc).toHaveLength(2);
-    expect(groups.expansion).toHaveLength(1);
-    expect(groups.bundle).toHaveLength(1);
-  });
-
-  it("only returns non-empty groups", () => {
-    const extensions = [makeExtension("expansion", "Exp Only")];
-
-    const groups = groupDlcExtensionsByCategory(extensions);
-
-    expect(Object.keys(groups)).toEqual(["expansion"]);
-    expect(groups.dlc).toBeUndefined();
-    expect(groups.bundle).toBeUndefined();
-  });
-
-  it("returns empty object for empty input", () => {
-    expect(groupDlcExtensionsByCategory([])).toEqual({});
   });
 });
 

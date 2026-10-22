@@ -51,8 +51,8 @@ import {
   createImplicitBridgeHandler,
   createImplicitCallbackHandler,
   createNpssoHandler,
-  PlatformConnectionError,
 } from "@/lib/services/platform-connection";
+import { PlatformConnectionError } from "@/lib/services/platform-connection/errors";
 import { decryptPlatformToken } from "@/lib/services/platformTokens";
 
 const BASE = "http://localhost:3000";

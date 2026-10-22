@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   computeSuggestionScore,
   rankSuggestions,
-  suggestNext,
 } from "@/lib/services/backlog/suggestNext";
 import type { BacklogGame } from "@/types/backlog";
 
@@ -114,16 +113,5 @@ describe("rankSuggestions", () => {
     const ranked = rankSuggestions(games, {});
     // Equal scores/priority → shorter estimate should come first.
     expect(ranked[0].game.id).toBe("shorter");
-  });
-});
-
-describe("suggestNext", () => {
-  it("returns null for an empty backlog", () => {
-    expect(suggestNext([])).toBeNull();
-  });
-
-  it("returns the top-ranked game", () => {
-    const games = [makeGame({ id: "low", priority: 0 }), makeGame({ id: "high", priority: 3 })];
-    expect(suggestNext(games)?.game.id).toBe("high");
   });
 });

@@ -2,66 +2,9 @@
 
 import { useTranslations as useNextIntlTranslations, useLocale } from "next-intl";
 
-// Custom hook for common translations
-export function useCommonTranslations() {
-  return useNextIntlTranslations("common");
-}
-
-// Custom hook for navigation translations
-export function useNavigationTranslations() {
-  return useNextIntlTranslations("navigation");
-}
-
-// Custom hook for library translations
-export function useLibraryTranslations() {
-  return useNextIntlTranslations("library");
-}
-
-// Custom hook for game translations
-export function useGameTranslations() {
-  return useNextIntlTranslations("game");
-}
-
-// Custom hook for character translations
-export function useCharacterTranslations() {
-  return useNextIntlTranslations("characters");
-}
-
-// Custom hook for auth translations
-export function useAuthTranslations() {
-  return useNextIntlTranslations("auth");
-}
-
-// Custom hook for dashboard translations
-export function useDashboardTranslations() {
-  return useNextIntlTranslations("dashboard");
-}
-
-// Custom hook for landing page translations
-export function useLandingTranslations() {
-  return useNextIntlTranslations("landing");
-}
-
-// Custom hook for pagination translations
-export function usePaginationTranslations() {
-  return useNextIntlTranslations("pagination");
-}
-
 // Custom hook for review translations
 export function useReviewTranslations() {
   return useNextIntlTranslations("gameDetails.reviews");
-}
-
-// Custom hook to get current locale with additional utilities
-export function useCurrentLocale() {
-  const locale = useLocale();
-
-  return {
-    locale,
-    isDefault: locale === "fr",
-    isFrench: locale === "fr",
-    isEnglish: locale === "en",
-  };
 }
 
 // Custom hook for formatting dates according to locale
@@ -109,35 +52,5 @@ export function useDateFormatter() {
     formatDate,
     formatShortDate,
     formatRelativeTime,
-  };
-}
-
-// Custom hook for formatting numbers according to locale
-export function useNumberFormatter() {
-  const locale = useLocale();
-
-  const formatNumber = (number: number, options?: Intl.NumberFormatOptions) => {
-    return new Intl.NumberFormat(locale, options).format(number);
-  };
-
-  const formatCurrency = (amount: number, currency = "EUR") => {
-    return new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency,
-    }).format(amount);
-  };
-
-  const formatPercent = (value: number) => {
-    return new Intl.NumberFormat(locale, {
-      style: "percent",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 1,
-    }).format(value);
-  };
-
-  return {
-    formatNumber,
-    formatCurrency,
-    formatPercent,
   };
 }

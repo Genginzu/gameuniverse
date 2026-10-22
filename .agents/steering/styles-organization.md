@@ -23,7 +23,6 @@ src/app/
 └── styles/
     ├── animations.css       # @keyframes + .animate-*, hover-lift, etc.
     ├── neon.css             # .neon-glow, .neon-border, .neon-text, .neon-btn
-    ├── landing-grid.css     # .landing-grid-bg (legacy)
     ├── glass-deprecated.css # .glass-* + .topbar + .dashboard-bg + scrollbar (legacy admin)
     └── editorial/
         ├── typography.css   # SpotlightCard, .editorial-display, kicker, scanlines, hero, marquee
@@ -130,7 +129,7 @@ L'ordre des `@import` dans `globals.css` reflète l'ordre de la cascade :
 1. **Tailwind utilities** (`@import "tailwindcss"`) en premier.
 2. **Animations + keyframes** (utilisables par tous les modules).
 3. **Neon utilities** (utilisables par les composants editoriaux).
-4. **Legacy** (landing-grid, glass-deprecated) avant l'éditorial.
+4. **Legacy** (glass-deprecated) avant l'éditorial.
 5. **Éditorial** (typography → layout → header → search → game-card →
    games-listing → pagination → sort-menu → filters → home).
 
@@ -155,8 +154,7 @@ par-dessus `.editorial-display`) doivent venir **après** la classe parente.
 - ✅ Un module ne devrait **jamais dépasser 600 lignes**. Au-delà, le redécouper
   (ex : `editorial/search.css` proche de cette limite : si on ajoute une
   fonctionnalité significative, sortir un sous-module).
-- ✅ Si un module < 30 lignes peut être absorbé par un voisin (ex :
-  `landing-grid.css` pourrait fusionner avec `glass-deprecated.css`), on le
+- ✅ Si un module < 30 lignes peut être absorbé par un voisin, on le
   laisse tant que le découpage thématique reste clair.
 
 ## Patterns interdits

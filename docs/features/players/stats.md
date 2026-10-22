@@ -140,7 +140,6 @@ données, sinon vers l'année la plus récente.
 | `SocialStats`            | 4 cartes métriques sociales            |
 | `ActivityTimeline`       | Barres activité 12 mois (BarChart)     |
 | `PlaytimeStats`          | Temps moyen + top game                 |
-| `AchievementsList`       | Badges avec statut et progression      |
 | `SessionStats`           | Stats sessions + fréquence par jour    |
 | `PersonalGoals`          | CRUD objectifs + barres de progression |
 | `PersonalGoalForm`       | Formulaire création/édition d'objectif |
@@ -179,7 +178,6 @@ données, sinon vers l'année la plus récente.
 
 | Composant             | Fichier                                          | Rôle                               |
 | --------------------- | ------------------------------------------------ | ---------------------------------- |
-| `YearInReviewLink`    | `src/components/players/YearInReviewLink.tsx`    | Lien vers le résumé annuel         |
 | `YearInReviewContent` | `src/components/players/YearInReviewContent.tsx` | Contenu principal du résumé annuel |
 | `YearInReviewCards`   | `src/components/players/YearInReviewCards.tsx`   | Cartes visuelles du résumé annuel  |
 
@@ -207,7 +205,6 @@ component du résumé annuel.
 | `test/unit/lib/services/playerStatsService.property.test.ts`    | Property-based | 9 propriétés de correction            |
 | `test/unit/api/players/stats/route.test.ts`                     | Unitaire       | Route API stats enrichies             |
 | `test/unit/api/players/year/route.test.ts`                      | Unitaire       | Route API résumé annuel               |
-| `test/unit/components/players/YearInReviewLink.test.ts`         | Unitaire       | Composant lien année en revue         |
 
 ```bash
 bunx vitest run test/unit/lib/services/dashboardStatsCompute.property.test.ts

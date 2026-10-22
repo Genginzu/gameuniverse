@@ -17,7 +17,7 @@ import {
   normalizePsnTitles,
   playstationAdapter,
 } from "@/lib/services/library-sync/adapters/playstation";
-import { getLibraryAdapter } from "@/lib/services/library-sync";
+import { getLibraryAdapter } from "@/lib/services/library-sync/adapters";
 
 function makeDb(
   externalId: string | null,

@@ -152,12 +152,10 @@ prête à sérialiser.
 
 - `src/components/layout/editorial/search/SearchOverlay.tsx` — Overlay de
   recherche plein écran (Ctrl+K), avec `SearchOverlayResults`,
-  `SearchOverlayItem`, `SearchOverlayInput` et `SearchOverlayEmptyState`
-- `GlobalSearchGameItem.tsx` — Carte de résultat jeu (aperçu « Recherche » de la landing)
-- `GlobalSearchCharacterItem.tsx` — Ligne de résultat personnage (aperçu « Recherche » de la landing)
-
-> Les rendus pour `team`, `proPlayer`, `coach` sont implémentés par F0-07c
-> (`SearchOverlay` et ses sous-composants `SearchOverlayItem`).
+  `SearchOverlayItem`, `SearchOverlayInput` et `SearchOverlayEmptyState`, qui
+  rendent les 6 types d'entités
+- `src/components/shared/GlobalSearchGameItem.tsx` — Carte de résultat jeu (aperçu « Recherche » de la landing)
+- `src/components/shared/GlobalSearchCharacterItem.tsx` — Ligne de résultat personnage (aperçu « Recherche » de la landing)
 
 ### Hook (`src/hooks/useGlobalSearch.ts`)
 

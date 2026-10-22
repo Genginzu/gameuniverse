@@ -4,10 +4,7 @@ import {
   createAppError,
   classifyError,
   withRetry,
-  apiCall,
   reportError,
-  getErrorMessage,
-  ERROR_MESSAGES,
   type AppError,
 } from "@/lib/error-handling";
 
@@ -224,70 +221,6 @@ describe("error-handling", () => {
     });
   });
 
-  describe("apiCall", () => {
-    let toastMock: ReturnType<typeof vi.fn>;
-
-    beforeEach(async () => {
-      const toastModule = await import("@/hooks/use-toast");
-      toastMock = toastModule.toast as ReturnType<typeof vi.fn>;
-      toastMock.mockClear();
-    });
-
-    it("should return result on successful operation", async () => {
-      const operation = vi.fn(async () => ({ data: "test" }));
-      const result = await apiCall(operation);
-
-      expect(result).toEqual({ data: "test" });
-    });
-
-    it("should show error toast by default", async () => {
-      const operation = vi.fn(async () => {
-        throw createAppError("Test error", ErrorType.VALIDATION);
-      });
-
-      await expect(apiCall(operation, { retryConfig: { maxAttempts: 1 } })).rejects.toThrow();
-      expect(toastMock).toHaveBeenCalledWith({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Test error",
-      });
-    });
-
-    it("should use custom error message when provided", async () => {
-      const operation = vi.fn(async () => {
-        throw createAppError("Original error", ErrorType.VALIDATION);
-      });
-
-      await expect(
-        apiCall(operation, {
-          errorMessage: "Custom message",
-          retryConfig: { maxAttempts: 1 },
-        })
-      ).rejects.toThrow();
-
-      expect(toastMock).toHaveBeenCalledWith({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Custom message",
-      });
-    });
-
-    it("should not show toast when showErrorToast is false", async () => {
-      const operation = vi.fn(async () => {
-        throw createAppError("Test error", ErrorType.VALIDATION);
-      });
-
-      await expect(
-        apiCall(operation, {
-          showErrorToast: false,
-          retryConfig: { maxAttempts: 1 },
-        })
-      ).rejects.toThrow();
-
-      expect(toastMock).not.toHaveBeenCalled();
-    });
-  });
-
   describe("reportError", () => {
     let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
@@ -309,55 +242,6 @@ describe("error-handling", () => {
       reportError(error, "TestContext");
 
       expect(consoleErrorSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe("getErrorMessage", () => {
-    it("should return French message by default", () => {
-      const message = getErrorMessage(ErrorType.NETWORK);
-      expect(message).toBe(ERROR_MESSAGES.fr[ErrorType.NETWORK]);
-    });
-
-    it("should return English message when locale is en", () => {
-      const message = getErrorMessage(ErrorType.NETWORK, "en");
-      expect(message).toBe(ERROR_MESSAGES.en[ErrorType.NETWORK]);
-    });
-
-    it("should fallback to French for unknown locale", () => {
-      const message = getErrorMessage(ErrorType.NETWORK, "de");
-      expect(message).toBe(ERROR_MESSAGES.fr[ErrorType.NETWORK]);
-    });
-
-    it("should return correct messages for all error types", () => {
-      const errorTypes = Object.values(ErrorType);
-
-      for (const type of errorTypes) {
-        const frMessage = getErrorMessage(type, "fr");
-        const enMessage = getErrorMessage(type, "en");
-
-        expect(frMessage).toBeDefined();
-        expect(enMessage).toBeDefined();
-        expect(typeof frMessage).toBe("string");
-        expect(typeof enMessage).toBe("string");
-      }
-    });
-  });
-
-  describe("ERROR_MESSAGES", () => {
-    it("should have messages for all error types in French", () => {
-      const errorTypes = Object.values(ErrorType);
-
-      for (const type of errorTypes) {
-        expect(ERROR_MESSAGES.fr[type]).toBeDefined();
-      }
-    });
-
-    it("should have messages for all error types in English", () => {
-      const errorTypes = Object.values(ErrorType);
-
-      for (const type of errorTypes) {
-        expect(ERROR_MESSAGES.en[type]).toBeDefined();
-      }
     });
   });
 });

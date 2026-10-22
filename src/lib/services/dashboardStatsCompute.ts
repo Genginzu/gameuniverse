@@ -250,17 +250,6 @@ export function computeSessionFrequency(sessions: Array<{ startedAt: string }>):
   }));
 }
 
-// --- 11. Goal Progress (Req 13.3, 13.4) ---
-
-export function computeGoalProgress(goal: { targetValue: number; currentValue: number }): {
-  ratio: number;
-  isCompleted: boolean;
-} {
-  const ratio = Math.min(goal.currentValue / goal.targetValue, 1);
-  const isCompleted = goal.currentValue >= goal.targetValue;
-  return { ratio, isCompleted };
-}
-
 // --- 12. Platform Distribution (Req 5.1, 5.3) ---
 
 export function computePlatformDistribution(

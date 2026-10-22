@@ -117,5 +117,3 @@ export function EntitySkeleton({ config, className = "" }: EntitySkeletonProps) 
     </div>
   );
 }
-
-export default EntitySkeleton;
