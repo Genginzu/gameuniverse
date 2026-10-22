@@ -44,7 +44,7 @@ export function EditorialHero({
   backgroundAlt,
 }: EditorialHeroProps) {
   return (
-    <section className="editorial-hero">
+    <section className="editorial-hero flex">
       <Image
         src={backgroundImage}
         alt={backgroundAlt}
@@ -63,7 +63,7 @@ export function EditorialHero({
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1600px] flex-col px-6 pt-24 pb-16 lg:px-12 lg:pt-20">
+      <div className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col justify-center px-6 py-16 lg:px-12 lg:py-20">
         <p className="editorial-kicker mb-4">{kicker}</p>
 
         <h1 className="editorial-display text-[clamp(2.75rem,6vw,5.5rem)] !leading-[1.05]">
