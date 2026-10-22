@@ -3906,19 +3906,6 @@
         "removeAriaLabel": "Remove search “{query}”"
       },
       "emptyHint": "Start typing to see results."
-    },
-    "placeholder": "Search games, characters, players...",
-    "noResults": "No results found",
-    "loading": "Searching...",
-    "importing": "Importing...",
-    "categories": {
-      "games": "Games",
-      "characters": "Characters",
-      "players": "Players"
-    },
-    "source": {
-      "local": "In library",
-      "igdb": "IGDB"
     }
   },
   "pageBanner": {

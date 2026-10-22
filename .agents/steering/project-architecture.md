@@ -115,7 +115,7 @@ IconPicker, GameUniverseLogo
 
 SearchBar, Pagination, FilterPanel, FilterButton, FilterChip, FilterSection,
 EntityCard, EntitySkeleton, GridSkeleton, PageBanner, CropEditor, ImageUploader,
-ErrorBoundary, ErrorFallback, LanguageSwitcher, GlobalSearchDropdown, Footer
+ErrorBoundary, ErrorFallback, LanguageSwitcher, Footer
 
 ## Services clés (`src/lib/services/`)
 
