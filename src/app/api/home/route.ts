@@ -36,9 +36,8 @@ export async function GET(request: NextRequest) {
       supabase
         .from("games")
         .select(HOME_GAME_SELECT)
-        .not("hybrid_popularity_score", "is", null)
-        .gt("hybrid_popularity_score", 0)
-        .order("hybrid_popularity_score", { ascending: false })
+        .gt("trending_score", 0)
+        .order("trending_score", { ascending: false })
         .limit(6),
       supabase
         .from("games")

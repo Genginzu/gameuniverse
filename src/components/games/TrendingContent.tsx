@@ -14,7 +14,13 @@ interface TrendingContentProps {
   initialData?: TrendingGamesData;
 }
 
-const SECTION_KEYS = ["mostViewed", "mostPopular", "bestRated", "recentlyAdded"] as const;
+const SECTION_KEYS = [
+  "trendingNow",
+  "mostViewed",
+  "mostPopular",
+  "bestRated",
+  "recentlyAdded",
+] as const;
 
 const GRID =
   "grid grid-cols-2 gap-4 min-[475px]:grid-cols-3 md:grid-cols-4 md:gap-6 lg:grid-cols-5 min-[1536px]:grid-cols-6";

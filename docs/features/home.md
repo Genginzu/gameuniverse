@@ -64,6 +64,55 @@ d'écran. Le contenu des avis est réduit à un extrait texte
 
 Les données de démo sont dans `previews/previewDemoData.ts`.
 
+## Tendances (`hybrid_popularity_score`)
+
+Score 0..1 recalculé par le trigger `trg_games_hybrid_popularity` (migration
+`20261022000001_rebalance_hybrid_popularity.sql`) :
+
+| Partie      | Signal                        | Poids |
+| ----------- | ----------------------------- | ----- |
+| IGDB (50 %) | Visites (PopScore)            | 32 %  |
+|             | Want to play                  | 11 %  |
+|             | Playing                       | 7 %   |
+| Site (50 %) | Vues de la page               | 25 %  |
+|             | Avis + ajouts en bibliothèque | 17 %  |
+|             | Activité des 6 derniers mois  | 8 %   |
+
+Les parts IGDB (valeurs normalisées) sont mises sur une échelle logarithmique
+entre 1e-6 et le maximum du catalogue. Les jeux `is_adult` (thème IGDB Erotic,
+id 42) ont un score forcé à 0 : marqués à l'import/synchro, ou via
+`bun --env-file=.env scripts/igdb-import/games/backfill-adult.ts`.
+
+### Tendances du moment (`trending_score`)
+
+Les blocs « Tendances » (accueil, dashboard, première section de `/trending`)
+trient par `trending_score` (migration `20261022000002_trending_score.sql`) :
+
+- `hybrid_popularity_score` × facteur de sortie : jeu sorti depuis moins d'un an
+  → 1, puis baisse linéaire jusqu'à 0,3 à 5 ans ; date inconnue → 0,5.
+- Jeux à venir (migration `20261022000003`) : date au 31 décembre (année seule
+  sur IGDB) → 0,7 sans bonus ; sortie dans les 6 mois → 1 + bonus d'attente
+  (0,15 × « want to play » IGDB) ; plus tard → 1 sans bonus.
+- Jeux adultes → 0.
+
+Le tri « popularité » du catalogue et la section « Les plus populaires » gardent
+`hybrid_popularity_score`.
+
+### Rafraîchissement hebdomadaire
+
+Cron Vercel `/api/cron/refresh-popularity` (lundi 5 h, `CRON_SECRET`) :
+
+1. Récupère le top 500 IGDB de chaque signal (visites, want to play, playing).
+2. Met à jour les valeurs IGDB de ces jeux s'ils sont au catalogue, plus 1 500
+   jeux du catalogue dont les valeurs sont les plus anciennes (rotation).
+3. Importe jusqu'à 5 jeux du top 100 absents du catalogue : jeux principaux,
+   remakes et remasters uniquement (pas de portages, DLC, bundles ni versions),
+   avec une cover, hors jeux adultes.
+4. Recalcule tous les scores (`refresh_trending_scores()`).
+
+Filet de sécurité : le job pg_cron `refresh-trending-scores` recalcule les
+scores chaque lundi à 5 h 45, même si le cron Vercel échoue.
+
 ## i18n
 
 - Namespaces : `landing.hero`, `landing.marquee`, `landing.previews`,

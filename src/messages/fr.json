@@ -4874,6 +4874,7 @@
     "subtitle": "Découvrez les jeux les plus populaires du moment",
     "count": "{count} jeux",
     "sections": {
+      "trendingNow": "Tendances du moment",
       "mostViewed": "Les plus vus",
       "mostPopular": "Les plus populaires",
       "bestRated": "Les mieux notés",
