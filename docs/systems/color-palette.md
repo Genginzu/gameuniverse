@@ -34,9 +34,11 @@ Exceptions volontaires :
   `--color-brand-x`, `--color-brand-twitch` (`bg-brand-*`). Elles ne changent
   pas lors d'un rebrand.
 
-L'accent dynamique éditorial (`DynamicAccent`) utilise toujours
-`DEFAULT_PALETTE`, dérivée de `palette-primary-500`. Les couleurs stockées en
-base (`accent_color`, `background_color`) ne stylisent plus l'UI publique.
+L'accent dynamique éditorial (`DynamicAccent`) utilise `DEFAULT_PALETTE`,
+dérivée de `palette-primary-500`, sauf sur la page détail d'un jeu
+(`/games/[slug]`) : l'accent y est dérivé de la couleur extraite de la cover
+(`paletteFromHex(game.accentColor, game.slug)`, fallback `DEFAULT_PALETTE`).
+`background_color` ne stylise pas l'UI publique.
 
 ## Accès
 
