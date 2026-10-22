@@ -30,6 +30,7 @@ import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
 import { getDistinctPlatformIcons } from "@/lib/utils/platform-icons";
+import { toHiResCover } from "@/lib/utils/igdbImage";
 import type { GameSummary } from "@/types/game";
 
 /**
@@ -82,7 +83,7 @@ export function GameCard({ game, priority = false, className = "", overlay }: Ga
       <div className="editorial-card-media">
         {game.coverImage ? (
           <Image
-            src={game.coverImage}
+            src={toHiResCover(game.coverImage)}
             alt={game.title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
