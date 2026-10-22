@@ -116,8 +116,9 @@
 }
 
 /*
- * Hero éditorial : conteneur de section avec hauteur min responsive et
- * débordement caché. Le gradient et l'image sont gérés par le composant.
+ * Hero éditorial : conteneur de section avec débordement caché. Le gradient
+ * et l'image sont gérés par le composant. Desktop : ratio 3/2 de l'illustration
+ * pour qu'elle soit visible en entier (largeur pleine × 2/3).
  */
 .editorial-hero {
   position: relative;
@@ -127,7 +128,8 @@
 
 @media (min-width: 1024px) {
   .editorial-hero {
-    min-height: 720px;
+    min-height: 0;
+    aspect-ratio: 3 / 2;
   }
 }
 
@@ -157,4 +159,3 @@
     animation: none;
   }
 }
-

@@ -122,11 +122,10 @@
       "titlePart2": "univers",
       "titlePart3": "gaming",
       "titlePart4": "commence ici",
-      "imageAlt": "Cover du jeu en avant",
       "description": "Explorez des milliers de jeux, suivez les personnages emblématiques et rejoignez une communauté de passionnés sans filtre.",
       "ctaSignup": "Commencer gratuitement",
       "ctaExplore": "Explorer les jeux",
-      "fallbackBackgroundAlt": "Univers gaming Gamers Universe"
+      "backgroundAlt": "Un groupe d'amis joue ensemble sur un grand écran dans un salon gaming"
     },
     "marquee": {
       "trending": "Trending now",
@@ -144,7 +143,7 @@
       "items": {
         "library": {
           "kicker": "BIBLIOTHÈQUE",
-          "title": "Toute votre ludothèque, enfin réunie",
+          "title": "Toute votre bibliothèque, enfin réunie",
           "description": "Ajoutez vos jeux en un clic, classez-les par statut (en cours, terminé, liste de souhaits) et retrouvez votre collection sur toutes vos plateformes.",
           "explore": "Parcourir le catalogue"
         },
@@ -1959,7 +1958,7 @@
         "import": "Importer"
       },
       "game": {
-        "title": "Jeux de la ludothèque",
+        "title": "Jeux de la bibliothèque",
         "description": "Bloc « Bibliothèque » : 3 jeux maximum, avec le statut affiché sur la carte.",
         "searchLabel": "Ajouter un jeu",
         "searchPlaceholder": "Titre du jeu, ex : Grand Theft Auto",

@@ -122,11 +122,10 @@
       "titlePart2": "gaming",
       "titlePart3": "universe",
       "titlePart4": "starts here",
-      "imageAlt": "Featured game cover",
       "description": "Explore thousands of games, follow iconic characters and join an unfiltered community of passionate players.",
       "ctaSignup": "Get started for free",
       "ctaExplore": "Explore games",
-      "fallbackBackgroundAlt": "Gamers Universe gaming world"
+      "backgroundAlt": "A group of friends playing together on a big screen in a gaming living room"
     },
     "marquee": {
       "trending": "Trending now",

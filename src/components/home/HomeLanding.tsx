@@ -24,7 +24,7 @@ export function HomeLanding({ data }: HomeLandingProps) {
 
   return (
     <div className="bg-editorial-bg min-h-screen overflow-x-hidden text-white">
-      <HeroSection featuredGame={data?.trending?.[0] ?? data?.upcoming?.[0]} />
+      <HeroSection />
       <MarqueeSection />
       <ProductPreviewsSection data={data} />
       <TrendingSection initialData={data} />
