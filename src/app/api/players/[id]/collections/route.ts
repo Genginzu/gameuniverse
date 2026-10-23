@@ -3,7 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { PlayerService } from "@/lib/services/playerService";
 import { PlayerCollectionsServerService } from "@/lib/services/playerCollectionsServerService";
 import { fetchCollections, createCollection } from "@/lib/services/collectionService";
-import { AchievementEngine } from "@/lib/services/achievementEngine";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { createCollectionSchema } from "@/lib/validations/collection";
 import { logger } from "@/lib/logger";
 import type { CollectionSortOption, PlayerCollectionsResponse } from "@/types/playerCollection";
@@ -174,12 +174,7 @@ export const POST = defineRoute(
 
     const result = await createCollection(user.id, body);
 
-    // Evaluate achievements (non-blocking)
-    try {
-      await AchievementEngine.evaluate(user.id, "collections");
-    } catch (error) {
-      console.error("Achievement evaluation failed:", error);
-    }
+    await rewardActivity({ kind: "collection_created", userId: user.id });
 
     return NextResponse.json({ collection: result }, { status: 201 });
   }

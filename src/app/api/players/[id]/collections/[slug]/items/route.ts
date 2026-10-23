@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { addItem } from "@/lib/services/collectionService";
 import { addCollectionItemSchema } from "@/lib/validations/collection";
-import { logger } from "@/lib/logger";
-import { CoinService } from "@/lib/services/coinService";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { conflict, defineRoute, forbidden, validationError } from "@/lib/api/route";
 
 /**
@@ -37,9 +36,7 @@ export const POST = defineRoute(
       throw error;
     }
 
-    CoinService.rewardActivity(user.id, "collection_add", body.gameId).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
+    await rewardActivity({ kind: "collection_item_added", userId: user.id, gameId: body.gameId });
 
     return NextResponse.json({ success: true }, { status: 201 });
   }

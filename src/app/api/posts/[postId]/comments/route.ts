@@ -4,7 +4,7 @@ import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { PostCommentServerService } from "@/lib/services/postCommentServerService";
 import { PlayerPostsServerService } from "@/lib/services/playerPostsServerService";
 import { logger } from "@/lib/logger";
-import { CoinService } from "@/lib/services/coinService";
+import { rewardActivity } from "@/lib/services/activityRewards";
 
 const postCommentBodySchema = z.looseObject({ content: z.unknown().optional() });
 
@@ -53,9 +53,7 @@ export const POST = defineRoute(
       throw error;
     }
 
-    CoinService.rewardActivity(user.id, "post_comment", comment.id).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
+    await rewardActivity({ kind: "post_comment_created", userId: user.id, commentId: comment.id });
 
     return NextResponse.json(comment, { status: 201 });
   }

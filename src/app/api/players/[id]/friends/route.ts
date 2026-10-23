@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { FriendServerService } from "@/lib/services/friendServerService";
 import { friendRequested } from "@/lib/services/notifications";
-import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { parsePaginationParams } from "@/lib/api-utils";
 import { logger } from "@/lib/logger";
 import { conflict, defineRoute, notFound, validationError } from "@/lib/api/route";
@@ -78,13 +77,6 @@ export const POST = defineRoute(
       requesterId: user.id,
       receiverId: playerId,
     });
-
-    // Evaluate achievements (non-blocking)
-    try {
-      await AchievementEngine.evaluate(user.id, "social");
-    } catch (error) {
-      console.error("Achievement evaluation failed:", error);
-    }
 
     return NextResponse.json(friendship, { status: 201 });
   }

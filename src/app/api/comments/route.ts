@@ -5,7 +5,7 @@ import { conflict, defineRoute, notFound, validationError } from "@/lib/api/rout
 import { commentSchema } from "@/lib/validations/comment";
 import type { Comment, CommentsResponse } from "@/types/comment";
 import { logger } from "@/lib/logger";
-import { CoinService } from "@/lib/services/coinService";
+import { rewardActivity } from "@/lib/services/activityRewards";
 
 /** characterId is read from the raw body, so the shared form schema must not strip it. */
 const commentBodySchema = commentSchema.extend({ characterId: z.unknown().optional() });
@@ -192,9 +192,11 @@ export const POST = defineRoute(
       return NextResponse.json({ error: "Failed to create comment" }, { status: 500 });
     }
 
-    CoinService.rewardActivity(user.id, "post_comment", comment.id).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
+    await rewardActivity({
+      kind: "character_comment_created",
+      userId: user.id,
+      commentId: comment.id,
+    });
 
     return NextResponse.json({ success: true, comment }, { status: 201 });
   }

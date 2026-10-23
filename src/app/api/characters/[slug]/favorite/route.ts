@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { CharacterFavoriteService } from "@/lib/services/characterFavoriteService";
 import { logger } from "@/lib/logger";
-import { CoinService } from "@/lib/services/coinService";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { conflict, defineRoute, notFound } from "@/lib/api/route";
 
 type RouteContext = { params: Promise<{ slug: string }> };
@@ -50,9 +50,7 @@ export const POST = defineRoute(
       throw error;
     }
 
-    CoinService.rewardActivity(user.id, "character_favorite", characterId).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
+    await rewardActivity({ kind: "character_favorited", userId: user.id, characterId });
 
     return NextResponse.json({ success: true });
   }
