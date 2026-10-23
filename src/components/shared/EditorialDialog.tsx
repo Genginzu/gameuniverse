@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 
 interface EditorialDialogProps {
   ariaLabel: string;
@@ -24,7 +25,8 @@ const SURFACES = {
 /**
  * Modal shell (opaque surface, editorial or admin theme).
  * Rendered in a portal on document.body so `fixed` positioning is not trapped
- * by ancestors using backdrop-filter. Closes on Escape and overlay click.
+ * by ancestors using backdrop-filter. A dismissable layer: closes on Escape and
+ * on a pointer down on the overlay, locks the page scroll and traps the focus.
  */
 export function EditorialDialog({
   ariaLabel,
@@ -35,20 +37,16 @@ export function EditorialDialog({
   className,
 }: EditorialDialogProps) {
   const [mounted, setMounted] = useState(false);
+  const surfaceRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKeyDown);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [onClose]);
+  useEffect(() => setMounted(true), []);
+
+  useDismissableLayer(surfaceRef, {
+    open: mounted,
+    onDismiss: onClose,
+    lockScroll: true,
+    trapFocus: true,
+  });
 
   if (!mounted) return null;
 
@@ -58,15 +56,14 @@ export function EditorialDialog({
       role={role}
       aria-modal="true"
       aria-label={ariaLabel}
-      onClick={onClose}
     >
       <div
+        ref={surfaceRef}
         className={cn(
           "max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border p-6 shadow-2xl",
           SURFACES[variant],
           className
         )}
-        onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>

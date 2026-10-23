@@ -18,11 +18,12 @@
  * Voir docs/design/editorial-refonte-plan.md sections 5.1, 5.2, 5.3.
  */
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import { useEditorialNavigation } from "@/hooks/useEditorialNavigation";
 import { useMegaMenuHover } from "@/hooks/useMegaMenuHover";
 
@@ -55,24 +56,8 @@ export function EditorialMegaMenu({
 
   const highlightedEntry = openEntry ?? activeEntryKey;
 
-  // Escape or click outside closes the open panel.
-  useEffect(() => {
-    if (!openEntry) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeImmediately();
-    };
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null;
-      if (!target || navRef.current?.contains(target)) return;
-      closeImmediately();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("pointerdown", handlePointerDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("pointerdown", handlePointerDown);
-    };
-  }, [openEntry]);
+  // Escape, or a pointer down outside the whole navigation bar, closes.
+  useDismissableLayer(navRef, { open: openEntry !== null, onDismiss: closeImmediately });
 
   const slots: Array<[string, ReactNode]> = [
     ["search", searchSlot],

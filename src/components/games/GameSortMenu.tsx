@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { GAME_LISTING_SORT_OPTIONS, GameListingSort } from "@/types/game";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 
 const SORT_ICONS: Record<GameListingSort, string> = {
   recommended: "mdi:star-four-points",
@@ -23,21 +24,7 @@ export function GameSortMenu({ value, onChange }: GameSortMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const handleClick = (event: MouseEvent) => {
-      if (!containerRef.current?.contains(event.target as Node)) setOpen(false);
-    };
-    const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("mousedown", handleClick);
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-      document.removeEventListener("keydown", handleKey);
-    };
-  }, [open]);
+  useDismissableLayer(containerRef, { open, onDismiss: () => setOpen(false) });
 
   return (
     <div ref={containerRef} className="relative">

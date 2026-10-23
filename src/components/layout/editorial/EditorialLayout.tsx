@@ -22,7 +22,7 @@
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 
 import { EditorialFooter } from "./EditorialFooter";
 import { EditorialMobileNav } from "./EditorialMobileNav";
@@ -63,6 +63,7 @@ export function EditorialLayout({
   className = "",
 }: EditorialLayoutProps) {
   const { openSpace, toggleSpace, closeSpace } = useEditorialRailState();
+  const railRef = useRef<HTMLDivElement>(null);
 
   return (
     <EditorialNavigationProvider>
@@ -75,13 +76,13 @@ export function EditorialLayout({
 
         <div className="editorial-layout-body">
           {/* Rail vertical — caché sous lg */}
-          <div className="editorial-layout-rail">
+          <div ref={railRef} className="editorial-layout-rail">
             <EditorialRail openSpace={openSpace} onToggleSpace={toggleSpace} />
           </div>
 
           {/* Sub-sidebar — caché sous lg */}
           <div className="editorial-layout-sub-sidebar">
-            <EditorialSubSidebar spaceKey={openSpace} onClose={closeSpace} />
+            <EditorialSubSidebar spaceKey={openSpace} onClose={closeSpace} insideRefs={[railRef]} />
           </div>
 
           {/* Colonne de contenu : main + footer empilés, décalés du rail/sidebar */}

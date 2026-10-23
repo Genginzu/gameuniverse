@@ -8,10 +8,18 @@ interface AdminGrantFormProps {
   playerId: string;
 }
 
+const ERROR_KEYS: Record<string, "grantInsufficientBalance" | "grantInvalid"> = {
+  insufficient_balance: "grantInsufficientBalance",
+  invalid_request: "grantInvalid",
+};
+
 export function AdminGrantForm({ playerId }: AdminGrantFormProps) {
   const t = useTranslations("coins.admin");
   const [amount, setAmount] = useState(0);
   const [description, setDescription] = useState("");
+  // Identifies one grant attempt: a double submit or retry replays the same
+  // nonce and the ledger ignores it. A new nonce is drawn after each success.
+  const [nonce, setNonce] = useState(() => crypto.randomUUID());
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -26,16 +34,18 @@ export function AdminGrantForm({ playerId }: AdminGrantFormProps) {
       const res = await fetch("/api/admin/coins/grant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ playerId, amount, description: description.trim() }),
+        body: JSON.stringify({ playerId, amount, description: description.trim(), nonce }),
       });
 
       if (res.ok) {
         setMessage({ type: "success", text: t("grantSuccess") });
         setAmount(0);
         setDescription("");
+        setNonce(crypto.randomUUID());
       } else {
-        const data = await res.json();
-        setMessage({ type: "error", text: data.error || t("grantError") });
+        const data = await res.json().catch(() => ({}));
+        const key = ERROR_KEYS[data.code as string] ?? "grantError";
+        setMessage({ type: "error", text: t(key) });
       }
     } catch {
       setMessage({ type: "error", text: t("grantError") });
@@ -56,7 +66,7 @@ export function AdminGrantForm({ playerId }: AdminGrantFormProps) {
             value={amount}
             onChange={(e) => setAmount(parseInt(e.target.value, 10) || 0)}
             className="glass-input w-full rounded-xl px-4 py-2 text-base"
-            placeholder="100 ou -50"
+            placeholder={t("grantAmountPlaceholder")}
           />
         </div>
         <div>

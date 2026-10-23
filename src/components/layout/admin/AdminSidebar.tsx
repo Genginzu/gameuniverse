@@ -1,9 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useRef } from "react";
+import { useRef, type RefObject } from "react";
 import { Icon } from "@iconify/react";
 import type { AdminUser } from "@/types/admin-auth";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import { AdminSidebarNav } from "./AdminSidebarNav";
 import { AdminSidebarUserMenu } from "./AdminSidebarUserMenu";
 
@@ -12,6 +13,8 @@ interface AdminSidebarProps {
   signOut: () => Promise<void>;
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+  /** The mobile toggle button: an inside region of the mobile drawer. */
+  toggleRef?: RefObject<HTMLElement | null>;
 }
 
 export default function AdminSidebar({
@@ -19,39 +22,18 @@ export default function AdminSidebar({
   signOut,
   sidebarOpen,
   setSidebarOpen,
+  toggleRef,
 }: AdminSidebarProps) {
   const t = useTranslations("admin");
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!sidebarOpen) return;
-    const sidebar = sidebarRef.current;
-    if (!sidebar) return;
-    const sel =
-      'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setSidebarOpen(false);
-        return;
-      }
-      if (e.key !== "Tab") return;
-      const focusable = sidebar.querySelectorAll<HTMLElement>(sel);
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    const focusable = sidebar.querySelectorAll<HTMLElement>(sel);
-    if (focusable.length > 0) focusable[0].focus();
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [sidebarOpen, setSidebarOpen]);
+  // Mobile drawer: Escape or a pointer down outside closes, focus trapped.
+  useDismissableLayer(sidebarRef, {
+    open: sidebarOpen,
+    onDismiss: () => setSidebarOpen(false),
+    insideRefs: toggleRef ? [toggleRef] : undefined,
+    trapFocus: true,
+  });
 
   const handleLinkClick = () => {
     if (window.innerWidth < 1024) setSidebarOpen(false);

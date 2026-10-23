@@ -300,8 +300,7 @@ describe("HeaderUserDropdown", () => {
       fireEvent.click(screen.getByTestId("header-user-trigger"));
       expect(screen.getByTestId("header-user-menu")).toBeDefined();
 
-      // Outside click via mousedown (the listener is on mousedown)
-      fireEvent.mouseDown(screen.getByTestId("outside"));
+      fireEvent.pointerDown(screen.getByTestId("outside"));
       expect(screen.queryByTestId("header-user-menu")).toBeNull();
     });
 

@@ -8,17 +8,18 @@
  * accordéon des Public Entries ("Découvrir"), puis des Spaces avec leurs
  * Membership Links ("Mon espace"), et la section "Compte" en bas.
  *
- * - Body scroll lock pendant que l'overlay est ouvert
+ * - Body scroll lock + focus trap pendant que l'overlay est ouvert
  * - Fermeture : Escape, ╳, clic sur un lien
  * - Pas de backdrop-blur (refonte éditoriale)
  *
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import { useEditorialNavigation } from "@/hooks/useEditorialNavigation";
 
 import { EditorialMobileNavAccount } from "./EditorialMobileNavAccount";
@@ -29,39 +30,33 @@ interface EditorialMobileNavProps {
   className?: string;
 }
 
-function useOverlayEffects(isOpen: boolean, close: () => void) {
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isOpen, close]);
-}
-
 export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const t = useTranslations("editorial");
   const { publicEntries, spaces, account } = useEditorialNavigation();
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   const close = useCallback(() => {
     setIsOpen(false);
     setExpandedId(null);
   }, []);
-  useOverlayEffects(isOpen, close);
+  // Escape closes; scroll locked and focus trapped while the overlay is open.
+  useDismissableLayer(overlayRef, {
+    open: isOpen,
+    onDismiss: close,
+    insideRefs: [toggleRef],
+    lockScroll: true,
+    trapFocus: true,
+  });
 
   const toggle = (id: string) => setExpandedId((current) => (current === id ? null : id));
 
   return (
     <>
       <button
+        ref={toggleRef}
         type="button"
         onClick={() => setIsOpen(true)}
         aria-label={t("mobileNav.openAriaLabel")}
@@ -74,6 +69,7 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
 
       {isOpen && (
         <div
+          ref={overlayRef}
           id="editorial-mobile-nav-overlay"
           role="dialog"
           aria-modal="true"
