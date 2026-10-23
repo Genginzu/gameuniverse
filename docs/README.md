@@ -98,6 +98,7 @@
 | Document                                                               | Description                    |
 | ---------------------------------------------------------------------- | ------------------------------ |
 | [achievements.md](systems/achievements.md)                             | Système de succès              |
+| [activity-rewards.md](systems/activity-rewards.md)                     | Récompenses d'activité (succès + GU Coins) |
 | [global-search.md](systems/global-search.md)                           | Recherche globale              |
 | [navigation-sidebar.md](systems/navigation-sidebar.md)                 | Sidebar de navigation          |
 | [navigation-model.md](systems/navigation-model.md)                     | Navigation Model éditorial     |
