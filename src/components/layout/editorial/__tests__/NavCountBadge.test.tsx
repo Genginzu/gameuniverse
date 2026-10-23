@@ -23,28 +23,28 @@ describe("NavCountBadge", () => {
     pendingCount = 0;
   });
 
-  it("shows the pending friend requests count on /friends", () => {
+  it("shows the pending friend requests count for the pendingFriends badge", () => {
     pendingCount = 3;
-    render(<NavCountBadge href="/friends" />);
+    render(<NavCountBadge badge="pendingFriends" />);
     const badge = screen.getByLabelText("pendingFriendsBadge:3");
     expect(badge.textContent).toBe("3");
   });
 
-  it("shows the unread notifications count on /notifications", () => {
+  it("shows the unread notifications count for the unreadNotifications badge", () => {
     unreadCount = 12;
-    render(<NavCountBadge href="/notifications" />);
+    render(<NavCountBadge badge="unreadNotifications" />);
     expect(screen.getByLabelText("unreadBadge:12").textContent).toBe("9+");
   });
 
   it("renders nothing when the count is zero", () => {
-    const { container } = render(<NavCountBadge href="/friends" />);
+    const { container } = render(<NavCountBadge badge="pendingFriends" />);
     expect(container.firstChild).toBeNull();
   });
 
   it("renders nothing for links without a counter", () => {
     pendingCount = 5;
     unreadCount = 5;
-    const { container } = render(<NavCountBadge href="/coins" />);
+    const { container } = render(<NavCountBadge />);
     expect(container.firstChild).toBeNull();
   });
 });

@@ -80,10 +80,7 @@
       "dropdownAriaLabel": "User menu",
       "avatarAlt": "Avatar of {username}",
       "signIn": "Sign in",
-      "signOut": "Sign out",
-      "profile": "Profile",
-      "library": "Library",
-      "settings": "Settings"
+      "signOut": "Sign out"
     }
   },
   "navigation": {
@@ -468,8 +465,6 @@
       "navAriaLabel": "{space} links",
       "myGroups": "My groups",
       "myCommunities": "My communities",
-      "noMyGroups": "You haven't joined any group yet",
-      "noMyCommunities": "You haven't joined any community yet",
       "loading": "Loading…",
       "unreadBadge": "{count} unread notifications",
       "pendingFriendsBadge": "{count, plural, one {# pending friend request} other {# pending friend requests}}"
@@ -485,10 +480,7 @@
       "account": {
         "title": "Account",
         "signIn": "Sign in",
-        "signOut": "Sign out",
-        "profile": "Profile",
-        "library": "Library",
-        "settings": "Settings"
+        "signOut": "Sign out"
       }
     },
     "languageSwitcher": {
@@ -591,7 +583,10 @@
         "friends": "My friends",
         "discussions": "Discussions",
         "coins": "My coins",
-        "notifications": "Notifications"
+        "notifications": "Notifications",
+        "profile": "Profile",
+        "library": "Library",
+        "settings": "Settings"
       }
     }
   },

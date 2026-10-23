@@ -1,40 +1,10 @@
-/**
- * Entries of the editorial mega-menu (public top bar), shared with the
- * mobile navigation overlay.
- */
-
-export type MegaMenuEntryKey = "games" | "characters" | "players" | "esport";
-
-export interface MegaMenuLink {
-  /** Href without locale prefix. */
-  href: string;
-  /** i18n sub-key under `editorial.megaMenu.links.{entry}`. */
-  labelKey: string;
-  /** Iconify icon (`lucide:`, `fa:`, `mdi:`…). */
-  icon: string;
-}
-
-export interface MegaMenuSection {
-  /** i18n sub-key under `editorial.megaMenu.sections.{entry}`. */
-  titleKey: string;
-  links: MegaMenuLink[];
-}
-
-export interface MegaMenuEntry {
-  key: MegaMenuEntryKey;
-  /** Iconify icon shown next to the entry label. */
-  icon: string;
-  /** Path prefixes that mark this entry as active. */
-  pathPrefixes: string[];
-  sections: MegaMenuSection[];
-}
+import type { NavPublicEntryDefinition } from "@/types/navigation";
 
 /**
- * Top bar = **contenu public** uniquement. Tout ce qui est propre à
- * l'utilisateur connecté (bibliothèque, pronostics, coaching, compte) vit
- * dans le rail / la sub-sidebar (voir `EDITORIAL_SPACES`).
+ * Public Entries: public catalogue only. Member-oriented destinations live in
+ * `EDITORIAL_SPACES`. Labels resolve under `editorial.megaMenu.*`.
  */
-export const EDITORIAL_MEGA_MENU_ENTRIES: readonly MegaMenuEntry[] = [
+export const PUBLIC_ENTRIES: readonly NavPublicEntryDefinition[] = [
   {
     key: "games",
     icon: "fa:dice",
@@ -103,17 +73,3 @@ export const EDITORIAL_MEGA_MENU_ENTRIES: readonly MegaMenuEntry[] = [
     ],
   },
 ];
-
-/** Returns the entry that matches the given pathname, or null. */
-export function megaMenuEntryFromPathname(pathname: string | null): MegaMenuEntryKey | null {
-  if (!pathname) return null;
-  for (const entry of EDITORIAL_MEGA_MENU_ENTRIES) {
-    for (const prefix of entry.pathPrefixes) {
-      if (pathname === prefix || pathname.startsWith(`${prefix}/`)) {
-        return entry.key;
-      }
-    }
-  }
-  return null;
-}
-

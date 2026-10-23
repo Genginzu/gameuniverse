@@ -1,55 +1,33 @@
 "use client";
 
 /**
- * EditorialMegaMenu : header full-width avec logo, 3 entrées principales
- * (Jeux / Personnages / Joueurs) qui ouvrent des panneaux au hover, et
- * 3 slots pour les composants de droite (search, language, user).
+ * EditorialMegaMenu : header full-width avec logo, les Public Entries du
+ * Navigation Model (Jeux / Personnages / Joueurs / E-sport) qui ouvrent des
+ * panneaux au hover, et des slots pour les composants de droite.
  *
  * - Ouverture au hover (delay 80ms) ou au clic
  * - Fermeture au mouseleave (delay 200ms), clic en dehors, Escape, ou clic
  *   sur un sous-lien
- * - Animation fade + translate-y 4px, 200ms ease-out
- * - Largeur du panel : pleine largeur header
- * - Underline néon sur l'entrée active (gradient secondary → primary), basé
- *   sur le pathname courant ou sur l'entrée dont le panel est ouvert
+ * - Underline néon sur l'entrée active (Active Entry du modèle, ou l'entrée
+ *   dont le panel est ouvert)
  * - Mobile (`< lg`) : entrées et panneaux cachés, le hamburger
  *   (`EditorialMobileNav`) prend le relais via `EditorialLayout`
+ *
+ * Entrées, libellés et état actif viennent de `useEditorialNavigation()`.
  *
  * Voir docs/design/editorial-refonte-plan.md sections 5.1, 5.2, 5.3.
  */
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { useDismissableLayer } from "@/hooks/useDismissableLayer";
+import { useEditorialNavigation } from "@/hooks/useEditorialNavigation";
+import { useMegaMenuHover } from "@/hooks/useMegaMenuHover";
 
-import {
-  EDITORIAL_MEGA_MENU_ENTRIES,
-  megaMenuEntryFromPathname,
-  type MegaMenuEntryKey,
-} from "./megaMenuEntries";
-
-export {
-  EDITORIAL_MEGA_MENU_ENTRIES,
-  megaMenuEntryFromPathname,
-  type MegaMenuEntry,
-  type MegaMenuEntryKey,
-  type MegaMenuLink,
-  type MegaMenuSection,
-} from "./megaMenuEntries";
-
-// ============================================================================
-// Constants for hover delays
-// ============================================================================
-
-const OPEN_DELAY_MS = 80;
-const CLOSE_DELAY_MS = 200;
-
-// ============================================================================
-// Component
-// ============================================================================
+import { EditorialMegaMenuPanel } from "./EditorialMegaMenuPanel";
 
 interface EditorialMegaMenuProps {
   /** Slot rendered in the right zone (typically HeaderSearchTrigger). */
@@ -70,64 +48,28 @@ export function EditorialMegaMenu({
   userSlot,
   className = "",
 }: EditorialMegaMenuProps) {
-  const pathname = usePathname();
   const t = useTranslations("editorial.megaMenu");
-  const tEntries = useTranslations("editorial.megaMenu.entries");
-  const tSections = useTranslations("editorial.megaMenu.sections");
-  const tLinks = useTranslations("editorial.megaMenu.links");
-
-  const [openEntry, setOpenEntry] = useState<MegaMenuEntryKey | null>(null);
-  const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { publicEntries, activeEntryKey } = useEditorialNavigation();
+  const menu = useMegaMenuHover();
+  const { openEntry, closeImmediately } = menu;
   const navRef = useRef<HTMLDivElement>(null);
 
-  const activeEntry = useMemo<MegaMenuEntryKey | null>(() => {
-    if (openEntry) return openEntry;
-    return megaMenuEntryFromPathname(pathname);
-  }, [openEntry, pathname]);
-
-  const clearTimers = () => {
-    if (openTimerRef.current) {
-      clearTimeout(openTimerRef.current);
-      openTimerRef.current = null;
-    }
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-  };
-
-  const scheduleOpen = (key: MegaMenuEntryKey) => {
-    clearTimers();
-    openTimerRef.current = setTimeout(() => {
-      setOpenEntry(key);
-    }, OPEN_DELAY_MS);
-  };
-
-  const scheduleClose = () => {
-    clearTimers();
-    closeTimerRef.current = setTimeout(() => {
-      setOpenEntry(null);
-    }, CLOSE_DELAY_MS);
-  };
-
-  const closeImmediately = () => {
-    clearTimers();
-    setOpenEntry(null);
-  };
-
-  // Cleanup timers on unmount
-  useEffect(() => {
-    return () => clearTimers();
-  }, []);
+  const highlightedEntry = openEntry ?? activeEntryKey;
 
   // Escape, or a pointer down outside the whole navigation bar, closes.
   useDismissableLayer(navRef, { open: openEntry !== null, onDismiss: closeImmediately });
 
+  const slots: Array<[string, ReactNode]> = [
+    ["search", searchSlot],
+    ["language", languageSlot],
+    ["notification", notificationSlot],
+    ["user", userSlot],
+  ];
+  const openPanel = publicEntries.find((entry) => entry.key === openEntry);
+
   return (
     <div ref={navRef} className={`editorial-mega-menu ${className}`.trim()}>
       <nav aria-label={t("primaryNavAriaLabel")} className="editorial-mega-menu-bar">
-        {/* Logo */}
         <Link
           href="/"
           aria-label={t("logoAriaLabel")}
@@ -137,33 +79,28 @@ export function EditorialMegaMenu({
           <Icon icon="fa:gamepad" className="size-5" aria-hidden />
         </Link>
 
-        {/* 3 entries (hidden under lg, mobile uses EditorialMobileNav) */}
+        {/* Entries (hidden under lg, mobile uses EditorialMobileNav) */}
         <ul className="editorial-mega-menu-entries hidden lg:flex">
-          {EDITORIAL_MEGA_MENU_ENTRIES.map((entry) => {
-            const isActive = activeEntry === entry.key;
+          {publicEntries.map((entry) => {
+            const isActive = highlightedEntry === entry.key;
             const isOpen = openEntry === entry.key;
-            const label = tEntries(entry.key);
             return (
               <li
                 key={entry.key}
-                onMouseEnter={() => scheduleOpen(entry.key)}
-                onMouseLeave={scheduleClose}
+                onMouseEnter={() => menu.scheduleOpen(entry.key)}
+                onMouseLeave={menu.scheduleClose}
                 className="editorial-mega-menu-entry-item"
               >
                 <button
                   type="button"
-                  onClick={() =>
-                    isOpen ? closeImmediately() : setOpenEntry(entry.key)
-                  }
+                  onClick={() => (isOpen ? closeImmediately() : menu.setOpenEntry(entry.key))}
                   aria-haspopup="true"
                   aria-expanded={isOpen}
-                  className={`editorial-mega-menu-entry ${
-                    isActive ? "is-active" : ""
-                  }`.trim()}
+                  className={`editorial-mega-menu-entry ${isActive ? "is-active" : ""}`.trim()}
                   data-entry={entry.key}
                 >
                   <Icon icon={entry.icon} className="size-4" aria-hidden />
-                  <span>{label}</span>
+                  <span>{entry.label}</span>
                   <Icon
                     icon="lucide:chevron-down"
                     className={`size-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -175,72 +112,25 @@ export function EditorialMegaMenu({
           })}
         </ul>
 
-        {/* Right zone: slots */}
         <div className="editorial-mega-menu-actions">
-          {searchSlot && (
-            <div className="editorial-mega-menu-action" data-slot="search">
-              {searchSlot}
-            </div>
-          )}
-          {languageSlot && (
-            <div className="editorial-mega-menu-action" data-slot="language">
-              {languageSlot}
-            </div>
-          )}
-          {notificationSlot && (
-            <div className="editorial-mega-menu-action" data-slot="notification">
-              {notificationSlot}
-            </div>
-          )}
-          {userSlot && (
-            <div className="editorial-mega-menu-action" data-slot="user">
-              {userSlot}
-            </div>
+          {slots.map(([name, slot]) =>
+            slot ? (
+              <div key={name} className="editorial-mega-menu-action" data-slot={name}>
+                {slot}
+              </div>
+            ) : null
           )}
         </div>
       </nav>
 
-      {/* Mega panels — one per entry, displayed under the bar when open */}
-      {EDITORIAL_MEGA_MENU_ENTRIES.map((entry) => {
-        const isOpen = openEntry === entry.key;
-        if (!isOpen) return null;
-        const entryLabel = tEntries(entry.key);
-        return (
-          <div
-            key={entry.key}
-            role="region"
-            aria-label={t("panel.ariaLabel", { entry: entryLabel })}
-            data-entry={entry.key}
-            className="editorial-mega-menu-panel"
-            onMouseEnter={() => clearTimers()}
-            onMouseLeave={scheduleClose}
-          >
-            <div className="editorial-mega-menu-panel-inner">
-              {entry.sections.map((section) => (
-                <div key={section.titleKey} className="editorial-mega-menu-section">
-                  <h3 className="editorial-kicker editorial-mega-menu-section-title">
-                    {tSections(`${entry.key}.${section.titleKey}`)}
-                  </h3>
-                  <ul className="editorial-mega-menu-section-links">
-                    {section.links.map((link) => (
-                      <li key={link.href}>
-                        <Link
-                          href={link.href}
-                          onClick={closeImmediately}
-                          className="editorial-mega-menu-link"
-                        >
-                          <Icon icon={link.icon} className="size-4" aria-hidden />
-                          <span>{tLinks(`${entry.key}.${link.labelKey}`)}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+      {openPanel && (
+        <EditorialMegaMenuPanel
+          entry={openPanel}
+          onKeepOpen={menu.clearTimers}
+          onLeave={menu.scheduleClose}
+          onNavigate={closeImmediately}
+        />
+      )}
     </div>
   );
 }
