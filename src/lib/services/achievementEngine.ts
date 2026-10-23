@@ -1,4 +1,3 @@
-import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { computeLevel } from "@/lib/services/levelSystem";
 import { achievementUnlocked } from "@/lib/services/notifications";
@@ -35,7 +34,9 @@ export class AchievementEngine {
    */
   static async evaluate(userId: string, category: AchievementCategory): Promise<EvaluationResult> {
     try {
-      const supabase = await createRouteHandlerClient();
+      // Service-role reads: the player evaluated is not always the session
+      // user (both sides of a friendship), and RLS hides private stats.
+      const supabase = getSupabaseAdmin();
 
       // 1. Récupérer le catalogue pour cette catégorie
       const { data: catalog, error: catalogError } = await supabase
@@ -82,12 +83,11 @@ export class AchievementEngine {
       if (toUnlock.length === 0) return EMPTY_RESULT;
 
       // 5. Insérer les nouveaux succès dans player_achievements.
-      // Server-only write (migration 20261019000003): service-role client.
-      const admin = getSupabaseAdmin();
+      // Server-only write (migration 20261019000003).
       const newlyUnlocked: EvaluationResult["newlyUnlocked"] = [];
 
       for (const entry of toUnlock) {
-        const { error: insertError } = await admin
+        const { error: insertError } = await supabase
           .from("player_achievements")
           .insert({ user_id: userId, achievement_key: entry.key });
 
@@ -136,7 +136,7 @@ export class AchievementEngine {
    */
   static async getPlayerCount(userId: string, category: AchievementCategory): Promise<number> {
     try {
-      const supabase = await createRouteHandlerClient();
+      const supabase = getSupabaseAdmin();
 
       switch (category) {
         case "library":
@@ -227,7 +227,7 @@ export class AchievementEngine {
 
 // --- Fonctions utilitaires privées ---
 
-type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
+type SupabaseClient = ReturnType<typeof getSupabaseAdmin>;
 
 /** Compte les lignes d'une table filtrées par user_id. */
 async function countRows(

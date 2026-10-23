@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { playerPlaytimeSchema } from "@/lib/validations/player-playtime";
 import { computePlaytimeAverage } from "@/lib/services/player-playtime-utils";
-import { AchievementEngine } from "@/lib/services/achievementEngine";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import type { PlayerPlaytimeEntry, PlayerPlaytimeContributor } from "@/types/game";
 import { logger } from "@/lib/logger";
 
@@ -278,12 +278,7 @@ export async function POST(
 
     const stats = await fetchPlaytimeStats(supabase, gameId, user.id);
 
-    // Evaluate achievements (non-blocking)
-    try {
-      await AchievementEngine.evaluate(user.id, "playtime");
-    } catch (error) {
-      console.error("Achievement evaluation failed:", error);
-    }
+    await rewardActivity({ kind: "playtime_logged", userId: user.id });
 
     return NextResponse.json(stats);
   } catch (error) {

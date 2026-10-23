@@ -37,6 +37,7 @@ export type CoinActivityType =
   | "character_vote"
   | "post_create"
   | "post_comment"
+  | "character_comment"
   | "discussion_message"
   | "friend_add";
 

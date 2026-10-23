@@ -3,7 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { SmartCollectionServerService } from "@/lib/services/smartCollectionServerService";
 import { generateSuggestions } from "@/lib/services/smartCollectionService";
 import { acceptSuggestionSchema } from "@/lib/validations/collection";
-import { AchievementEngine } from "@/lib/services/achievementEngine";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { logger } from "@/lib/logger";
 import type { CollectionSuggestionsResponse } from "@/types/smartCollection";
 
@@ -75,12 +75,7 @@ export async function POST(request: NextRequest) {
       isPublic
     );
 
-    // Evaluate achievements (non-blocking).
-    try {
-      await AchievementEngine.evaluate(user.id, "collections");
-    } catch (error) {
-      logger.error("Achievement evaluation failed", { error });
-    }
+    await rewardActivity({ kind: "collection_created", userId: user.id });
 
     return NextResponse.json({ collection }, { status: 201 });
   } catch (error) {
