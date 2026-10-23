@@ -11,13 +11,10 @@ interface CreateCollectionData {
 
 /**
  * Encapsulates the create-collection dialog state and submit handler shared by
- * the self and profile collection pages. Refetches the list after creation.
+ * the self and profile collection pages. The collection list refreshes itself.
  */
-export function useCreateCollectionDialog(playerId: string, refetch: () => Promise<void>) {
-  const { createCollection } = useCollectionMutations({
-    playerId,
-    refetchCollections: refetch,
-  });
+export function useCreateCollectionDialog(playerId: string) {
+  const { createCollection } = useCollectionMutations({ playerId });
 
   const [isOpen, setIsOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);

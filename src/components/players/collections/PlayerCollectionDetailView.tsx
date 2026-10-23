@@ -23,7 +23,6 @@ interface PlayerCollectionDetailViewProps {
   isOwner: boolean;
   onBack: () => void;
   onDeleted: () => void;
-  refetchList: () => Promise<void>;
 }
 
 /**
@@ -37,19 +36,15 @@ export function PlayerCollectionDetailView({
   isOwner,
   onBack,
   onDeleted,
-  refetchList,
 }: PlayerCollectionDetailViewProps) {
   const locale = useLocale();
   const t = useTranslations("collections.editorial.detail");
   const tPage = useTranslations("collections.page");
   const tActions = useTranslations("collections.actions");
 
-  const { collection, stats, isLoading, error, notFound, refetch } = useCollectionDetail(
-    playerId,
-    slug
-  );
+  const { collection, stats, isLoading, error, notFound } = useCollectionDetail(playerId, slug);
   const { updateCollection, deleteCollection, toggleVisibility, addItem, removeItem, updateItemNote } =
-    useCollectionMutations({ playerId, refetchCollections: refetchList, refetchDetail: refetch });
+    useCollectionMutations({ playerId });
 
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAddGameDialog, setShowAddGameDialog] = useState(false);

@@ -2,14 +2,10 @@
 
 import useSWR from "swr";
 import { useLocale } from "next-intl";
-import type { CollectionDetail } from "@/types/collection";
+import type { CollectionDetail, CollectionDetailResponse } from "@/types/collection";
 import type { CollectionAdvancedStats } from "@/types/playerCollection";
 import { ErrorType } from "@/lib/error-handling";
-
-interface CollectionDetailResponse {
-  collection: CollectionDetail;
-  stats?: CollectionAdvancedStats | null;
-}
+import { collectionDetailKey } from "@/lib/swr/keys";
 
 interface TypedError extends Error {
   type?: ErrorType;
@@ -33,7 +29,7 @@ export function useCollectionDetail(playerId: string, slug: string): UseCollecti
   const locale = useLocale();
 
   const { data, error, isLoading, mutate } = useSWR<CollectionDetailResponse>(
-    playerId && slug ? `/api/players/${playerId}/collections/${slug}?locale=${locale}` : null
+    playerId && slug ? collectionDetailKey(playerId, slug, locale) : null
   );
 
   // Détecter le 404 via l'erreur typée de l'ApiClient

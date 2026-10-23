@@ -34,14 +34,10 @@ export function CollectionDetailPageContent({
   const { user } = useAuth();
   const isOwner = user?.id === playerId;
 
-  const { collection, stats, isLoading, error, notFound, refetch } = useCollectionDetail(
-    playerId,
-    slug
-  );
+  const { collection, stats, isLoading, error, notFound } = useCollectionDetail(playerId, slug);
 
   const { updateCollection, deleteCollection, toggleVisibility, addItem } = useCollectionMutations({
     playerId,
-    refetchDetail: refetch,
   });
 
   const [showEditDialog, setShowEditDialog] = useState(false);

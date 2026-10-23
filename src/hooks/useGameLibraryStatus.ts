@@ -1,72 +1,52 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import useSWR from "swr";
 import { useAuth } from "./useAuth";
+import { useLibraryToggle } from "./useLibraryToggle";
+import { useLibraryStatus } from "@/components/providers/LibraryStatusProvider";
+import { libraryStatusKey } from "@/lib/swr/keys";
+import type { LibraryStatusResponse } from "@/types/library";
 
-interface LibraryStatusResponse {
-  inLibrary: boolean;
-}
+// The status may be seeded by LibraryStatusProvider and is revalidated after
+// every toggle, so a cached value is never refetched on mount or focus.
+const STATUS_OPTIONS = { revalidateIfStale: false, revalidateOnFocus: false };
 
 /**
- * Hook pour vérifier et gérer le statut d'un jeu dans la bibliothèque.
- * SWR gère la lecture (cache + déduplication), les mutations restent manuelles.
+ * Library status of one game with optimistic add/remove.
+ * Returns false when the request fails (the status is rolled back) or when a
+ * toggle of this game is already in flight.
  */
 export function useGameLibraryStatus(gameId: string) {
   const { user } = useAuth();
-  const [adding, setAdding] = useState(false);
+  const { isSeeding } = useLibraryStatus();
+  const seeding = !!gameId && isSeeding(gameId);
+  const { trigger, isPending } = useLibraryToggle();
 
-  // SWR pour la lecture du statut — clé null si pas d'user ou pas de gameId
-  const { data, isLoading, mutate } = useSWR<LibraryStatusResponse>(
-    user && gameId ? `/api/library/${gameId}` : null
+  const { data, isLoading } = useSWR<LibraryStatusResponse>(
+    user && gameId && !seeding ? libraryStatusKey(gameId) : null,
+    STATUS_OPTIONS
   );
 
-  const inLibrary = data?.inLibrary ?? false;
-
-  const addToLibrary = useCallback(async () => {
-    if (!user || !gameId || adding) return false;
-
-    try {
-      setAdding(true);
-      const response = await fetch("/api/library", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gameId }),
-      });
-
-      if (response.ok) {
-        // Mise à jour optimiste du cache SWR
-        await mutate({ inLibrary: true }, false);
-        return true;
+  const setInLibrary = useCallback(
+    async (inLibrary: boolean) => {
+      if (!user || !gameId) return false;
+      try {
+        return (await trigger({ gameId, inLibrary })) !== undefined;
+      } catch {
+        return false;
       }
-      return false;
-    } catch {
-      return false;
-    } finally {
-      setAdding(false);
-    }
-  }, [user, gameId, adding, mutate]);
+    },
+    [user, gameId, trigger]
+  );
 
-  const removeFromLibrary = useCallback(async () => {
-    if (!user || !gameId) return false;
-
-    try {
-      const response = await fetch(`/api/library/${gameId}`, { method: "DELETE" });
-
-      if (response.ok) {
-        await mutate({ inLibrary: false }, false);
-        return true;
-      }
-      return false;
-    } catch {
-      return false;
-    }
-  }, [user, gameId, mutate]);
+  const addToLibrary = useCallback(() => setInLibrary(true), [setInLibrary]);
+  const removeFromLibrary = useCallback(() => setInLibrary(false), [setInLibrary]);
 
   return {
-    inLibrary,
-    loading: isLoading,
-    adding,
+    inLibrary: data?.inLibrary ?? false,
+    loading: seeding || isLoading,
+    adding: isPending,
     addToLibrary,
     removeFromLibrary,
   };

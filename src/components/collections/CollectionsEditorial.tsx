@@ -36,10 +36,7 @@ export function CollectionsEditorial() {
 
   const playerId = user?.id ?? "";
   const { collections, isLoading, refetch } = useCollections(playerId);
-  const { isOpen, setIsOpen, isCreating, handleCreate } = useCreateCollectionDialog(
-    playerId,
-    refetch
-  );
+  const { isOpen, setIsOpen, isCreating, handleCreate } = useCreateCollectionDialog(playerId);
   const suggestions = useCollectionSuggestions(!!user);
 
   const stats = useMemo(() => {

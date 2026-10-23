@@ -103,6 +103,7 @@
 | [background-customization.md](systems/background-customization.md)     | Personnalisation arrière-plan  |
 | [image-crop-upload.md](systems/image-crop-upload.md)                   | Crop & upload d'images         |
 | [error-handling.md](systems/error-handling.md)                         | Gestion des erreurs            |
+| [optimistic-mutations.md](systems/optimistic-mutations.md)             | Mutations optimistes SWR       |
 | [database-functions.md](systems/database-functions.md)                 | Référence fonctions DB         |
 | [security-fixes.md](systems/security-fixes.md)                         | Correctifs sécurité            |
 | [resend-configuration.md](systems/resend-configuration.md)             | Configuration Resend (email)   |

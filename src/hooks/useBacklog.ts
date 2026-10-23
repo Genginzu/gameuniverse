@@ -3,7 +3,12 @@
 import { useCallback, useMemo, useState } from "react";
 import useSWR from "swr";
 import { useAuth } from "./useAuth";
+import { useOptimisticMutation } from "./useOptimisticMutation";
 import { computeTimeSummary, rankSuggestions } from "@/lib/services/backlog";
+import { jsonRequest } from "@/lib/utils/json-request";
+import { affect } from "@/lib/swr/optimistic";
+import { BACKLOG_KEY } from "@/lib/swr/keys";
+import { backlogPriorityUpdater, backlogReorderUpdater } from "@/lib/swr/updaters/backlog";
 import type {
   BacklogFilters,
   BacklogGame,
@@ -58,7 +63,7 @@ export function useBacklog() {
     error,
     isLoading,
     mutate,
-  } = useSWR<BacklogResponse>(user ? "/api/library/backlog" : null, {
+  } = useSWR<BacklogResponse>(user ? BACKLOG_KEY : null, {
     onError: () => {},
   });
 
@@ -101,57 +106,36 @@ export function useBacklog() {
     );
   }, [games]);
 
+  const { trigger: reorderTrigger } = useOptimisticMutation<string[]>({
+    request: (orderedGameIds) =>
+      jsonRequest(`${BACKLOG_KEY}/reorder`, "PATCH", { orderedGameIds }),
+    affects: (orderedGameIds) => [
+      affect<BacklogResponse>(BACKLOG_KEY, backlogReorderUpdater(orderedGameIds)),
+    ],
+  });
+
+  const { trigger: priorityTrigger } = useOptimisticMutation<{
+    gameId: string;
+    priority: BacklogPriority;
+  }>({
+    request: ({ gameId, priority }) => jsonRequest(`${BACKLOG_KEY}/${gameId}`, "PATCH", { priority }),
+    affects: ({ gameId, priority }) => [
+      affect<BacklogResponse>(BACKLOG_KEY, backlogPriorityUpdater(gameId, priority)),
+    ],
+  });
+
   const reorder = useCallback(
     async (orderedGameIds: string[]) => {
-      // Optimistic reordering: reflect the new order immediately.
-      const optimistic: BacklogGame[] = [];
-      orderedGameIds.forEach((id, index) => {
-        const game = games.find((g) => g.id === id);
-        if (game) optimistic.push({ ...game, backlogPosition: index });
-      });
-
-      await mutate(
-        async () => {
-          const response = await fetch("/api/library/backlog/reorder", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ orderedGameIds }),
-          });
-          if (!response.ok) throw new Error("Failed to reorder backlog");
-          return { games: optimistic };
-        },
-        {
-          optimisticData: { games: optimistic },
-          rollbackOnError: true,
-          revalidate: true,
-        }
-      );
+      await reorderTrigger(orderedGameIds);
     },
-    [games, mutate]
+    [reorderTrigger]
   );
 
   const setPriority = useCallback(
     async (gameId: string, priority: BacklogPriority) => {
-      const optimistic = games.map((g) => (g.id === gameId ? { ...g, priority } : g));
-
-      await mutate(
-        async () => {
-          const response = await fetch(`/api/library/backlog/${gameId}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ priority }),
-          });
-          if (!response.ok) throw new Error("Failed to update priority");
-          return { games: optimistic };
-        },
-        {
-          optimisticData: { games: optimistic },
-          rollbackOnError: true,
-          revalidate: true,
-        }
-      );
+      await priorityTrigger({ gameId, priority });
     },
-    [games, mutate]
+    [priorityTrigger]
   );
 
   const hasActiveFilters =

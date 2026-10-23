@@ -1,3 +1,5 @@
+import type { CollectionAdvancedStats } from "./playerCollection";
+
 /** Résumé d'une collection pour l'affichage en liste */
 export interface CollectionSummary {
   id: string;
@@ -68,4 +70,15 @@ export interface AddCollectionItemInput {
 /** Payload de réordonnancement */
 export interface ReorderCollectionItemsInput {
   items: Array<{ gameId: string; position: number }>;
+}
+
+/** Réponse de la liste des collections d'un joueur (clé SWR liste) */
+export interface CollectionsResponse {
+  collections: CollectionSummary[];
+}
+
+/** Réponse du détail d'une collection (clé SWR détail) */
+export interface CollectionDetailResponse {
+  collection: CollectionDetail;
+  stats?: CollectionAdvancedStats | null;
 }

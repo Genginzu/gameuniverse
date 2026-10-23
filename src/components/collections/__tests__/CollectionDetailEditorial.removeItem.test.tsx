@@ -139,7 +139,6 @@ vi.mock("@/hooks/useCollectionMutations", () => ({
     addItem: vi.fn(),
     removeItem: removeItemMock,
     updateItemNote: vi.fn(),
-    reorderItems: vi.fn(),
   }),
 }));
 

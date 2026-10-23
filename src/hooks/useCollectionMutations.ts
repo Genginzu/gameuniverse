@@ -1,124 +1,49 @@
 "use client";
 
-import { useCallback } from "react";
+import { useMemo } from "react";
+import { useLocale } from "next-intl";
+import { useOptimisticMutation } from "./useOptimisticMutation";
+import { collectionMutationSpecs } from "@/lib/swr/collectionMutationSpecs";
 import type {
+  AddCollectionItemInput,
   CreateCollectionInput,
   UpdateCollectionInput,
-  AddCollectionItemInput,
 } from "@/types/collection";
-import {
-  apiCreateCollection,
-  apiUpdateCollection,
-  apiDeleteCollection,
-  apiToggleVisibility,
-  apiAddItem,
-  apiRemoveItem,
-  apiUpdateItemNote,
-  apiReorderItems,
-} from "@/lib/services/collectionApi";
-
-interface UseCollectionMutationsOptions {
-  playerId: string;
-  /** Callback to refetch the collections list after a mutation */
-  refetchCollections?: () => Promise<void>;
-  /** Callback to refetch the collection detail after a mutation */
-  refetchDetail?: () => Promise<void>;
-}
 
 /**
- * Hook fournissant les mutations CRUD pour les collections.
- * Chaque mutation appelle l'API correspondante puis invalide le cache via les callbacks.
+ * CRUD mutations of a player's collections. List, stats and detail stay fresh
+ * without caller callbacks; each mutation rejects with the server message
+ * after rolling back its optimistic changes.
  */
-export function useCollectionMutations({
-  playerId,
-  refetchCollections,
-  refetchDetail,
-}: UseCollectionMutationsOptions) {
-  const invalidateList = useCallback(async () => {
-    await refetchCollections?.();
-  }, [refetchCollections]);
+export function useCollectionMutations({ playerId }: { playerId: string }) {
+  const locale = useLocale();
+  const specs = collectionMutationSpecs(playerId, locale);
 
-  const invalidateAll = useCallback(async () => {
-    await Promise.all([refetchCollections?.(), refetchDetail?.()]);
-  }, [refetchCollections, refetchDetail]);
+  const { trigger: create } = useOptimisticMutation(specs.create);
+  const { trigger: update } = useOptimisticMutation(specs.update);
+  const { trigger: remove } = useOptimisticMutation(specs.remove);
+  const { trigger: visibility } = useOptimisticMutation(specs.visibility);
+  const { trigger: addItem } = useOptimisticMutation(specs.addItem);
+  const { trigger: removeItem } = useOptimisticMutation(specs.removeItem);
+  const { trigger: updateItemNote } = useOptimisticMutation(specs.updateItemNote);
 
-  const createCollection = useCallback(
-    async (input: CreateCollectionInput) => {
-      const result = await apiCreateCollection(playerId, input);
-      await invalidateList();
-      return result;
-    },
-    [playerId, invalidateList]
+  return useMemo(
+    () => ({
+      createCollection: (input: CreateCollectionInput) => create(input),
+      updateCollection: (slug: string, input: UpdateCollectionInput) => update({ slug, input }),
+      deleteCollection: async (slug: string) => {
+        await remove(slug);
+      },
+      toggleVisibility: (slug: string, currentIsPublic: boolean) =>
+        visibility({ slug, isPublic: !currentIsPublic }),
+      addItem: (slug: string, input: AddCollectionItemInput) => addItem({ slug, input }),
+      removeItem: async (slug: string, gameId: string) => {
+        await removeItem({ slug, gameId });
+      },
+      updateItemNote: async (slug: string, gameId: string, note: string | null) => {
+        await updateItemNote({ slug, gameId, note });
+      },
+    }),
+    [create, update, remove, visibility, addItem, removeItem, updateItemNote]
   );
-
-  const updateCollection = useCallback(
-    async (slug: string, input: UpdateCollectionInput) => {
-      const result = await apiUpdateCollection(playerId, slug, input);
-      await invalidateAll();
-      return result;
-    },
-    [playerId, invalidateAll]
-  );
-
-  const deleteCollection = useCallback(
-    async (slug: string) => {
-      await apiDeleteCollection(playerId, slug);
-      await invalidateList();
-    },
-    [playerId, invalidateList]
-  );
-
-  const toggleVisibility = useCallback(
-    async (slug: string, currentIsPublic: boolean) => {
-      const result = await apiToggleVisibility(playerId, slug, !currentIsPublic);
-      await invalidateAll();
-      return result;
-    },
-    [playerId, invalidateAll]
-  );
-
-  const addItem = useCallback(
-    async (slug: string, input: AddCollectionItemInput) => {
-      const result = await apiAddItem(playerId, slug, input);
-      await invalidateAll();
-      return result;
-    },
-    [playerId, invalidateAll]
-  );
-
-  const removeItem = useCallback(
-    async (slug: string, gameId: string) => {
-      await apiRemoveItem(playerId, slug, gameId);
-      await invalidateAll();
-    },
-    [playerId, invalidateAll]
-  );
-
-  const updateItemNote = useCallback(
-    async (slug: string, gameId: string, note: string | null) => {
-      await apiUpdateItemNote(playerId, slug, gameId, note);
-      await invalidateAll();
-    },
-    [playerId, invalidateAll]
-  );
-
-  const reorderItems = useCallback(
-    async (slug: string, items: Array<{ gameId: string; position: number }>) => {
-      const result = await apiReorderItems(playerId, slug, items);
-      await invalidateAll();
-      return result;
-    },
-    [playerId, invalidateAll]
-  );
-
-  return {
-    createCollection,
-    updateCollection,
-    deleteCollection,
-    toggleVisibility,
-    addItem,
-    removeItem,
-    updateItemNote,
-    reorderItems,
-  };
 }
