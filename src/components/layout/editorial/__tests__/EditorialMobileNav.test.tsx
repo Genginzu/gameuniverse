@@ -1,10 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 
-const mockUsePathname = vi.fn<[], string>(() => "/");
 vi.mock("@/i18n/navigation", () => ({
-  usePathname: () => mockUsePathname(),
   Link: ({
     children,
     href,
@@ -45,9 +43,9 @@ const editorialTranslations: Record<string, string> = {
   "mobileNav.account.title": "Account",
   "mobileNav.account.signIn": "Sign in",
   "mobileNav.account.signOut": "Sign out",
-  "mobileNav.account.profile": "Profile",
-  "mobileNav.account.library": "Library",
-  "mobileNav.account.settings": "Settings",
+  "links.account.profile": "Profile",
+  "links.account.library": "Library",
+  "links.account.settings": "Settings",
   // Public mega entries + links
   "megaMenu.entries.games": "Games",
   "megaMenu.entries.characters": "Characters",
@@ -97,12 +95,26 @@ vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => mockUseAuth(),
 }));
 
+vi.mock("@/hooks/useNotifications", () => ({
+  useNotifications: () => ({ unreadCount: 0 }),
+}));
+vi.mock("@/hooks/usePendingRequestCount", () => ({
+  usePendingRequestCount: () => ({ count: 0 }),
+}));
+
 import { EditorialMobileNav } from "@/components/layout/editorial/EditorialMobileNav";
+import { dictionaryTranslator, renderWithNavigation } from "@/test-helpers/editorial-navigation";
+
+const translate = dictionaryTranslator(editorialTranslations);
+
+/** Resolves the model with the same auth state the mocked useAuth reports. */
+function render(ui: React.ReactElement) {
+  const { user } = mockUseAuth() as { user: unknown };
+  return renderWithNavigation(ui, { isAuthenticated: Boolean(user) }, translate);
+}
 
 describe("EditorialMobileNav", () => {
   beforeEach(() => {
-    mockUsePathname.mockReset();
-    mockUsePathname.mockReturnValue("/");
     mockUseAuth.mockReset();
     mockUseAuth.mockReturnValue({ user: null, loading: false, signOut: vi.fn() });
   });
@@ -212,26 +224,15 @@ describe("EditorialMobileNav", () => {
       fireEvent.click(screen.getByRole("button", { name: /Games/i }));
       fireEvent.click(screen.getByRole("button", { name: /My library/i }));
 
-      expect(
-        screen.getByRole("button", { name: /Games/i }).getAttribute("aria-expanded")
-      ).toBe("false");
+      expect(screen.getByRole("button", { name: /Games/i }).getAttribute("aria-expanded")).toBe(
+        "false"
+      );
       expect(
         screen.getByRole("button", { name: /My library/i }).getAttribute("aria-expanded")
       ).toBe("true");
 
       expect(screen.queryByText("Trending")).toBeNull();
       expect(screen.getByText("My collections")).toBeDefined();
-    });
-
-    it("marks a link active when its href matches the current pathname", () => {
-      mockUsePathname.mockReturnValue("/trending");
-      render(<EditorialMobileNav />);
-      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
-      fireEvent.click(screen.getByRole("button", { name: /Games/i }));
-
-      const trending = screen.getByTestId("link-/trending");
-      expect(trending.className).toContain("is-active");
-      expect(trending.getAttribute("aria-current")).toBe("page");
     });
   });
 
@@ -267,9 +268,9 @@ describe("EditorialMobileNav", () => {
       fireEvent.click(screen.getByRole("button", { name: /Games/i }));
       fireEvent.click(screen.getByRole("button", { name: "Close navigation" }));
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
-      expect(
-        screen.getByRole("button", { name: /Games/i }).getAttribute("aria-expanded")
-      ).toBe("false");
+      expect(screen.getByRole("button", { name: /Games/i }).getAttribute("aria-expanded")).toBe(
+        "false"
+      );
     });
 
     it("ignores Escape when the overlay is closed", () => {
@@ -341,20 +342,6 @@ describe("EditorialMobileNav", () => {
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
       fireEvent.click(screen.getByTestId("editorial-mobile-account-signin"));
       expect(screen.queryByRole("dialog")).toBeNull();
-    });
-
-    it("marks an account link active when its href matches the pathname", () => {
-      mockUsePathname.mockReturnValue("/settings");
-      mockUseAuth.mockReturnValue({
-        user: makeUser(),
-        loading: false,
-        signOut: vi.fn(),
-      });
-      render(<EditorialMobileNav />);
-      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
-      const settings = screen.getByTestId("editorial-mobile-account-settings");
-      expect(settings.className).toContain("is-active");
-      expect(settings.getAttribute("aria-current")).toBe("page");
     });
   });
 });

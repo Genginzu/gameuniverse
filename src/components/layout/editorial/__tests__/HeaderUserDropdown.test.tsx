@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { screen, fireEvent, act } from "@testing-library/react";
 
 // ---------------------------------------------------------------------------
 // next-intl mock with interpolation
@@ -11,9 +11,9 @@ const translations: Record<string, string> = {
   "header.userDropdown.avatarAlt": "Avatar of {username}",
   "header.userDropdown.signIn": "Sign in",
   "header.userDropdown.signOut": "Sign out",
-  "header.userDropdown.profile": "Profile",
-  "header.userDropdown.library": "Library",
-  "header.userDropdown.settings": "Settings",
+  "editorial.links.account.profile": "Profile",
+  "editorial.links.account.library": "Library",
+  "editorial.links.account.settings": "Settings",
 };
 
 vi.mock("next-intl", () => ({
@@ -30,10 +30,8 @@ vi.mock("next-intl", () => ({
 }));
 
 // ---------------------------------------------------------------------------
-// @/i18n/navigation : usePathname + Link stubs
+// @/i18n/navigation : Link stub
 // ---------------------------------------------------------------------------
-
-const mockPathname = vi.fn<() => string>(() => "/games");
 
 vi.mock("@/i18n/navigation", () => ({
   Link: ({
@@ -62,7 +60,6 @@ vi.mock("@/i18n/navigation", () => ({
       },
       children
     ),
-  usePathname: () => mockPathname(),
 }));
 
 // ---------------------------------------------------------------------------
@@ -80,6 +77,18 @@ vi.mock("@/hooks/useAuth", () => ({
 // ---------------------------------------------------------------------------
 
 import { HeaderUserDropdown } from "@/components/layout/editorial/HeaderUserDropdown";
+import { renderWithNavigation } from "@/test-helpers/editorial-navigation";
+
+/** Resolves the model with the same auth state the mocked useAuth reports. */
+function render(ui: React.ReactElement) {
+  const { user } = mockUseAuth() as { user: unknown };
+  const translate = (key: string) => translations[`editorial.${key}`] ?? key;
+  return renderWithNavigation(
+    ui,
+    { pathname: "/games", isAuthenticated: Boolean(user) },
+    translate
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -122,7 +131,6 @@ function setAuth({
 describe("HeaderUserDropdown", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPathname.mockReturnValue("/games");
   });
 
   describe("loading state", () => {
@@ -245,20 +253,6 @@ describe("HeaderUserDropdown", () => {
       expect(profile.getAttribute("role")).toBe("menuitem");
       expect(library.getAttribute("role")).toBe("menuitem");
       expect(settings.getAttribute("role")).toBe("menuitem");
-    });
-
-    it("marks the active menu item based on the current pathname", () => {
-      mockPathname.mockReturnValue("/library");
-      setAuth({ user: makeUser() });
-      render(<HeaderUserDropdown />);
-      fireEvent.click(screen.getByTestId("header-user-trigger"));
-
-      expect(
-        screen.getByTestId("header-user-menu-library").className
-      ).toContain("is-active");
-      expect(
-        screen.getByTestId("header-user-menu-profile").className
-      ).not.toContain("is-active");
     });
 
     it("closes the menu when a menu item link is clicked", () => {

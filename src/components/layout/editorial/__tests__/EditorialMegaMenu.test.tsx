@@ -1,10 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { screen, fireEvent, act } from "@testing-library/react";
 
-const mockUsePathname = vi.fn<[], string>(() => "/");
 vi.mock("@/i18n/navigation", () => ({
-  usePathname: () => mockUsePathname(),
   Link: ({
     children,
     href,
@@ -70,85 +68,18 @@ vi.mock("next-intl", () => ({
   },
 }));
 
-import {
-  EditorialMegaMenu,
-  EDITORIAL_MEGA_MENU_ENTRIES,
-  megaMenuEntryFromPathname,
-} from "@/components/layout/editorial/EditorialMegaMenu";
+import { EditorialMegaMenu } from "@/components/layout/editorial/EditorialMegaMenu";
+import { renderWithNavigation } from "@/test-helpers/editorial-navigation";
 
-describe("megaMenuEntryFromPathname (helper)", () => {
-  it("returns null for empty / unrelated input", () => {
-    expect(megaMenuEntryFromPathname(null)).toBeNull();
-    expect(megaMenuEntryFromPathname("")).toBeNull();
-    expect(megaMenuEntryFromPathname("/")).toBeNull();
-    expect(megaMenuEntryFromPathname("/admin/games")).toBeNull();
-  });
+const translate = (key: string) => editorialTranslations[`editorial.${key}`] ?? key;
+let pathname = "/";
 
-  it("matches the games entry", () => {
-    expect(megaMenuEntryFromPathname("/games")).toBe("games");
-    expect(megaMenuEntryFromPathname("/games/zelda")).toBe("games");
-    expect(megaMenuEntryFromPathname("/trending")).toBe("games");
-    expect(megaMenuEntryFromPathname("/upcoming")).toBe("games");
-  });
-
-  it("matches the characters entry (only public character browsing)", () => {
-    expect(megaMenuEntryFromPathname("/characters")).toBe("characters");
-    // Favorite characters are user-specific now → handled by the rail, not the top bar.
-    expect(megaMenuEntryFromPathname("/favorites/characters")).toBeNull();
-  });
-
-  it("matches the players entry (public players directory only)", () => {
-    expect(megaMenuEntryFromPathname("/players")).toBe("players");
-    // Discussions are user-specific now → rail (account space), not the top bar.
-    expect(megaMenuEntryFromPathname("/discussions")).toBeNull();
-    // Friends are user-specific now → not part of the public players entry.
-    expect(megaMenuEntryFromPathname("/friends")).toBeNull();
-  });
-
-  it("matches the esport entry for public esport pages only", () => {
-    expect(megaMenuEntryFromPathname("/esport/live")).toBe("esport");
-    expect(megaMenuEntryFromPathname("/esport/teams")).toBe("esport");
-    expect(megaMenuEntryFromPathname("/esport/tournaments")).toBe("esport");
-    // Predictions / fantasy are user-specific → rail, not top bar.
-    expect(megaMenuEntryFromPathname("/esport/predictions")).toBeNull();
-    expect(megaMenuEntryFromPathname("/esport/fantasy")).toBeNull();
-  });
-
-  it("does not match prefixes that only share a starting substring", () => {
-    expect(megaMenuEntryFromPathname("/gamesettings")).toBeNull();
-  });
-});
-
-describe("EDITORIAL_MEGA_MENU_ENTRIES contract", () => {
-  it("exposes exactly 4 public entries (games, characters, players, esport)", () => {
-    expect(EDITORIAL_MEGA_MENU_ENTRIES.map((e) => e.key)).toEqual([
-      "games",
-      "characters",
-      "players",
-      "esport",
-    ]);
-  });
-
-  it("each entry has an icon and at least one section with at least one link (icon included)", () => {
-    EDITORIAL_MEGA_MENU_ENTRIES.forEach((entry) => {
-      expect(entry.icon).toMatch(/^[a-z]+:/);
-      expect(entry.sections.length).toBeGreaterThan(0);
-      entry.sections.forEach((section) => {
-        expect(section.links.length).toBeGreaterThan(0);
-        section.links.forEach((link) => {
-          expect(link.href).toMatch(/^\//);
-          expect(link.labelKey.length).toBeGreaterThan(0);
-          expect(link.icon).toMatch(/^[a-z]+:/);
-        });
-      });
-    });
-  });
-});
-
+function render(ui: React.ReactElement) {
+  return renderWithNavigation(ui, { pathname }, translate);
+}
 describe("EditorialMegaMenu", () => {
   beforeEach(() => {
-    mockUsePathname.mockReset();
-    mockUsePathname.mockReturnValue("/");
+    pathname = "/";
     vi.useFakeTimers();
   });
 
@@ -333,41 +264,16 @@ describe("EditorialMegaMenu", () => {
   });
 
   describe("active entry indicator", () => {
-    it("marks the games entry active based on the pathname", () => {
-      mockUsePathname.mockReturnValue("/trending");
+    it("the open panel takes precedence over the Active Entry", () => {
+      pathname = "/games";
       render(<EditorialMegaMenu />);
-      const games = screen.getByRole("button", { name: /Games/i });
-      expect(games.className).toContain("is-active");
-    });
-
-    it("the open panel takes precedence over the pathname", () => {
-      mockUsePathname.mockReturnValue("/games");
-      render(<EditorialMegaMenu />);
-      expect(
-        screen.getByRole("button", { name: /Games/i }).className
-      ).toContain("is-active");
+      expect(screen.getByRole("button", { name: /Games/i }).className).toContain("is-active");
 
       fireEvent.click(screen.getByRole("button", { name: /Players/i }));
-      expect(
-        screen.getByRole("button", { name: /Players/i }).className
-      ).toContain("is-active");
-      expect(
-        screen.getByRole("button", { name: /Games/i }).className
-      ).not.toContain("is-active");
-    });
-
-    it("does not mark anything active when the pathname is unrelated", () => {
-      mockUsePathname.mockReturnValue("/auth/sign-in");
-      render(<EditorialMegaMenu />);
-      EDITORIAL_MEGA_MENU_ENTRIES.forEach((entry) => {
-        const button = screen.getByRole("button", {
-          name: new RegExp(editorialTranslations[`editorial.megaMenu.entries.${entry.key}`], "i"),
-        });
-        expect(button.className).not.toContain("is-active");
-      });
+      expect(screen.getByRole("button", { name: /Players/i }).className).toContain("is-active");
+      expect(screen.getByRole("button", { name: /Games/i }).className).not.toContain("is-active");
     });
   });
-
   describe("panel content", () => {
     it("renders one section title per esport section, translated", () => {
       render(<EditorialMegaMenu />);

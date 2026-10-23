@@ -391,24 +391,21 @@ un `KickerLabel` en dessous.
 ### `EditorialRail`
 
 **Fichier :** `src/components/layout/editorial/EditorialRail.tsx`
-**Rôle :** Barre verticale 56px persistante (Discord-style) avec logo et
-5 icônes d'espace cliquables.
+**Rôle :** Barre verticale 56px persistante (Discord-style) avec une icône
+par Space du Navigation Model (voir
+[navigation-model.md](../systems/navigation-model.md)).
 
 #### API
 
 | Prop            | Type                                               | Défaut | Description                                              |
 | --------------- | -------------------------------------------------- | ------ | -------------------------------------------------------- |
-| `openSpace`     | `EditorialSpaceKey \| null`                        | —      | Space dont la sub-sidebar est ouverte (driven par parent). |
-| `onToggleSpace` | `(key: EditorialSpaceKey) => void`                 | —      | Callback au clic sur une icône.                          |
+| `openSpace`     | `NavSpaceKey \| null`                              | —      | Space dont la sub-sidebar est ouverte (driven par parent). |
+| `onToggleSpace` | `(key: NavSpaceKey) => void`                       | —      | Callback au clic sur une icône.                          |
 | `className`     | `string`                                           | —      | Classes additionnelles.                                  |
 
-#### Exports utiles
-
-- `EditorialSpaceKey` : `"games" | "esport" | "library" | "community" | "coaching"`
-- `EditorialSpace` : structure d'un space (key, icon, pathPrefixes, links).
-- `EDITORIAL_SPACES` : tableau readonly des 5 spaces.
-- `spaceFromPathname(pathname)` : helper qui retourne la `EditorialSpaceKey`
-  matchant le pathname (ou `null`).
+Espaces, libellés et Active Space viennent de `useEditorialNavigation()` :
+le rail doit être rendu sous `EditorialNavigationProvider` (monté par
+`EditorialLayout`).
 
 #### Exemple
 
@@ -447,7 +444,7 @@ du rail. Affiche les liens du space sélectionné.
 
 | Prop              | Type                       | Défaut  | Description                                                   |
 | ----------------- | -------------------------- | ------- | ------------------------------------------------------------- |
-| `space`           | `EditorialSpace \| null`   | requis  | Space affiché. `null` = sub-sidebar fermée.                   |
+| `spaceKey`        | `NavSpaceKey \| null`      | requis  | Space affiché. `null` = sub-sidebar fermée.                   |
 | `onClose`         | `() => void`               | requis  | Callback (Escape, ╳, clic en dehors, clic sur un lien).       |
 | `closeOnNavigate` | `boolean`                  | `true`  | Si `true`, ferme aussi au clic sur un lien.                   |
 | `insideRefs`      | `RefObject<HTMLElement>[]` | —       | Inside regions en plus du panneau (le rail, via ref).         |
@@ -458,27 +455,30 @@ du rail. Affiche les liens du space sélectionné.
 - Dismissable layer (`useDismissableLayer`) : fermeture sur **Escape** et
   **clic en dehors** (sauf dans `insideRefs` : `EditorialLayout` y passe le
   rail), et clic sur un lien (configurable).
-- Indicateur visuel sur le lien actif (basé sur `usePathname`).
+- Liens, Membership Links (mes groupes / mes communautés) et Active Link
+  viennent de `useEditorialNavigation()`.
 
 #### Exemple
 
 ```tsx
 "use client";
 
-import { EditorialRail, EDITORIAL_SPACES } from "@/components/layout/editorial/EditorialRail";
+import { EditorialNavigationProvider } from "@/components/layout/editorial/EditorialNavigationProvider";
+import { EditorialRail } from "@/components/layout/editorial/EditorialRail";
 import { EditorialSubSidebar } from "@/components/layout/editorial/EditorialSubSidebar";
 import { useEditorialRailState } from "@/hooks/useEditorialRailState";
 
 function Shell({ children }) {
   const { openSpace, toggleSpace, closeSpace } = useEditorialRailState();
-  const space = openSpace ? EDITORIAL_SPACES.find((s) => s.key === openSpace) ?? null : null;
 
   return (
-    <div className="flex h-screen">
-      <EditorialRail openSpace={openSpace} onToggleSpace={toggleSpace} />
-      <EditorialSubSidebar space={space} onClose={closeSpace} />
-      <main className="flex-1 overflow-y-auto">{children}</main>
-    </div>
+    <EditorialNavigationProvider>
+      <div className="flex h-screen">
+        <EditorialRail openSpace={openSpace} onToggleSpace={toggleSpace} />
+        <EditorialSubSidebar spaceKey={openSpace} onClose={closeSpace} />
+        <main className="flex-1 overflow-y-auto">{children}</main>
+      </div>
+    </EditorialNavigationProvider>
   );
 }
 ```
@@ -496,14 +496,15 @@ function Shell({ children }) {
 | ----------- | -------- | ------ | ------------------------------------------ |
 | `className` | `string` | —      | Classes additionnelles sur le bouton hamburger. |
 
-Le composant est **auto-contenu** : il gère son propre state d'ouverture
-et l'accordéon des spaces. Il consomme `useAuth` pour rendre la section
-**Compte** en bas de l'overlay.
+Le composant gère son propre state d'ouverture et l'accordéon. Il rend tout
+le Navigation Model (`useEditorialNavigation()`) : parité stricte avec le
+desktop, vérifiée par `navigation-parity.test.tsx`.
 
 #### Comportement
 
 - Hamburger affiché uniquement `< lg`.
-- Overlay full-screen avec accordéon des 5 spaces (un seul ouvert à la fois).
+- Overlay full-screen avec accordéon des Public Entries puis des Spaces, y
+  compris les Membership Links (un seul ouvert à la fois).
 - Section **Compte** en bas de l'overlay (#264) :
   - Connecté : Profile / Library / Settings / Sign out (déclenche `signOut`)
   - Non connecté : CTA Sign in vers `/auth`
@@ -539,10 +540,10 @@ function MobileHeader() {
 
 | Champ          | Type                                                | Description                                                   |
 | -------------- | --------------------------------------------------- | ------------------------------------------------------------- |
-| `openSpace`    | `EditorialSpaceKey \| null`                         | Space dont la sub-sidebar est ouverte. `null` si fermée.      |
-| `toggleSpace`  | `(key: EditorialSpaceKey) => void`                  | Toggle (clic sur icône du rail).                              |
+| `openSpace`    | `NavSpaceKey \| null`                               | Space dont la sub-sidebar est ouverte. `null` si fermée.      |
+| `toggleSpace`  | `(key: NavSpaceKey) => void`                        | Toggle (clic sur icône du rail).                              |
 | `closeSpace`   | `() => void`                                        | Force la fermeture (Escape, ╳, clic en dehors).               |
-| `openSpaceKey` | `(key: EditorialSpaceKey) => void`                  | Force l'ouverture d'un space spécifique.                      |
+| `openSpaceKey` | `(key: NavSpaceKey) => void`                        | Force l'ouverture d'un space spécifique.                      |
 | `hydrated`     | `boolean`                                           | `true` une fois la lecture localStorage terminée.             |
 
 #### Notes
@@ -551,7 +552,7 @@ function MobileHeader() {
   via `localStorage` après mount → pas de mismatch d'hydratation Next.js.
 - Storage key : `gu.editorial.openSpace.v1`.
 - Tolère les erreurs (mode privé, quota dépassé, JSON corrompu).
-- Valide la valeur stockée contre `EDITORIAL_SPACES` — ignore les clés inconnues.
+- Valide la valeur stockée contre `EDITORIAL_SPACE_KEYS` (`@/lib/navigation`) — ignore les clés inconnues.
 
 ---
 
@@ -669,11 +670,11 @@ Cette page sera mise à jour au fur et à mesure de leur arrivée.
 - ✅ Tous les libellés visibles passent par `next-intl`
   (namespace `editorial.*`).
 - ✅ Animations désactivées sous `prefers-reduced-motion: reduce`.
-- ✅ `EDITORIAL_SPACES` est la single source of truth pour les espaces
-  (clés, icônes, hrefs, pathPrefixes, labelKeys). Si vous ajoutez un
-  space, il apparaît automatiquement dans le rail, la sub-sidebar et le
-  mobile nav.
+- ✅ `src/lib/navigation` est la single source of truth de la navigation
+  éditoriale (Public Entries, Spaces, Account Links, règle d'Active Link).
+  Un lien ajouté au catalogue apparaît dans le rail, la sub-sidebar, le
+  mega-menu, le dropdown et le mobile nav.
 - ❌ Ne pas hardcoder de classes `.glass-*` dans un composant éditorial
   (cf retrait du glassmorphism sur ce périmètre).
-- ❌ Ne pas dupliquer les liens des spaces dans des composants tiers ;
-  importer `EDITORIAL_SPACES` à la place.
+- ❌ Ne pas dupliquer de liens ni recalculer d'état actif dans un renderer ;
+  lire `useEditorialNavigation()`.
