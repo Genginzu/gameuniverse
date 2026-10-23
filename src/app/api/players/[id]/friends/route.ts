@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { FriendServerService } from "@/lib/services/friendServerService";
 import { friendRequested } from "@/lib/services/notifications";
-import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { parsePaginationParams } from "@/lib/api-utils";
 import { logger } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/services/rateLimitService";
@@ -97,13 +96,6 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
       requesterId: user.id,
       receiverId: playerId,
     });
-
-    // Evaluate achievements (non-blocking)
-    try {
-      await AchievementEngine.evaluate(user.id, "social");
-    } catch (error) {
-      console.error("Achievement evaluation failed:", error);
-    }
 
     return NextResponse.json(friendship, { status: 201 });
   } catch (error) {

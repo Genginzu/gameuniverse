@@ -55,8 +55,8 @@ vi.mock("@/lib/validations/review", () => ({
   },
 }));
 
-vi.mock("@/lib/services/achievementEngine", () => ({
-  AchievementEngine: { evaluate: vi.fn(() => Promise.resolve()) },
+vi.mock("@/lib/services/activityRewards", () => ({
+  rewardActivity: vi.fn(() => Promise.resolve()),
 }));
 
 vi.mock("@/lib/utils/reviewVoteQueries", () => ({

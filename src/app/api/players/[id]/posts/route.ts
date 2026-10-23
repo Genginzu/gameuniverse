@@ -4,7 +4,7 @@ import { PlayerService } from "@/lib/services/playerService";
 import { PlayerPostsServerService } from "@/lib/services/playerPostsServerService";
 import { isValidImageUrl } from "@/lib/utils/postContentParser";
 import { logger } from "@/lib/logger";
-import { CoinService } from "@/lib/services/coinService";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { suspendedResponse } from "@/lib/services/suspensionGuard";
 import type { PostsResponse } from "@/types/post";
 import { enforceRateLimit } from "@/lib/services/rateLimitService";
@@ -111,9 +111,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       imageUrl,
       explicitTags
     );
-    CoinService.rewardActivity(user.id, "post_create", post.id).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
+    await rewardActivity({ kind: "post_created", userId: user.id, postId: post.id });
 
     return NextResponse.json(post, { status: 201 });
   } catch (error) {

@@ -4,7 +4,7 @@ import { DiscussionServerService } from "@/lib/services/discussionServerService"
 import { discussionMessageSent } from "@/lib/services/notifications";
 import { sendMessageSchema } from "@/lib/validations/discussion";
 import { logger } from "@/lib/logger";
-import { CoinService } from "@/lib/services/coinService";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 type RouteContext = { params: Promise<{ conversationId: string }> };
@@ -85,9 +85,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       content: parsed.data.content,
     });
 
-    CoinService.rewardActivity(user.id, "discussion_message", msg.id).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
+    await rewardActivity({ kind: "discussion_message_sent", userId: user.id, messageId: msg.id });
 
     return NextResponse.json(msg, { status: 201 });
   } catch (error) {

@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { reviewSchema } from "@/lib/validations/review";
 import { sanitizeRichText } from "@/lib/utils/sanitizeRichText";
-import { AchievementEngine } from "@/lib/services/achievementEngine";
-import { CoinService } from "@/lib/services/coinService";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { suspendedResponse } from "@/lib/services/suspensionGuard";
 import type { Review, ReviewsResponse, VoteType } from "@/types/review";
 import {
@@ -289,17 +288,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       logger.warn("Could not add game to library (may already exist)");
     }
 
-    // Evaluate achievements (non-blocking)
-    try {
-      await AchievementEngine.evaluate(user.id, "reviews");
-    } catch (error) {
-      console.error("Achievement evaluation failed:", error);
-
-      // Reward GU Coins (non-blocking)
-      CoinService.rewardActivity(user.id, "review", review.id).catch((err) =>
-        logger.error("Coin reward failed", { error: err })
-      );
-    }
+    await rewardActivity({ kind: "review_created", userId: user.id, reviewId: review.id });
 
     return NextResponse.json({ success: true, review }, { status: 201 });
   } catch (error) {

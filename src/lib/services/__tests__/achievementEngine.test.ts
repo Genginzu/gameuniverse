@@ -8,10 +8,6 @@ const mockSupabaseClient = {
   from: mockFrom,
 };
 
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => mockSupabaseClient),
-}));
-
 vi.mock("@/lib/supabase-admin", () => ({
   getSupabaseAdmin: vi.fn(() => mockSupabaseClient),
 }));

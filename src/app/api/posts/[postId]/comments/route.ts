@@ -3,7 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { PostCommentServerService } from "@/lib/services/postCommentServerService";
 import { PlayerPostsServerService } from "@/lib/services/playerPostsServerService";
 import { logger } from "@/lib/logger";
-import { CoinService } from "@/lib/services/coinService";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { suspendedResponse } from "@/lib/services/suspensionGuard";
 import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
@@ -62,9 +62,7 @@ export async function POST(
 
     const comment = await PostCommentServerService.createComment(postId, user.id, content);
 
-    CoinService.rewardActivity(user.id, "post_comment", comment.id).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
+    await rewardActivity({ kind: "post_comment_created", userId: user.id, commentId: comment.id });
 
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {

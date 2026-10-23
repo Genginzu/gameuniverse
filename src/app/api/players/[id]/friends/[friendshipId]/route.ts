@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { FriendServerService } from "@/lib/services/friendServerService";
 import { friendAccepted } from "@/lib/services/notifications";
-import { AchievementEngine } from "@/lib/services/achievementEngine";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { logger } from "@/lib/logger";
-import { CoinService } from "@/lib/services/coinService";
 
 type RouteContext = { params: Promise<{ id: string; friendshipId: string }> };
 
@@ -34,20 +33,13 @@ export async function PATCH(_request: NextRequest, { params }: RouteContext) {
         accepterId: user.id,
         requesterId: updated.sender_id,
       });
-    }
 
-    // Evaluate achievements for both users (non-blocking)
-    try {
-      await AchievementEngine.evaluate(user.id, "social");
-    } catch (error) {
-      console.error("Achievement evaluation failed:", error);
+      await rewardActivity({
+        kind: "friendship_accepted",
+        accepterId: user.id,
+        requesterId: updated.sender_id,
+      });
     }
-
-    // Keyed by the friend's id (not the friendship row) so unfriending and
-    // re-adding the same player never pays twice.
-    CoinService.rewardActivity(user.id, "friend_add", updated.sender_id).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
 
     return NextResponse.json(updated);
   } catch (error: unknown) {

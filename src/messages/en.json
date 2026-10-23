@@ -5137,6 +5137,7 @@
       "character_vote": "Character vote",
       "post_create": "Post published",
       "post_comment": "Comment published",
+      "character_comment": "Character comment",
       "discussion_message": "Message sent",
       "friend_add": "Friend added"
     },
