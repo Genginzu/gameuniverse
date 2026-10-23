@@ -31,7 +31,7 @@ Ces tables n'ont pas de policy d'insertion client ; elles sont écrites via
 | Table / colonne                 | Écrit par                                   |
 | ------------------------------- | ------------------------------------------- |
 | `player_achievements`           | `AchievementEngine`, routes admin           |
-| `coin_transactions` / wallets   | `ensure_player_wallet`, `award_activity_reward` (verrou par joueur, une récompense par référence) |
+| `coin_transactions` / wallets   | `post_coin_entry` uniquement (verrou par joueur, ledger key idempotente, pas de découvert) — voir `coin-ledger.md` |
 | `content_reports`               | `ReportServerService`                       |
 | `game_price_history`            | trigger sur `game_prices`, admins           |
 | `match_comments.reactions`      | RPC `toggle_match_comment_reaction`         |
