@@ -1,13 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-// --- Mock setup ---
-
+const mockRpc = vi.fn();
 const mockFrom = vi.fn();
-const mockSupabaseClient = { from: mockFrom };
 
-// coinService now uses the service-role client exclusively (issue #372).
+// coinService uses the service-role client exclusively (issue #372).
 vi.mock("@/lib/supabase-admin", () => ({
-  getSupabaseAdmin: vi.fn(() => mockSupabaseClient),
+  getSupabaseAdmin: vi.fn(() => ({ rpc: mockRpc, from: mockFrom })),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -16,133 +14,87 @@ vi.mock("@/lib/logger", () => ({
 
 import { CoinService } from "@/lib/services/coinService";
 
-// --- Chainable mock helper ---
+const GRANT = {
+  adminId: "admin-1",
+  playerId: "p1",
+  amount: 100,
+  description: "gift",
+  nonce: "7f0c1d2e-3a4b-4c5d-8e9f-001122334455",
+};
 
-function buildChain(result: { data?: unknown; count?: number | null; error?: unknown }) {
-  const chain: Record<string, unknown> = {};
-  const resolver = () => Promise.resolve(result);
-  chain.select = vi.fn(() => chain);
-  chain.eq = vi.fn(() => chain);
-  chain.gte = vi.fn(() => chain);
-  chain.order = vi.fn(() => chain);
-  chain.range = vi.fn(resolver);
-  chain.single = vi.fn(resolver);
-  chain.insert = vi.fn(() => chain);
-  chain.update = vi.fn(() => chain);
-  chain.then = vi.fn((resolve: (v: unknown) => void) => Promise.resolve(result).then(resolve));
-  return chain;
-}
+const entryRow = {
+  id: "tx-3",
+  player_id: "p1",
+  amount: 100,
+  type: "admin_grant",
+  activity_type: null,
+  reference_id: null,
+  description: "[Admin admin-1] gift",
+  balance_after: 600,
+  created_at: "2026-10-23T00:00:00Z",
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe("CoinService.creditCoins", () => {
-  it("inserts a positive transaction with the service-role client", async () => {
-    const walletChain = buildChain({ data: { balance: 100 }, error: null });
-    const txRow = {
-      id: "tx-1",
-      player_id: "p1",
-      amount: 50,
-      type: "activity_reward",
-      activity_type: "review",
-      reference_id: null,
-      description: null,
-      balance_after: 150,
-      created_at: "2026-10-18T00:00:00Z",
-    };
-    const insertChain = buildChain({ data: txRow, error: null });
+describe("CoinService.grant", () => {
+  it("posts one ledger entry keyed by the admin nonce", async () => {
+    mockRpc.mockResolvedValue({ data: { posted: true, transaction: entryRow }, error: null });
 
-    mockFrom.mockImplementation((table: string) =>
-      table === "player_wallets" ? walletChain : insertChain
-    );
+    await CoinService.grant(GRANT);
 
-    const result = await CoinService.creditCoins("p1", 50, "activity_reward", "review");
-
-    expect(result.amount).toBe(50);
-    expect(result.balanceAfter).toBe(150);
-    expect(insertChain.insert).toHaveBeenCalledWith(
-      expect.objectContaining({ player_id: "p1", amount: 50, balance_after: 150 })
-    );
-  });
-
-  it("rejects a non-positive credit without touching the DB", async () => {
-    await expect(CoinService.creditCoins("p1", 0, "admin_grant")).rejects.toThrow(
-      "Credit amount must be positive"
-    );
+    expect(mockRpc).toHaveBeenCalledWith("post_coin_entry", {
+      p_player_id: "p1",
+      p_amount: 100,
+      p_type: "admin_grant",
+      p_ledger_key: "admin_grant:7f0c1d2e-3a4b-4c5d-8e9f-001122334455",
+      p_description: "[Admin admin-1] gift",
+    });
     expect(mockFrom).not.toHaveBeenCalled();
   });
-});
 
-describe("CoinService.debitCoins", () => {
-  it("throws when the balance is insufficient", async () => {
-    const walletChain = buildChain({ data: { balance: 10 }, error: null });
-    mockFrom.mockImplementation(() => walletChain);
+  it("maps the posted ledger entry", async () => {
+    mockRpc.mockResolvedValue({ data: { posted: true, transaction: entryRow }, error: null });
 
-    await expect(
-      CoinService.debitCoins("p1", 50, "prediction_bet")
-    ).rejects.toThrow("Insufficient balance");
-  });
-
-  it("inserts a negative transaction when the balance covers it", async () => {
-    const walletChain = buildChain({ data: { balance: 200 }, error: null });
-    const txRow = {
-      id: "tx-2",
-      player_id: "p1",
-      amount: -50,
-      type: "prediction_bet",
-      activity_type: null,
-      reference_id: null,
-      description: "bet",
-      balance_after: 150,
-      created_at: "2026-10-18T00:00:00Z",
-    };
-    const insertChain = buildChain({ data: txRow, error: null });
-    mockFrom.mockImplementation((table: string) =>
-      table === "player_wallets" ? walletChain : insertChain
-    );
-
-    const result = await CoinService.debitCoins("p1", 50, "prediction_bet", undefined, "bet");
-
-    expect(result.amount).toBe(-50);
-    expect(insertChain.insert).toHaveBeenCalledWith(
-      expect.objectContaining({ amount: -50, type: "prediction_bet" })
-    );
-  });
-});
-
-describe("CoinService.grantCoins", () => {
-  it("prefixes the description with the admin id for a positive grant", async () => {
-    const walletChain = buildChain({ data: { balance: 0 }, error: null });
-    const insertChain = buildChain({
-      data: {
+    await expect(CoinService.grant(GRANT)).resolves.toEqual({
+      posted: true,
+      transaction: {
         id: "tx-3",
-        player_id: "p1",
+        playerId: "p1",
         amount: 100,
         type: "admin_grant",
-        activity_type: null,
-        reference_id: null,
+        activityType: null,
+        referenceId: null,
         description: "[Admin admin-1] gift",
-        balance_after: 100,
-        created_at: "2026-10-18T00:00:00Z",
+        balanceAfter: 600,
+        createdAt: "2026-10-23T00:00:00Z",
       },
-      error: null,
     });
-    mockFrom.mockImplementation((table: string) =>
-      table === "player_wallets" ? walletChain : insertChain
-    );
-
-    const result = await CoinService.grantCoins("admin-1", "p1", 100, "gift");
-
-    expect(result.description).toBe("[Admin admin-1] gift");
-    expect(insertChain.insert).toHaveBeenCalledWith(
-      expect.objectContaining({ description: "[Admin admin-1] gift", type: "admin_grant" })
-    );
   });
 
-  it("rejects a zero amount", async () => {
-    await expect(CoinService.grantCoins("admin-1", "p1", 0, "x")).rejects.toThrow(
+  it.each(["duplicate", "insufficient_balance"] as const)(
+    "reports a %s refusal without throwing",
+    async (reason) => {
+      mockRpc.mockResolvedValue({ data: { posted: false, reason }, error: null });
+
+      await expect(CoinService.grant({ ...GRANT, amount: -50 })).resolves.toEqual({
+        posted: false,
+        reason,
+      });
+    }
+  );
+
+  it("rejects a zero amount without touching the DB", async () => {
+    await expect(CoinService.grant({ ...GRANT, amount: 0 })).rejects.toThrow(
       "Amount cannot be zero"
     );
+    expect(mockRpc).not.toHaveBeenCalled();
+  });
+
+  it("throws when the ledger write fails", async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: "boom" } });
+
+    await expect(CoinService.grant(GRANT)).rejects.toThrow("Failed to post ledger entry");
   });
 });

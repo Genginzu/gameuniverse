@@ -54,6 +54,22 @@ export interface RewardResult {
   reason?: string;
 }
 
+export interface AdminGrant {
+  adminId: string;
+  playerId: string;
+  /** Signed: a negative grant debits the wallet but never overdraws it. */
+  amount: number;
+  description: string;
+  /** Identifies the grant attempt; replaying it is a no-op. */
+  nonce: string;
+}
+
+export type LedgerRefusal = "duplicate" | "insufficient_balance";
+
+export type LedgerPostResult =
+  | { posted: true; transaction: CoinTransaction }
+  | { posted: false; reason: LedgerRefusal };
+
 export interface WalletResponse {
   wallet: PlayerWallet;
 }

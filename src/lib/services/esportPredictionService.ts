@@ -1,8 +1,6 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
-import { CoinService } from "@/lib/services/coinService";
-import { getMatchById } from "@/lib/pandascore/client";
 import { untypedTable } from "@/lib/utils/untypedTable";
 import type { BettableMatch } from "@/lib/services/esportPredictionGuard";
 
@@ -76,65 +74,25 @@ export async function getMyPredictions(playerId: string): Promise<EsportPredicti
   return ((data ?? []) as any[]).map(mapPrediction);
 }
 
-export async function resolvePrediction(matchId: number): Promise<number> {
-  // Fetch match result from PandaScore
-  const match = await getMatchById(matchId);
-  if (match.status !== "finished" || !match.winner_id) return 0;
-
-  return resolvePredictionsForMatch(matchId, match.winner_id);
-}
-
 /**
- * Resolve all pending predictions for a finished match.
- * Can be called from cron without re-fetching from PandaScore.
+ * Settle every pending prediction of a finished match and pay each won one,
+ * in a single DB transaction (settle_esport_match, migration 20261023000001).
+ * Re-running it is a no-op; a failure settles nothing and throws.
  */
 export async function resolvePredictionsForMatch(matchId: number, winnerId: number): Promise<number> {
-  // Server-internal callback (no user context): use the service-role client so
-  // prediction updates and coin credits bypass the client-only RLS (issue #372).
+  // Server-internal callback (no user context): service-role client (issue #372).
   const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase.rpc("settle_esport_match", {
+    p_match_id: matchId,
+    p_winner_id: winnerId,
+  });
 
-  // Get all pending predictions for this match
-  const { data: predictions, error } = await untypedTable(supabase, "esport_predictions")
-    .select("*")
-    .eq("match_id", matchId)
-    .eq("status", "pending");
-
-  if (error || !predictions?.length) return 0;
-
-  let resolved = 0;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const pred of predictions as any[]) {
-    const won = pred.predicted_winner_id === winnerId;
-    const payout = won ? pred.amount * 2 : 0;
-
-    // Claim the row atomically: concurrent resolver runs (cron + Edge callback)
-    // must not settle and credit the same prediction twice.
-    const { data: claimed } = await untypedTable(supabase, "esport_predictions")
-      .update({
-        status: won ? "won" : "lost",
-        payout,
-        resolved_at: new Date().toISOString(),
-      })
-      .eq("id", pred.id)
-      .eq("status", "pending")
-      .select("id");
-
-    if (!claimed?.length) continue;
-
-    if (won) {
-      await CoinService.creditCoins(
-        pred.player_id,
-        payout,
-        "prediction_win",
-        undefined,
-        undefined,
-        `Gain pronostic: ${pred.match_name}`
-      );
-    }
-    resolved++;
+  if (error) {
+    logger.error("Failed to settle predictions", { matchId, winnerId, error });
+    throw new Error("Failed to settle predictions");
   }
 
-  return resolved;
+  return Number(data) || 0;
 }
 
 export async function getLeaderboard(): Promise<PredictionLeaderboardEntry[]> {

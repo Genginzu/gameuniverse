@@ -5,8 +5,8 @@
 Tous les menus, dropdowns, panneaux, overlays et dialogs maison passent par un module
 unique : `useDismissableLayer` (`src/hooks/useDismissableLayer.ts`). Il possède la séquence
 complète : fermeture (Escape, pointeur extérieur), scroll lock, focus trap, retour du focus
-au trigger et empilement des calques. Vocabulaire : voir `GLOSSARY.md` (section Interface
-utilisateur).
+au trigger et empilement des calques. Vocabulaire : voir `GLOSSARY.md` (section User
+interface).
 
 Remplace `useEscapeKey`, `useClickOutside` et les listeners `keydown` / `mousedown` /
 `pointerdown` écrits à la main dans chaque composant.
