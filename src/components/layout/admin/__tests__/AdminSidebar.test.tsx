@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import { useRef } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import AdminSidebar from "../AdminSidebar";
 import type { AdminUser } from "@/types/admin-auth";
@@ -44,6 +45,33 @@ describe("AdminSidebar", () => {
     expect(setSidebarOpen).toHaveBeenCalledTimes(2);
     expect(setSidebarOpen).toHaveBeenNthCalledWith(1, false);
     expect(setSidebarOpen).toHaveBeenNthCalledWith(2, false);
+  });
+
+  it("closes the mobile drawer on a pointer down outside it, but not on its toggle", () => {
+    const setSidebarOpen = vi.fn();
+    function WithToggle() {
+      const toggleRef = useRef<HTMLButtonElement>(null);
+      return (
+        <>
+          <button ref={toggleRef} type="button">
+            toggle
+          </button>
+          <p>page</p>
+          <AdminSidebar
+            user={{ id: "user-1", role: "admin" } as AdminUser}
+            signOut={vi.fn()}
+            sidebarOpen
+            setSidebarOpen={setSidebarOpen}
+            toggleRef={toggleRef}
+          />
+        </>
+      );
+    }
+    render(<WithToggle />);
+    fireEvent.pointerDown(screen.getByText("toggle"));
+    expect(setSidebarOpen).not.toHaveBeenCalled();
+    fireEvent.pointerDown(screen.getByText("page"));
+    expect(setSidebarOpen).toHaveBeenCalledWith(false);
   });
 
   it("closes the drawer after navigating on small screens only", () => {

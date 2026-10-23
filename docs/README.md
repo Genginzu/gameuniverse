@@ -106,6 +106,7 @@
 | [rate-limiting.md](systems/rate-limiting.md)                           | Limitation des requêtes        |
 | [color-palette.md](systems/color-palette.md)                           | Palette de couleurs (tokens)   |
 | [legal-pages.md](systems/legal-pages.md)                               | Pages légales & infos éditeur  |
+| [dismissable-layer.md](systems/dismissable-layer.md)                   | Menus & overlays refermables   |
 
 ### 💰 Pricing
 

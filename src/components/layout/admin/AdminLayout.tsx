@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LoadingSpinner } from "../../ui/loading-spinner";
 import { useRouter } from "@/i18n/navigation";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -23,6 +23,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const t = useTranslations("admin");
   const tCommon = useTranslations("common");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   const loading = authLoading || adminLoading;
 
@@ -43,27 +44,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     }
   }, [authUser, loading, router]);
 
-  // Close sidebar when clicking outside on mobile
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const sidebar = document.getElementById("admin-mobile-sidebar");
-      const toggle = document.getElementById("admin-sidebar-toggle");
-      if (
-        sidebarOpen &&
-        sidebar &&
-        !sidebar.contains(event.target as Node) &&
-        toggle &&
-        !toggle.contains(event.target as Node)
-      ) {
-        setSidebarOpen(false);
-      }
-    };
-    if (sidebarOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [sidebarOpen]);
-
   // Close sidebar on resize/orientation change
   useEffect(() => {
     const handleResize = () => {
@@ -78,42 +58,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       window.removeEventListener("orientationchange", handleResize);
     };
   }, []);
-
-  // Focus trap: keep focus inside sidebar when open on mobile
-  useEffect(() => {
-    if (!sidebarOpen) return;
-    const sidebar = document.getElementById("admin-mobile-sidebar");
-    if (!sidebar) return;
-
-    const focusable = sidebar.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    );
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setSidebarOpen(false);
-        return;
-      }
-      if (e.key !== "Tab") return;
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
-      }
-    };
-
-    first?.focus();
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [sidebarOpen]);
 
   if (loading) {
     return (
@@ -149,6 +93,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* Mobile sidebar toggle */}
       <Button
+        ref={toggleRef}
         id="admin-sidebar-toggle"
         variant="ghost"
         size="icon"
@@ -172,6 +117,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           signOut={signOut}
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
+          toggleRef={toggleRef}
         />
       )}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">

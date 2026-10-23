@@ -8,6 +8,7 @@ import type { SearchResultItem } from "@/types/search";
 import { useTranslations } from "next-intl";
 import { useHybridSearch } from "@/hooks/useHybridSearch";
 import { useAuth } from "@/hooks/useAuth";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 
 interface GameSearchBarProps {
   onSearch?: (query: string) => void;
@@ -52,27 +53,11 @@ export function GameSearchBar({
     return () => clearTimeout(timer);
   }, [searchQuery, onSearch, debounceMs]);
 
-  // Click outside to close
-  useEffect(() => {
-    if (!isHybridMode) return;
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        hybrid.close();
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isHybridMode, hybrid]);
-
-  // Escape key to close
-  useEffect(() => {
-    if (!isHybridMode) return;
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") hybrid.close();
-    };
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [isHybridMode, hybrid]);
+  // Escape or a pointer down outside the search bar closes the dropdown
+  useDismissableLayer(containerRef, {
+    open: isHybridMode && hybrid.isOpen,
+    onDismiss: hybrid.close,
+  });
 
   const handleClear = () => {
     setSearchQuery("");

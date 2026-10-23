@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,6 +12,7 @@ export function NotificationBell() {
   const { user } = useAuth();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
+  const bellRef = useRef<HTMLButtonElement>(null);
 
   const handleToggle = useCallback(() => {
     setIsOpen((prev) => !prev);
@@ -40,6 +41,7 @@ export function NotificationBell() {
   return (
     <div className="relative">
       <button
+        ref={bellRef}
         type="button"
         onClick={handleToggle}
         className="relative flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl p-2 transition-all hover:bg-white/10"
@@ -59,6 +61,7 @@ export function NotificationBell() {
           onDismiss={handleDismiss}
           onDismissAll={handleDismissAll}
           onClose={handleClose}
+          triggerRef={bellRef}
         />
       )}
     </div>

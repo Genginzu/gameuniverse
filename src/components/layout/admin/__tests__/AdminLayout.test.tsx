@@ -80,7 +80,7 @@ describe("AdminLayout", () => {
     expect(document.body.style.overflow).toBe("");
   });
 
-  it("toggles the mobile sidebar and closes it with Escape", () => {
+  it("toggles the mobile sidebar from its button", () => {
     renderLayout();
     const sidebar = () => screen.getByText("sidebar:admin");
     expect(sidebar()).toHaveAttribute("data-open", "false");
@@ -88,7 +88,7 @@ describe("AdminLayout", () => {
     fireEvent.click(screen.getByRole("button", { name: "openSidebar" }));
     expect(sidebar()).toHaveAttribute("data-open", "true");
 
-    fireEvent.keyDown(document, { key: "Escape" });
+    fireEvent.click(screen.getByRole("button", { name: "closeSidebar" }));
     expect(sidebar()).toHaveAttribute("data-open", "false");
   });
 });

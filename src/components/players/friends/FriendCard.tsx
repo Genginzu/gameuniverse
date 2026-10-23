@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import type { FriendSummary } from "@/types/friendship";
 
 interface FriendCardProps {
@@ -19,17 +20,8 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
   const [isRemoving, setIsRemoving] = useState(false);
   const confirmRef = useRef<HTMLButtonElement>(null);
 
-  // Fermer la confirmation si on clique ailleurs
-  useEffect(() => {
-    if (!confirming) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (confirmRef.current && !confirmRef.current.contains(e.target as Node)) {
-        setConfirming(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [confirming]);
+  // Escape or a pointer down elsewhere cancels the confirmation
+  useDismissableLayer(confirmRef, { open: confirming, onDismiss: () => setConfirming(false) });
 
   const handleClick = async () => {
     if (!confirming) {

@@ -105,7 +105,6 @@ describe("EditorialMobileNav", () => {
     mockUsePathname.mockReturnValue("/");
     mockUseAuth.mockReset();
     mockUseAuth.mockReturnValue({ user: null, loading: false, signOut: vi.fn() });
-    document.body.style.overflow = "";
   });
 
   describe("hamburger button (overlay closed)", () => {
@@ -166,11 +165,10 @@ describe("EditorialMobileNav", () => {
       expect(toggle.getAttribute("aria-expanded")).toBe("true");
     });
 
-    it("locks body scroll when open", () => {
+    it("moves the focus into the overlay when opened", () => {
       render(<EditorialMobileNav />);
-      expect(document.body.style.overflow).toBe("");
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
-      expect(document.body.style.overflow).toBe("hidden");
+      expect(screen.getByRole("dialog").contains(document.activeElement)).toBe(true);
     });
   });
 
@@ -245,11 +243,14 @@ describe("EditorialMobileNav", () => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
 
-    it("closes on Escape", () => {
+    it("closes on Escape and gives the focus back to the hamburger", () => {
       render(<EditorialMobileNav />);
-      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      const toggle = screen.getByRole("button", { name: "Open navigation" });
+      toggle.focus();
+      fireEvent.click(toggle);
       fireEvent.keyDown(window, { key: "Escape" });
       expect(screen.queryByRole("dialog")).toBeNull();
+      expect(document.activeElement).toBe(toggle);
     });
 
     it("closes when clicking on a navigation link", () => {
@@ -258,14 +259,6 @@ describe("EditorialMobileNav", () => {
       fireEvent.click(screen.getByRole("button", { name: /Games/i }));
       fireEvent.click(screen.getByText("Trending"));
       expect(screen.queryByRole("dialog")).toBeNull();
-    });
-
-    it("restores body scroll when closed", () => {
-      render(<EditorialMobileNav />);
-      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
-      expect(document.body.style.overflow).toBe("hidden");
-      fireEvent.click(screen.getByRole("button", { name: "Close navigation" }));
-      expect(document.body.style.overflow).toBe("");
     });
 
     it("collapses any expanded section after closing and re-opening", () => {
@@ -283,7 +276,6 @@ describe("EditorialMobileNav", () => {
       render(<EditorialMobileNav />);
       fireEvent.keyDown(window, { key: "Escape" });
       expect(screen.queryByRole("dialog")).toBeNull();
-      expect(document.body.style.overflow).toBe("");
     });
   });
 

@@ -4,8 +4,7 @@ import { useState, useEffect, useRef, useCallback, ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { Input } from "@/components/ui/input";
 import { SearchBarDropdown } from "./SearchBarDropdown";
-import { useClickOutside } from "@/hooks/useClickOutside";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 
 export interface SearchResultItem {
   id: string;
@@ -99,8 +98,7 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
 
   const closeDropdown = useCallback(() => setIsOpen(false), []);
 
-  useClickOutside(containerRef, isHybridMode ? closeDropdown : () => {});
-  useEscapeKey(isHybridMode ? closeDropdown : () => {});
+  useDismissableLayer(containerRef, { open: isHybridMode && isOpen, onDismiss: closeDropdown });
 
   const handleClear = useCallback(() => {
     setSearchQuery("");
