@@ -14,13 +14,14 @@
  * Voir docs/design/editorial-refonte-plan.md section 5.5.
  */
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useLocale, useTranslations } from "next-intl";
 import FR from "country-flag-icons/react/3x2/FR";
 import US from "country-flag-icons/react/3x2/US";
 
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 
 type Locale = "fr" | "en";
 
@@ -75,22 +76,14 @@ export function HeaderLanguageSwitcher({ className = "" }: HeaderLanguageSwitche
     setHighlightedIndex(-1);
   };
 
-  // ----------------------------------------------------------------------
-  // Click outside
-  // ----------------------------------------------------------------------
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null;
-      if (!target) return;
-      if (triggerRef.current?.contains(target)) return;
-      if (listRef.current?.contains(target)) return;
-      close();
-    };
-    window.addEventListener("pointerdown", handlePointerDown);
-    return () => window.removeEventListener("pointerdown", handlePointerDown);
-  }, [isOpen]);
+  // Escape or a pointer down outside the trigger and the list closes; the list
+  // takes the focus at open so the arrow keys work, and gives it back on close.
+  useDismissableLayer(listRef, {
+    open: isOpen,
+    onDismiss: close,
+    insideRefs: [triggerRef],
+    initialFocusRef: listRef,
+  });
 
   // ----------------------------------------------------------------------
   // Selection
@@ -117,11 +110,6 @@ export function HeaderLanguageSwitcher({ className = "" }: HeaderLanguageSwitche
 
   const handleListKeyDown = (event: React.KeyboardEvent<HTMLUListElement>) => {
     switch (event.key) {
-      case "Escape":
-        event.preventDefault();
-        close();
-        triggerRef.current?.focus();
-        break;
       case "ArrowDown":
         event.preventDefault();
         setHighlightedIndex((i) => (i + 1) % LOCALES.length);
@@ -147,13 +135,6 @@ export function HeaderLanguageSwitcher({ className = "" }: HeaderLanguageSwitche
         break;
     }
   };
-
-  // Focus la liste quand elle s'ouvre, pour que les flèches fonctionnent
-  useEffect(() => {
-    if (isOpen) {
-      listRef.current?.focus();
-    }
-  }, [isOpen]);
 
   // ----------------------------------------------------------------------
   // Render

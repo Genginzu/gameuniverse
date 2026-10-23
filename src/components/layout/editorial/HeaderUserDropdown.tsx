@@ -20,12 +20,13 @@
  * Voir docs/design/editorial-refonte-plan.md (issue #264).
  */
 
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 
 interface HeaderUserDropdownProps {
   className?: string;
@@ -53,35 +54,8 @@ export function HeaderUserDropdown({ className = "" }: HeaderUserDropdownProps) 
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listboxId = useId();
 
-  // ----------------------------------------------------------------------
-  // Close on outside click
-  // ----------------------------------------------------------------------
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleClick = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    window.addEventListener("mousedown", handleClick);
-    return () => window.removeEventListener("mousedown", handleClick);
-  }, [isOpen]);
-
-  // ----------------------------------------------------------------------
-  // Close on Escape
-  // ----------------------------------------------------------------------
-  useEffect(() => {
-    if (!isOpen) return;
-    const handler = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setIsOpen(false);
-        triggerRef.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [isOpen]);
+  // Escape or a pointer down outside closes; the focus returns to the trigger.
+  useDismissableLayer(containerRef, { open: isOpen, onDismiss: () => setIsOpen(false) });
 
   // ----------------------------------------------------------------------
   // Sign in button (not authenticated)

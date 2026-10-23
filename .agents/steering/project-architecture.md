@@ -101,7 +101,7 @@ useComments, useReviews, useReviewVote, useMentionAutocomplete
 
 useAuth, useCropEditor, useDebouncedValue, useImageLoading,
 useImageUpload, useInView, useLocaleManager, usePriceHistory, useGlobalSearch,
-useSearchOverlay, useWebhookEvents, useWebhookRegistrations, useAchievements,
+useDismissableLayer, useWebhookEvents, useWebhookRegistrations, useAchievements,
 useRecommendations, usePersonalRecommendations
 
 ## Composants UI (`src/components/ui/`)

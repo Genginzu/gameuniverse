@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { Icon } from "@iconify/react";
 import type { AdminUser } from "@/types/admin-auth";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 
 interface AdminSidebarUserMenuProps {
   user: AdminUser;
@@ -18,17 +19,10 @@ export function AdminSidebarUserMenu({ user, signOut }: AdminSidebarUserMenuProp
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (target.closest("[data-dropdown-action]")) return;
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsUserMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useDismissableLayer(dropdownRef, {
+    open: isUserMenuOpen,
+    onDismiss: () => setIsUserMenuOpen(false),
+  });
 
   return (
     <div className="shrink-0 border-t border-gray-200 p-4 dark:border-gray-700">

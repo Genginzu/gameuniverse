@@ -61,3 +61,38 @@ _Avoid_: resolution, payout run
 **Payout**:
 The GU Coins credited for a won prediction: twice the stake.
 _Avoid_: winnings
+
+## User interface
+
+**Dismissable layer**:
+A temporary surface (menu, dropdown, panel, overlay, dialog) that closes on
+Escape or on a pointer pressed outside its inside regions.
+_Avoid_: popup, popover (except for a specific component), click-outside
+
+**Layer stack**:
+The order of the dismissable layers open at a given time; the last one opened
+is the top layer.
+_Avoid_: z-index, modal stack
+
+**Top layer**:
+The most recently opened dismissable layer; the only one that receives Escape.
+_Avoid_: active layer, current modal
+
+**Inside region**:
+An area that counts as inside a dismissable layer (its container, plus declared
+regions such as its trigger); a pointer pressed there does not close it.
+_Avoid_: ignored zone, exclusion
+
+**Trigger**:
+The element that had the focus when a dismissable layer opened, and gets it
+back when the layer closes.
+_Avoid_: anchor, opener
+
+**Scroll lock**:
+Page scrolling blocked while at least one dismissable layer asks for it.
+_Avoid_: body lock, overflow hidden
+
+**Focus trap**:
+The constraint that keeps keyboard navigation (Tab, Shift+Tab) inside a
+dismissable layer.
+_Avoid_: focus lock, focus scope

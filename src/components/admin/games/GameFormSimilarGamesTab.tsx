@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useAdminSimilarGames } from "@/hooks/useAdminSimilarGames";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import { SimilarGameSearchDropdown, SimilarGameRow } from "./SimilarGameParts";
 import { Icon } from "@iconify/react";
 
@@ -50,14 +51,7 @@ export function GameFormSimilarGamesTab({ gameId }: { gameId: string }) {
     };
   }, [query]);
 
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node))
-        setShowDropdown(false);
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
+  useDismissableLayer(containerRef, { open: showDropdown, onDismiss: () => setShowDropdown(false) });
 
   const handleSelect = async (game: SearchResult) => {
     setAddError(null);

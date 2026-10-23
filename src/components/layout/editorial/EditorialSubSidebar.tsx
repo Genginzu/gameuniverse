@@ -19,12 +19,13 @@
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
-import { useEffect, useRef } from "react";
+import { useRef, type RefObject } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { LazyImage } from "@/components/ui/lazy-image";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import { useMyGroups } from "@/hooks/useMyGroups";
 import { useMyCommunities } from "@/hooks/useMyCommunities";
 
@@ -41,12 +42,15 @@ interface EditorialSubSidebarProps {
    * Activé par défaut pour la navigation desktop.
    */
   closeOnNavigate?: boolean;
+  /** Inside regions besides the sub-sidebar itself (the rail). */
+  insideRefs?: ReadonlyArray<RefObject<HTMLElement | null>>;
 }
 
 export function EditorialSubSidebar({
   space,
   onClose,
   closeOnNavigate = true,
+  insideRefs,
 }: EditorialSubSidebarProps) {
   const isOpen = space !== null;
   const pathname = usePathname();
@@ -57,35 +61,9 @@ export function EditorialSubSidebar({
   const { groups: myGroups, isLoading: isLoadingMyGroups } = useMyGroups();
   const { communities: myCommunities, isLoading: isLoadingMyCommunities } = useMyCommunities();
 
-  // Escape closes
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  // Click outside closes
-  useEffect(() => {
-    if (!isOpen) return;
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null;
-      const aside = asideRef.current;
-      if (!aside || !target) return;
-      if (aside.contains(target)) return;
-      // Aussi ignorer les clics sur le rail (le toggle gère sa propre logique)
-      const rail = document.querySelector(".editorial-rail");
-      if (rail && rail.contains(target)) return;
-      onClose();
-    };
-    // Utilise pointerdown pour réagir avant que le focus change
-    window.addEventListener("pointerdown", handlePointerDown);
-    return () => window.removeEventListener("pointerdown", handlePointerDown);
-  }, [isOpen, onClose]);
+  // Escape, or a pointer down outside the sub-sidebar and the rail (the rail
+  // toggle handles its own open/close logic).
+  useDismissableLayer(asideRef, { open: isOpen, onDismiss: onClose, insideRefs });
 
   const spaceLabel = space ? t(`spaces.${space.key}`) : "";
 

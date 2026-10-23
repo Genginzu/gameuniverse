@@ -450,12 +450,14 @@ du rail. Affiche les liens du space sélectionné.
 | `space`           | `EditorialSpace \| null`   | requis  | Space affiché. `null` = sub-sidebar fermée.                   |
 | `onClose`         | `() => void`               | requis  | Callback (Escape, ╳, clic en dehors, clic sur un lien).       |
 | `closeOnNavigate` | `boolean`                  | `true`  | Si `true`, ferme aussi au clic sur un lien.                   |
+| `insideRefs`      | `RefObject<HTMLElement>[]` | —       | Inside regions en plus du panneau (le rail, via ref).         |
 
 #### Comportement
 
 - Slide-in / slide-out via `width: 0 ↔ 220px` (transition CSS 250 ms).
-- Fermeture automatique sur **Escape**, **clic en dehors** (mais ignore les
-  clics sur le rail), et clic sur un lien (configurable).
+- Dismissable layer (`useDismissableLayer`) : fermeture sur **Escape** et
+  **clic en dehors** (sauf dans `insideRefs` : `EditorialLayout` y passe le
+  rail), et clic sur un lien (configurable).
 - Indicateur visuel sur le lien actif (basé sur `usePathname`).
 
 #### Exemple

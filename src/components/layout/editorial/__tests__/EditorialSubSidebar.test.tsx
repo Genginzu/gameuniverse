@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import React from "react";
+import React, { useRef } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 
 // Mock @/i18n/navigation
@@ -201,7 +201,7 @@ describe("EditorialSubSidebar", () => {
       expect(onClose).not.toHaveBeenCalled();
     });
 
-    it("removes the listener on unmount", () => {
+    it("stops closing on Escape once unmounted", () => {
       const onClose = vi.fn();
       const { unmount } = render(
         <EditorialSubSidebar space={librarySpace} onClose={onClose} />
@@ -236,19 +236,23 @@ describe("EditorialSubSidebar", () => {
 
     it("does NOT call onClose when clicking on the rail (the rail handles its own toggle)", () => {
       const onClose = vi.fn();
-      render(
-        <div>
-          <aside className="editorial-rail">
-            <button data-testid="rail-button" type="button">Rail</button>
-          </aside>
-          <EditorialSubSidebar space={librarySpace} onClose={onClose} />
-        </div>
-      );
+      function WithRail() {
+        const railRef = useRef<HTMLDivElement>(null);
+        return (
+          <div>
+            <div ref={railRef}>
+              <button data-testid="rail-button" type="button">Rail</button>
+            </div>
+            <EditorialSubSidebar space={librarySpace} onClose={onClose} insideRefs={[railRef]} />
+          </div>
+        );
+      }
+      render(<WithRail />);
       fireEvent.pointerDown(screen.getByTestId("rail-button"));
       expect(onClose).not.toHaveBeenCalled();
     });
 
-    it("does not listen for outside clicks when closed", () => {
+    it("does not close on outside clicks when closed", () => {
       const onClose = vi.fn();
       render(
         <div>
