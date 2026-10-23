@@ -87,18 +87,20 @@ Clés i18n sous le namespace `achievements` dans `src/messages/fr.json` et
 
 ### Déblocage automatique des succès
 
-Les succès sont évalués automatiquement après chaque action utilisateur :
+Les succès sont évalués automatiquement après chaque action utilisateur, via le
+module de récompenses d'activité (`rewardActivity`, voir
+[activity-rewards.md](./activity-rewards.md)) qui verse aussi les GU Coins :
 
-| Action                    | Catégorie évaluée | Routes concernées                    |
-| ------------------------- | ----------------- | ------------------------------------ |
-| Ajout d'un jeu            | `library`         | `POST /api/library`                  |
-| Enregistrement temps jeu  | `playtime`        | `POST /api/game-sessions` (playtime) |
-| Publication d'un avis     | `reviews`         | `POST /api/reviews`                  |
-| Ajout/acceptation d'ami   | `social`          | `POST/PATCH /api/friends`            |
-| Création d'une collection | `collections`     | `POST /api/collections`              |
+| Action                    | Catégorie évaluée | Routes concernées                                         |
+| ------------------------- | ----------------- | --------------------------------------------------------- |
+| Ajout d'un jeu            | `library`         | `POST /api/library`                                       |
+| Enregistrement temps jeu  | `playtime`        | `POST /api/games/[slug]/playtime`                         |
+| Publication d'un avis     | `reviews`         | `POST /api/reviews`                                       |
+| Acceptation d'ami         | `social` (les 2)  | `PATCH /api/players/[id]/friends/[friendshipId]`          |
+| Création d'une collection | `collections`     | `POST /api/players/[id]/collections`, `/collections/suggestions` |
 
 L'évaluation est non-bloquante : si elle échoue, l'action principale reste
-réussie.
+réussie et les GU Coins sont quand même versés.
 
 ### Catégories et seuils
 
