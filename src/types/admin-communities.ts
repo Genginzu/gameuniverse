@@ -11,12 +11,3 @@ export interface AdminCommunity {
   ownerEmail: string | null;
   createdAt: string;
 }
-
-/** Query params for the admin communities list */
-export interface FetchAdminCommunitiesParams {
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  page?: number;
-  limit?: number;
-}

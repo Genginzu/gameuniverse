@@ -18,11 +18,3 @@ export interface AdminCompany {
   gameCount: number;
   translations: CompanyTranslation[];
 }
-
-export interface FetchCompaniesParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}

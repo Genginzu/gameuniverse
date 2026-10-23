@@ -3,7 +3,8 @@
 import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useCompanyForm } from "@/hooks/useCompanyForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { companyForm } from "@/lib/admin-resource/forms/catalogForms";
 import { CompanyForm } from "@/components/admin/companies/CompanyForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -15,7 +16,12 @@ import { Icon } from "@iconify/react";
 export default function NewCompanyPage() {
   const t = useTranslations("admin.companies");
   const router = useRouter();
-  const { form, submitCompany, isSubmitting, supportedLanguages } = useCompanyForm("create");
+  const {
+    form,
+    submit: submitCompany,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(companyForm, "create");
 
   const handleSubmit = useCallback(
     async (data: CompanyFormData) => {

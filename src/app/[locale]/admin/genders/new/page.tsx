@@ -3,7 +3,8 @@
 import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useGenderForm } from "@/hooks/useGenderForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { genderForm } from "@/lib/admin-resource/forms/translatedForms";
 import { GenderForm } from "@/components/admin/genders/GenderForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -14,7 +15,12 @@ import { Icon } from "@iconify/react";
 export default function NewGenderPage() {
   const t = useTranslations("admin.genders");
   const router = useRouter();
-  const { form, submitGender, isSubmitting, supportedLanguages } = useGenderForm("create");
+  const {
+    form,
+    submit: submitGender,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(genderForm, "create");
 
   const handleSubmit = useCallback(
     async (data: GenderFormData) => {

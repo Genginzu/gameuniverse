@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { useRatingForm } from "@/hooks/useRatingForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { ratingForm } from "@/lib/admin-resource/forms/ageClassificationForms";
 import { RatingForm } from "@/components/admin/age-classifications/RatingForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -124,12 +125,16 @@ function EditRatingFormWrapper({
   const t = useTranslations("admin.ageClassifications.ratings");
   const tParent = useTranslations("admin.ageClassifications");
   const router = useRouter();
-  const { form, submitRating, isSubmitting, supportedLanguages } = useRatingForm(
-    "edit",
-    ratingSystemId,
-    ratingId,
-    initialData
-  );
+  const {
+    form,
+    submit: submitRating,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(ratingForm, "edit", {
+    pathParams: { ratingSystemId },
+    id: ratingId,
+    initialData,
+  });
 
   const handleSubmit = useCallback(
     async (data: RatingFormData) => {

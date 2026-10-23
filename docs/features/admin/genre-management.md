@@ -14,8 +14,8 @@ La fonctionnalité permet de :
 - **Modifier** les traductions d'un genre existant (slug immuable)
 - **Supprimer** un genre, avec vérification d'usage et suppression forcée
 
-Le module suit les mêmes patterns que la gestion des langues admin
-(`useAdminLanguages`, `LanguageForm`, etc.).
+Le module suit le pattern commun des listes admin
+(voir [admin-entity-resource.md](admin-entity-resource.md)).
 
 ## Accès
 

@@ -23,12 +23,3 @@ export interface AdminCommentDetail {
   playerName: string | null;
   characterName: string;
 }
-
-/** Paramètres de requête pour la liste admin */
-export interface FetchAdminCommentsParams {
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  page?: number;
-  limit?: number;
-}

@@ -203,3 +203,30 @@ An expected refusal from a route, identified by a stable code
 (`unauthorized`, `forbidden`, `suspended`, `not_found`, `validation`,
 `conflict`, `rate_limited`) that the client relies on.
 _Avoid_: exception, failure
+
+## Administration
+
+**Admin entity**:
+A reference or content record managed in the admin panel (genre, platform,
+species, review, game...), listed, edited and deleted by an administrator.
+_Avoid_: admin object, CRUD item
+
+**Admin resource**:
+How the admin panel describes an admin entity: where it is listed, how a row
+is identified, whether it has a usage and whether its delete is forced.
+_Avoid_: admin config, entity definition
+
+**Usage**:
+The number of other records (games, characters, players...) that reference an
+admin entity. Reading it never changes anything.
+_Avoid_: usage check (when it means a delete), references count
+
+**Forced delete**:
+Deleting an admin entity by first detaching its usages, instead of being
+refused while it is in use.
+_Avoid_: hard delete, cascade delete
+
+**Delete flow**:
+The sequence request, show the usage, then confirm or cancel the deletion of
+an admin entity.
+_Avoid_: delete dialog logic

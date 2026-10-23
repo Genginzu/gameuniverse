@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { useAdminGenres } from "@/hooks/useAdminGenres";
 import dynamic from "next/dynamic";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { genresResource } from "@/lib/admin-resource/resources/genres";
 import type { AdminGenre } from "@/types/admin-genres";
 import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
 const AdminDeleteDialog = dynamic(
@@ -19,97 +20,11 @@ export default function AdminGenresPage() {
   const t = useTranslations("admin.genres");
   const locale = useLocale();
   const router = useRouter();
-  const { genres, pagination, loading, fetchGenres, deleteGenre, checkGenreUsage } =
-    useAdminGenres();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{
-    field: string;
-    order: "asc" | "desc";
-  }>({ field: "slug", order: "asc" });
-
-  const [genreToDelete, setGenreToDelete] = useState<AdminGenre | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchGenres({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
-    },
-    [fetchGenres, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchGenres({
-        search: currentSearch,
-        sortBy: field,
-        sortOrder: order,
-        page: 1,
-      });
-    },
-    [fetchGenres, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchGenres({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
-    },
-    [fetchGenres, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (genre: AdminGenre) => {
-      router.push(`/admin/genres/${genre.slug}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback(
-    async (genre: AdminGenre) => {
-      setGenreToDelete(genre);
-      setUsageCount(undefined);
-      try {
-        const count = await checkGenreUsage(genre.slug);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkGenreUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!genreToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteGenre(genreToDelete.slug);
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setGenreToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [genreToDelete, deleteGenre, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) {
-      setGenreToDelete(null);
-    }
-  }, [isDeleting]);
+  const genres = useAdminResource(genresResource);
+  const deletion = useAdminDeleteFlow(genres, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
+  });
 
   const genreColumns: AdminColumnDef<AdminGenre>[] = [
     {
@@ -150,30 +65,26 @@ export default function AdminGenresPage() {
         </div>
 
         <AdminDataTable<AdminGenre>
-          items={genres}
+          items={genres.rows}
           columns={genreColumns}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-          onSearch={handleSearch}
-          onSort={handleSort}
-          onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
-          isLoading={loading}
-          currentSort={currentSort}
-          currentSearch={currentSearch}
+          pagination={genres.pagination}
+          onPageChange={genres.setPage}
+          onSearch={genres.setSearch}
+          onSort={(field, order) => genres.setSort({ field, order })}
+          onEdit={(genre) => router.push(`/admin/genres/${genre.slug}/edit`)}
+          onDelete={deletion.request}
+          isLoading={genres.isLoading}
+          currentSort={genres.sort}
+          currentSearch={genres.search}
           translationNamespace="admin.genres"
           totalCountKey="totalGenres"
           emptyKey="noGenres"
         />
 
         <AdminDeleteDialog
-          isOpen={genreToDelete !== null}
+          {...deletion.dialog}
           translationNamespace="admin.genres.deleteDialog"
-          warningParams={{ name: genreToDelete?.slug ?? "" }}
-          onClose={handleDeleteClose}
-          onConfirm={handleDeleteConfirm}
-          isDeleting={isDeleting}
-          usageCount={usageCount}
+          warningParams={{ name: deletion.target?.slug ?? "" }}
         />
       </section>
     </div>

@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useSpeciesForm } from "@/hooks/useSpeciesForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { speciesForm } from "@/lib/admin-resource/forms/translatedForms";
 import { SpeciesForm } from "@/components/admin/species/SpeciesForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -22,11 +23,15 @@ function EditSpeciesForm({
   const t = useTranslations("admin.species");
   const router = useRouter();
 
-  const { form, submitSpecies, isSubmitting, supportedLanguages } = useSpeciesForm(
-    "edit",
+  const {
+    form,
+    submit: submitSpecies,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(speciesForm, "edit", {
     initialData,
-    speciesId
-  );
+    id: speciesId,
+  });
 
   const handleSubmit = useCallback(
     async (data: SpeciesFormData) => {

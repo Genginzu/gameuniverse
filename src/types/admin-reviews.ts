@@ -27,12 +27,3 @@ export interface AdminReviewDetail {
   playerName: string | null;
   gameTitle: string;
 }
-
-/** Paramètres de requête pour la liste admin */
-export interface FetchAdminReviewsParams {
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  page?: number;
-  limit?: number;
-}

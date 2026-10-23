@@ -28,7 +28,7 @@ export function useListingQuery<TFilters extends object, TData>(
   const context = { locale, pathParams };
   const key = buildListingUrl(resource, state, context);
 
-  const { data, error, isLoading, isValidating } = useSWR<TData>(key, fetcher, {
+  const { data, error, isLoading, isValidating, mutate } = useSWR<TData>(key, fetcher, {
     revalidateOnFocus: false,
     keepPreviousData: true,
     ...resource.swr,
@@ -55,5 +55,6 @@ export function useListingQuery<TFilters extends object, TData>(
     error: error as Error | undefined,
     isLoading,
     isValidating,
+    mutate,
   };
 }

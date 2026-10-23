@@ -3,7 +3,8 @@
 import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useSpeciesForm } from "@/hooks/useSpeciesForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { speciesForm } from "@/lib/admin-resource/forms/translatedForms";
 import { SpeciesForm } from "@/components/admin/species/SpeciesForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -14,7 +15,12 @@ import { Icon } from "@iconify/react";
 export default function NewSpeciesPage() {
   const t = useTranslations("admin.species");
   const router = useRouter();
-  const { form, submitSpecies, isSubmitting, supportedLanguages } = useSpeciesForm("create");
+  const {
+    form,
+    submit: submitSpecies,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(speciesForm, "create");
 
   const handleSubmit = useCallback(
     async (data: SpeciesFormData) => {

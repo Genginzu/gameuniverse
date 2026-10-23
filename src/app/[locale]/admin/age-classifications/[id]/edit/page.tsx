@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { useRatingSystemForm } from "@/hooks/useRatingSystemForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { ratingSystemForm } from "@/lib/admin-resource/forms/ageClassificationForms";
 import { RatingSystemForm } from "@/components/admin/age-classifications/RatingSystemForm";
 import { RatingsTab } from "@/components/admin/age-classifications/RatingsTab";
 import { DescriptorsTab } from "@/components/admin/age-classifications/DescriptorsTab";
@@ -36,11 +37,14 @@ function EditSystemForm({
 }) {
   const t = useTranslations("admin.ageClassifications");
   const router = useRouter();
-  const { form, submitRatingSystem, isSubmitting } = useRatingSystemForm(
-    "edit",
-    systemId,
-    initialData
-  );
+  const {
+    form,
+    submit: submitRatingSystem,
+    isSubmitting,
+  } = useAdminEntityForm(ratingSystemForm, "edit", {
+    id: systemId,
+    initialData,
+  });
 
   const handleSubmit = useCallback(
     async (data: RatingSystemFormData) => {

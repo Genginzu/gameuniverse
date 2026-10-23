@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { useAdminCommunities } from "@/hooks/useAdminCommunities";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { communitiesResource } from "@/lib/admin-resource/resources/communities";
+import { readApiError } from "@/lib/admin-resource/defineAdminResource";
 import type { AdminCommunity } from "@/types/admin-communities";
 import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
 const AdminDeleteDialog = dynamic(
@@ -12,57 +15,30 @@ const AdminDeleteDialog = dynamic(
 );
 import { toast } from "@/hooks/use-toast";
 
+async function patchCommunityVisibility(id: string, visibility: "public" | "private") {
+  const response = await fetch(`/api/admin/communities/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ visibility }),
+  });
+  if (!response.ok) throw await readApiError(response, "Failed to update community");
+}
+
 export default function AdminCommunitiesPage() {
   const t = useTranslations("admin.communities");
-  const { communities, pagination, loading, fetchCommunities, setVisibility, deleteCommunity } =
-    useAdminCommunities();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "created_at",
-    order: "desc",
+  const communities = useAdminResource(communitiesResource);
+  const deletion = useAdminDeleteFlow(communities, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
-  const [communityToDelete, setCommunityToDelete] = useState<AdminCommunity | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchCommunities({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
-    },
-    [fetchCommunities, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchCommunities({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
-    },
-    [fetchCommunities, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchCommunities({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
-    },
-    [fetchCommunities, currentSearch, currentSort]
-  );
+  const { revalidate } = communities;
 
   const handleToggleSuspend = useCallback(
     async (community: AdminCommunity) => {
       try {
         const nextVisibility = community.visibility === "private" ? "public" : "private";
-        await setVisibility(community.id, nextVisibility);
+        await patchCommunityVisibility(community.id, nextVisibility);
+        await revalidate();
         toast({
           title:
             nextVisibility === "private" ? t("suspendDialog.success") : t("restoreDialog.success"),
@@ -72,30 +48,8 @@ export default function AdminCommunitiesPage() {
         toast({ title: t("toggleError"), variant: "destructive" });
       }
     },
-    [setVisibility, t]
+    [revalidate, t]
   );
-
-  const handleDeleteRequest = useCallback((community: AdminCommunity) => {
-    setCommunityToDelete(community);
-  }, []);
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!communityToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteCommunity(communityToDelete.id);
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setCommunityToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [communityToDelete, deleteCommunity, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) setCommunityToDelete(null);
-  }, [isDeleting]);
 
   const formatDate = (dateStr: string) => {
     try {
@@ -158,29 +112,26 @@ export default function AdminCommunitiesPage() {
       </div>
 
       <AdminDataTable<AdminCommunity>
-        items={communities}
+        items={communities.rows}
         columns={communityColumns}
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        onSearch={handleSearch}
-        onSort={handleSort}
+        pagination={communities.pagination}
+        onPageChange={communities.setPage}
+        onSearch={communities.setSearch}
+        onSort={(field, order) => communities.setSort({ field, order })}
         onEdit={handleToggleSuspend}
-        onDelete={handleDeleteRequest}
-        isLoading={loading}
-        currentSort={currentSort}
-        currentSearch={currentSearch}
+        onDelete={deletion.request}
+        isLoading={communities.isLoading}
+        currentSort={communities.sort}
+        currentSearch={communities.search}
         translationNamespace="admin.communities"
         totalCountKey="totalCommunities"
         emptyKey="noCommunities"
       />
 
       <AdminDeleteDialog
-        isOpen={communityToDelete !== null}
+        {...deletion.dialog}
         translationNamespace="admin.communities.deleteDialog"
-        warningParams={{ name: communityToDelete?.name ?? "" }}
-        onClose={handleDeleteClose}
-        onConfirm={handleDeleteConfirm}
-        isDeleting={isDeleting}
+        warningParams={{ name: deletion.target?.name ?? "" }}
       />
     </div>
   );

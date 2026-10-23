@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useCompanyForm } from "@/hooks/useCompanyForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { companyForm } from "@/lib/admin-resource/forms/catalogForms";
 import { CompanyForm } from "@/components/admin/companies/CompanyForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -16,16 +17,18 @@ import { Icon } from "@iconify/react";
 
 /**
  * Inner component that mounts only when initialData is ready,
- * so useCompanyForm receives correct defaultValues on first render.
+ * so useAdminEntityForm receives correct defaultValues on first render.
  */
 function EditCompanyForm({ initialData }: { initialData: CompanyFormData }) {
   const t = useTranslations("admin.companies");
   const router = useRouter();
 
-  const { form, submitCompany, isSubmitting, supportedLanguages } = useCompanyForm(
-    "edit",
-    initialData
-  );
+  const {
+    form,
+    submit: submitCompany,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(companyForm, "edit", { initialData });
 
   const handleSubmit = useCallback(
     async (data: CompanyFormData) => {

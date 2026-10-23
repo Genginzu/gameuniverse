@@ -4,7 +4,8 @@ import { useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { useRatingForm } from "@/hooks/useRatingForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { ratingForm } from "@/lib/admin-resource/forms/ageClassificationForms";
 import { RatingForm } from "@/components/admin/age-classifications/RatingForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -20,10 +21,14 @@ export default function NewRatingPage() {
   const params = useParams<{ id: string }>();
   const ratingSystemId = params.id;
 
-  const { form, submitRating, isSubmitting, supportedLanguages } = useRatingForm(
-    "create",
-    ratingSystemId
-  );
+  const {
+    form,
+    submit: submitRating,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(ratingForm, "create", {
+    pathParams: { ratingSystemId },
+  });
 
   const handleSubmit = useCallback(
     async (data: RatingFormData) => {

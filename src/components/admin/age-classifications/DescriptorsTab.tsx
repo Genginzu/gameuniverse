@@ -2,8 +2,11 @@
 
 import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { useAdminDescriptors } from "@/hooks/useAdminDescriptors";
-import { useDescriptorForm } from "@/hooks/useDescriptorForm";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { descriptorsResource } from "@/lib/admin-resource/resources/descriptors";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { descriptorForm } from "@/lib/admin-resource/forms/ageClassificationForms";
 import { DescriptorsTable } from "./DescriptorsTable";
 import { DescriptorForm } from "./DescriptorForm";
 import { AdminDeleteDialog } from "@/components/admin/shared/AdminDeleteDialog";
@@ -20,22 +23,25 @@ interface DescriptorsTabProps {
 
 export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
   const t = useTranslations("admin.ageClassifications.descriptors");
-  const { descriptors, loading, fetchDescriptors, deleteDescriptor, checkDescriptorUsage } =
-    useAdminDescriptors(ratingSystemId);
+  const descriptors = useAdminResource(descriptorsResource, { pathParams: { ratingSystemId } });
+  const deletion = useAdminDeleteFlow(descriptors, {
+    onDeleted: () => toast({ title: t("toast.deleted"), variant: "success" }),
+    onError: () => toast({ title: t("toast.deleteError"), variant: "destructive" }),
+  });
+  const { revalidate } = descriptors;
 
-  const [currentSearch, setCurrentSearch] = useState("");
   const [editingDescriptor, setEditingDescriptor] = useState<AdminContentDescriptor | null>(null);
   const [isCreating, setIsCreating] = useState(false);
-  const [descriptorToDelete, setDescriptorToDelete] = useState<AdminContentDescriptor | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
 
   const formMode = editingDescriptor ? "edit" : "create";
-  const { form, submitDescriptor, isSubmitting } = useDescriptorForm(
-    formMode,
-    ratingSystemId,
-    editingDescriptor?.id,
-    editingDescriptor
+  const {
+    form,
+    submit: submitDescriptor,
+    isSubmitting,
+  } = useAdminEntityForm(descriptorForm, formMode, {
+    pathParams: { ratingSystemId },
+    id: editingDescriptor?.id,
+    initialData: editingDescriptor
       ? {
           code: editingDescriptor.code,
           icon_url: editingDescriptor.icon_url ?? "",
@@ -45,16 +51,8 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
             description: t.description ?? "",
           })),
         }
-      : undefined
-  );
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchDescriptors(query);
-    },
-    [fetchDescriptors]
-  );
+      : undefined,
+  });
 
   const handleFormSubmit = useCallback(
     async (data: DescriptorFormData) => {
@@ -66,13 +64,13 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
         });
         setEditingDescriptor(null);
         setIsCreating(false);
-        fetchDescriptors(currentSearch);
+        revalidate();
       } catch (err) {
         const message = err instanceof Error ? err.message : t("toast.error");
         toast({ title: message, variant: "destructive" });
       }
     },
-    [submitDescriptor, editingDescriptor, fetchDescriptors, currentSearch]
+    [submitDescriptor, editingDescriptor, revalidate, t]
   );
 
   const handleEdit = useCallback((descriptor: AdminContentDescriptor) => {
@@ -94,38 +92,6 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
     setEditingDescriptor(null);
     setIsCreating(false);
   }, []);
-
-  const handleDeleteRequest = useCallback(
-    async (descriptor: AdminContentDescriptor) => {
-      setDescriptorToDelete(descriptor);
-      setUsageCount(undefined);
-      try {
-        const count = await checkDescriptorUsage(descriptor.id);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkDescriptorUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!descriptorToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteDescriptor(descriptorToDelete.id);
-      toast({ title: t("toast.deleted"), variant: "success" });
-      setDescriptorToDelete(null);
-    } catch {
-      toast({ title: t("toast.deleteError"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [descriptorToDelete, deleteDescriptor]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) setDescriptorToDelete(null);
-  }, [isDeleting]);
 
   const showForm = isCreating || editingDescriptor !== null;
 
@@ -161,25 +127,21 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
       )}
 
       <DescriptorsTable
-        descriptors={descriptors}
-        onSearch={handleSearch}
+        descriptors={descriptors.rows}
+        onSearch={descriptors.setSearch}
         onEdit={handleEdit}
-        onDelete={handleDeleteRequest}
-        isLoading={loading}
-        currentSearch={currentSearch}
+        onDelete={deletion.request}
+        isLoading={descriptors.isLoading}
+        currentSearch={descriptors.search}
       />
 
       <AdminDeleteDialog
-        isOpen={descriptorToDelete !== null}
+        {...deletion.dialog}
         translationNamespace="admin.ageClassifications.descriptors.delete"
-        warningParams={{ code: descriptorToDelete?.code ?? "" }}
+        warningParams={{ code: deletion.target?.code ?? "" }}
         warningKey="confirm"
         confirmKey="delete"
         blockOnUsage
-        onClose={handleDeleteClose}
-        onConfirm={handleDeleteConfirm}
-        isDeleting={isDeleting}
-        usageCount={usageCount}
       />
     </div>
   );

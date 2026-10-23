@@ -8,6 +8,13 @@ export interface AdminSpecies {
   updatedAt: string;
 }
 
+export interface AdminSpeciesListItem {
+  id: string;
+  slug: string;
+  characterCount: number;
+  translations: { language_code: string; name: string }[];
+}
+
 export interface SpeciesTranslation {
   language_code: string;
   name: string;

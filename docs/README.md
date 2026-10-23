@@ -81,6 +81,7 @@
 | Document                                                                | Description                             |
 | ----------------------------------------------------------------------- | --------------------------------------- |
 | [achievements-management.md](features/admin/achievements-management.md) | Gestion des succès                      |
+| [admin-entity-resource.md](features/admin/admin-entity-resource.md)     | Listes, suppression et formulaires admin |
 | [age-classification.md](features/admin/age-classification.md)           | Classification d'âge                    |
 | [character-management.md](features/admin/character-management.md)       | Gestion des personnages                 |
 | [company-management.md](features/admin/company-management.md)           | Gestion des entreprises                 |

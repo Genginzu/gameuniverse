@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { useAdminRatings } from "@/hooks/useAdminRatings";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { ratingsResource } from "@/lib/admin-resource/resources/ratings";
 import { RatingsTable } from "./RatingsTable";
 import { AdminDeleteDialog } from "@/components/admin/shared/AdminDeleteDialog";
 import { Button } from "@/components/ui/button";
@@ -19,21 +21,11 @@ interface RatingsTabProps {
 export function RatingsTab({ ratingSystemId }: RatingsTabProps) {
   const t = useTranslations("admin.ageClassifications.ratings");
   const router = useRouter();
-  const { ratings, loading, fetchRatings, deleteRating, checkRatingUsage } =
-    useAdminRatings(ratingSystemId);
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [ratingToDelete, setRatingToDelete] = useState<AdminRating | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchRatings(query);
-    },
-    [fetchRatings]
-  );
+  const ratings = useAdminResource(ratingsResource, { pathParams: { ratingSystemId } });
+  const deletion = useAdminDeleteFlow(ratings, {
+    onDeleted: () => toast({ title: t("toast.deleted"), variant: "success" }),
+    onError: () => toast({ title: t("toast.deleteError"), variant: "destructive" }),
+  });
 
   const handleEdit = useCallback(
     (rating: AdminRating) => {
@@ -46,38 +38,6 @@ export function RatingsTab({ ratingSystemId }: RatingsTabProps) {
     router.push(`/admin/age-classifications/${ratingSystemId}/ratings/new`);
   }, [router, ratingSystemId]);
 
-  const handleDeleteRequest = useCallback(
-    async (rating: AdminRating) => {
-      setRatingToDelete(rating);
-      setUsageCount(undefined);
-      try {
-        const count = await checkRatingUsage(rating.id);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkRatingUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!ratingToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteRating(ratingToDelete.id);
-      toast({ title: t("toast.deleted"), variant: "success" });
-      setRatingToDelete(null);
-    } catch {
-      toast({ title: t("toast.deleteError"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [ratingToDelete, deleteRating]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) setRatingToDelete(null);
-  }, [isDeleting]);
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -89,25 +49,21 @@ export function RatingsTab({ ratingSystemId }: RatingsTabProps) {
       </div>
 
       <RatingsTable
-        ratings={ratings}
-        onSearch={handleSearch}
+        ratings={ratings.rows}
+        onSearch={ratings.setSearch}
         onEdit={handleEdit}
-        onDelete={handleDeleteRequest}
-        isLoading={loading}
-        currentSearch={currentSearch}
+        onDelete={deletion.request}
+        isLoading={ratings.isLoading}
+        currentSearch={ratings.search}
       />
 
       <AdminDeleteDialog
-        isOpen={ratingToDelete !== null}
+        {...deletion.dialog}
         translationNamespace="admin.ageClassifications.ratings.delete"
-        warningParams={{ name: ratingToDelete?.display_name ?? "" }}
+        warningParams={{ name: deletion.target?.display_name ?? "" }}
         warningKey="confirm"
         confirmKey="delete"
         blockOnUsage
-        onClose={handleDeleteClose}
-        onConfirm={handleDeleteConfirm}
-        isDeleting={isDeleting}
-        usageCount={usageCount}
       />
     </div>
   );
