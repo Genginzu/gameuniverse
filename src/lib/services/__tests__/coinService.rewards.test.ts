@@ -74,10 +74,7 @@ describe("CoinService.getWallet", () => {
 
     const wallet = await CoinService.getWallet("p1");
 
-    expect(mockRpc).toHaveBeenCalledWith("ensure_player_wallet", {
-      p_player_id: "p1",
-      p_signup_bonus: 500,
-    });
+    expect(mockRpc).toHaveBeenCalledWith("ensure_player_wallet", { p_player_id: "p1" });
     expect(wallet.balance).toBe(500);
   });
 
