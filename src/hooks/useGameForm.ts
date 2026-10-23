@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { adminGameFormSchema, type AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { buildGamePayload } from "./useGameFormSubmit";
+import { submitAdminEntity } from "@/lib/admin-resource/defineAdminForm";
 import type {
   AdminGenre,
   Company,
@@ -173,17 +174,12 @@ export function useGameForm(
       setSubmitError(null);
       try {
         const url = mode === "create" ? "/api/admin/games" : `/api/admin/games/${gameId}`;
-        const method = mode === "create" ? "POST" : "PUT";
-        const payload = buildGamePayload(data, mode);
-        const res = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.error || `Failed to ${mode} game`);
-        }
+        await submitAdminEntity(
+          url,
+          mode === "create" ? "POST" : "PUT",
+          buildGamePayload(data, mode),
+          `Failed to ${mode} game`
+        );
       } catch (err) {
         const message = err instanceof Error ? err.message : `Failed to ${mode} game`;
         setSubmitError(message);

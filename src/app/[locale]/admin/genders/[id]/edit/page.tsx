@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useGenderForm } from "@/hooks/useGenderForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { genderForm } from "@/lib/admin-resource/forms/translatedForms";
 import { GenderForm } from "@/components/admin/genders/GenderForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -22,11 +23,15 @@ function EditGenderForm({
   const t = useTranslations("admin.genders");
   const router = useRouter();
 
-  const { form, submitGender, isSubmitting, supportedLanguages } = useGenderForm(
-    "edit",
+  const {
+    form,
+    submit: submitGender,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(genderForm, "edit", {
     initialData,
-    genderId
-  );
+    id: genderId,
+  });
 
   const handleSubmit = useCallback(
     async (data: GenderFormData) => {

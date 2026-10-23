@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useRoleForm } from "@/hooks/useRoleForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { roleForm } from "@/lib/admin-resource/forms/translatedForms";
 import { RoleForm } from "@/components/admin/roles/RoleForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -16,7 +17,12 @@ import { Icon } from "@iconify/react";
 function EditRoleForm({ initialData }: { initialData: RoleFormData }) {
   const t = useTranslations("admin.characterRoles");
   const router = useRouter();
-  const { form, submitRole, isSubmitting, supportedLanguages } = useRoleForm("edit", initialData);
+  const {
+    form,
+    submit: submitRole,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(roleForm, "edit", { initialData });
 
   const handleSubmit = useCallback(
     async (data: RoleFormData) => {

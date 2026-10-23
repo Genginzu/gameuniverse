@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useAdminComments } from "@/hooks/useAdminComments";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { commentsResource } from "@/lib/admin-resource/resources/comments";
 import dynamic from "next/dynamic";
 import type { AdminComment } from "@/types/admin-comments";
 import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
@@ -16,67 +17,11 @@ import { toast } from "@/hooks/use-toast";
 export default function AdminCommentsPage() {
   const t = useTranslations("admin.comments");
   const router = useRouter();
-  const { comments, pagination, loading, fetchComments, deleteComment } = useAdminComments();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "created_at",
-    order: "desc",
+  const comments = useAdminResource(commentsResource);
+  const deletion = useAdminDeleteFlow(comments, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
-  const [commentToDelete, setCommentToDelete] = useState<AdminComment | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchComments({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
-    },
-    [fetchComments, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchComments({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
-    },
-    [fetchComments, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchComments({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
-    },
-    [fetchComments, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (comment: AdminComment) => {
-      router.push(`/admin/comments/${comment.id}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback((comment: AdminComment) => {
-    setCommentToDelete(comment);
-  }, []);
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!commentToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteComment(commentToDelete.id);
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setCommentToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [commentToDelete, deleteComment, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) setCommentToDelete(null);
-  }, [isDeleting]);
 
   const formatDate = (dateStr: string) => {
     try {
@@ -123,32 +68,29 @@ export default function AdminCommentsPage() {
       </div>
 
       <AdminDataTable<AdminComment>
-        items={comments}
+        items={comments.rows}
         columns={commentColumns}
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        onSearch={handleSearch}
-        onSort={handleSort}
-        onEdit={handleEdit}
-        onDelete={handleDeleteRequest}
-        isLoading={loading}
-        currentSort={currentSort}
-        currentSearch={currentSearch}
+        pagination={comments.pagination}
+        onPageChange={comments.setPage}
+        onSearch={comments.setSearch}
+        onSort={(field, order) => comments.setSort({ field, order })}
+        onEdit={(comment) => router.push(`/admin/comments/${comment.id}/edit`)}
+        onDelete={deletion.request}
+        isLoading={comments.isLoading}
+        currentSort={comments.sort}
+        currentSearch={comments.search}
         translationNamespace="admin.comments"
         totalCountKey="totalComments"
         emptyKey="noComments"
       />
 
       <AdminDeleteDialog
-        isOpen={commentToDelete !== null}
+        {...deletion.dialog}
         translationNamespace="admin.comments.deleteDialog"
         warningParams={{
-          player: commentToDelete?.playerName ?? "",
-          character: commentToDelete?.characterName ?? "",
+          player: deletion.target?.playerName ?? "",
+          character: deletion.target?.characterName ?? "",
         }}
-        onClose={handleDeleteClose}
-        onConfirm={handleDeleteConfirm}
-        isDeleting={isDeleting}
       />
     </div>
   );

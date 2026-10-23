@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useAdminLanguages } from "@/hooks/useAdminLanguages";
 import dynamic from "next/dynamic";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { languagesResource } from "@/lib/admin-resource/resources/languages";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
 const AdminDeleteDialog = dynamic(
@@ -33,96 +34,11 @@ const SITE_LOCALES: SiteLocale[] = [
 export default function AdminLanguagesPage() {
   const t = useTranslations("admin.languages");
   const router = useRouter();
-  const { languages, pagination, loading, fetchLanguages, deleteLanguage, checkLanguageUsage } =
-    useAdminLanguages();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "code",
-    order: "asc",
+  const languages = useAdminResource(languagesResource);
+  const deletion = useAdminDeleteFlow(languages, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
-  const [languageToDelete, setLanguageToDelete] = useState<SupportedLanguage | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchLanguages({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
-    },
-    [fetchLanguages, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchLanguages({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
-    },
-    [fetchLanguages, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchLanguages({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
-    },
-    [fetchLanguages, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (language: SupportedLanguage) => {
-      router.push(`/admin/languages/${language.code}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback(
-    async (language: SupportedLanguage) => {
-      setLanguageToDelete(language);
-      setUsageCount(undefined);
-      try {
-        const count = await checkLanguageUsage(language.code);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkLanguageUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!languageToDelete) return;
-    setIsDeleting(true);
-    try {
-      if (usageCount && usageCount > 0) {
-        const response = await fetch(
-          `/api/admin/languages/${encodeURIComponent(languageToDelete.code)}?force=true`,
-          { method: "DELETE" }
-        );
-        if (!response.ok) {
-          const body = await response.json().catch(() => ({}));
-          throw new Error(body.error || `Failed to delete language (${response.status})`);
-        }
-        await fetchLanguages({
-          search: currentSearch,
-          sortBy: currentSort.field,
-          sortOrder: currentSort.order,
-          page: pagination.currentPage,
-        });
-      } else {
-        await deleteLanguage(languageToDelete.code);
-      }
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setLanguageToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [languageToDelete, usageCount, deleteLanguage, fetchLanguages, currentSearch, currentSort, pagination.currentPage, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) setLanguageToDelete(null);
-  }, [isDeleting]);
 
   const languageColumns: AdminColumnDef<SupportedLanguage>[] = [
     {
@@ -149,7 +65,9 @@ export default function AdminLanguagesPage() {
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
+            {t("title")}
+          </h1>
           <Button onClick={() => router.push("/admin/languages/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newLanguage")}
@@ -157,17 +75,17 @@ export default function AdminLanguagesPage() {
         </div>
 
         <AdminDataTable<SupportedLanguage>
-          items={languages}
+          items={languages.rows}
           columns={languageColumns}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-          onSearch={handleSearch}
-          onSort={handleSort}
-          onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
-          isLoading={loading}
-          currentSort={currentSort}
-          currentSearch={currentSearch}
+          pagination={languages.pagination}
+          onPageChange={languages.setPage}
+          onSearch={languages.setSearch}
+          onSort={(field, order) => languages.setSort({ field, order })}
+          onEdit={(language) => router.push(`/admin/languages/${language.code}/edit`)}
+          onDelete={deletion.request}
+          isLoading={languages.isLoading}
+          currentSort={languages.sort}
+          currentSearch={languages.search}
           translationNamespace="admin.languages"
           idField="code"
           totalCountKey="totalLanguages"
@@ -175,13 +93,9 @@ export default function AdminLanguagesPage() {
         />
 
         <AdminDeleteDialog
-          isOpen={languageToDelete !== null}
+          {...deletion.dialog}
           translationNamespace="admin.languages.deleteDialog"
-          warningParams={{ name: languageToDelete?.name ?? "" }}
-          onClose={handleDeleteClose}
-          onConfirm={handleDeleteConfirm}
-          isDeleting={isDeleting}
-          usageCount={usageCount}
+          warningParams={{ name: deletion.target?.name ?? "" }}
         />
       </section>
 

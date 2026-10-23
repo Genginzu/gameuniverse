@@ -13,14 +13,6 @@ export interface AdminCharacter {
   updatedAt: string;
 }
 
-export interface FetchCharactersParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
-
 /** Props communes à tous les onglets du formulaire personnage */
 export interface CharacterFormTabProps {
   form: UseFormReturn<AdminCharacterFormData>;

@@ -15,8 +15,8 @@ La fonctionnalité permet de :
 - **Modifier** les informations d'une entreprise existante (slug immuable)
 - **Supprimer** une entreprise, avec vérification d'usage et suppression forcée
 
-Le module suit les mêmes patterns que la gestion des genres admin
-(`useAdminGenres`, `AdminGenresTable`, etc.).
+Le module suit le pattern commun des listes admin
+(voir [admin-entity-resource.md](admin-entity-resource.md)).
 
 ## Accès
 

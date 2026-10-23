@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { useAdminGroups } from "@/hooks/useAdminGroups";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { groupsResource } from "@/lib/admin-resource/resources/groups";
+import { readApiError } from "@/lib/admin-resource/defineAdminResource";
 import type { AdminGroup } from "@/types/admin-groups";
 import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
 const AdminDeleteDialog = dynamic(
@@ -12,47 +15,30 @@ const AdminDeleteDialog = dynamic(
 );
 import { toast } from "@/hooks/use-toast";
 
+async function patchGroupVisibility(id: string, visibility: "public" | "private") {
+  const response = await fetch(`/api/admin/groups/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ visibility }),
+  });
+  if (!response.ok) throw await readApiError(response, "Failed to update group");
+}
+
 export default function AdminGroupsPage() {
   const t = useTranslations("admin.groups");
-  const { groups, pagination, loading, fetchGroups, setVisibility, deleteGroup } =
-    useAdminGroups();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "created_at",
-    order: "desc",
+  const groups = useAdminResource(groupsResource);
+  const deletion = useAdminDeleteFlow(groups, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
-  const [groupToDelete, setGroupToDelete] = useState<AdminGroup | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchGroups({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
-    },
-    [fetchGroups, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchGroups({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
-    },
-    [fetchGroups, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchGroups({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
-    },
-    [fetchGroups, currentSearch, currentSort]
-  );
+  const { revalidate } = groups;
 
   const handleToggleSuspend = useCallback(
     async (group: AdminGroup) => {
       try {
         const nextVisibility = group.visibility === "private" ? "public" : "private";
-        await setVisibility(group.id, nextVisibility);
+        await patchGroupVisibility(group.id, nextVisibility);
+        await revalidate();
         toast({
           title:
             nextVisibility === "private" ? t("suspendDialog.success") : t("restoreDialog.success"),
@@ -62,30 +48,8 @@ export default function AdminGroupsPage() {
         toast({ title: t("toggleError"), variant: "destructive" });
       }
     },
-    [setVisibility, t]
+    [revalidate, t]
   );
-
-  const handleDeleteRequest = useCallback((group: AdminGroup) => {
-    setGroupToDelete(group);
-  }, []);
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!groupToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteGroup(groupToDelete.id);
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setGroupToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [groupToDelete, deleteGroup, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) setGroupToDelete(null);
-  }, [isDeleting]);
 
   const formatDate = (dateStr: string) => {
     try {
@@ -148,29 +112,26 @@ export default function AdminGroupsPage() {
       </div>
 
       <AdminDataTable<AdminGroup>
-        items={groups}
+        items={groups.rows}
         columns={groupColumns}
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        onSearch={handleSearch}
-        onSort={handleSort}
+        pagination={groups.pagination}
+        onPageChange={groups.setPage}
+        onSearch={groups.setSearch}
+        onSort={(field, order) => groups.setSort({ field, order })}
         onEdit={handleToggleSuspend}
-        onDelete={handleDeleteRequest}
-        isLoading={loading}
-        currentSort={currentSort}
-        currentSearch={currentSearch}
+        onDelete={deletion.request}
+        isLoading={groups.isLoading}
+        currentSort={groups.sort}
+        currentSearch={groups.search}
         translationNamespace="admin.groups"
         totalCountKey="totalGroups"
         emptyKey="noGroups"
       />
 
       <AdminDeleteDialog
-        isOpen={groupToDelete !== null}
+        {...deletion.dialog}
         translationNamespace="admin.groups.deleteDialog"
-        warningParams={{ name: groupToDelete?.name ?? "" }}
-        onClose={handleDeleteClose}
-        onConfirm={handleDeleteConfirm}
-        isDeleting={isDeleting}
+        warningParams={{ name: deletion.target?.name ?? "" }}
       />
     </div>
   );

@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import type { CharacterFormTabProps } from "@/types/admin-characters";
-import { useAdminSpecies } from "@/hooks/useAdminSpecies";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { speciesResource } from "@/lib/admin-resource/resources/species";
 import { useLocale } from "next-intl";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 
 export function CharacterFormSpeciesTab({ form, t }: CharacterFormTabProps) {
   const locale = useLocale();
-  const { species, loading } = useAdminSpecies();
+  const { rows: species, isLoading: loading } = useAdminResource(speciesResource);
   const [search, setSearch] = useState("");
 
   const currentSpeciesId = form.watch("species_id") ?? null;

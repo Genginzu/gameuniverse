@@ -3,7 +3,8 @@
 import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useGenreForm } from "@/hooks/useGenreForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { genreForm } from "@/lib/admin-resource/forms/translatedForms";
 import { GenreForm } from "@/components/admin/genres/GenreForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -15,7 +16,12 @@ import { Icon } from "@iconify/react";
 export default function NewGenrePage() {
   const t = useTranslations("admin.genres");
   const router = useRouter();
-  const { form, submitGenre, isSubmitting, supportedLanguages } = useGenreForm("create");
+  const {
+    form,
+    submit: submitGenre,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(genreForm, "create");
 
   const handleSubmit = useCallback(
     async (data: GenreFormData) => {

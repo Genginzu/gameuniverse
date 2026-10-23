@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
+import { submitAdminEntity } from "@/lib/admin-resource/defineAdminForm";
 import {
   adminCharacterFormSchema,
   type AdminCharacterFormData,
@@ -196,18 +197,12 @@ export function useCharacterForm(
       try {
         const url =
           mode === "create" ? "/api/admin/characters" : `/api/admin/characters/${characterId}`;
-        const method = mode === "create" ? "POST" : "PUT";
-
-        const res = await fetch(url, {
-          method,
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          throw new Error(body.error || `Failed to ${mode} character`);
-        }
+        await submitAdminEntity(
+          url,
+          mode === "create" ? "POST" : "PUT",
+          data,
+          `Failed to ${mode} character`
+        );
       } catch (err) {
         const message = err instanceof Error ? err.message : `Failed to ${mode} character`;
         setSubmitError(message);

@@ -49,19 +49,15 @@ src/
 
 ## Hooks disponibles (72)
 
-### Admin (16)
+### Admin
 
-useAdminAchievements, useAdminAuth, useAdminCharacters, useAdminComments,
-useAdminCompanies, useAdminDescriptors, useAdminGames, useAdminGenders,
-useAdminGenres, useAdminLanguages, useAdminPlatforms, useAdminRatings,
-useAdminRatingSystems, useAdminReviews, useAdminRoles, useAdminSpecies,
-useAdminTranslations
+useAdminResource + useAdminDeleteFlow (module `src/lib/admin-resource/`, une
+resource par entité dans `resources/`), useAdminAuth, useAdminTranslations
 
-### Formulaires (11)
+### Formulaires
 
-useCharacterForm, useCompanyForm, useDescriptorForm, useGameForm, useGenderForm,
-useGenreForm, useLanguageForm, useRatingForm, useRatingSystemForm, useRoleForm,
-useSpeciesForm
+useAdminEntityForm (configs dans `src/lib/admin-resource/forms/`),
+useCharacterForm, useGameForm
 
 ### Jeux (7)
 

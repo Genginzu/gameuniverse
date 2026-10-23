@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { useAdminCharacters } from "@/hooks/useAdminCharacters";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { charactersResource } from "@/lib/admin-resource/resources/characters";
 import dynamic from "next/dynamic";
-import type { AdminCharacter } from "@/types/admin-characters";
 import { AdminCharactersTable } from "@/components/admin/characters/AdminCharactersTable";
 const AdminDeleteDialog = dynamic(
   () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
@@ -20,86 +20,11 @@ export default function AdminCharactersPage() {
   const t = useTranslations("admin.characters");
   const router = useRouter();
   const { canDelete } = useAdminAuth();
-  const { characters, pagination, loading, fetchCharacters, deleteCharacter } =
-    useAdminCharacters();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "updated_at",
-    order: "desc",
+  const characters = useAdminResource(charactersResource);
+  const deletion = useAdminDeleteFlow(characters, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
-  const [characterToDelete, setCharacterToDelete] = useState<AdminCharacter | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchCharacters({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
-    },
-    [fetchCharacters, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchCharacters({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
-    },
-    [fetchCharacters, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchCharacters({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
-    },
-    [fetchCharacters, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (id: string) => {
-      router.push(`/admin/characters/${id}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback((character: AdminCharacter) => {
-    setCharacterToDelete(character);
-  }, []);
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!characterToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteCharacter(characterToDelete.id);
-      toast({
-        title: t("deleteDialog.success"),
-        variant: "success",
-      });
-      setCharacterToDelete(null);
-    } catch {
-      toast({
-        title: t("deleteDialog.errorGeneric"),
-        variant: "destructive",
-      });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [characterToDelete, deleteCharacter, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) {
-      setCharacterToDelete(null);
-    }
-  }, [isDeleting]);
 
   return (
     <div className="p-4 lg:p-6">
@@ -112,26 +37,23 @@ export default function AdminCharactersPage() {
       </div>
 
       <AdminCharactersTable
-        characters={characters}
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        onSearch={handleSearch}
-        onSort={handleSort}
-        onEdit={handleEdit}
-        onDelete={handleDeleteRequest}
+        characters={characters.rows}
+        pagination={characters.pagination}
+        onPageChange={characters.setPage}
+        onSearch={characters.setSearch}
+        onSort={(field, order) => characters.setSort({ field, order })}
+        onEdit={(id) => router.push(`/admin/characters/${id}/edit`)}
+        onDelete={deletion.request}
         canDelete={canDelete}
-        isLoading={loading}
-        currentSort={currentSort}
-        currentSearch={currentSearch}
+        isLoading={characters.isLoading}
+        currentSort={characters.sort}
+        currentSearch={characters.search}
       />
 
       <AdminDeleteDialog
-        isOpen={characterToDelete !== null}
+        {...deletion.dialog}
         translationNamespace="admin.characters.deleteDialog"
-        warningParams={{ name: characterToDelete?.name ?? "" }}
-        onClose={handleDeleteClose}
-        onConfirm={handleDeleteConfirm}
-        isDeleting={isDeleting}
+        warningParams={{ name: deletion.target?.name ?? "" }}
       />
     </div>
   );

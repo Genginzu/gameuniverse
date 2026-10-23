@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 
 import { toast } from "@/hooks/use-toast";
 import { usePlayerAchievementManager } from "@/hooks/usePlayerAchievementManager";
-import { useAdminAchievements } from "@/hooks/useAdminAchievements";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { achievementsResource } from "@/lib/admin-resource/resources/achievements";
 import { PlayerSearchResults } from "./PlayerSearchResults";
 import { PlayerAchievementList } from "./PlayerAchievementList";
 import { AssignAchievementDialog } from "./AssignAchievementDialog";
@@ -31,7 +32,7 @@ export function PlayerAchievementManager() {
     revokeAchievement,
   } = usePlayerAchievementManager();
 
-  const { achievements } = useAdminAchievements();
+  const { rows: achievements } = useAdminResource(achievementsResource);
 
   const [searchInput, setSearchInput] = useState("");
   const [assignTarget, setAssignTarget] = useState<AdminAchievement | null>(null);

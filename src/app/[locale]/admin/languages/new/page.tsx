@@ -3,7 +3,8 @@
 import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useLanguageForm } from "@/hooks/useLanguageForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { languageForm } from "@/lib/admin-resource/forms/catalogForms";
 import { LanguageForm } from "@/components/admin/languages/LanguageForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -15,7 +16,7 @@ import { Icon } from "@iconify/react";
 export default function NewLanguagePage() {
   const t = useTranslations("admin.languages");
   const router = useRouter();
-  const { form, submitLanguage, isSubmitting } = useLanguageForm("create");
+  const { form, submit: submitLanguage, isSubmitting } = useAdminEntityForm(languageForm, "create");
 
   const handleSubmit = useCallback(
     async (data: LanguageFormData) => {

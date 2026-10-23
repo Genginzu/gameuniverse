@@ -21,16 +21,6 @@ export interface AdminAchievement {
   sortOrder: number;
 }
 
-/** Params pour le fetch paginé */
-export interface FetchAchievementsParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  locale?: string;
-}
-
 /** Résultat de recherche joueur */
 export interface PlayerSearchResult {
   id: string;

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { useAdminRoles } from "@/hooks/useAdminRoles";
 import dynamic from "next/dynamic";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { rolesResource } from "@/lib/admin-resource/resources/roles";
 import type { AdminRole } from "@/types/admin-roles";
 import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
 const AdminDeleteDialog = dynamic(
@@ -19,78 +20,11 @@ export default function AdminRolesPage() {
   const t = useTranslations("admin.characterRoles");
   const locale = useLocale();
   const router = useRouter();
-  const { roles, pagination, loading, fetchRoles, deleteRole, checkRoleUsage } = useAdminRoles();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "slug",
-    order: "asc",
+  const roles = useAdminResource(rolesResource);
+  const deletion = useAdminDeleteFlow(roles, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
-  const [roleToDelete, setRoleToDelete] = useState<AdminRole | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchRoles({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
-    },
-    [fetchRoles, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchRoles({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
-    },
-    [fetchRoles, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchRoles({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
-    },
-    [fetchRoles, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (role: AdminRole) => {
-      router.push(`/admin/roles/${role.slug}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback(
-    async (role: AdminRole) => {
-      setRoleToDelete(role);
-      setUsageCount(undefined);
-      try {
-        const count = await checkRoleUsage(role.slug);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkRoleUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!roleToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteRole(roleToDelete.slug);
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setRoleToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [roleToDelete, deleteRole, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) setRoleToDelete(null);
-  }, [isDeleting]);
 
   const roleColumns: AdminColumnDef<AdminRole>[] = [
     {
@@ -121,7 +55,9 @@ export default function AdminRolesPage() {
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
+            {t("title")}
+          </h1>
           <Button onClick={() => router.push("/admin/roles/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newRole")}
@@ -129,30 +65,26 @@ export default function AdminRolesPage() {
         </div>
 
         <AdminDataTable<AdminRole>
-          items={roles}
+          items={roles.rows}
           columns={roleColumns}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-          onSearch={handleSearch}
-          onSort={handleSort}
-          onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
-          isLoading={loading}
-          currentSort={currentSort}
-          currentSearch={currentSearch}
+          pagination={roles.pagination}
+          onPageChange={roles.setPage}
+          onSearch={roles.setSearch}
+          onSort={(field, order) => roles.setSort({ field, order })}
+          onEdit={(role) => router.push(`/admin/roles/${role.slug}/edit`)}
+          onDelete={deletion.request}
+          isLoading={roles.isLoading}
+          currentSort={roles.sort}
+          currentSearch={roles.search}
           translationNamespace="admin.characterRoles"
           totalCountKey="totalRoles"
           emptyKey="noRoles"
         />
 
         <AdminDeleteDialog
-          isOpen={roleToDelete !== null}
+          {...deletion.dialog}
           translationNamespace="admin.roles.deleteDialog"
-          warningParams={{ name: roleToDelete?.slug ?? "" }}
-          onClose={handleDeleteClose}
-          onConfirm={handleDeleteConfirm}
-          isDeleting={isDeleting}
-          usageCount={usageCount}
+          warningParams={{ name: deletion.target?.slug ?? "" }}
         />
       </section>
     </div>

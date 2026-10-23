@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { useAdminGenders, type AdminGenderListItem } from "@/hooks/useAdminGenders";
 import dynamic from "next/dynamic";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { gendersResource } from "@/lib/admin-resource/resources/genders";
+import type { AdminGenderListItem } from "@/types/admin-genders";
 import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
 const AdminDeleteDialog = dynamic(
   () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
@@ -18,79 +20,11 @@ export default function AdminGendersPage() {
   const t = useTranslations("admin.genders");
   const locale = useLocale();
   const router = useRouter();
-  const { genders, pagination, loading, fetchGenders, deleteGender, checkGenderUsage } =
-    useAdminGenders();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "slug",
-    order: "asc",
+  const genders = useAdminResource(gendersResource);
+  const deletion = useAdminDeleteFlow(genders, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
-  const [genderToDelete, setGenderToDelete] = useState<AdminGenderListItem | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchGenders({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
-    },
-    [fetchGenders, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchGenders({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
-    },
-    [fetchGenders, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchGenders({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
-    },
-    [fetchGenders, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (gender: AdminGenderListItem) => {
-      router.push(`/admin/genders/${gender.slug}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback(
-    async (gender: AdminGenderListItem) => {
-      setGenderToDelete(gender);
-      setUsageCount(undefined);
-      try {
-        const count = await checkGenderUsage(gender.id);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkGenderUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!genderToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteGender(genderToDelete.id);
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setGenderToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [genderToDelete, deleteGender, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) setGenderToDelete(null);
-  }, [isDeleting]);
 
   const genderColumns: AdminColumnDef<AdminGenderListItem>[] = [
     {
@@ -121,7 +55,9 @@ export default function AdminGendersPage() {
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
+            {t("title")}
+          </h1>
           <Button onClick={() => router.push("/admin/genders/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newGender")}
@@ -129,30 +65,26 @@ export default function AdminGendersPage() {
         </div>
 
         <AdminDataTable<AdminGenderListItem>
-          items={genders}
+          items={genders.rows}
           columns={genderColumns}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-          onSearch={handleSearch}
-          onSort={handleSort}
-          onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
-          isLoading={loading}
-          currentSort={currentSort}
-          currentSearch={currentSearch}
+          pagination={genders.pagination}
+          onPageChange={genders.setPage}
+          onSearch={genders.setSearch}
+          onSort={(field, order) => genders.setSort({ field, order })}
+          onEdit={(gender) => router.push(`/admin/genders/${gender.slug}/edit`)}
+          onDelete={deletion.request}
+          isLoading={genders.isLoading}
+          currentSort={genders.sort}
+          currentSearch={genders.search}
           translationNamespace="admin.genders"
           totalCountKey="totalGenders"
           emptyKey="noGenders"
         />
 
         <AdminDeleteDialog
-          isOpen={genderToDelete !== null}
+          {...deletion.dialog}
           translationNamespace="admin.genders.deleteDialog"
-          warningParams={{ name: genderToDelete?.slug ?? "" }}
-          onClose={handleDeleteClose}
-          onConfirm={handleDeleteConfirm}
-          isDeleting={isDeleting}
-          usageCount={usageCount}
+          warningParams={{ name: deletion.target?.slug ?? "" }}
         />
       </section>
     </div>

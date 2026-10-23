@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
-import { useAdminReviews } from "@/hooks/useAdminReviews";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { reviewsResource } from "@/lib/admin-resource/resources/reviews";
 import dynamic from "next/dynamic";
-import type { AdminReview } from "@/types/admin-reviews";
 import { AdminReviewsTable } from "@/components/admin/reviews/AdminReviewsTable";
 const AdminDeleteDialog = dynamic(
   () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
@@ -18,85 +18,11 @@ export default function AdminReviewsPage() {
   const t = useTranslations("admin.reviews");
   const router = useRouter();
   const { canDelete } = useAdminAuth();
-  const { reviews, pagination, loading, fetchReviews, deleteReview } = useAdminReviews();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "created_at",
-    order: "desc",
+  const reviews = useAdminResource(reviewsResource);
+  const deletion = useAdminDeleteFlow(reviews, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
-  const [reviewToDelete, setReviewToDelete] = useState<AdminReview | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchReviews({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
-    },
-    [fetchReviews, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchReviews({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
-    },
-    [fetchReviews, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchReviews({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
-    },
-    [fetchReviews, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (id: string) => {
-      router.push(`/admin/reviews/${id}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback((review: AdminReview) => {
-    setReviewToDelete(review);
-  }, []);
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!reviewToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteReview(reviewToDelete.id);
-      toast({
-        title: t("deleteDialog.success"),
-        variant: "success",
-      });
-      setReviewToDelete(null);
-    } catch {
-      toast({
-        title: t("deleteDialog.errorGeneric"),
-        variant: "destructive",
-      });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [reviewToDelete, deleteReview, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) {
-      setReviewToDelete(null);
-    }
-  }, [isDeleting]);
 
   return (
     <div className="p-4 lg:p-6">
@@ -105,29 +31,26 @@ export default function AdminReviewsPage() {
       </div>
 
       <AdminReviewsTable
-        reviews={reviews}
-        pagination={pagination}
-        onPageChange={handlePageChange}
-        onSearch={handleSearch}
-        onSort={handleSort}
-        onEdit={handleEdit}
-        onDelete={handleDeleteRequest}
+        reviews={reviews.rows}
+        pagination={reviews.pagination}
+        onPageChange={reviews.setPage}
+        onSearch={reviews.setSearch}
+        onSort={(field, order) => reviews.setSort({ field, order })}
+        onEdit={(id) => router.push(`/admin/reviews/${id}/edit`)}
+        onDelete={deletion.request}
         canDelete={canDelete}
-        isLoading={loading}
-        currentSort={currentSort}
-        currentSearch={currentSearch}
+        isLoading={reviews.isLoading}
+        currentSort={reviews.sort}
+        currentSearch={reviews.search}
       />
 
       <AdminDeleteDialog
-        isOpen={reviewToDelete !== null}
+        {...deletion.dialog}
         translationNamespace="admin.reviews.deleteDialog"
         warningParams={{
-          player: reviewToDelete?.playerName ?? "",
-          game: reviewToDelete?.gameTitle ?? "",
+          player: deletion.target?.playerName ?? "",
+          game: deletion.target?.gameTitle ?? "",
         }}
-        onClose={handleDeleteClose}
-        onConfirm={handleDeleteConfirm}
-        isDeleting={isDeleting}
       />
     </div>
   );
