@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getStripe, PLATFORM_FEE_RATE } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
+import { isPayableSession } from "@/lib/services/coaching-lifecycle";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
@@ -29,10 +30,8 @@ export async function POST(request: NextRequest) {
     if (!session) return NextResponse.json({ error: "Session not found" }, { status: 404 });
     if (session.student_id !== user.id)
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    if (session.status !== "confirmed")
+    if (!isPayableSession({ status: session.status, paymentStatus: session.payment_status }))
       return NextResponse.json({ error: "Session is not awaiting payment" }, { status: 409 });
-    if (session.payment_status !== "pending")
-      return NextResponse.json({ error: "Already paid" }, { status: 409 });
 
     // Get coach's Stripe account
     const { data: coach } = await supabase
@@ -89,7 +88,8 @@ export async function POST(request: NextRequest) {
         platform_fee: amount * PLATFORM_FEE_RATE,
         coach_payout: amount * (1 - PLATFORM_FEE_RATE),
       })
-      .eq("id", sessionId);
+      .eq("id", sessionId)
+      .eq("payment_status", "pending");
 
     return NextResponse.json({ url: checkoutSession.url });
   } catch (error) {

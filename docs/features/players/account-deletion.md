@@ -44,7 +44,8 @@ API :
   ouverte est révoquée aussitôt) ; compte OAuth sans mot de passe : connexion de
   moins de 10 minutes.
 - Mot de confirmation : `SUPPRIMER` (fr) / `DELETE` (en).
-- Refus tant qu'un paiement de coaching est retenu (`payment_status = 'paid'`)
+- Refus tant qu'un paiement de coaching est retenu ou qu'un remboursement est dû
+  (`payment_status` `paid` ou `refund_pending`)
   ou qu'un litige est ouvert / en cours d'instruction.
 - `profiles.deletion_requested_at` / `deletion_scheduled_for` sont écrits par le
   service role uniquement (trigger `protect_profile_deletion_state`).
@@ -80,7 +81,7 @@ auth (sessions, identités).
 
 ### Données conservées (obligation légale)
 
-- `coaching_sessions` avec `payment_status` `paid` / `released` / `refunded` :
+- `coaching_sessions` avec `payment_status` `paid` / `refund_pending` / `released` / `refunded` :
   conservées 10 ans (art. L123-22 Code de commerce) avec `student_id`,
   `coach_id`, `cancelled_by` et `cancellation_reason` vidés.
 - `coaching_disputes.resolved_by` passe à `NULL` quand l'admin est supprimé.

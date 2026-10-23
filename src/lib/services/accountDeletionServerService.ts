@@ -48,7 +48,7 @@ export async function getDeletionStatus(userId: string): Promise<AccountDeletion
   return toStatus(data as DeletionRow | null);
 }
 
-/** Money held in escrow or an open dispute must be settled before deletion. */
+/** Money held in escrow, a refund still owed, or an open dispute must be settled before deletion. */
 export async function findDeletionBlocker(userId: string): Promise<AccountDeletionBlocker | null> {
   const admin = getSupabaseAdmin();
 
@@ -64,7 +64,7 @@ export async function findDeletionBlocker(userId: string): Promise<AccountDeleti
   const { count: heldPayments, error: sessionError } = await admin
     .from("coaching_sessions")
     .select("id", { count: "exact", head: true })
-    .eq("payment_status", "paid")
+    .in("payment_status", ["paid", "refund_pending"])
     .or(parties.join(","));
   if (sessionError) throw new Error(sessionError.message);
   if ((heldPayments ?? 0) > 0) return "coachingPaymentPending";

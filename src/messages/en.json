@@ -5066,6 +5066,9 @@
       "paymentError": "Payment error.",
       "paymentCancelled": "Payment cancelled.",
       "paymentDone": "Payment done",
+      "refundIssued": "Session cancelled. The refund has been issued.",
+      "refundPending": "Session cancelled. The refund is awaiting confirmation from Stripe.",
+      "actionError": "Could not update the session. Refresh the page and try again.",
       "loginRequired": "Log in to view your coaching sessions.",
       "login": "Log in"
     },

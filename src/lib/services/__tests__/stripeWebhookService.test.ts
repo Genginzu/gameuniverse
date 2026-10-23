@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import type Stripe from "stripe";
 
 vi.mock("@/lib/supabase-admin", () => ({ getSupabaseAdmin: vi.fn() }));
@@ -6,52 +6,52 @@ vi.mock("@/lib/stripe", () => ({ getStripe: vi.fn() }));
 vi.mock("@/lib/logger", () => ({ logger: { info: vi.fn(), error: vi.fn() } }));
 
 import { claimEvent, handleStripeEvent } from "@/lib/services/stripeWebhookService";
-
-function makeDb(session: { payment_amount: number; payment_status: string } | null) {
-  const updateEqStatus = vi.fn().mockResolvedValue({ error: null });
-  const update = vi.fn(() => ({ eq: vi.fn(() => ({ eq: updateEqStatus })) }));
-  const maybeSingle = vi.fn().mockResolvedValue({ data: session, error: null });
-  const select = vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle })) }));
-  const insert = vi.fn();
-  const db = { from: vi.fn(() => ({ select, update, insert })) };
-  return { db, update, insert };
-}
+import { createCoachingLifecycle } from "@/lib/services/coaching-lifecycle";
+import { aSession, createLifecycleHarness } from "@/test-helpers/coaching-lifecycle-fakes";
 
 function checkoutEvent(payment_status: string, amount_total: number): Stripe.Event {
   return {
     id: "evt_1",
     type: "checkout.session.completed",
     data: {
-      object: { payment_status, amount_total, metadata: { coaching_session_id: "s1" } },
+      object: { payment_status, amount_total, metadata: { coaching_session_id: "session-1" } },
     },
   } as unknown as Stripe.Event;
 }
 
-describe("handleStripeEvent — checkout.session.completed", () => {
-  beforeEach(() => vi.clearAllMocks());
+function refundEvent(amount_refunded: number): Stripe.Event {
+  return {
+    id: "evt_2",
+    type: "charge.refunded",
+    data: { object: { payment_intent: "pi_1", amount_refunded } },
+  } as unknown as Stripe.Event;
+}
 
-  it("marks a pending session paid when Stripe says paid and the amount matches", async () => {
-    const { db, update } = makeDb({ payment_amount: 40, payment_status: "pending" });
-    await handleStripeEvent(checkoutEvent("paid", 4000), db);
-    expect(update).toHaveBeenCalledWith({ payment_status: "paid" });
+function harness(paymentStatus: "pending" | "paid" = "pending") {
+  const h = createLifecycleHarness([aSession({ status: "confirmed", paymentStatus })], {
+    paymentIntents: { pi_1: "session-1" },
+  });
+  return { ...h, lifecycle: createCoachingLifecycle(h.deps) };
+}
+
+describe("handleStripeEvent — adapter onto the coaching lifecycle", () => {
+  it("records a paid checkout and notifies the coach", async () => {
+    const { lifecycle, db, recorded } = harness();
+    await handleStripeEvent(checkoutEvent("paid", 4000), {}, lifecycle);
+    expect(db.get("session-1")?.paymentStatus).toBe("paid");
+    expect(recorded.paid).toHaveLength(1);
   });
 
   it("ignores an unpaid checkout (async payment still pending)", async () => {
-    const { db, update } = makeDb({ payment_amount: 40, payment_status: "pending" });
-    await handleStripeEvent(checkoutEvent("unpaid", 4000), db);
-    expect(update).not.toHaveBeenCalled();
+    const { lifecycle, db } = harness();
+    await handleStripeEvent(checkoutEvent("unpaid", 4000), {}, lifecycle);
+    expect(db.get("session-1")?.paymentStatus).toBe("pending");
   });
 
-  it("refuses to mark paid when the charged amount differs from the session price", async () => {
-    const { db, update } = makeDb({ payment_amount: 40, payment_status: "pending" });
-    await handleStripeEvent(checkoutEvent("paid", 50), db);
-    expect(update).not.toHaveBeenCalled();
-  });
-
-  it("does nothing for a session that is no longer pending", async () => {
-    const { db, update } = makeDb({ payment_amount: 40, payment_status: "refunded" });
-    await handleStripeEvent(checkoutEvent("paid", 4000), db);
-    expect(update).not.toHaveBeenCalled();
+  it("records charge.refunded with the amount reported by Stripe", async () => {
+    const { lifecycle, db } = harness("paid");
+    await handleStripeEvent(refundEvent(4000), {}, lifecycle);
+    expect(db.get("session-1")).toMatchObject({ paymentStatus: "refunded", refundAmount: 40 });
   });
 });
 
