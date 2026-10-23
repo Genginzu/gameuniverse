@@ -10,6 +10,9 @@
  *   - `EditorialMobileNav` (hamburger + overlay full-screen, visible sous lg).
  *   - `children` : le contenu de la page.
  *
+ * Monte `EditorialNavigationProvider` : le header, le rail, la sub-sidebar et
+ * la nav mobile lisent le même Navigation Model.
+ *
  * L'état d'ouverture de la sub-sidebar est géré ici via `useEditorialRailState`
  * (persistance localStorage incluse). Le rail et la sub-sidebar sont synchronisés.
  *
@@ -23,11 +26,8 @@ import type { ReactNode } from "react";
 
 import { EditorialFooter } from "./EditorialFooter";
 import { EditorialMobileNav } from "./EditorialMobileNav";
-import {
-  EditorialRail,
-  EDITORIAL_SPACES,
-  type EditorialSpace,
-} from "./EditorialRail";
+import { EditorialNavigationProvider } from "./EditorialNavigationProvider";
+import { EditorialRail } from "./EditorialRail";
 import { EditorialSubSidebar } from "./EditorialSubSidebar";
 import { useEditorialRailState } from "@/hooks/useEditorialRailState";
 
@@ -64,46 +64,44 @@ export function EditorialLayout({
 }: EditorialLayoutProps) {
   const { openSpace, toggleSpace, closeSpace } = useEditorialRailState();
 
-  const space: EditorialSpace | null = openSpace
-    ? EDITORIAL_SPACES.find((s) => s.key === openSpace) ?? null
-    : null;
-
   return (
-    <div className={`editorial-layout ${className}`.trim()}>
-      {header && (
-        <header className="editorial-layout-header" data-testid="editorial-layout-header">
-          {header}
-        </header>
-      )}
+    <EditorialNavigationProvider>
+      <div className={`editorial-layout ${className}`.trim()}>
+        {header && (
+          <header className="editorial-layout-header" data-testid="editorial-layout-header">
+            {header}
+          </header>
+        )}
 
-      <div className="editorial-layout-body">
-        {/* Rail vertical — caché sous lg */}
-        <div className="editorial-layout-rail">
-          <EditorialRail openSpace={openSpace} onToggleSpace={toggleSpace} />
+        <div className="editorial-layout-body">
+          {/* Rail vertical — caché sous lg */}
+          <div className="editorial-layout-rail">
+            <EditorialRail openSpace={openSpace} onToggleSpace={toggleSpace} />
+          </div>
+
+          {/* Sub-sidebar — caché sous lg */}
+          <div className="editorial-layout-sub-sidebar">
+            <EditorialSubSidebar spaceKey={openSpace} onClose={closeSpace} />
+          </div>
+
+          {/* Colonne de contenu : main + footer empilés, décalés du rail/sidebar */}
+          <div className="editorial-layout-content-column">
+            <main className="editorial-layout-main" data-testid="editorial-layout-main">
+              {children}
+            </main>
+
+            {/* Footer rendu sous le contenu (au milieu), pas sous le rail */}
+            {!disableFooter && <EditorialFooter />}
+          </div>
         </div>
 
-        {/* Sub-sidebar — caché sous lg */}
-        <div className="editorial-layout-sub-sidebar">
-          <EditorialSubSidebar space={space} onClose={closeSpace} />
-        </div>
-
-        {/* Colonne de contenu : main + footer empilés, décalés du rail/sidebar */}
-        <div className="editorial-layout-content-column">
-          <main className="editorial-layout-main" data-testid="editorial-layout-main">
-            {children}
-          </main>
-
-          {/* Footer rendu sous le contenu (au milieu), pas sous le rail */}
-          {!disableFooter && <EditorialFooter />}
-        </div>
+        {/* Hamburger + overlay mobile — visible uniquement sous lg */}
+        {!disableMobileNav && (
+          <div className="editorial-layout-mobile-nav">
+            <EditorialMobileNav />
+          </div>
+        )}
       </div>
-
-      {/* Hamburger + overlay mobile — visible uniquement sous lg */}
-      {!disableMobileNav && (
-        <div className="editorial-layout-mobile-nav">
-          <EditorialMobileNav />
-        </div>
-      )}
-    </div>
+    </EditorialNavigationProvider>
   );
 }

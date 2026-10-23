@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 
 import { useNotifications } from "@/hooks/useNotifications";
 import { usePendingRequestCount } from "@/hooks/usePendingRequestCount";
+import type { NavBadge } from "@/types/navigation";
 
 interface CountBadgeProps {
   count: number;
@@ -22,25 +23,24 @@ function CountBadge({ count, ariaLabel }: CountBadgeProps) {
   );
 }
 
-/**
- * Counter badge rendered next to editorial navigation links that carry a
- * live count (unread notifications, pending friend requests).
- */
-export function NavCountBadge({ href }: { href: string }) {
+function UnreadNotificationsBadge() {
   const t = useTranslations("editorial.subSidebar");
   const { unreadCount } = useNotifications();
-  const { count: pendingFriends } = usePendingRequestCount();
+  return <CountBadge count={unreadCount} ariaLabel={t("unreadBadge", { count: unreadCount })} />;
+}
 
-  if (href === "/notifications") {
-    return <CountBadge count={unreadCount} ariaLabel={t("unreadBadge", { count: unreadCount })} />;
-  }
-  if (href === "/friends") {
-    return (
-      <CountBadge
-        count={pendingFriends}
-        ariaLabel={t("pendingFriendsBadge", { count: pendingFriends })}
-      />
-    );
-  }
+function PendingFriendsBadge() {
+  const t = useTranslations("editorial.subSidebar");
+  const { count } = usePendingRequestCount();
+  return <CountBadge count={count} ariaLabel={t("pendingFriendsBadge", { count })} />;
+}
+
+/**
+ * Live counter rendered next to a navigation link carrying a `badge` in the
+ * Navigation Model. Only the hook of the requested counter runs.
+ */
+export function NavCountBadge({ badge }: { badge?: NavBadge }) {
+  if (badge === "unreadNotifications") return <UnreadNotificationsBadge />;
+  if (badge === "pendingFriends") return <PendingFriendsBadge />;
   return null;
 }

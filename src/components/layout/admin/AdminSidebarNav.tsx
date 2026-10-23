@@ -4,6 +4,8 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
+import { resolveActiveHref } from "@/lib/navigation";
+
 interface NavItem {
   href: string;
   icon: string;
@@ -94,18 +96,21 @@ interface AdminSidebarNavProps {
   onLinkClick: () => void;
 }
 
+// Every admin link owns its sub-pages (edit forms, detail views).
+const MATCHABLE_ITEMS = NAV_CATEGORIES.flatMap((category) =>
+  category.items.map((item) => ({ href: item.href, match: "prefix" as const }))
+);
+
 export function AdminSidebarNav({ onLinkClick }: AdminSidebarNavProps) {
   const t = useTranslations("admin");
   const pathname = usePathname();
 
-  const isActive = (path: string) => {
-    const normalized = pathname.replace(/^\/(fr|en)/, "") || "/";
-    return normalized === path || normalized.startsWith(path + "/");
-  };
+  // Most specific link wins: /admin/achievements/players does not also light /admin/achievements.
+  const activeHref = resolveActiveHref(MATCHABLE_ITEMS, { pathname });
 
   const linkClasses = (path: string) =>
     `flex items-center rounded-xl px-3 py-2.5 text-sm font-medium min-h-[44px] ${
-      isActive(path)
+      path === activeHref
         ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white"
         : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
     }`;

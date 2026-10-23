@@ -2,38 +2,36 @@
 
 /**
  * EditorialSubSidebar : panneau secondaire 220px qui glisse depuis la
- * gauche, à droite du rail (F0-08). Affiche les liens d'un espace
- * (Games, Esport, Library, Community, Coaching).
+ * gauche, à droite du rail (F0-08). Affiche les liens d'un Space, puis ses
+ * Membership Links (mes groupes / mes communautés).
  *
  * Comportement :
- * - Slide-in de 220px (animation CSS) quand `space` est non-null
- * - Largeur 0 + retiré du flux quand `space` est null
+ * - Slide-in de 220px (animation CSS) quand `spaceKey` est non-null
+ * - Largeur 0 + retiré du flux quand `spaceKey` est null
  * - Fermeture sur Escape, clic en dehors, ou clic sur un lien
- * - Indicateur visuel sur le lien actif (basé sur le pathname courant)
  * - Pas de backdrop-blur (refonte éditoriale)
  *
- * L'état d'ouverture est géré par le parent via `useEditorialRailState`
- * (ce composant est purement contrôlé). Tous les libellés visibles
- * passent par next-intl.
+ * Pure mise en page : liens, libellés et état actif viennent de
+ * `useEditorialNavigation()`. L'état d'ouverture est géré par le parent via
+ * `useEditorialRailState`.
  *
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
-import { Link, usePathname } from "@/i18n/navigation";
-import { LazyImage } from "@/components/ui/lazy-image";
-import { useMyGroups } from "@/hooks/useMyGroups";
-import { useMyCommunities } from "@/hooks/useMyCommunities";
+import { Link } from "@/i18n/navigation";
+import { useEditorialNavigation } from "@/hooks/useEditorialNavigation";
+import type { NavSpaceKey } from "@/types/navigation";
 
-import type { EditorialSpace } from "./EditorialRail";
+import { MembershipAvatar } from "./MembershipAvatar";
 import { NavCountBadge } from "./NavCountBadge";
 
 interface EditorialSubSidebarProps {
   /** Space affiché. `null` = fermée. */
-  space: EditorialSpace | null;
+  spaceKey: NavSpaceKey | null;
   /** Callback de fermeture (Escape, ╳, clic en dehors). */
   onClose: () => void;
   /**
@@ -43,56 +41,53 @@ interface EditorialSubSidebarProps {
   closeOnNavigate?: boolean;
 }
 
-export function EditorialSubSidebar({
-  space,
-  onClose,
-  closeOnNavigate = true,
-}: EditorialSubSidebarProps) {
-  const isOpen = space !== null;
-  const pathname = usePathname();
-  const asideRef = useRef<HTMLElement>(null);
-  const t = useTranslations("editorial");
-
-  // Toujours appelés (règles des Hooks) ; le rendu ci-dessous décide lequel utiliser.
-  const { groups: myGroups, isLoading: isLoadingMyGroups } = useMyGroups();
-  const { communities: myCommunities, isLoading: isLoadingMyCommunities } = useMyCommunities();
-
-  // Escape closes
+function useDismiss(isOpen: boolean, onClose: () => void, asideRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
+      if (event.key === "Escape") onClose();
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  // Click outside closes
-  useEffect(() => {
-    if (!isOpen) return;
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Node | null;
       const aside = asideRef.current;
-      if (!aside || !target) return;
-      if (aside.contains(target)) return;
-      // Aussi ignorer les clics sur le rail (le toggle gère sa propre logique)
+      if (!aside || !target || aside.contains(target)) return;
+      // Le rail gère son propre toggle.
       const rail = document.querySelector(".editorial-rail");
       if (rail && rail.contains(target)) return;
       onClose();
     };
-    // Utilise pointerdown pour réagir avant que le focus change
+    window.addEventListener("keydown", handleKeyDown);
+    // pointerdown pour réagir avant que le focus change
     window.addEventListener("pointerdown", handlePointerDown);
-    return () => window.removeEventListener("pointerdown", handlePointerDown);
-  }, [isOpen, onClose]);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [isOpen, onClose, asideRef]);
+}
 
-  const spaceLabel = space ? t(`spaces.${space.key}`) : "";
+export function EditorialSubSidebar({
+  spaceKey,
+  onClose,
+  closeOnNavigate = true,
+}: EditorialSubSidebarProps) {
+  const t = useTranslations("editorial");
+  const { spaces } = useEditorialNavigation();
+  const space = spaceKey ? (spaces.find((s) => s.key === spaceKey) ?? null) : null;
+  const isOpen = space !== null;
+  const asideRef = useRef<HTMLElement>(null);
+
+  useDismiss(isOpen, onClose, asideRef);
+
+  const handleNavigate = () => {
+    if (closeOnNavigate) onClose();
+  };
+  const navAriaLabel = space ? t("subSidebar.navAriaLabel", { space: space.label }) : undefined;
 
   return (
     <aside
       ref={asideRef}
-      aria-label={space ? t("subSidebar.navAriaLabel", { space: spaceLabel }) : undefined}
+      aria-label={navAriaLabel}
       aria-hidden={!isOpen}
       className={`editorial-sub-sidebar ${isOpen ? "is-open" : ""}`.trim()}
       data-space={space?.key}
@@ -100,7 +95,7 @@ export function EditorialSubSidebar({
       {space && (
         <div className="editorial-sub-sidebar-inner">
           <header className="editorial-sub-sidebar-header">
-            <h2 className="editorial-display text-lg text-white">{spaceLabel}</h2>
+            <h2 className="editorial-display text-lg text-white">{space.label}</h2>
             <button
               type="button"
               onClick={onClose}
@@ -111,133 +106,45 @@ export function EditorialSubSidebar({
             </button>
           </header>
 
-          <nav
-            aria-label={t("subSidebar.navAriaLabel", { space: spaceLabel })}
-            className="editorial-sub-sidebar-nav"
-          >
-            {space.links.map((link) => {
-              const active = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`editorial-sub-sidebar-link ${active ? "is-active" : ""}`.trim()}
-                  aria-current={active ? "page" : undefined}
-                  onClick={() => {
-                    if (closeOnNavigate) {
-                      onClose();
-                    }
-                  }}
-                >
-                  <Icon icon={link.icon} className="size-4" aria-hidden />
-                  <span>{t(`links.${space.key}.${link.labelKey}`)}</span>
-                  <NavCountBadge href={link.href} />
-                </Link>
-              );
-            })}
+          <nav aria-label={navAriaLabel} className="editorial-sub-sidebar-nav">
+            {space.links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`editorial-sub-sidebar-link ${link.isActive ? "is-active" : ""}`.trim()}
+                aria-current={link.isActive ? "page" : undefined}
+                onClick={handleNavigate}
+              >
+                <Icon icon={link.icon} className="size-4" aria-hidden />
+                <span>{link.label}</span>
+                <NavCountBadge badge={link.badge} />
+              </Link>
+            ))}
 
-            {space.key === "groups" && (
-              <MembershipSection
-                items={myGroups}
-                isLoading={isLoadingMyGroups}
-                basePath="/groups"
-                icon="lucide:users"
-                emptyKey="noMyGroups"
-                closeOnNavigate={closeOnNavigate}
-                onNavigate={onClose}
-              />
-            )}
-
-            {space.key === "communities" && (
-              <MembershipSection
-                items={myCommunities}
-                isLoading={isLoadingMyCommunities}
-                basePath="/communities"
-                icon="lucide:globe-2"
-                emptyKey="noMyCommunities"
-                closeOnNavigate={closeOnNavigate}
-                onNavigate={onClose}
-              />
+            {space.membership && (
+              <>
+                <span aria-hidden className="editorial-sub-sidebar-divider" />
+                {space.membership.isLoading ? (
+                  <p className="editorial-sub-sidebar-empty">{t("subSidebar.loading")}</p>
+                ) : (
+                  space.membership.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`editorial-sub-sidebar-link ${link.isActive ? "is-active" : ""}`.trim()}
+                      aria-current={link.isActive ? "page" : undefined}
+                      onClick={handleNavigate}
+                    >
+                      <MembershipAvatar link={link} />
+                      <span className="truncate">{link.label}</span>
+                    </Link>
+                  ))
+                )}
+              </>
             )}
           </nav>
         </div>
       )}
     </aside>
-  );
-}
-
-interface MembershipItem {
-  id: string;
-  name: string;
-  slug: string;
-  imageUrl: string | null;
-}
-
-interface MembershipSectionProps {
-  items: MembershipItem[];
-  isLoading: boolean;
-  basePath: string;
-  icon: string;
-  /** Sous-clé i18n dans `editorial.subSidebar.{emptyKey}`. */
-  emptyKey: string;
-  closeOnNavigate: boolean;
-  onNavigate: () => void;
-}
-
-/**
- * Section dynamique "mes groupes" / "mes communautés" : séparateur puis la
- * liste (triée alphabétiquement par le serveur) des espaces dont
- * l'utilisateur est membre. Masquée si non authentifié (hooks retournent []).
- */
-function MembershipSection({
-  items,
-  isLoading,
-  basePath,
-  icon,
-  emptyKey,
-  closeOnNavigate,
-  onNavigate,
-}: MembershipSectionProps) {
-  const t = useTranslations("editorial.subSidebar");
-  const pathname = usePathname();
-
-  if (!isLoading && items.length === 0) return null;
-
-  return (
-    <>
-      <span aria-hidden className="editorial-sub-sidebar-divider" />
-      {isLoading ? (
-        <p className="editorial-sub-sidebar-empty">{t("loading")}</p>
-      ) : items.length === 0 ? (
-        <p className="editorial-sub-sidebar-empty">{t(emptyKey)}</p>
-      ) : (
-        items.map((item) => {
-          const href = `${basePath}/${item.slug}`;
-          const active = pathname === href;
-          return (
-            <Link
-              key={item.id}
-              href={href}
-              className={`editorial-sub-sidebar-link ${active ? "is-active" : ""}`.trim()}
-              aria-current={active ? "page" : undefined}
-              onClick={() => {
-                if (closeOnNavigate) {
-                  onNavigate();
-                }
-              }}
-            >
-              <span className="editorial-sub-sidebar-avatar" aria-hidden>
-                {item.imageUrl ? (
-                  <LazyImage src={item.imageUrl} alt="" fill sizes="20px" className="object-cover" />
-                ) : (
-                  <Icon icon={icon} className="size-4" />
-                )}
-              </span>
-              <span className="truncate">{item.name}</span>
-            </Link>
-          );
-        })
-      )}
-    </>
   );
 }

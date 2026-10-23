@@ -93,6 +93,7 @@
 | [achievements.md](systems/achievements.md)                             | Système de succès              |
 | [global-search.md](systems/global-search.md)                           | Recherche globale              |
 | [navigation-sidebar.md](systems/navigation-sidebar.md)                 | Sidebar de navigation          |
+| [navigation-model.md](systems/navigation-model.md)                     | Navigation Model éditorial     |
 | [ui-redesign.md](systems/ui-redesign.md)                               | Refonte UI gaming (thème néon) |
 | [background-customization.md](systems/background-customization.md)     | Personnalisation arrière-plan  |
 | [image-crop-upload.md](systems/image-crop-upload.md)                   | Crop & upload d'images         |
