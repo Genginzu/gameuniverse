@@ -1,23 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 const OWNER_ID = "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa";
 
-const { mockSearchCommunities, mockCreateCommunity, mockGetUser } = vi.hoisted(() => ({
+const { mockSearchCommunities, mockCreateCommunity } = vi.hoisted(() => ({
   mockSearchCommunities: vi.fn(),
   mockCreateCommunity: vi.fn(),
-  mockGetUser: vi.fn(),
 }));
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: OWNER_ID }) });
 
 vi.mock("@/lib/services/communityServerService", () => ({
   CommunityServerService: {
     searchCommunities: mockSearchCommunities,
     createCommunity: mockCreateCommunity,
   },
-}));
-
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => ({ auth: { getUser: mockGetUser } })),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -42,6 +40,13 @@ const SAMPLE_COMMUNITY = {
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
 };
+
+function createRequest(body: object) {
+  return new NextRequest("http://localhost/api/communities", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
 
 describe("/api/communities — GET", () => {
   beforeEach(() => {
@@ -90,16 +95,11 @@ describe("/api/communities — GET", () => {
 describe("/api/communities — POST", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetUser.mockResolvedValue({ data: { user: { id: OWNER_ID } }, error: null });
     mockCreateCommunity.mockResolvedValue(SAMPLE_COMMUNITY);
   });
 
   it("returns 201 with the created community", async () => {
-    const req = new NextRequest("http://localhost/api/communities", {
-      method: "POST",
-      body: JSON.stringify({ name: "RPG Community" }),
-    });
-    const res = await POST(req);
+    const res = await POST(createRequest({ name: "RPG Community" }));
 
     expect(res.status).toBe(201);
     expect(mockCreateCommunity).toHaveBeenCalledWith(
@@ -109,23 +109,35 @@ describe("/api/communities — POST", () => {
   });
 
   it("returns 401 when not authenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
-    const req = new NextRequest("http://localhost/api/communities", {
-      method: "POST",
-      body: JSON.stringify({ name: "RPG Community" }),
-    });
-    const res = await POST(req);
+    routeEnv.signOut();
+    const res = await POST(createRequest({ name: "RPG Community" }));
 
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   it("returns 400 on invalid input", async () => {
-    const req = new NextRequest("http://localhost/api/communities", {
-      method: "POST",
-      body: JSON.stringify({ name: "" }),
-    });
-    const res = await POST(req);
+    const res = await POST(createRequest({ name: "" }));
 
     expect(res.status).toBe(400);
+    expect(await res.json()).toMatchObject({ code: "validation" });
+  });
+
+  it("returns 403 when the account is suspended", async () => {
+    routeEnv.suspend("2099-01-01T00:00:00Z");
+    const res = await POST(createRequest({ name: "RPG Community" }));
+
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ code: "suspended" });
+    expect(mockCreateCommunity).not.toHaveBeenCalled();
+  });
+
+  it("returns 429 when the groupCreate rate limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(60);
+    const res = await POST(createRequest({ name: "RPG Community" }));
+
+    expect(res.status).toBe(429);
+    expect(routeEnv.rateLimitHits[0]).toContain("groupCreate");
+    expect(mockCreateCommunity).not.toHaveBeenCalled();
   });
 });

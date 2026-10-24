@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute } from "@/lib/api/route";
 import { CommunityServerService } from "@/lib/services/communityServerService";
 import { createCommunitySchema } from "@/lib/validations/community";
 import { logger } from "@/lib/logger";
@@ -55,31 +55,11 @@ export async function GET(request: NextRequest) {
  * POST /api/communities — Create a new community.
  * Authentication required. The creator becomes the owner (auto-added via DB trigger).
  */
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const parsed = createCommunitySchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    const community = await CommunityServerService.createCommunity(user.id, parsed.data);
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "groupCreate", writesContent: true, body: createCommunitySchema },
+  async ({ user, body }) => {
+    const community = await CommunityServerService.createCommunity(user.id, body);
 
     return NextResponse.json({ community }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in communities POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

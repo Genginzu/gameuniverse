@@ -21,7 +21,7 @@ entre toutes les langues configurées (actuellement fr/en).
 - **Annulation** : possibilité d'annuler un traitement par lot en cours (les
   traductions déjà sauvegardées sont conservées)
 - **Recherche et pagination** : filtrage par titre/nom, 20 éléments par page
-- **Protection admin** : toutes les routes protégées par `requireAdmin()`
+- **Protection admin** : toutes les routes protégées par `defineRoute({ auth: "admin" })`
 - **Internationalisation** : namespace `admin.translations` avec clés FR/EN
 
 ### Types d'entités supportés
@@ -66,7 +66,7 @@ explicite `"VERCEL_AI_GATEWAY_API_KEY is not configured"`.
 ### Permissions
 
 Accès réservé aux utilisateurs avec le rôle **admin** (vérifié par
-`requireAdmin()` sur chaque route API).
+`defineRoute({ auth: "admin" })` sur chaque route API).
 
 ### Tables existantes
 

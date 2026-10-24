@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import { adminGuardResponse } from "@/lib/auth-admin";
+import { conflict, defineRoute, notFound, validationError } from "@/lib/api/route";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
 interface SimilarGameRow {
@@ -23,86 +24,75 @@ interface ResolvedSimilarGame {
   } | null;
 }
 
+const addSimilarGameSchema = z.object({
+  gameSlug: z.string().min(1),
+});
+
 /** GET — list similar games for a game */
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
+export const GET = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { id: gameId } = params;
+  const supabase = await createRouteHandlerClient();
 
-  try {
-    const { id: gameId } = await params;
-    const supabase = await createRouteHandlerClient();
+  const { data: rows, error } = await untypedTable(supabase, "game_similar_games")
+    .select("id, similar_igdb_id, similar_game_id, display_order")
+    .eq("game_id", gameId)
+    .order("display_order", { ascending: true });
 
-    const { data: rows, error } = await untypedTable(supabase, "game_similar_games")
-      .select("id, similar_igdb_id, similar_game_id, display_order")
-      .eq("game_id", gameId)
-      .order("display_order", { ascending: true });
-
-    if (error) {
-      logger.error("Failed to fetch similar games", { error });
-      return NextResponse.json({ error: "Failed to fetch similar games" }, { status: 500 });
-    }
-
-    // Resolve local game details
-    const resolvedIds = (rows as SimilarGameRow[])
-      .map((r) => r.similar_game_id)
-      .filter((id): id is string => id !== null);
-
-    const gameMap = new Map<
-      string,
-      { id: string; slug: string; title: string; coverImage: string | null }
-    >();
-
-    if (resolvedIds.length > 0) {
-      const { data: games } = await supabase
-        .from("games")
-        .select("id, slug, cover_image_url, game_translations(title, language_code)")
-        .in("id", resolvedIds);
-
-      for (const g of games ?? []) {
-        const translations = (g.game_translations ?? []) as Array<{
-          title: string;
-          language_code: string;
-        }>;
-        const t =
-          translations.find((tr) => tr.language_code === "fr") ||
-          translations.find((tr) => tr.language_code === "en") ||
-          translations[0];
-        gameMap.set(g.id, {
-          id: g.id,
-          slug: g.slug,
-          title: t?.title || g.slug,
-          coverImage: g.cover_image_url,
-        });
-      }
-    }
-
-    const result: ResolvedSimilarGame[] = (rows as SimilarGameRow[]).map((r) => ({
-      id: r.id,
-      similarIgdbId: r.similar_igdb_id,
-      displayOrder: r.display_order,
-      game: r.similar_game_id ? (gameMap.get(r.similar_game_id) ?? null) : null,
-    }));
-
-    return NextResponse.json(result);
-  } catch (error) {
-    logger.error("Error in similar games GET", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (error) {
+    logger.error("Failed to fetch similar games", { error });
+    return NextResponse.json({ error: "Failed to fetch similar games" }, { status: 500 });
   }
-}
+
+  // Resolve local game details
+  const resolvedIds = (rows as SimilarGameRow[])
+    .map((r) => r.similar_game_id)
+    .filter((id): id is string => id !== null);
+
+  const gameMap = new Map<
+    string,
+    { id: string; slug: string; title: string; coverImage: string | null }
+  >();
+
+  if (resolvedIds.length > 0) {
+    const { data: games } = await supabase
+      .from("games")
+      .select("id, slug, cover_image_url, game_translations(title, language_code)")
+      .in("id", resolvedIds);
+
+    for (const g of games ?? []) {
+      const translations = (g.game_translations ?? []) as Array<{
+        title: string;
+        language_code: string;
+      }>;
+      const t =
+        translations.find((tr) => tr.language_code === "fr") ||
+        translations.find((tr) => tr.language_code === "en") ||
+        translations[0];
+      gameMap.set(g.id, {
+        id: g.id,
+        slug: g.slug,
+        title: t?.title || g.slug,
+        coverImage: g.cover_image_url,
+      });
+    }
+  }
+
+  const result: ResolvedSimilarGame[] = (rows as SimilarGameRow[]).map((r) => ({
+    id: r.id,
+    similarIgdbId: r.similar_igdb_id,
+    displayOrder: r.display_order,
+    game: r.similar_game_id ? (gameMap.get(r.similar_game_id) ?? null) : null,
+  }));
+
+  return NextResponse.json(result);
+});
 
 /** POST — add a similar game by slug (local game) */
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
-
-  try {
-    const { id: gameId } = await params;
-    const body = await request.json();
-    const { gameSlug } = body as { gameSlug?: string };
-
-    if (!gameSlug) {
-      return NextResponse.json({ error: "gameSlug is required" }, { status: 400 });
-    }
+export const POST = defineRoute(
+  { auth: "admin", body: addSimilarGameSchema },
+  async ({ params, body }) => {
+    const { id: gameId } = params;
+    const { gameSlug } = body;
 
     const supabase = await createRouteHandlerClient();
 
@@ -114,14 +104,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .single();
 
     if (findError || !targetGame) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+      throw notFound("Game not found");
     }
 
     if (targetGame.id === gameId) {
-      return NextResponse.json(
-        { error: "Cannot add a game as similar to itself" },
-        { status: 400 }
-      );
+      throw validationError(undefined, "Cannot add a game as similar to itself");
     }
 
     // Get current max display_order
@@ -150,55 +137,36 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .single();
 
     if (insertError) {
-      if (insertError.code === "23505") {
-        return NextResponse.json(
-          { error: "This game is already in similar games" },
-          { status: 409 }
-        );
-      }
+      if (insertError.code === "23505") throw conflict("This game is already in similar games");
       logger.error("Failed to add similar game", { error: insertError });
       return NextResponse.json({ error: "Failed to add similar game" }, { status: 500 });
     }
 
     return NextResponse.json({ id: inserted.id }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in similar games POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /** DELETE — remove a similar game entry */
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
+export const DELETE = defineRoute({ auth: "admin" }, async ({ request, params }) => {
+  const { id: gameId } = params;
+  const { searchParams } = new URL(request.url);
+  const entryId = searchParams.get("entryId");
 
-  try {
-    const { id: gameId } = await params;
-    const { searchParams } = new URL(request.url);
-    const entryId = searchParams.get("entryId");
-
-    if (!entryId) {
-      return NextResponse.json({ error: "entryId query param is required" }, { status: 400 });
-    }
-
-    const supabase = await createRouteHandlerClient();
-
-    const { error } = await untypedTable(supabase, "game_similar_games")
-      .delete()
-      .eq("id", entryId)
-      .eq("game_id", gameId);
-
-    if (error) {
-      logger.error("Failed to delete similar game", { error });
-      return NextResponse.json({ error: "Failed to delete similar game" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in similar games DELETE", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (!entryId) {
+    throw validationError(undefined, "entryId query param is required");
   }
-}
+
+  const supabase = await createRouteHandlerClient();
+
+  const { error } = await untypedTable(supabase, "game_similar_games")
+    .delete()
+    .eq("id", entryId)
+    .eq("game_id", gameId);
+
+  if (error) {
+    logger.error("Failed to delete similar game", { error });
+    return NextResponse.json({ error: "Failed to delete similar game" }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+});

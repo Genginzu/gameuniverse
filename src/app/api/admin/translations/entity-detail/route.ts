@@ -1,9 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute, notFound } from "@/lib/api/route";
 import { getEntityTranslationDetail } from "@/lib/services/translationService";
 import { routing } from "@/i18n/routing";
-import { logger } from "@/lib/logger";
 import { z } from "zod";
 import type { EntityType } from "@/types/admin-translations";
 
@@ -29,48 +28,21 @@ const querySchema = z.object({
  * GET /api/admin/translations/entity-detail?type=games&entityId=xxx
  * Returns full translation detail for a single entity across all languages.
  */
-export async function GET(request: NextRequest) {
-  try {
-    await requireAdmin();
+export const GET = defineRoute({ auth: "admin", query: querySchema }, async ({ query }) => {
+  const supabase = await createRouteHandlerClient();
+  const detail = await getEntityTranslationDetail({
+    supabase,
+    entityType: query.type as EntityType,
+    entityId: query.entityId,
+    languages: routing.locales as unknown as string[],
+  });
 
-    const { searchParams } = new URL(request.url);
-    const parsed = querySchema.safeParse({
-      type: searchParams.get("type"),
-      entityId: searchParams.get("entityId"),
-    });
+  if (!detail) throw notFound("Entity not found");
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Invalid query parameters", details: parsed.error.issues },
-        { status: 400 }
-      );
+  return NextResponse.json(
+    { detail },
+    {
+      headers: { "Cache-Control": "no-store, max-age=0" },
     }
-
-    const supabase = await createRouteHandlerClient();
-    const detail = await getEntityTranslationDetail({
-      supabase,
-      entityType: parsed.data.type as EntityType,
-      entityId: parsed.data.entityId,
-      languages: routing.locales as unknown as string[],
-    });
-
-    if (!detail) {
-      return NextResponse.json({ error: "Entity not found" }, { status: 404 });
-    }
-
-    return NextResponse.json(
-      { detail },
-      {
-        headers: { "Cache-Control": "no-store, max-age=0" },
-      }
-    );
-  } catch (error) {
-    logger.error("Error in admin translations entity-detail GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
+  );
+});

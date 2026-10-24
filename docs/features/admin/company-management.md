@@ -34,7 +34,7 @@ Le module suit les mêmes patterns que la gestion des genres admin
 
 - **Rôle administrateur** : Seuls les utilisateurs avec le rôle admin peuvent
   accéder à cette fonctionnalité. Les routes API sont protégées par
-  `requireAdmin()` (403 si non admin).
+  `defineRoute({ auth: "admin" })` (401 si déconnecté, 403 si non admin).
 - **Tables en base** : `companies` et `game_companies` doivent exister dans
   Supabase.
 

@@ -1,15 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mocks ---
-
-const mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
 
 const mockSelectEqSingle = vi.fn();
 const mockUpdateEqSelectSingle = vi.fn();
 
 const mockSupabase = {
-  auth: { getUser: mockGetUser },
   from: vi.fn((table: string) => {
     void table;
     return {
@@ -44,7 +42,8 @@ vi.mock("@/lib/services/uploadService", () => ({
 
 import { POST } from "@/app/api/upload/confirm/route";
 
-const mockUser = { id: "user-uuid-123", email: "player@example.com" };
+const routeEnv = useTestRouteEnvironment();
+const mockUser = testUser("user", { id: "user-uuid-123", email: "player@example.com" });
 const validPublicUrl =
   "https://test-project.supabase.co/storage/v1/object/public/avatars/user-uuid-123/1700000000-abc123.webp";
 const oldAvatarUrl =
@@ -61,22 +60,34 @@ function createConfirmRequest(body: Record<string, unknown>) {
 describe("/api/upload/confirm POST", () => {
   beforeEach(() => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://test-project.supabase.co");
-    mockGetUser.mockReset();
     mockDeleteFile.mockReset();
     mockSelectEqSingle.mockReset();
     mockUpdateEqSelectSingle.mockReset();
     mockSupabase.from.mockClear();
+    routeEnv.signIn(mockUser);
   });
 
   afterEach(() => {
     vi.unstubAllEnvs();
   });
 
+  it.each([
+    ["suspended", () => routeEnv.suspend("2030-01-01T00:00:00Z"), 403],
+    ["rate_limited", () => routeEnv.exceedRateLimit(60), 429],
+  ])("should refuse with %s before touching the profile", async (code, arrange, status) => {
+    arrange();
+
+    const response = await POST(
+      createConfirmRequest({ context: "avatars", publicUrl: validPublicUrl })
+    );
+
+    expect(response.status).toBe(status);
+    expect(await response.json()).toMatchObject({ code });
+    expect(mockSupabase.from).not.toHaveBeenCalled();
+  });
+
   it("should return 401 when user is not authenticated", async () => {
-    mockGetUser.mockResolvedValue({
-      data: { user: null },
-      error: { message: "Not authenticated" },
-    });
+    routeEnv.signOut();
 
     const request = createConfirmRequest({
       context: "avatars",
@@ -86,11 +97,10 @@ describe("/api/upload/confirm POST", () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.error).toBe("Unauthorized");
+    expect(data).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   it("should return 400 for invalid context", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
     const request = createConfirmRequest({
       context: "invalid",
@@ -102,7 +112,6 @@ describe("/api/upload/confirm POST", () => {
   });
 
   it("should return 400 for missing publicUrl", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
     const request = createConfirmRequest({ context: "avatars" });
     const response = await POST(request);
@@ -111,7 +120,6 @@ describe("/api/upload/confirm POST", () => {
   });
 
   it("should return 400 for invalid publicUrl (not a Supabase Storage URL)", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
     const request = createConfirmRequest({
       context: "avatars",
@@ -140,7 +148,6 @@ describe("/api/upload/confirm POST", () => {
       "https://test-project.supabase.co/storage/v1/object/public/avatars/user-uuid-123/../victim-uuid/a.webp",
     ],
   ])("should return 400 and touch nothing for %s", async (_label, publicUrl) => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
     const response = await POST(createConfirmRequest({ context: "avatars", publicUrl }));
 
@@ -150,7 +157,6 @@ describe("/api/upload/confirm POST", () => {
   });
 
   it("should not delete a previous avatar that does not belong to the user", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockSelectEqSingle.mockResolvedValue({
       data: {
         avatar_url:
@@ -172,7 +178,6 @@ describe("/api/upload/confirm POST", () => {
   });
 
   it("should return 200 with success and profile on successful confirmation", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockSelectEqSingle.mockResolvedValue({
       data: { avatar_url: null },
       error: null,
@@ -200,7 +205,6 @@ describe("/api/upload/confirm POST", () => {
   });
 
   it("should update banner_url when context is banners", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockSelectEqSingle.mockResolvedValue({
       data: { banner_url: null },
       error: null,
@@ -230,7 +234,6 @@ describe("/api/upload/confirm POST", () => {
   });
 
   it("should delete old file from storage when replacing an existing image", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockSelectEqSingle.mockResolvedValue({
       data: { avatar_url: oldAvatarUrl },
       error: null,
@@ -252,7 +255,6 @@ describe("/api/upload/confirm POST", () => {
   });
 
   it("should NOT delete old file when there is no previous image", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockSelectEqSingle.mockResolvedValue({
       data: { avatar_url: null },
       error: null,
@@ -272,7 +274,6 @@ describe("/api/upload/confirm POST", () => {
   });
 
   it("should rollback (delete new file) when profile update fails", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockSelectEqSingle.mockResolvedValue({
       data: { avatar_url: null },
       error: null,
@@ -296,7 +297,6 @@ describe("/api/upload/confirm POST", () => {
   });
 
   it("should handle rollback failure gracefully and still return 500", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockSelectEqSingle.mockResolvedValue({
       data: { avatar_url: null },
       error: null,

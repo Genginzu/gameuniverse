@@ -8,7 +8,7 @@ import {
 } from "@/lib/services/esportPredictionService";
 import { fetchBettableMatch, PredictionRejectedError } from "@/lib/services/esportPredictionGuard";
 import { logger } from "@/lib/logger";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
+import { defineRoute } from "@/lib/api/route";
 
 /** Only ids and the stake come from the client; match facts come from PandaScore. */
 const placePredictionSchema = z.object({
@@ -43,24 +43,10 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const limited = await enforceRateLimit("prediction", { userId: user.id });
-    if (limited) return limited;
-
-    const parsed = placePredictionSchema.safeParse(await request.json());
-    if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid prediction data" }, { status: 400 });
-    }
-    const { matchId, predictedWinnerId, amount } = parsed.data;
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "prediction", body: placePredictionSchema },
+  async ({ user, body }) => {
+    const { matchId, predictedWinnerId, amount } = body;
 
     let match;
     try {
@@ -73,14 +59,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Match unavailable, try again later" }, { status: 503 });
     }
 
-    const prediction = await placePrediction(user.id, match, amount);
-    return NextResponse.json({ prediction }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in esport predictions POST", { error });
-    const message =
-      error instanceof Error && error.message === "Insufficient balance"
-        ? error.message
-        : "Failed to place prediction";
-    return NextResponse.json({ error: message }, { status: 500 });
+    try {
+      const prediction = await placePrediction(user.id, match, amount);
+      return NextResponse.json({ prediction }, { status: 201 });
+    } catch (error) {
+      logger.error("Error in esport predictions POST", { error });
+      const message =
+        error instanceof Error && error.message === "Insufficient balance"
+          ? error.message
+          : "Failed to place prediction";
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
   }
-}
+);

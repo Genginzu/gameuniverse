@@ -4,15 +4,14 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mutable mock references ---
-let mockRequireAdmin: ReturnType<typeof vi.fn>;
 let mockSupabaseFrom: ReturnType<typeof vi.fn> | null;
 
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
+
 // --- Mock modules ---
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => (mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true)),
-}));
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -58,9 +57,7 @@ function jsonReq(method: string, body: object) {
 }
 
 function denyAdmin() {
-  mockRequireAdmin = vi.fn(() => {
-    throw new Error("Admin access required");
-  });
+  routeEnv.signIn("user");
 }
 
 /** Build a chainable mock for the supabase client that tracks calls per table */
@@ -136,23 +133,30 @@ function buildSupabaseMock(config: {
 
 describe("Admin Achievements — Player Achievements (GET/POST/DELETE)", () => {
   beforeEach(() => {
-    mockRequireAdmin = vi.fn(() => Promise.resolve(true));
     mockSupabaseFrom = null;
   });
 
   // --- GET ---
   describe("GET /api/admin/achievements/players", () => {
+    test("returns 401 when signed out", async () => {
+      routeEnv.signOut();
+      const res = await GET(makeRequest(`${BASE_URL}?userId=${USER_ID}`));
+      expect(res.status).toBe(401);
+    });
+
     test("returns 403 without admin auth", async () => {
       denyAdmin();
       const res = await GET(makeRequest(BASE_URL));
       expect(res.status).toBe(403);
-      expect((await res.json()).error).toBe("Admin access required");
+      expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
     });
 
     test("returns 400 when userId is missing", async () => {
       const res = await GET(makeRequest(BASE_URL));
       expect(res.status).toBe(400);
-      expect((await res.json()).error).toBe("Invalid input data");
+      const body = await res.json();
+      expect(body.error).toBe("Invalid input data");
+      expect(body.code).toBe("validation");
     });
 
     test("returns list of achievement keys for a player", async () => {
@@ -193,7 +197,7 @@ describe("Admin Achievements — Player Achievements (GET/POST/DELETE)", () => {
     test("returns 400 with invalid body (missing fields)", async () => {
       const res = await POST(jsonReq("POST", { userId: "not-a-uuid" }));
       expect(res.status).toBe(400);
-      expect((await res.json()).error).toBe("Invalid input data");
+      expect((await res.json()).error).toBe("Invalid request body");
     });
 
     test("returns 404 when achievement key not found in catalog", async () => {
@@ -252,7 +256,7 @@ describe("Admin Achievements — Player Achievements (GET/POST/DELETE)", () => {
     test("returns 400 with invalid body", async () => {
       const res = await DEL(jsonReq("DELETE", {}));
       expect(res.status).toBe(400);
-      expect((await res.json()).error).toBe("Invalid input data");
+      expect((await res.json()).error).toBe("Invalid request body");
     });
 
     test("returns 404 when achievement not found in catalog", async () => {

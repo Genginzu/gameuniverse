@@ -1,18 +1,13 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { defineRoute, validationError } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
-export async function GET() {
+const profileUpdateSchema = z.looseObject({});
+
+export const GET = defineRoute({ auth: "required" }, async ({ user }) => {
   const supabase = await createRouteHandlerClient();
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
   // Get user profile from profiles table
   const { data: profile, error: profileError } = await supabase
@@ -29,22 +24,12 @@ export async function GET() {
   // Email is no longer stored in profiles (issue #375); surface the caller's own
   // email from auth.users so the account page keeps showing it.
   return NextResponse.json({ user, profile: { ...profile, email: user.email ?? null } });
-}
+});
 
-export async function PATCH(request: NextRequest) {
-  const supabase = await createRouteHandlerClient();
-
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-
-  if (userError || !user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    const updates = await request.json();
+export const PATCH = defineRoute(
+  { auth: "required", rateLimit: "profileUpdate", writesContent: true, body: profileUpdateSchema },
+  async ({ user, body: updates }) => {
+    const supabase = await createRouteHandlerClient();
 
     // Validate allowed fields
     const allowedFields = ["username", "preferred_locale", "stats_private"];
@@ -56,11 +41,11 @@ export async function PATCH(request: NextRequest) {
       }, {});
 
     if (Object.keys(filteredUpdates).length === 0) {
-      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+      throw validationError(undefined, "No valid fields to update");
     }
 
     if ("stats_private" in filteredUpdates && typeof filteredUpdates.stats_private !== "boolean") {
-      return NextResponse.json({ error: "stats_private must be a boolean" }, { status: 400 });
+      throw validationError(undefined, "stats_private must be a boolean");
     }
 
     // Add updated_at timestamp
@@ -79,8 +64,5 @@ export async function PATCH(request: NextRequest) {
     }
 
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error("Profile update error", { error });
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
-}
+);

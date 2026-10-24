@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import {
   createTeam,
@@ -6,6 +7,7 @@ import {
   getLeaderboard,
 } from "@/lib/services/fantasyService";
 import { logger } from "@/lib/logger";
+import { defineRoute, validationError } from "@/lib/api/route";
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,22 +36,23 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+const fantasyActionSchema = z.looseObject({
+  action: z.unknown().optional(),
+  leagueId: z.unknown().optional(),
+  name: z.unknown().optional(),
+});
 
-    const body = await request.json();
-    const { action } = body;
+/** createTeam is the only action that writes: the other ones answer 501 or 400, so charging every call is equivalent. */
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "fantasyTeam", writesContent: true, body: fantasyActionSchema },
+  async ({ user, body }) => {
+    const { action, leagueId, name } = body;
 
     if (action === "createTeam") {
-      if (typeof body.leagueId !== "string" || typeof body.name !== "string" || !body.name.trim()) {
-        return NextResponse.json({ error: "leagueId and name are required" }, { status: 400 });
+      if (typeof leagueId !== "string" || typeof name !== "string" || !name.trim()) {
+        throw validationError(undefined, "leagueId and name are required");
       }
-      const team = await createTeam(user.id, body.leagueId, body.name.trim().slice(0, 60));
+      const team = await createTeam(user.id, leagueId, name.trim().slice(0, 60));
       return NextResponse.json({ team }, { status: 201 });
     }
 
@@ -60,9 +63,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Fantasy rosters are not available yet" }, { status: 501 });
     }
 
-    return NextResponse.json({ error: "Unknown action" }, { status: 400 });
-  } catch (error) {
-    logger.error("Error in fantasy POST", { error });
-    return NextResponse.json({ error: "Failed" }, { status: 500 });
+    throw validationError(undefined, "Unknown action");
   }
-}
+);

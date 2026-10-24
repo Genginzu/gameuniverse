@@ -1,9 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
+
+const availabilityBodySchema = z.looseObject({
+  dayOfWeek: z.unknown().optional(),
+  startTime: z.unknown().optional(),
+  endTime: z.unknown().optional(),
+  timezone: z.unknown().optional(),
+  isRecurring: z.unknown().optional(),
+  specificDate: z.unknown().optional(),
+});
 
 export async function GET() {
   try {
@@ -55,13 +66,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "coachingProfile", body: availabilityBodySchema },
+  async ({ user, body }) => {
     const supabase: AnySupabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { data: profile } = await supabase
       .from("coach_profiles")
@@ -69,15 +77,12 @@ export async function POST(request: NextRequest) {
       .eq("player_id", user.id)
       .single();
 
-    if (!profile) {
-      return NextResponse.json({ error: "Coach profile not found" }, { status: 404 });
-    }
+    if (!profile) throw notFound("Coach profile not found");
 
-    const body = await request.json();
     const { dayOfWeek, startTime, endTime, timezone, isRecurring, specificDate } = body;
 
     if (dayOfWeek === undefined || dayOfWeek === null || !startTime || !endTime) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      throw validationError(undefined, "Missing required fields");
     }
 
     const { data, error } = await supabase
@@ -116,8 +121,5 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    logger.error("Error in coaching availability POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

@@ -81,16 +81,11 @@ export async function GET(request: NextRequest) {
 ## Pattern Auth (pas de middleware)
 
 ```ts
-// Dans chaque API route :
-const supabase = await createRouteHandlerClient();
-const {
-  data: { user },
-} = await supabase.auth.getUser();
-if (!user)
-  return NextResponse.json({ error: "Auth required" }, { status: 401 });
+// Dans chaque API route : défini par defineRoute (src/lib/api/route/)
+export const GET = defineRoute({ auth: "required" }, async ({ user }) => { ... });
 
-// Admin check :
-await requireAdmin(); // src/lib/auth-admin.ts — basé sur le domaine email
+// Admin check : 401 si déconnecté, 403 si app_metadata.role !== "admin"
+export const POST = defineRoute({ auth: "admin", body: schema }, async ({ body }) => { ... });
 ```
 
 ## Pattern RPC (fonctions Postgres)

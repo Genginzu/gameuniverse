@@ -1,16 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-// Mock Supabase auth
-const mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
-
-const mockSupabase = {
-  auth: { getUser: mockGetUser },
-};
-
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
-}));
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // Mock logger to avoid console noise
 vi.mock("@/lib/logger", () => ({
@@ -25,7 +16,8 @@ vi.mock("@/lib/services/uploadService", () => ({
 
 import { POST } from "@/app/api/upload/route";
 
-const mockUser = { id: "user-uuid-123", email: "player@example.com" };
+const routeEnv = useTestRouteEnvironment();
+const mockUser = testUser("user", { id: "user-uuid-123", email: "player@example.com" });
 
 function createUploadRequest(body: Record<string, unknown>) {
   return new NextRequest("http://localhost:3000/api/upload", {
@@ -37,15 +29,24 @@ function createUploadRequest(body: Record<string, unknown>) {
 
 describe("/api/upload POST", () => {
   beforeEach(() => {
-    mockGetUser.mockReset();
     mockGenerateSignedUploadUrl.mockReset();
+    routeEnv.signIn(mockUser);
+  });
+
+  it("should return 429 when the upload rate limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(60);
+
+    const response = await POST(
+      createUploadRequest({ context: "avatars", contentType: "image/png", fileSize: 1000 })
+    );
+
+    expect(response.status).toBe(429);
+    expect(await response.json()).toMatchObject({ code: "rate_limited", retryAfter: 60 });
+    expect(mockGenerateSignedUploadUrl).not.toHaveBeenCalled();
   });
 
   it("should return 401 when user is not authenticated", async () => {
-    mockGetUser.mockResolvedValue({
-      data: { user: null },
-      error: { message: "Not authenticated" },
-    });
+    routeEnv.signOut();
 
     const request = createUploadRequest({
       context: "avatars",
@@ -56,11 +57,10 @@ describe("/api/upload POST", () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.error).toBe("Unauthorized");
+    expect(data).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   it("should return signed URL for valid request", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockGenerateSignedUploadUrl.mockResolvedValue({
       signedUrl:
         "https://test-project.supabase.co/storage/v1/upload/sign/avatars/user-uuid-123/1700000000-abc123.png",
@@ -87,7 +87,6 @@ describe("/api/upload POST", () => {
   });
 
   it("should call generateSignedUploadUrl with correct params", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockGenerateSignedUploadUrl.mockResolvedValue({
       signedUrl:
         "https://test-project.supabase.co/storage/v1/upload/sign/banners/user-uuid-123/1700000000-abc123.webp",
@@ -112,7 +111,6 @@ describe("/api/upload POST", () => {
   });
 
   it("should return 400 for invalid context", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
     const request = createUploadRequest({
       context: "invalid",
@@ -125,7 +123,6 @@ describe("/api/upload POST", () => {
   });
 
   it("should return 400 for invalid content type", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
     const request = createUploadRequest({
       context: "avatars",
@@ -138,7 +135,6 @@ describe("/api/upload POST", () => {
   });
 
   it("should return 400 for file size exceeding 5 MB", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
     const request = createUploadRequest({
       context: "avatars",
@@ -151,7 +147,6 @@ describe("/api/upload POST", () => {
   });
 
   it("should return 400 for missing fields", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
     const request = createUploadRequest({ context: "avatars" });
     const response = await POST(request);
@@ -160,7 +155,6 @@ describe("/api/upload POST", () => {
   });
 
   it("should return 503 when storage service fails", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockGenerateSignedUploadUrl.mockRejectedValue(new Error("Storage connection failed"));
 
     const request = createUploadRequest({

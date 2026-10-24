@@ -16,21 +16,16 @@
  *     only walks that entity's cursor keys. When omitted, kind is 'full'.
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { NextResponse } from "next/server";
+import { conflict, defineRoute } from "@/lib/api/route";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { isSyncJobEntity } from "@/lib/pandascore/sync-progress";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(request: NextRequest) {
-  try {
-    await requireAdmin();
-  } catch {
-    return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-  }
-
+export const POST = defineRoute({ auth: "admin" }, async ({ request }) => {
+  // Read by hand: a malformed or missing body must still start an unfiltered full sync.
   const body = await request.json().catch(() => ({}));
   const game = typeof body.game === "string" ? body.game : null;
   const rawEntity: unknown = body.entity;
@@ -49,14 +44,10 @@ export async function POST(request: NextRequest) {
     .limit(1);
 
   if (active && active.length > 0) {
-    return NextResponse.json(
-      {
-        error: "A sync job is already in progress",
-        existingJobId: active[0].id,
-        existingStatus: active[0].status,
-      },
-      { status: 409 },
-    );
+    throw conflict("A sync job is already in progress", {
+      existingJobId: active[0].id,
+      existingStatus: active[0].status,
+    });
   }
 
   const { data: job, error } = await supabase
@@ -72,13 +63,15 @@ export async function POST(request: NextRequest) {
 
   if (error || !job) {
     logger.error("Failed to insert sync job", { error });
-    return NextResponse.json(
-      { error: "Failed to create sync job" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to create sync job" }, { status: 500 });
   }
 
-  logger.info("Sync job created", { jobId: job.id, kind: entity ? "entity" : "full", entity, game });
+  logger.info("Sync job created", {
+    jobId: job.id,
+    kind: entity ? "entity" : "full",
+    entity,
+    game,
+  });
 
   // Fire-and-forget the first chunk. The Edge Function self-reschedules
   // after each chunk, so we don't need to await this. If the call fails
@@ -89,7 +82,7 @@ export async function POST(request: NextRequest) {
   });
 
   return NextResponse.json({ jobId: job.id }, { status: 201 });
-}
+});
 
 async function triggerFirstChunk(jobId: string): Promise<void> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

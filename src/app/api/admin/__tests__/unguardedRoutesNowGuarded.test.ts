@@ -5,12 +5,12 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 const mockFrom = vi.fn();
-const mockGetUser = vi.fn();
 
 vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => ({ auth: { getUser: mockGetUser }, from: mockFrom })),
+  createRouteHandlerClient: vi.fn(async () => ({ from: mockFrom })),
 }));
 vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() } }));
 
@@ -28,6 +28,8 @@ import {
 } from "@/app/api/admin/games/[id]/similar-games/route";
 import { POST as publicGameSync } from "@/app/api/games/[slug]/sync/route";
 
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
+
 const req = (method = "GET") =>
   new NextRequest("http://localhost/api/x?entryId=e1", {
     method,
@@ -37,12 +39,12 @@ const idParams = { params: Promise.resolve({ id: "g1" }) };
 const slugParams = { params: Promise.resolve({ slug: "x" }) };
 
 const handlers: Array<[string, () => Promise<Response>]> = [
-  ["bulk-import/fields GET", () => bulkFields()],
+  ["bulk-import/fields GET", () => bulkFields(req())],
   ["bulk-import/games GET", () => bulkGames(req())],
   ["bulk-import/sync POST", () => bulkSync(req("POST"))],
   ["bulk-import/sync-metascore POST", () => bulkMetascore(req("POST"))],
   ["bulk-import-characters/characters GET", () => charsList(req())],
-  ["bulk-import-characters/fields GET", () => charsFields()],
+  ["bulk-import-characters/fields GET", () => charsFields(req())],
   ["bulk-import-characters/sync POST", () => charsSync(req("POST"))],
   ["similar-games GET", () => similarGet(req(), idParams)],
   ["similar-games POST", () => similarPost(req("POST"), idParams)],
@@ -53,21 +55,21 @@ const handlers: Array<[string, () => Promise<Response>]> = [
 describe("formerly unauthenticated admin routes", () => {
   beforeEach(() => {
     mockFrom.mockReset();
-    mockGetUser.mockReset();
   });
 
   it.each(handlers)("%s returns 401 for anonymous callers", async (_name, call) => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
-    expect((await call()).status).toBe(401);
+    routeEnv.signOut();
+    const res = await call();
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
     expect(mockFrom).not.toHaveBeenCalled();
   });
 
   it.each(handlers)("%s returns 403 for a self-declared admin", async (_name, call) => {
-    mockGetUser.mockResolvedValue({
-      data: { user: { id: "u1", app_metadata: {}, user_metadata: { role: "admin" } } },
-      error: null,
-    });
-    expect((await call()).status).toBe(403);
+    routeEnv.signIn(testUser("user", { user_metadata: { role: "admin" } }));
+    const res = await call();
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
     expect(mockFrom).not.toHaveBeenCalled();
   });
 });

@@ -1,18 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-const { mockGetUser, mockIsAdmin, mockGrant } = vi.hoisted(() => ({
-  mockGetUser: vi.fn(),
-  mockIsAdmin: vi.fn(),
-  mockGrant: vi.fn(),
-}));
+const { mockGrant } = vi.hoisted(() => ({ mockGrant: vi.fn() }));
 
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => ({
-    auth: { getUser: mockGetUser },
-    rpc: mockIsAdmin,
-  })),
-}));
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("admin", { id: "admin-1" }) });
 
 vi.mock("@/lib/services/coinService", () => ({ CoinService: { grant: mockGrant } }));
 
@@ -36,17 +28,22 @@ const validBody = { playerId: PLAYER_ID, amount: -50, description: "refund", non
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockGetUser.mockResolvedValue({ data: { user: { id: "admin-1" } } });
-  mockIsAdmin.mockResolvedValue({ data: true });
 });
 
 describe("POST /api/admin/coins/grant", () => {
   it("refuses a non-admin", async () => {
-    mockIsAdmin.mockResolvedValue({ data: false });
+    routeEnv.signIn("user");
 
     const res = await POST(grantRequest(validBody));
 
     expect(res.status).toBe(403);
+    expect(mockGrant).not.toHaveBeenCalled();
+  });
+
+  it("answers 401 to a signed-out caller", async () => {
+    routeEnv.signOut();
+
+    expect((await POST(grantRequest(validBody))).status).toBe(401);
     expect(mockGrant).not.toHaveBeenCalled();
   });
 

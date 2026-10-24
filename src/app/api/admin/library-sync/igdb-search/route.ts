@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { NextResponse } from "next/server";
+import { defineRoute } from "@/lib/api/route";
 import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
 
@@ -10,13 +10,7 @@ import { logger } from "@/lib/logger";
  * platform title to any IGDB game — even one not yet imported locally. The
  * link step imports the game if needed.
  */
-export async function GET(request: NextRequest) {
-  try {
-    await requireAdmin();
-  } catch {
-    return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-  }
-
+export const GET = defineRoute({ auth: "admin" }, async ({ request }) => {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q")?.trim() ?? "";
   const limit = Math.min(Math.max(Number(searchParams.get("limit") ?? "20") || 20, 1), 50);
@@ -39,4 +33,4 @@ export async function GET(request: NextRequest) {
     logger.error("Admin IGDB search failed", { error });
     return NextResponse.json({ error: "IGDB search failed" }, { status: 502 });
   }
-}
+});

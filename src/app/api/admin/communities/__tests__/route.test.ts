@@ -4,9 +4,11 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-let mockRequireAdmin: ReturnType<typeof vi.fn>;
 let mockSupabaseFrom: ReturnType<typeof vi.fn>;
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 
 const sampleRow = {
   id: "comm-1",
@@ -18,13 +20,6 @@ const sampleRow = {
   community_members: [{ id: "m1" }, { id: "m2" }],
   owner: { username: "alice" },
 };
-
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => {
-    if (mockRequireAdmin) return mockRequireAdmin();
-    return Promise.resolve(true);
-  },
-}));
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -52,16 +47,20 @@ function makeRequest(url: string) {
 
 describe("GET /api/admin/communities", () => {
   beforeEach(() => {
-    mockRequireAdmin = vi.fn(() => Promise.resolve(true));
     mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
+  test("returns 401 when signed out", async () => {
+    routeEnv.signOut();
+    const res = await GET(makeRequest("http://localhost/api/admin/communities"));
+    expect(res.status).toBe(401);
+  });
+
   test("returns 403 when not admin", async () => {
-    mockRequireAdmin = vi.fn(() => {
-      throw new Error("Admin access required");
-    });
+    routeEnv.signIn("user");
     const res = await GET(makeRequest("http://localhost/api/admin/communities"));
     expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
   });
 
   test("resolves owner email from auth.users, not profiles", async () => {

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { conflict, defineRoute } from "@/lib/api/route";
 import {
   adminRatingSystemFormSchema,
   ratingSystemQuerySchema,
@@ -11,30 +11,10 @@ import { ilikeAnyFilter } from "@/lib/utils/postgrestFilter";
 /**
  * GET /api/admin/age-classifications - List rating systems with pagination, search, and sort
  */
-export async function GET(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const { searchParams } = new URL(request.url);
-
-    const rawParams: Record<string, string | undefined> = {
-      page: searchParams.get("page") ?? undefined,
-      limit: searchParams.get("limit") ?? undefined,
-      search: searchParams.get("search") ?? undefined,
-      sort_by: searchParams.get("sort_by") ?? undefined,
-      sort_order: searchParams.get("sort_order") ?? undefined,
-    };
-
-    const queryResult = ratingSystemQuerySchema.safeParse(rawParams);
-
-    if (!queryResult.success) {
-      return NextResponse.json(
-        { error: "Invalid query parameters", details: queryResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { page, limit, search, sort_by, sort_order } = queryResult.data;
+export const GET = defineRoute(
+  { auth: "admin", query: ratingSystemQuerySchema },
+  async ({ query: listQuery }) => {
+    const { page, limit, search, sort_by, sort_order } = listQuery;
 
     const supabase = await createRouteHandlerClient();
     const offset = (page - 1) * limit;
@@ -125,36 +105,16 @@ export async function GET(request: NextRequest) {
         hasPreviousPage: page > 1,
       },
     });
-  } catch (error) {
-    logger.error("Error in admin age-classifications GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * POST /api/admin/age-classifications - Create a new rating system
  */
-export async function POST(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const body = await request.json();
-
-    const validationResult = adminRatingSystemFormSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { code, name, description, country_codes, website_url } = validationResult.data;
+export const POST = defineRoute(
+  { auth: "admin", body: adminRatingSystemFormSchema },
+  async ({ body }) => {
+    const { code, name, description, country_codes, website_url } = body;
 
     const supabase = await createRouteHandlerClient();
 
@@ -173,16 +133,9 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      logger.error("Error creating rating system", { error });
-
       // Unique constraint violation (code already exists)
-      if (error.code === "23505") {
-        return NextResponse.json(
-          { error: "A rating system with this code already exists" },
-          { status: 409 }
-        );
-      }
-
+      if (error.code === "23505") throw conflict("A rating system with this code already exists");
+      logger.error("Error creating rating system", { error });
       return NextResponse.json({ error: "Failed to create rating system" }, { status: 500 });
     }
 
@@ -197,13 +150,5 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    logger.error("Error in admin age-classifications POST", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

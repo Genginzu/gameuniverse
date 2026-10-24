@@ -1,11 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { reviewSchema } from "@/lib/validations/review";
 import type { AdminReviewDetail } from "@/types/admin-reviews";
 import { logger } from "@/lib/logger";
-
-type RouteParams = { params: Promise<{ id: string }> };
 
 /** Row shape returned by the detail query (without profiles join) */
 interface ReviewDetailRow {
@@ -59,75 +57,44 @@ async function fetchPlayerName(
 /**
  * GET /api/admin/reviews/[id] — Full review detail for editing
  */
-export async function GET(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const GET = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { id: reviewId } = params;
 
-    const { id: reviewId } = await params;
+  if (!reviewId) throw validationError(undefined, "Review ID is required");
 
-    if (!reviewId) {
-      return NextResponse.json({ error: "Review ID is required" }, { status: 400 });
-    }
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  const { data, error } = await supabase
+    .from("game_reviews")
+    .select(DETAIL_SELECT)
+    .eq("id", reviewId)
+    .single();
 
-    const { data, error } = await supabase
-      .from("game_reviews")
-      .select(DETAIL_SELECT)
-      .eq("id", reviewId)
-      .single();
-
-    if (error) {
-      if (error.code === "PGRST116") {
-        return NextResponse.json({ error: "Review not found" }, { status: 404 });
-      }
-      logger.error("Error fetching review", { error });
-      return NextResponse.json({ error: "Failed to fetch review" }, { status: 500 });
-    }
-
-    if (!data) {
-      return NextResponse.json({ error: "Review not found" }, { status: 404 });
-    }
-
-    const row = data as unknown as ReviewDetailRow;
-    const playerName = await fetchPlayerName(supabase, row.user_id);
-
-    return NextResponse.json(toAdminReviewDetail(row, playerName));
-  } catch (error) {
-    logger.error("Error in admin review GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (error) {
+    if (error.code === "PGRST116") throw notFound("Review not found");
+    logger.error("Error fetching review", { error });
+    return NextResponse.json({ error: "Failed to fetch review" }, { status: 500 });
   }
-}
+
+  if (!data) throw notFound("Review not found");
+
+  const row = data as unknown as ReviewDetailRow;
+  const playerName = await fetchPlayerName(supabase, row.user_id);
+
+  return NextResponse.json(toAdminReviewDetail(row, playerName));
+});
 
 /**
  * PUT /api/admin/reviews/[id] — Update a review
  */
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const PUT = defineRoute(
+  { auth: "admin", body: reviewSchema },
+  async ({ params, body }) => {
+    const { id: reviewId } = params;
 
-    const { id: reviewId } = await params;
+    if (!reviewId) throw validationError(undefined, "Review ID is required");
 
-    if (!reviewId) {
-      return NextResponse.json({ error: "Review ID is required" }, { status: 400 });
-    }
-
-    const body = await request.json();
-    const validationResult = reviewSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { rating, content, positivePoints, negativePoints } = validationResult.data;
+    const { rating, content, positivePoints, negativePoints } = body;
     const supabase = await createRouteHandlerClient();
 
     // Check existence
@@ -137,9 +104,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", reviewId)
       .single();
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Review not found" }, { status: 404 });
-    }
+    if (checkError || !existing) throw notFound("Review not found");
 
     // Update
     const { error: updateError } = await supabase
@@ -174,58 +139,34 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const playerName = await fetchPlayerName(supabase, row.user_id);
 
     return NextResponse.json(toAdminReviewDetail(row, playerName));
-  } catch (error) {
-    logger.error("Error in admin review PUT", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/admin/reviews/[id] — Delete a review
  */
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const DELETE = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { id: reviewId } = params;
 
-    const { id: reviewId } = await params;
+  if (!reviewId) throw validationError(undefined, "Review ID is required");
 
-    if (!reviewId) {
-      return NextResponse.json({ error: "Review ID is required" }, { status: 400 });
-    }
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  // Check existence
+  const { data: existing, error: checkError } = await supabase
+    .from("game_reviews")
+    .select("id")
+    .eq("id", reviewId)
+    .single();
 
-    // Check existence
-    const { data: existing, error: checkError } = await supabase
-      .from("game_reviews")
-      .select("id")
-      .eq("id", reviewId)
-      .single();
+  if (checkError || !existing) throw notFound("Review not found");
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Review not found" }, { status: 404 });
-    }
+  const { error: deleteError } = await supabase.from("game_reviews").delete().eq("id", reviewId);
 
-    const { error: deleteError } = await supabase.from("game_reviews").delete().eq("id", reviewId);
-
-    if (deleteError) {
-      logger.error("Error deleting review", { error: deleteError });
-      return NextResponse.json({ error: "Failed to delete review" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in admin review DELETE", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (deleteError) {
+    logger.error("Error deleting review", { error: deleteError });
+    return NextResponse.json({ error: "Failed to delete review" }, { status: 500 });
   }
-}
+
+  return NextResponse.json({ success: true });
+});

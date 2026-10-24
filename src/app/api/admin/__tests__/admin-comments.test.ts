@@ -5,10 +5,12 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mock state ---
-let mockRequireAdmin: ReturnType<typeof vi.fn>;
 let mockSupabaseFrom: ReturnType<typeof vi.fn>;
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 
 const sampleCommentRow = {
   id: "comment-1",
@@ -21,13 +23,6 @@ const sampleCommentRow = {
 };
 
 const sampleProfiles = [{ id: "user-1", username: "player1" }];
-
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => {
-    if (mockRequireAdmin) return mockRequireAdmin();
-    return Promise.resolve(true);
-  },
-}));
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -72,7 +67,6 @@ function makeParams(id: string) {
 
 describe("Admin Comments API", () => {
   beforeEach(() => {
-    mockRequireAdmin = vi.fn(() => Promise.resolve(true));
     mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
@@ -80,13 +74,24 @@ describe("Admin Comments API", () => {
   // GET /api/admin/comments (list)
   // =====================
   describe("GET /api/admin/comments", () => {
+    test("returns 401 when signed out", async () => {
+      routeEnv.signOut();
+      const res = await GET_LIST(makeRequest("http://localhost/api/admin/comments"));
+      expect(res.status).toBe(401);
+      expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
     test("returns 403 when user is not admin (Req 7.1, 7.2)", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
       const res = await GET_LIST(makeRequest("http://localhost/api/admin/comments"));
       expect(res.status).toBe(403);
-      expect((await res.json()).error).toBe("Admin access required");
+      expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
+    });
+
+    test("returns 400 for invalid query parameters", async () => {
+      const res = await GET_LIST(makeRequest("http://localhost/api/admin/comments?limit=0"));
+      expect(res.status).toBe(400);
+      expect((await res.json()).error).toBe("Invalid query parameters");
     });
 
     test("returns paginated comments with correct structure (Req 4.1)", async () => {
@@ -135,9 +140,7 @@ describe("Admin Comments API", () => {
   // =====================
   describe("GET /api/admin/comments/[id]", () => {
     test("returns 403 when user is not admin (Req 7.1, 7.2)", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
       const res = await GET_DETAIL(
         makeRequest("http://localhost/api/admin/comments/comment-1"),
         makeParams("comment-1")
@@ -212,9 +215,7 @@ describe("Admin Comments API", () => {
     const validBody = { content: "Updated comment content" };
 
     test("returns 403 when user is not admin (Req 7.1, 7.2)", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
       const res = await PUT(
         makeRequest("http://localhost/api/admin/comments/comment-1", {
           method: "PUT",
@@ -236,7 +237,7 @@ describe("Admin Comments API", () => {
         makeParams("comment-1")
       );
       expect(res.status).toBe(400);
-      expect((await res.json()).error).toBe("Invalid input data");
+      expect((await res.json()).error).toBe("Invalid request body");
     });
 
     test("returns 404 when comment does not exist", async () => {
@@ -342,9 +343,7 @@ describe("Admin Comments API", () => {
   // =====================
   describe("DELETE /api/admin/comments/[id]", () => {
     test("returns 403 when user is not admin (Req 7.1, 7.2)", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
       const res = await DELETE_HANDLER(
         makeRequest("http://localhost/api/admin/comments/comment-1"),
         makeParams("comment-1")

@@ -1,12 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { NextResponse } from "next/server";
 
 import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 const mock = createSupabaseQueryMock();
-const guard = vi.hoisted(() => ({ response: null as unknown }));
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 
-vi.mock("@/lib/auth-admin", () => ({ adminGuardResponse: () => Promise.resolve(guard.response) }));
 vi.mock("@/lib/supabase-admin", () => ({ getSupabaseAdmin: () => mock.client }));
 vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
@@ -28,16 +27,24 @@ const params = (id: string) => ({ params: Promise.resolve({ id }) });
 
 beforeEach(() => {
   mock.reset();
-  guard.response = null;
 });
 
 describe("admin home showcase API", () => {
   it("rejects non-admin callers before touching the database", async () => {
-    guard.response = NextResponse.json({ error: "Admin access required" }, { status: 403 });
+    routeEnv.signIn("user");
 
     const response = await POST(request("POST", { kind: "game", entityId: ID }));
 
     expect(response.status).toBe(403);
+    expect(mock.calls).toHaveLength(0);
+  });
+
+  it("rejects signed-out callers with 401", async () => {
+    routeEnv.signOut();
+
+    const response = await DELETE(request("DELETE"), params(ID));
+
+    expect(response.status).toBe(401);
     expect(mock.calls).toHaveLength(0);
   });
 

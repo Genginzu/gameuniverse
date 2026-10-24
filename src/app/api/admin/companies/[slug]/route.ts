@@ -1,96 +1,76 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { conflict, defineRoute, notFound } from "@/lib/api/route";
 import { adminCompanyFormSchema } from "@/lib/validations/admin-company-form";
 import { logger } from "@/lib/logger";
-
-type RouteParams = { params: Promise<{ slug: string }> };
 
 /**
  * GET /api/admin/companies/[slug] - Get a single company with translations and game count
  */
-export async function GET(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const GET = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { slug } = params;
 
-    const { slug } = await params;
+  const supabase = await createRouteHandlerClient();
 
-    if (!slug) {
-      return NextResponse.json({ error: "Company slug is required" }, { status: 400 });
-    }
-
-    const supabase = await createRouteHandlerClient();
-
-    // company_translations table may not be in generated types yet — use type assertion
-    const { data: companyRaw, error } = await supabase
-      .from("companies")
-      .select(
-        `id, name, slug, website_url, logo_url, founded_year, headquarters,
+  // company_translations table may not be in generated types yet — use type assertion
+  const { data: companyRaw, error } = await supabase
+    .from("companies")
+    .select(
+      `id, name, slug, website_url, logo_url, founded_year, headquarters,
          company_type, is_active,
          company_translations(company_id, language_code, description)`
-      )
-      .eq("slug", slug)
-      .single();
+    )
+    .eq("slug", slug)
+    .single();
 
-    type TranslationRow = { company_id: string; language_code: string; description: string | null };
-    type CompanyWithTranslations = {
-      id: string;
-      name: string;
-      slug: string;
-      website_url: string | null;
-      logo_url: string | null;
-      founded_year: number | null;
-      headquarters: string | null;
-      company_type: string;
-      is_active: boolean;
-      company_translations: TranslationRow[] | null;
-    };
+  type TranslationRow = { company_id: string; language_code: string; description: string | null };
+  type CompanyWithTranslations = {
+    id: string;
+    name: string;
+    slug: string;
+    website_url: string | null;
+    logo_url: string | null;
+    founded_year: number | null;
+    headquarters: string | null;
+    company_type: string;
+    is_active: boolean;
+    company_translations: TranslationRow[] | null;
+  };
 
-    const company = companyRaw as unknown as CompanyWithTranslations | null;
+  const company = companyRaw as unknown as CompanyWithTranslations | null;
 
-    if (error || !company) {
-      return NextResponse.json({ error: "Company not found" }, { status: 404 });
-    }
+  if (error || !company) throw notFound("Company not found");
 
-    const { count: gameCount, error: countError } = await supabase
-      .from("game_companies")
-      .select("game_id", { count: "exact", head: true })
-      .eq("company_id", company.id);
+  const { count: gameCount, error: countError } = await supabase
+    .from("game_companies")
+    .select("game_id", { count: "exact", head: true })
+    .eq("company_id", company.id);
 
-    if (countError) {
-      logger.error("Error counting company games", { error: countError });
-    }
-
-    const translations = (company.company_translations || []).map((t) => ({
-      language_code: t.language_code,
-      description: t.description || "",
-    }));
-
-    return NextResponse.json({
-      company: {
-        id: company.id,
-        name: company.name,
-        slug: company.slug,
-        website_url: company.website_url,
-        logo_url: company.logo_url,
-        founded_year: company.founded_year,
-        headquarters: company.headquarters,
-        company_type: company.company_type,
-        is_active: company.is_active,
-        gameCount: gameCount || 0,
-        translations,
-      },
-    });
-  } catch (error) {
-    logger.error("Error in admin company GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (countError) {
+    logger.error("Error counting company games", { error: countError });
   }
-}
+
+  const translations = (company.company_translations || []).map((t) => ({
+    language_code: t.language_code,
+    description: t.description || "",
+  }));
+
+  return NextResponse.json({
+    company: {
+      id: company.id,
+      name: company.name,
+      slug: company.slug,
+      website_url: company.website_url,
+      logo_url: company.logo_url,
+      founded_year: company.founded_year,
+      headquarters: company.headquarters,
+      company_type: company.company_type,
+      is_active: company.is_active,
+      gameCount: gameCount || 0,
+      translations,
+    },
+  });
+});
 
 // Validation schema for PUT body (slug is immutable, not in body)
 const updateCompanySchema = adminCompanyFormSchema.omit({ slug: true });
@@ -98,29 +78,12 @@ const updateCompanySchema = adminCompanyFormSchema.omit({ slug: true });
 /**
  * PUT /api/admin/companies/[slug] - Update a company with translations
  */
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
-
-    const { slug } = await params;
-
-    if (!slug) {
-      return NextResponse.json({ error: "Company slug is required" }, { status: 400 });
-    }
-
-    const body = await request.json();
-
-    const validationResult = updateCompanySchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.issues },
-        { status: 400 }
-      );
-    }
-
+export const PUT = defineRoute(
+  { auth: "admin", body: updateCompanySchema },
+  async ({ params, body }) => {
+    const { slug } = params;
     const { name, company_type, website_url, logo_url, founded_year, headquarters, translations } =
-      validationResult.data;
+      body;
 
     const supabase = await createRouteHandlerClient();
 
@@ -131,9 +94,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("slug", slug)
       .single();
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Company not found" }, { status: 404 });
-    }
+    if (checkError || !existing) throw notFound("Company not found");
 
     const { data: updated, error: updateError } = await supabase
       .from("companies")
@@ -200,114 +161,84 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         })),
       },
     });
-  } catch (error) {
-    logger.error("Error in admin company PUT", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/admin/companies/[slug] - Delete a company
  * Supports ?force=true to delete even if the company is used by games
  */
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const DELETE = defineRoute({ auth: "admin" }, async ({ request, params }) => {
+  const { slug } = params;
 
-    const { slug } = await params;
+  const { searchParams } = new URL(request.url);
+  const force = searchParams.get("force") === "true";
 
-    if (!slug) {
-      return NextResponse.json({ error: "Company slug is required" }, { status: 400 });
-    }
+  const supabase = await createRouteHandlerClient();
 
-    const { searchParams } = new URL(request.url);
-    const force = searchParams.get("force") === "true";
+  // Check if company exists
+  const { data: existing, error: checkError } = await supabase
+    .from("companies")
+    .select("id, slug")
+    .eq("slug", slug)
+    .single();
 
-    const supabase = await createRouteHandlerClient();
+  if (checkError || !existing) throw notFound("Company not found");
 
-    // Check if company exists
-    const { data: existing, error: checkError } = await supabase
-      .from("companies")
-      .select("id, slug")
-      .eq("slug", slug)
-      .single();
+  // Check usage in game_companies
+  const { count: usageCount, error: usageError } = await supabase
+    .from("game_companies")
+    .select("game_id", { count: "exact", head: true })
+    .eq("company_id", existing.id);
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Company not found" }, { status: 404 });
-    }
+  if (usageError) {
+    logger.error("Error checking company usage", { error: usageError });
+    return NextResponse.json({ error: "Failed to check company usage" }, { status: 500 });
+  }
 
-    // Check usage in game_companies
-    const { count: usageCount, error: usageError } = await supabase
+  const gameCount = usageCount || 0;
+
+  if (gameCount > 0 && !force) {
+    throw conflict("Company is in use", {
+      type: "IN_USE",
+      usageCount: gameCount,
+      message: `This company is used by ${gameCount} game(s). Use ?force=true to delete anyway.`,
+    });
+  }
+
+  if (gameCount > 0 && force) {
+    const { error: cleanupError } = await supabase
       .from("game_companies")
-      .select("game_id", { count: "exact", head: true })
-      .eq("company_id", existing.id);
-
-    if (usageError) {
-      logger.error("Error checking company usage", { error: usageError });
-      return NextResponse.json({ error: "Failed to check company usage" }, { status: 500 });
-    }
-
-    const gameCount = usageCount || 0;
-
-    if (gameCount > 0 && !force) {
-      return NextResponse.json(
-        {
-          error: "Company is in use",
-          type: "IN_USE",
-          usageCount: gameCount,
-          message: `This company is used by ${gameCount} game(s). Use ?force=true to delete anyway.`,
-        },
-        { status: 409 }
-      );
-    }
-
-    if (gameCount > 0 && force) {
-      const { error: cleanupError } = await supabase
-        .from("game_companies")
-        .delete()
-        .eq("company_id", existing.id);
-
-      if (cleanupError) {
-        logger.error("Error cleaning up game_companies", { error: cleanupError });
-        return NextResponse.json(
-          { error: "Failed to remove company references from games" },
-          { status: 500 }
-        );
-      }
-    }
-
-    // company_translations not in generated Supabase types — cast to bypass
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: translationDeleteError } = await (supabase as any)
-      .from("company_translations")
       .delete()
       .eq("company_id", existing.id);
 
-    if (translationDeleteError) {
-      logger.error("Error deleting company translations", { error: translationDeleteError });
+    if (cleanupError) {
+      logger.error("Error cleaning up game_companies", { error: cleanupError });
+      return NextResponse.json(
+        { error: "Failed to remove company references from games" },
+        { status: 500 }
+      );
     }
-
-    // Delete the company
-    const { error: deleteError } = await supabase.from("companies").delete().eq("id", existing.id);
-
-    if (deleteError) {
-      logger.error("Error deleting company", { error: deleteError });
-      return NextResponse.json({ error: "Failed to delete company" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in admin company DELETE", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+
+  // company_translations not in generated Supabase types — cast to bypass
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: translationDeleteError } = await (supabase as any)
+    .from("company_translations")
+    .delete()
+    .eq("company_id", existing.id);
+
+  if (translationDeleteError) {
+    logger.error("Error deleting company translations", { error: translationDeleteError });
+  }
+
+  // Delete the company
+  const { error: deleteError } = await supabase.from("companies").delete().eq("id", existing.id);
+
+  if (deleteError) {
+    logger.error("Error deleting company", { error: deleteError });
+    return NextResponse.json({ error: "Failed to delete company" }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+});

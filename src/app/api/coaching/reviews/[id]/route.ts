@@ -1,24 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, forbidden, notFound, validationError } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
 
-type RouteParams = { params: Promise<{ id: string }> };
+const reviewResponseSchema = z.looseObject({ response: z.any().optional() });
 
 /** PATCH /api/coaching/reviews/[id] — Coach responds to a review */
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
-  try {
+export const PATCH = defineRoute(
+  { auth: "required", rateLimit: "comment", writesContent: true, body: reviewResponseSchema },
+  async ({ user, params, body }) => {
     const supabase: S = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { id } = await params;
-    const { response } = await request.json();
-    if (!response) return NextResponse.json({ error: "response required" }, { status: 400 });
+    const { id } = params;
+    const { response } = body;
+    if (!response) throw validationError(undefined, "response required");
 
     // Verify user is the coach
     const { data: review } = await supabase
@@ -26,7 +25,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       .select("id, coach_id")
       .eq("id", id)
       .single();
-    if (!review) return NextResponse.json({ error: "Review not found" }, { status: 404 });
+    if (!review) throw notFound("Review not found");
 
     const { data: coach } = await supabase
       .from("coach_profiles")
@@ -34,7 +33,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       .eq("id", review.coach_id)
       .eq("player_id", user.id)
       .single();
-    if (!coach) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!coach) throw forbidden("Forbidden");
 
     const { error } = await supabase
       .from("coaching_reviews")
@@ -47,8 +46,5 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in review PATCH", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

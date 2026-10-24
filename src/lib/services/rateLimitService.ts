@@ -21,6 +21,22 @@ export const RATE_LIMITS = {
   view: { limit: 60, windowSeconds: 600 },
   gameSession: { limit: 30, windowSeconds: 3600 },
   accountDeletion: { limit: 5, windowSeconds: 3600 },
+  coachingProfile: { limit: 30, windowSeconds: 600 },
+  coachingPayout: { limit: 3, windowSeconds: 3600 },
+  groupCreate: { limit: 5, windowSeconds: 3600 },
+  groupUpdate: { limit: 20, windowSeconds: 3600 },
+  membership: { limit: 30, windowSeconds: 3600 },
+  collection: { limit: 20, windowSeconds: 3600 },
+  collectionItem: { limit: 120, windowSeconds: 600 },
+  library: { limit: 120, windowSeconds: 600 },
+  favorite: { limit: 60, windowSeconds: 600 },
+  vote: { limit: 60, windowSeconds: 600 },
+  reaction: { limit: 60, windowSeconds: 60 },
+  follow: { limit: 60, windowSeconds: 3600 },
+  profileUpdate: { limit: 20, windowSeconds: 3600 },
+  platformLink: { limit: 20, windowSeconds: 3600 },
+  fantasyTeam: { limit: 10, windowSeconds: 3600 },
+  goal: { limit: 30, windowSeconds: 3600 },
 } as const;
 
 export type RateLimitAction = keyof typeof RATE_LIMITS;
@@ -40,15 +56,17 @@ export function rateLimitKey(action: RateLimitAction, identity: RateLimitIdentit
     : `${action}:ip:${clientIp(identity.request)}`;
 }
 
+export type RateLimitDecision = { allowed: true } | { allowed: false; retryAfter: number };
+
 /**
- * Record a hit and return a 429 response when the caller is over the limit,
- * or null when the request may proceed. Fails open (logs, allows) on a DB
- * error so a transient database issue never blocks legitimate users.
+ * Record a hit and tell whether the caller is still under the limit. Fails
+ * open (logs, allows) on a DB error so a transient database issue never
+ * blocks legitimate users.
  */
-export async function enforceRateLimit(
+export async function consumeRateLimit(
   action: RateLimitAction,
   identity: RateLimitIdentity
-): Promise<NextResponse | null> {
+): Promise<RateLimitDecision> {
   const { limit, windowSeconds } = RATE_LIMITS[action];
   const key = rateLimitKey(action, identity);
 
@@ -61,19 +79,32 @@ export async function enforceRateLimit(
 
     if (error) {
       logger.error("Rate limit check failed", { action, error });
-      return null;
+      return { allowed: true };
     }
 
     const result = data as { allowed?: boolean; retry_after?: number } | null;
-    if (result?.allowed !== false) return null;
+    if (result?.allowed !== false) return { allowed: true };
 
-    const retryAfter = Math.max(1, Number(result.retry_after) || windowSeconds);
-    return NextResponse.json(
-      { error: "Too many requests", retryAfter },
-      { status: 429, headers: { "Retry-After": String(retryAfter) } }
-    );
+    return { allowed: false, retryAfter: Math.max(1, Number(result.retry_after) || windowSeconds) };
   } catch (error) {
     logger.error("Unexpected rate limit error", { action, error });
-    return null;
+    return { allowed: true };
   }
+}
+
+/**
+ * Record a hit and return a 429 response when the caller is over the limit,
+ * or null when the request may proceed. Routes built with `defineRoute`
+ * declare `rateLimit` instead.
+ */
+export async function enforceRateLimit(
+  action: RateLimitAction,
+  identity: RateLimitIdentity
+): Promise<NextResponse | null> {
+  const decision = await consumeRateLimit(action, identity);
+  if (decision.allowed) return null;
+  return NextResponse.json(
+    { error: "Too many requests", code: "rate_limited", retryAfter: decision.retryAfter },
+    { status: 429, headers: { "Retry-After": String(decision.retryAfter) } }
+  );
 }

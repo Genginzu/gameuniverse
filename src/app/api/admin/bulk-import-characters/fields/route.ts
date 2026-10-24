@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import { adminGuardResponse } from "@/lib/auth-admin";
+import { defineRoute } from "@/lib/api/route";
 
 const IMPORTABLE_FIELDS: Record<string, string> = {
   image: "main_image",
@@ -12,30 +12,22 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
  * GET /api/admin/bulk-import-characters/fields
  * Returns the count of IGDB-linked characters missing data for each field.
  */
-export async function GET() {
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
+export const GET = defineRoute({ auth: "admin" }, async () => {
+  const supabase = await createRouteHandlerClient();
+  const results: Record<string, number> = {};
 
-  try {
-    const supabase = await createRouteHandlerClient();
-    const results: Record<string, number> = {};
+  for (const [key, column] of Object.entries(IMPORTABLE_FIELDS)) {
+    const { count, error } = await supabase
+      .from("characters")
+      .select("id", { count: "exact", head: true })
+      .not("igdb_id", "is", null)
+      .is(column, null);
 
-    for (const [key, column] of Object.entries(IMPORTABLE_FIELDS)) {
-      const { count, error } = await supabase
-        .from("characters")
-        .select("id", { count: "exact", head: true })
-        .not("igdb_id", "is", null)
-        .is(column, null);
-
-      if (error) {
-        logger.warn(`Bulk import character count failed for ${key}`, { error });
-      }
-      results[key] = count ?? 0;
+    if (error) {
+      logger.warn(`Bulk import character count failed for ${key}`, { error });
     }
-
-    return NextResponse.json(results);
-  } catch (error) {
-    logger.error("Error fetching character bulk import field counts", { error });
-    return NextResponse.json({ error: "Failed to fetch field counts" }, { status: 500 });
+    results[key] = count ?? 0;
   }
-}
+
+  return NextResponse.json(results);
+});

@@ -4,17 +4,11 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mock setup ---
-let mockRequireAdmin: any;
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 let mockSupabaseFrom: any;
-
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => {
-    if (mockRequireAdmin) return mockRequireAdmin();
-    return Promise.resolve(true);
-  },
-}));
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -44,7 +38,6 @@ const samplePlatform = {
 
 describe("Admin Platforms API — GET + POST", () => {
   beforeEach(() => {
-    mockRequireAdmin = vi.fn(() => Promise.resolve(true));
     mockSupabaseFrom = null;
   });
 
@@ -52,15 +45,26 @@ describe("Admin Platforms API — GET + POST", () => {
   // GET /api/admin/platforms
   // =====================
   describe("GET /api/admin/platforms", () => {
+    test("returns 401 when signed out", async () => {
+      routeEnv.signOut();
+
+      const res = await GET(makeRequest("http://localhost/api/admin/platforms"));
+      expect(res.status).toBe(401);
+      expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
 
       const res = await GET(makeRequest("http://localhost/api/admin/platforms"));
       expect(res.status).toBe(403);
-      const body = await res.json();
-      expect(body.error).toBe("Admin access required");
+      expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
+    });
+
+    test("returns 400 for invalid query parameters", async () => {
+      const res = await GET(makeRequest("http://localhost/api/admin/platforms?page=0"));
+      expect(res.status).toBe(400);
+      expect((await res.json()).error).toBe("Invalid query parameters");
     });
 
     test("returns platforms with pagination structure", async () => {
@@ -151,9 +155,7 @@ describe("Admin Platforms API — GET + POST", () => {
   // =====================
   describe("POST /api/admin/platforms", () => {
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
 
       const res = await POST(
         makeRequest("http://localhost/api/admin/platforms", {
@@ -178,7 +180,8 @@ describe("Admin Platforms API — GET + POST", () => {
       );
       expect(res.status).toBe(400);
       const body = await res.json();
-      expect(body.error).toBe("Invalid input data");
+      expect(body.error).toBe("Invalid request body");
+      expect(body.code).toBe("validation");
     });
 
     test("returns 400 for invalid input (no translations with name)", async () => {

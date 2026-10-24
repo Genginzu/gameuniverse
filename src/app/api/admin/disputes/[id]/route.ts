@@ -1,29 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import { adminAuthErrorStatus, requireAdminUser } from "@/lib/auth-admin";
+import { defineRoute, notFound } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
 
-type RouteParams = { params: Promise<{ id: string }> };
+const disputeActionSchema = z.object({
+  action: z.enum(["resolve", "dismiss", "investigate"]),
+  adminNotes: z.unknown().optional(),
+});
 
 /**
  * PATCH /api/admin/disputes/[id] — Admin: resolve or dismiss a dispute.
  * coaching_disputes has no UPDATE policy, so the admin check runs first and the
  * update uses the service-role client (issue #385).
  */
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
-  try {
-    const user = await requireAdminUser();
+export const PATCH = defineRoute(
+  { auth: "admin", body: disputeActionSchema },
+  async ({ user, params, body }) => {
     const supabase: S = getSupabaseAdmin();
 
-    const { id } = await params;
-    const { action, adminNotes } = await request.json();
-
-    if (!["resolve", "dismiss", "investigate"].includes(action)) {
-      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-    }
+    const { id } = params;
+    const { action, adminNotes } = body;
 
     const statusMap: Record<string, string> = {
       resolve: "resolved",
@@ -47,17 +47,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       logger.error("Error updating dispute", { error });
       return NextResponse.json({ error: "Failed to update" }, { status: 500 });
     }
-    if (!updatedRows?.length) {
-      return NextResponse.json({ error: "Dispute not found" }, { status: 404 });
-    }
+    if (!updatedRows?.length) throw notFound("Dispute not found");
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    const authStatus = adminAuthErrorStatus(error);
-    if (authStatus) {
-      return NextResponse.json({ error: (error as Error).message }, { status: authStatus });
-    }
-    logger.error("Error in dispute PATCH", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

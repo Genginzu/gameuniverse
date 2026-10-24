@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 const mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
 const mockFrom = vi.fn(() => ({}));
@@ -20,6 +21,9 @@ import { GET } from "@/app/api/library/backlog/route";
 import { PATCH as reorder } from "@/app/api/library/backlog/reorder/route";
 
 const authedUser = { id: "user-123", email: "test@example.com" };
+
+// GET still authenticates through auth.getUser; the reorder PATCH goes through the route environment.
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", authedUser) });
 
 function makeReorderRequest(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/library/backlog/reorder", {
@@ -134,27 +138,28 @@ describe("GET /api/library/backlog", () => {
 
 describe("PATCH /api/library/backlog/reorder", () => {
   beforeEach(() => {
-    mockGetUser.mockReset();
     mockFrom.mockReset();
     mockRpc.mockReset();
   });
 
   it("returns 401 when unauthenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: new Error("no auth") });
+    routeEnv.signOut();
 
     const response = await reorder(makeReorderRequest({ orderedGameIds: [] }));
     expect(response.status).toBe(401);
+    expect(await response.json()).toEqual({
+      error: "Authentication required",
+      code: "unauthorized",
+    });
   });
 
   it("rejects an invalid body", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: authedUser }, error: null });
 
     const response = await reorder(makeReorderRequest({ orderedGameIds: ["not-a-uuid"] }));
     expect(response.status).toBe(400);
   });
 
   it("persists the order via the RPC", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: authedUser }, error: null });
     mockRpc.mockResolvedValue({ error: null });
 
     const ids = [
@@ -173,7 +178,6 @@ describe("PATCH /api/library/backlog/reorder", () => {
   });
 
   it("falls back to per-row updates when the RPC is missing", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: authedUser }, error: null });
     mockRpc.mockResolvedValue({ error: { code: "PGRST202", message: "not found" } });
 
     // Each from() returns a thenable chain resolving to { error: null }.

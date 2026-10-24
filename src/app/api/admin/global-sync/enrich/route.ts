@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { NextResponse } from "next/server";
+import { defineRoute } from "@/lib/api/route";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "@/lib/services/igdbService";
 import { syncTrackedFields } from "@/lib/services/igdb-fields/override-aware-sync";
@@ -23,47 +23,38 @@ const ENRICHED_FIELDS: readonly TrackableField[] = [
  * Phase 2: Enriches synced games with IGDB data (no color extraction).
  * Screenshots, artworks, age ratings, versions, languages, playtime, videos, similar games.
  */
-export async function POST(_request: NextRequest) {
-  try {
-    await requireAdmin();
-    const supabase = getSupabaseAdmin();
+export const POST = defineRoute({ auth: "admin" }, async () => {
+  const supabase = getSupabaseAdmin();
 
-    const { data: entries, error: fetchError } = await supabase
-      .from("igdb_global_sync")
-      .select("id, igdb_id, name, matched_game_id")
-      .eq("is_synced", true)
-      .eq("is_enriched", false)
-      .not("matched_game_id", "is", null)
-      .order("igdb_id", { ascending: true })
-      .limit(BATCH_SIZE);
+  const { data: entries, error: fetchError } = await supabase
+    .from("igdb_global_sync")
+    .select("id, igdb_id, name, matched_game_id")
+    .eq("is_synced", true)
+    .eq("is_enriched", false)
+    .not("matched_game_id", "is", null)
+    .order("igdb_id", { ascending: true })
+    .limit(BATCH_SIZE);
 
-    if (fetchError) {
-      logger.error("Error fetching games for enrichment", { fetchError });
-      return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
-    }
-
-    if (!entries || entries.length === 0) {
-      return NextResponse.json({ results: [], done: true, remaining: 0 });
-    }
-
-    const results = await Promise.all(entries.map((e) => enrichOneGame(supabase, e)));
-
-    const { count: remaining } = await supabase
-      .from("igdb_global_sync")
-      .select("id", { count: "exact", head: true })
-      .eq("is_synced", true)
-      .eq("is_enriched", false)
-      .not("matched_game_id", "is", null);
-
-    return NextResponse.json({ results, done: false, remaining: remaining ?? 0 });
-  } catch (error) {
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-    logger.error("Error in global-sync enrich", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (fetchError) {
+    logger.error("Error fetching games for enrichment", { fetchError });
+    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
   }
-}
+
+  if (!entries || entries.length === 0) {
+    return NextResponse.json({ results: [], done: true, remaining: 0 });
+  }
+
+  const results = await Promise.all(entries.map((e) => enrichOneGame(supabase, e)));
+
+  const { count: remaining } = await supabase
+    .from("igdb_global_sync")
+    .select("id", { count: "exact", head: true })
+    .eq("is_synced", true)
+    .eq("is_enriched", false)
+    .not("matched_game_id", "is", null);
+
+  return NextResponse.json({ results, done: false, remaining: remaining ?? 0 });
+});
 
 interface EnrichEntry {
   id: number;

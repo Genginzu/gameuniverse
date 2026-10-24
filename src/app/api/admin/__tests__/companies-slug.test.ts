@@ -1,11 +1,8 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-let mockRequireAdmin: any;
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 let mockSupabaseFrom: any;
-
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => (mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true)),
-}));
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -46,21 +43,27 @@ function supaChain(result: { data?: any; error?: any; count?: number }) {
 }
 
 beforeEach(() => {
-  mockRequireAdmin = undefined;
   mockSupabaseFrom = undefined;
 });
 
 describe("GET /api/admin/companies/[slug]", () => {
+  test("returns 401 when signed out", async () => {
+    routeEnv.signOut();
+    const res = await GET(
+      makeRequest("http://localhost/api/admin/companies/studio-a"),
+      makeParams("studio-a")
+    );
+    expect(res.status).toBe(401);
+  });
+
   test("returns 403 when not admin", async () => {
-    mockRequireAdmin = () => {
-      throw new Error("Admin access required");
-    };
+    routeEnv.signIn("user");
     const res = await GET(
       makeRequest("http://localhost/api/admin/companies/studio-a"),
       makeParams("studio-a")
     );
     expect(res.status).toBe(403);
-    expect((await res.json()).error).toBe("Admin access required");
+    expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
   });
 
   test("returns company by slug", async () => {
@@ -107,9 +110,7 @@ describe("GET /api/admin/companies/[slug]", () => {
 
 describe("PUT /api/admin/companies/[slug]", () => {
   test("returns 403 when not admin", async () => {
-    mockRequireAdmin = () => {
-      throw new Error("Admin access required");
-    };
+    routeEnv.signIn("user");
     const res = await PUT(
       makeRequest("http://localhost/api/admin/companies/studio-a", {
         method: "PUT",
@@ -136,9 +137,7 @@ describe("PUT /api/admin/companies/[slug]", () => {
 
 describe("DELETE /api/admin/companies/[slug]", () => {
   test("returns 403 when not admin", async () => {
-    mockRequireAdmin = () => {
-      throw new Error("Admin access required");
-    };
+    routeEnv.signIn("user");
     const res = await DELETE_HANDLER(
       makeRequest("http://localhost/api/admin/companies/studio-a"),
       makeParams("studio-a")

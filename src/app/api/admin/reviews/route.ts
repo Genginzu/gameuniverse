@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute } from "@/lib/api/route";
 import { fetchUserEmails } from "@/lib/services/userEmailsServerService";
 import { adminReviewQuerySchema } from "@/lib/validations/admin-review-query";
 import type { AdminReview } from "@/types/admin-reviews";
@@ -76,30 +76,10 @@ async function fetchProfilesMap(
 /**
  * GET /api/admin/reviews — Paginated list with search and sort
  */
-export async function GET(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const { searchParams } = new URL(request.url);
-
-    const rawParams: Record<string, string | undefined> = {
-      page: searchParams.get("page") ?? undefined,
-      limit: searchParams.get("limit") ?? undefined,
-      search: searchParams.get("search") ?? undefined,
-      sort_by: searchParams.get("sort_by") ?? undefined,
-      sort_order: searchParams.get("sort_order") ?? undefined,
-    };
-
-    const queryResult = adminReviewQuerySchema.safeParse(rawParams);
-
-    if (!queryResult.success) {
-      return NextResponse.json(
-        { error: "Invalid query parameters", details: queryResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { page, limit, search, sort_by, sort_order } = queryResult.data;
+export const GET = defineRoute(
+  { auth: "admin", query: adminReviewQuerySchema },
+  async ({ query }) => {
+    const { page, limit, search, sort_by, sort_order } = query;
 
     const supabase = await createRouteHandlerClient();
     const offset = (page - 1) * limit;
@@ -151,16 +131,8 @@ export async function GET(request: NextRequest) {
         hasPreviousPage: page > 1,
       },
     });
-  } catch (error) {
-    logger.error("Error in admin reviews GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
 

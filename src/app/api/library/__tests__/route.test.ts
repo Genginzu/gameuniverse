@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
+
+// GET still authenticates through auth.getUser; POST goes through the route environment.
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: "user-123" }) });
 
 // Mock functions shared by the Supabase client mock
 const mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
@@ -552,10 +556,7 @@ describe("/api/library", () => {
 
   describe("POST", () => {
     it("should return 401 when user not authenticated", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: null },
-        error: new Error("Not authenticated"),
-      });
+      routeEnv.signOut();
 
       const request = new NextRequest("http://localhost:3000/api/library", {
         method: "POST",
@@ -566,7 +567,21 @@ describe("/api/library", () => {
       const data = await response.json();
 
       expect(response.status).toBe(401);
-      expect(data.error).toBe("Unauthorized");
+      expect(data).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
+    it("should return 429 when the library rate limit is exceeded", async () => {
+      routeEnv.exceedRateLimit(60);
+
+      const request = new NextRequest("http://localhost:3000/api/library", {
+        method: "POST",
+        body: JSON.stringify({ gameId: "game-123" }),
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(429);
+      expect(mockFrom).not.toHaveBeenCalled();
     });
 
     it("should return 400 when gameId is missing", async () => {

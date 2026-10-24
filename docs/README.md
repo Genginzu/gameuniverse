@@ -111,6 +111,7 @@
 | [isr-hybrid.md](systems/isr-hybrid.md)                                 | ISR hybrid pages publiques     |
 | [database-privileges.md](systems/database-privileges.md)               | Privilèges DB (grants, RLS)    |
 | [rate-limiting.md](systems/rate-limiting.md)                           | Limitation des requêtes        |
+| [route-pipeline.md](systems/route-pipeline.md)                         | Prologue des routes API        |
 | [color-palette.md](systems/color-palette.md)                           | Palette de couleurs (tokens)   |
 | [legal-pages.md](systems/legal-pages.md)                               | Pages légales & infos éditeur  |
 | [coin-ledger.md](systems/coin-ledger.md)                               | Ledger GU Coins (atomique)     |

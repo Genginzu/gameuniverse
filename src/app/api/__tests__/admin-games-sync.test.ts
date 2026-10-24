@@ -7,17 +7,17 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 import { TRACKABLE_FIELDS } from "@/lib/services/igdb-fields/registry";
 
 const db = createSupabaseQueryMock();
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 const mocks = vi.hoisted(() => ({
-  requireAdmin: vi.fn(),
   syncGameField: vi.fn(),
   syncAllGameFields: vi.fn(),
   fetchMetacriticScore: vi.fn(),
 }));
 
-vi.mock("@/lib/auth-admin", () => ({ requireAdmin: () => mocks.requireAdmin() }));
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () => Promise.resolve(db.client),
 }));
@@ -51,20 +51,29 @@ const overridesRequest = () =>
 beforeEach(() => {
   db.reset();
   Object.values(mocks).forEach((m) => m.mockReset());
-  mocks.requireAdmin.mockResolvedValue(true);
 });
 
 describe("POST /api/admin/games/[id]/sync", () => {
-  test("returns 403 when the admin guard rejects", async () => {
-    mocks.requireAdmin.mockRejectedValue(new Error("Admin access required"));
+  test("returns 401 when signed out", async () => {
+    routeEnv.signOut();
+    const res = await POST(syncRequest({}), ctx());
+    expect(res.status).toBe(401);
+  });
+
+  test("returns 403 for a non-admin user", async () => {
+    routeEnv.signIn("user");
     const res = await POST(syncRequest({}), ctx());
     expect(res.status).toBe(403);
+    expect(db.calls).toHaveLength(0);
   });
 
   test("returns 400 for an unknown field without touching the database", async () => {
     const res = await POST(syncRequest({ field: "nonexistent_field" }), ctx());
     expect(res.status).toBe(400);
-    expect(await res.json()).toEqual({ error: "Invalid field: nonexistent_field" });
+    expect(await res.json()).toEqual({
+      error: "Invalid field: nonexistent_field",
+      code: "validation",
+    });
     expect(db.calls).toHaveLength(0);
   });
 
@@ -180,8 +189,8 @@ describe("POST /api/admin/games/[id]/sync", () => {
 });
 
 describe("GET /api/admin/games/[id]/overrides", () => {
-  test("returns 403 when the admin guard rejects", async () => {
-    mocks.requireAdmin.mockRejectedValue(new Error("Admin access required"));
+  test("returns 403 for a non-admin user", async () => {
+    routeEnv.signIn("user");
     expect((await GET(overridesRequest(), ctx())).status).toBe(403);
   });
 

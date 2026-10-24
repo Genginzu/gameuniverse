@@ -1,24 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getStripe, PLATFORM_FEE_RATE } from "@/lib/stripe";
-import { logger } from "@/lib/logger";
 import { isPayableSession } from "@/lib/services/coaching-lifecycle";
+import { conflict, defineRoute, forbidden, notFound, validationError } from "@/lib/api/route";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
 
-/** POST — Create a Stripe Checkout Session for a coaching session */
-export async function POST(request: NextRequest) {
-  try {
-    const supabase: S = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+const checkoutBodySchema = z.looseObject({ sessionId: z.any().optional() });
 
-    const { sessionId } = await request.json();
-    if (!sessionId) return NextResponse.json({ error: "sessionId required" }, { status: 400 });
+/** POST — Create a Stripe Checkout Session for a coaching session */
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "coachingBooking", body: checkoutBodySchema },
+  async ({ user, body }) => {
+    const supabase: S = await createRouteHandlerClient();
+
+    const { sessionId } = body;
+    if (!sessionId) throw validationError(undefined, "sessionId required");
 
     // Fetch coaching session
     const { data: session } = await supabase
@@ -27,11 +27,10 @@ export async function POST(request: NextRequest) {
       .eq("id", sessionId)
       .single();
 
-    if (!session) return NextResponse.json({ error: "Session not found" }, { status: 404 });
-    if (session.student_id !== user.id)
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!session) throw notFound("Session not found");
+    if (session.student_id !== user.id) throw forbidden("Forbidden");
     if (!isPayableSession({ status: session.status, paymentStatus: session.payment_status }))
-      return NextResponse.json({ error: "Session is not awaiting payment" }, { status: 409 });
+      throw conflict("Session is not awaiting payment");
 
     // Get coach's Stripe account
     const { data: coach } = await supabase
@@ -92,11 +91,8 @@ export async function POST(request: NextRequest) {
       .eq("payment_status", "pending");
 
     return NextResponse.json({ url: checkoutSession.url });
-  } catch (error) {
-    logger.error("Error creating checkout session", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * Load the pricing tier of a session, only if it belongs to the session's coach.

@@ -1,14 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // Create mock functions
-const mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
 const mockFrom = vi.fn(() => ({}));
 
 const mockSupabase = {
-  auth: {
-    getUser: mockGetUser,
-  },
   from: mockFrom,
 };
 
@@ -18,38 +15,31 @@ vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
 }));
 
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: "user-123" }) });
+
 // Import after mocking
 import { GET, DELETE } from "@/app/api/library/[gameId]/route";
 
+const params = () => ({ params: Promise.resolve({ gameId: "game-123" }) });
+
 describe("/api/library/[gameId]", () => {
   beforeEach(() => {
-    mockGetUser.mockReset();
     mockFrom.mockReset();
   });
 
   describe("GET", () => {
     it("should return 401 when user not authenticated", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: null },
-        error: new Error("Not authenticated"),
-      });
+      routeEnv.signOut();
 
       const request = new NextRequest("http://localhost:3000/api/library/game-123");
-      const response = await GET(request, { params: Promise.resolve({ gameId: "game-123" }) });
+      const response = await GET(request, params());
       const data = await response.json();
 
       expect(response.status).toBe(401);
-      expect(data.error).toBe("Unauthorized");
+      expect(data).toEqual({ error: "Authentication required", code: "unauthorized" });
     });
 
     it("should return false when game not in library", async () => {
-      const mockUser = { id: "user-123", email: "test@example.com" };
-
-      mockGetUser.mockResolvedValue({
-        data: { user: mockUser },
-        error: null,
-      });
-
       const mockSelect = {
         eq: vi.fn(() => mockSelect),
         single: vi.fn(() =>
@@ -65,7 +55,7 @@ describe("/api/library/[gameId]", () => {
       });
 
       const request = new NextRequest("http://localhost:3000/api/library/game-123");
-      const response = await GET(request, { params: Promise.resolve({ gameId: "game-123" }) });
+      const response = await GET(request, params());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -75,17 +65,11 @@ describe("/api/library/[gameId]", () => {
     });
 
     it("should return true when game is in library", async () => {
-      const mockUser = { id: "user-123", email: "test@example.com" };
       const mockLibraryEntry = {
         id: "library-123",
         status: "owned",
         added_at: "2024-01-11T10:00:00Z",
       };
-
-      mockGetUser.mockResolvedValue({
-        data: { user: mockUser },
-        error: null,
-      });
 
       const mockSelect = {
         eq: vi.fn(() => mockSelect),
@@ -102,7 +86,7 @@ describe("/api/library/[gameId]", () => {
       });
 
       const request = new NextRequest("http://localhost:3000/api/library/game-123");
-      const response = await GET(request, { params: Promise.resolve({ gameId: "game-123" }) });
+      const response = await GET(request, params());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -114,29 +98,31 @@ describe("/api/library/[gameId]", () => {
 
   describe("DELETE", () => {
     it("should return 401 when user not authenticated", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: null },
-        error: new Error("Not authenticated"),
-      });
+      routeEnv.signOut();
 
       const request = new NextRequest("http://localhost:3000/api/library/game-123", {
         method: "DELETE",
       });
-      const response = await DELETE(request, { params: Promise.resolve({ gameId: "game-123" }) });
+      const response = await DELETE(request, params());
       const data = await response.json();
 
       expect(response.status).toBe(401);
-      expect(data.error).toBe("Unauthorized");
+      expect(data).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
+    it("should return 429 when the library rate limit is exceeded", async () => {
+      routeEnv.exceedRateLimit(60);
+
+      const request = new NextRequest("http://localhost:3000/api/library/game-123", {
+        method: "DELETE",
+      });
+      const response = await DELETE(request, params());
+
+      expect(response.status).toBe(429);
+      expect(mockFrom).not.toHaveBeenCalled();
     });
 
     it("should remove game from library successfully", async () => {
-      const mockUser = { id: "user-123", email: "test@example.com" };
-
-      mockGetUser.mockResolvedValue({
-        data: { user: mockUser },
-        error: null,
-      });
-
       const mockDelete = {
         eq: vi.fn(() => mockDelete),
       };
@@ -150,7 +136,7 @@ describe("/api/library/[gameId]", () => {
       const request = new NextRequest("http://localhost:3000/api/library/game-123", {
         method: "DELETE",
       });
-      const response = await DELETE(request, { params: Promise.resolve({ gameId: "game-123" }) });
+      const response = await DELETE(request, params());
       const data = await response.json();
 
       expect(response.status).toBe(200);

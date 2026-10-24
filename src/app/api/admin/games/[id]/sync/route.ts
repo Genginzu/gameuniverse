@@ -1,9 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { isTrackableField } from "@/lib/services/igdb-fields/registry";
 import { syncGameField, syncAllGameFields } from "@/lib/services/igdb-sync";
 import { fetchMetacriticScore } from "@/lib/services/metacriticService";
+
+const syncGameSchema = z.object({
+  field: z.string().optional(),
+});
 
 /**
  * POST /api/admin/games/[id]/sync
@@ -15,23 +20,21 @@ import { fetchMetacriticScore } from "@/lib/services/metacriticService";
  *
  * Requirements: 4.1, 4.2, 4.3, 4.4, 4.5
  */
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    await requireAdmin();
-
-    const { id: gameId } = await params;
+export const POST = defineRoute(
+  { auth: "admin", body: syncGameSchema },
+  async ({ params, body }) => {
+    const { id: gameId } = params;
 
     if (!gameId) {
-      return NextResponse.json({ error: "Game ID is required" }, { status: 400 });
+      throw validationError(undefined, "Game ID is required");
     }
 
-    const body = await request.json().catch(() => ({}));
-    const { field } = body as { field?: string };
+    const { field } = body;
 
     // Validate field name if provided
     const requestedField = isTrackableField(field) ? field : null;
     if (field && !requestedField) {
-      return NextResponse.json({ error: `Invalid field: ${field}` }, { status: 400 });
+      throw validationError(undefined, `Invalid field: ${field}`);
     }
 
     const supabase = await createRouteHandlerClient();
@@ -44,11 +47,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .single();
 
     if (fetchError || !game) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+      throw notFound("Game not found");
     }
 
     if (!game.igdb_id) {
-      return NextResponse.json({ error: "Ce jeu n'est pas lié à IGDB" }, { status: 400 });
+      throw validationError(undefined, "Ce jeu n'est pas lié à IGDB");
     }
 
     // Sync single field or all fields (forced — no override protection)
@@ -97,10 +100,5 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       syncedFields: result.syncedFields,
       game: updatedError ? null : updatedGame,
     });
-  } catch (error) {
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

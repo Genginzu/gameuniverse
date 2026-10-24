@@ -1,21 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { GameDetails } from "@/types/game";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // vi.hoisted ensures mock fns exist when the vi.mock factories run.
-const { mockGetUser, mockImportFromIGDB, mockFindExisting, mockCheckRateLimit, mockRecordEvent } =
-  vi.hoisted(() => ({
-    mockGetUser: vi.fn(),
+const { mockImportFromIGDB, mockFindExisting, mockCheckRateLimit, mockRecordEvent } = vi.hoisted(
+  () => ({
     mockImportFromIGDB: vi.fn(),
     mockFindExisting: vi.fn(),
     mockCheckRateLimit: vi.fn(),
     mockRecordEvent: vi.fn(() => Promise.resolve()),
-  }));
+  })
+);
 
-const mockSupabase = { auth: { getUser: mockGetUser } };
-
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
-}));
+const routeEnv = useTestRouteEnvironment();
 
 vi.mock("@/lib/services/gameImportService", () => ({
   GameImportService: {
@@ -46,33 +43,19 @@ function makeRequest(body: unknown) {
 }
 
 function mockUser(id = USER_ID, email = "player@example.com") {
-  mockGetUser.mockResolvedValue({
-    data: { user: { id, email, app_metadata: {}, user_metadata: { role: "admin" } } },
-    error: null,
-  });
+  routeEnv.signIn(testUser("user", { id, email, user_metadata: { role: "admin" } }));
 }
 
 function mockAdmin() {
-  mockGetUser.mockResolvedValue({
-    data: {
-      user: {
-        id: "admin-id",
-        email: "boss@example.com",
-        app_metadata: { role: "admin" },
-        user_metadata: {},
-      },
-    },
-    error: null,
-  });
+  routeEnv.signIn(testUser("admin", { id: "admin-id", email: "boss@example.com" }));
 }
 
 function mockLoggedOut() {
-  mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+  routeEnv.signOut();
 }
 
 describe("POST /api/games/import", () => {
   beforeEach(() => {
-    mockGetUser.mockReset();
     mockImportFromIGDB.mockReset().mockResolvedValue({ success: true, game: SAMPLE_GAME });
     mockFindExisting.mockReset().mockResolvedValue(null);
     mockCheckRateLimit.mockReset().mockResolvedValue({
@@ -89,6 +72,7 @@ describe("POST /api/games/import", () => {
     const res = await POST(makeRequest({ igdbId: 123 }));
 
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
     expect(mockFindExisting).not.toHaveBeenCalled();
     expect(mockImportFromIGDB).not.toHaveBeenCalled();
     expect(mockRecordEvent).not.toHaveBeenCalled();

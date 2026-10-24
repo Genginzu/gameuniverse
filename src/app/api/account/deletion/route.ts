@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { defineRoute, notFound } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
 import { reauthenticate } from "@/lib/services/reauthService";
 import { sendDeletionRequestedEmail } from "@/lib/services/accountDeletionEmails";
 import {
@@ -18,55 +18,36 @@ import type {
 
 const NO_STORE = { "Cache-Control": "no-store" };
 
-async function currentUser() {
-  const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
-}
-
-function unauthorized() {
-  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-}
+const deletionRequestSchema = z.looseObject({
+  password: z.unknown().optional(),
+  confirmation: z.unknown().optional(),
+  locale: z.unknown().optional(),
+});
 
 function refused(code: AccountDeletionErrorCode, status: number) {
   return NextResponse.json({ error: "Deletion refused", code }, { status });
 }
 
 /** GET /api/account/deletion — Signed-in user: pending deletion status. */
-export async function GET() {
-  const user = await currentUser();
-  if (!user) return unauthorized();
-
-  try {
-    return NextResponse.json(await getDeletionStatus(user.id), { headers: NO_STORE });
-  } catch (error) {
-    logger.error("Failed to read account deletion status", { error, userId: user.id });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
+export const GET = defineRoute({ auth: "required" }, async ({ user }) => {
+  return NextResponse.json(await getDeletionStatus(user.id), { headers: NO_STORE });
+});
 
 /**
  * POST /api/account/deletion — Request deletion: re-authentication + typed
  * confirmation word, then the account is deactivated for the grace period.
  */
-export async function POST(request: NextRequest) {
-  const user = await currentUser();
-  if (!user) return unauthorized();
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "accountDeletion", body: deletionRequestSchema },
+  async ({ user, body: rawBody }) => {
+    const body = rawBody as Partial<AccountDeletionRequestPayload>;
+    const locale = body.locale === "en" ? "en" : "fr";
 
-  const limited = await enforceRateLimit("accountDeletion", { userId: user.id });
-  if (limited) return limited;
+    if (!isValidConfirmation(body.confirmation, locale)) return refused("invalidConfirmation", 400);
 
-  const body = (await request.json().catch(() => ({}))) as Partial<AccountDeletionRequestPayload>;
-  const locale = body.locale === "en" ? "en" : "fr";
+    const reauth = await reauthenticate(user, body.password);
+    if (reauth !== "ok") return refused(reauth, 403);
 
-  if (!isValidConfirmation(body.confirmation, locale)) return refused("invalidConfirmation", 400);
-
-  const reauth = await reauthenticate(user, body.password);
-  if (reauth !== "ok") return refused(reauth, 403);
-
-  try {
     const blocker = await findDeletionBlocker(user.id);
     if (blocker) return refused(blocker, 409);
 
@@ -82,25 +63,14 @@ export async function POST(request: NextRequest) {
       scheduledFor: status.scheduledFor,
     });
     return NextResponse.json(status, { headers: NO_STORE });
-  } catch (error) {
-    logger.error("Failed to request account deletion", { error, userId: user.id });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /** DELETE /api/account/deletion — Cancel a pending deletion (grace period). */
-export async function DELETE() {
-  const user = await currentUser();
-  if (!user) return unauthorized();
+export const DELETE = defineRoute({ auth: "required" }, async ({ user }) => {
+  const cancelled = await cancelDeletion(user.id);
+  if (!cancelled) throw notFound("No pending deletion");
 
-  try {
-    const cancelled = await cancelDeletion(user.id);
-    if (!cancelled) return NextResponse.json({ error: "No pending deletion" }, { status: 404 });
-
-    logger.info("Account deletion cancelled", { userId: user.id });
-    return NextResponse.json(await getDeletionStatus(user.id), { headers: NO_STORE });
-  } catch (error) {
-    logger.error("Failed to cancel account deletion", { error, userId: user.id });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
+  logger.info("Account deletion cancelled", { userId: user.id });
+  return NextResponse.json(await getDeletionStatus(user.id), { headers: NO_STORE });
+});

@@ -6,14 +6,13 @@
  */
 
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import * as fc from "fast-check";
 import type { NextRequest } from "next/server";
 import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 const db = createSupabaseQueryMock();
-const requireAdmin = vi.hoisted(() => vi.fn());
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 
-vi.mock("@/lib/auth-admin", () => ({ requireAdmin: () => requireAdmin() }));
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () => Promise.resolve(db.client),
 }));
@@ -48,31 +47,28 @@ const callAll = () =>
 
 beforeEach(() => {
   db.reset();
-  requireAdmin.mockReset().mockResolvedValue(true);
 });
 
 describe("Property 6: auth rejection", () => {
-  test("every handler returns 403 when the admin guard rejects", async () => {
-    requireAdmin.mockRejectedValue(new Error("Admin access required"));
+  test("every handler returns 401 to a signed-out caller", async () => {
+    routeEnv.signOut();
+    for (const res of await callAll()) expect(res.status).toBe(401);
+    expect(db.calls).toHaveLength(0);
+  });
+
+  test("every handler returns 403 to a non-admin", async () => {
+    routeEnv.signIn("user");
     const responses = await callAll();
     for (const res of responses) {
       expect(res.status).toBe(403);
-      expect(await res.json()).toEqual({ error: "Admin access required" });
+      expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
     }
     expect(db.calls).toHaveLength(0);
   });
 
-  test("any other guard error maps to 500, never 403", async () => {
-    await fc.assert(
-      fc.asyncProperty(
-        fc.string({ minLength: 1 }).filter((m) => m !== "Admin access required"),
-        async (message) => {
-          requireAdmin.mockRejectedValue(new Error(message));
-          for (const res of await callAll()) expect(res.status).toBe(500);
-        }
-      ),
-      { numRuns: 20 }
-    );
+  test("an admin role in user_metadata is not trusted", async () => {
+    routeEnv.signIn(testUser("user", { user_metadata: { role: "admin" } }));
+    for (const res of await callAll()) expect(res.status).toBe(403);
   });
 });
 
@@ -151,7 +147,7 @@ describe("POST /api/admin/characters", () => {
       request(BASE_URL, "POST", { slug: "Mario Bros!", translations: [] })
     );
     expect(res.status).toBe(400);
-    expect((await res.json()).error).toBe("Invalid input data");
+    expect((await res.json()).error).toBe("Invalid request body");
     expect(db.calls).toHaveLength(0);
   });
 

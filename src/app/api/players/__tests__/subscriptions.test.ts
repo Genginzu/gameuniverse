@@ -1,8 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 const PLAYER_ID = "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa";
 const TARGET_ID = "bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb";
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: PLAYER_ID }) });
 
 const {
   mockGetCounts,
@@ -11,7 +14,6 @@ const {
   mockSubscribe,
   mockUnsubscribe,
   mockGetRelationship,
-  mockGetUser,
 } = vi.hoisted(() => ({
   mockGetCounts: vi.fn(),
   mockGetSubscriptions: vi.fn(),
@@ -19,7 +21,6 @@ const {
   mockSubscribe: vi.fn(),
   mockUnsubscribe: vi.fn(),
   mockGetRelationship: vi.fn(),
-  mockGetUser: vi.fn(),
 }));
 
 vi.mock("@/lib/services/subscriptionServerService", () => ({
@@ -31,12 +32,6 @@ vi.mock("@/lib/services/subscriptionServerService", () => ({
     unsubscribe: mockUnsubscribe,
     getRelationship: mockGetRelationship,
   },
-}));
-
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(() =>
-    Promise.resolve({ auth: { getUser: mockGetUser } })
-  ),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -105,7 +100,6 @@ describe("GET /api/players/[id]/subscriptions", () => {
 describe("POST /api/players/[id]/subscriptions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetUser.mockResolvedValue({ data: { user: { id: PLAYER_ID } }, error: null });
     mockSubscribe.mockResolvedValue(undefined);
   });
 
@@ -124,15 +118,24 @@ describe("POST /api/players/[id]/subscriptions", () => {
   });
 
   it("returns 401 when unauthenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+    routeEnv.signOut();
     const res = await POST_SUBSCRIPTION(postReq(), idParams());
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   it("returns 403 when acting for another user", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: TARGET_ID } }, error: null });
+    routeEnv.signIn(testUser("user", { id: TARGET_ID }));
     const res = await POST_SUBSCRIPTION(postReq(), idParams());
     expect(res.status).toBe(403);
+  });
+
+  it("returns 429 when the follow limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(60);
+    const res = await POST_SUBSCRIPTION(postReq(), idParams());
+    expect(res.status).toBe(429);
+    expect(routeEnv.rateLimitHits[0]).toBe(`follow:user:${PLAYER_ID}`);
+    expect(mockSubscribe).not.toHaveBeenCalled();
   });
 
   it("returns 400 when subscribing to yourself", async () => {
@@ -163,7 +166,6 @@ describe("GET /api/players/[id]/subscribers", () => {
 describe("subscriptions/[targetId]", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetUser.mockResolvedValue({ data: { user: { id: PLAYER_ID } }, error: null });
     mockUnsubscribe.mockResolvedValue(undefined);
     mockGetRelationship.mockResolvedValue({ isSubscribed: true });
   });
@@ -179,7 +181,7 @@ describe("subscriptions/[targetId]", () => {
   });
 
   it("DELETE returns 403 for another user", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: TARGET_ID } }, error: null });
+    routeEnv.signIn(testUser("user", { id: TARGET_ID }));
     const req = new NextRequest(
       `http://localhost/api/players/${PLAYER_ID}/subscriptions/${TARGET_ID}`,
       { method: "DELETE" }

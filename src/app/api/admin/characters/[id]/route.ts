@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { adminCharacterFormSchema } from "@/lib/validations/admin-character-form";
 import { characterFormToPayload } from "@/lib/utils/character-form-utils";
 import { logger } from "@/lib/logger";
@@ -54,29 +54,22 @@ interface CharacterDetailRow {
   }>;
 }
 
-type RouteParams = { params: Promise<{ id: string }> };
-
 /** GET /api/admin/characters/[id] - Full character details for editing */
-export async function GET(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const GET = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { id: characterId } = params;
 
-    const { id: characterId } = await params;
+  if (!characterId) throw validationError(undefined, "Character ID is required");
 
-    if (!characterId) {
-      return NextResponse.json({ error: "Character ID is required" }, { status: 400 });
-    }
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  // Character tables are not yet in generated Supabase types (database.types.ts)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any;
 
-    // Character tables are not yet in generated Supabase types (database.types.ts)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = supabase as any;
-
-    const { data, error } = await db
-      .from("characters")
-      .select(
-        `
+  const { data, error } = await db
+    .from("characters")
+    .select(
+      `
         id,
         slug,
         igdb_id,
@@ -123,77 +116,49 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           role_id
         )
       `
-      )
-      .eq("id", characterId)
-      .single();
+    )
+    .eq("id", characterId)
+    .single();
 
-    const character = data as CharacterDetailRow | null;
+  const character = data as CharacterDetailRow | null;
 
-    if (error) {
-      logger.error("Error fetching character details", { error });
+  if (error) {
+    if (error.code === "PGRST116") throw notFound("Character not found");
 
-      if (error.code === "PGRST116") {
-        return NextResponse.json({ error: "Character not found" }, { status: 404 });
-      }
-
-      return NextResponse.json({ error: "Failed to fetch character details" }, { status: 500 });
-    }
-
-    if (!character) {
-      return NextResponse.json({ error: "Character not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({
-      id: character.id,
-      slug: character.slug,
-      igdb_id: character.igdb_id ?? null,
-      main_image: character.main_image,
-      background_image: character.background_image,
-      background_color: character.background_color,
-      gender_id: character.gender_id ?? null,
-      species_id: character.species_id ?? null,
-      created_at: character.created_at,
-      updated_at: character.updated_at,
-      translations: character.character_translations || [],
-      games: character.character_games || [],
-      relationships: character.character_relationships || [],
-      media: character.character_media || [],
-      role_ids: (character.character_character_roles || []).map((r) => r.role_id),
-    });
-  } catch (error) {
-    logger.error("Error in admin character GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    logger.error("Error fetching character details", { error });
+    return NextResponse.json({ error: "Failed to fetch character details" }, { status: 500 });
   }
-}
+
+  if (!character) throw notFound("Character not found");
+
+  return NextResponse.json({
+    id: character.id,
+    slug: character.slug,
+    igdb_id: character.igdb_id ?? null,
+    main_image: character.main_image,
+    background_image: character.background_image,
+    background_color: character.background_color,
+    gender_id: character.gender_id ?? null,
+    species_id: character.species_id ?? null,
+    created_at: character.created_at,
+    updated_at: character.updated_at,
+    translations: character.character_translations || [],
+    games: character.character_games || [],
+    relationships: character.character_relationships || [],
+    media: character.character_media || [],
+    role_ids: (character.character_character_roles || []).map((r) => r.role_id),
+  });
+});
 
 /** PUT /api/admin/characters/[id] - Full update with relation replacement */
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const PUT = defineRoute(
+  { auth: "admin", body: adminCharacterFormSchema },
+  async ({ params, body }) => {
+    const { id: characterId } = params;
 
-    const { id: characterId } = await params;
+    if (!characterId) throw validationError(undefined, "Character ID is required");
 
-    if (!characterId) {
-      return NextResponse.json({ error: "Character ID is required" }, { status: 400 });
-    }
-
-    const body = await request.json();
-
-    const validationResult = adminCharacterFormSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const payload = characterFormToPayload(validationResult.data);
+    const payload = characterFormToPayload(body);
     const supabase = await createRouteHandlerClient();
 
     // Character tables are not yet in generated Supabase types (database.types.ts)
@@ -207,9 +172,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", characterId)
       .single();
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Character not found" }, { status: 404 });
-    }
+    if (checkError || !existing) throw notFound("Character not found");
 
     // Update main character data
     const { error: updateError } = await db
@@ -226,15 +189,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", characterId);
 
     if (updateError) {
-      logger.error("Error updating character", { error: updateError });
-
       if (updateError.code === "23505") {
-        return NextResponse.json(
-          { error: "Character with this slug already exists" },
-          { status: 400 }
-        );
+        throw validationError(undefined, "Character with this slug already exists");
       }
 
+      logger.error("Error updating character", { error: updateError });
       return NextResponse.json({ error: "Failed to update character" }, { status: 500 });
     }
 
@@ -326,65 +285,41 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       message: "Character updated successfully",
       characterId,
     });
-  } catch (error) {
-    logger.error("Error in admin character PUT", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /** DELETE /api/admin/characters/[id] - Delete with cascade */
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const DELETE = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { id: characterId } = params;
 
-    const { id: characterId } = await params;
+  if (!characterId) throw validationError(undefined, "Character ID is required");
 
-    if (!characterId) {
-      return NextResponse.json({ error: "Character ID is required" }, { status: 400 });
-    }
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  // Character tables are not yet in generated Supabase types (database.types.ts)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any;
 
-    // Character tables are not yet in generated Supabase types (database.types.ts)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = supabase as any;
+  // Check if character exists
+  const { data: existing, error: checkError } = await db
+    .from("characters")
+    .select("id, slug")
+    .eq("id", characterId)
+    .single();
 
-    // Check if character exists
-    const { data: existing, error: checkError } = await db
-      .from("characters")
-      .select("id, slug")
-      .eq("id", characterId)
-      .single();
+  if (checkError || !existing) throw notFound("Character not found");
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Character not found" }, { status: 404 });
-    }
+  // CASCADE will handle all related data
+  const { error: deleteError } = await db.from("characters").delete().eq("id", characterId);
 
-    // CASCADE will handle all related data
-    const { error: deleteError } = await db.from("characters").delete().eq("id", characterId);
-
-    if (deleteError) {
-      logger.error("Error deleting character", { error: deleteError });
-      return NextResponse.json({ error: "Failed to delete character" }, { status: 500 });
-    }
-
-    return NextResponse.json({
-      message: "Character deleted successfully",
-      characterId,
-      slug: existing.slug,
-    });
-  } catch (error) {
-    logger.error("Error in admin character DELETE", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (deleteError) {
+    logger.error("Error deleting character", { error: deleteError });
+    return NextResponse.json({ error: "Failed to delete character" }, { status: 500 });
   }
-}
+
+  return NextResponse.json({
+    message: "Character deleted successfully",
+    characterId,
+    slug: existing.slug,
+  });
+});

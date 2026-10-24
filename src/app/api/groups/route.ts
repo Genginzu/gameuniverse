@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute } from "@/lib/api/route";
 import { GroupServerService } from "@/lib/services/groupServerService";
 import { createGroupSchema } from "@/lib/validations/group";
 import { logger } from "@/lib/logger";
@@ -55,31 +55,11 @@ export async function GET(request: NextRequest) {
  * POST /api/groups — Create a new group.
  * Authentication required. The creator becomes the owner (auto-added via DB trigger).
  */
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const parsed = createGroupSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    const group = await GroupServerService.createGroup(user.id, parsed.data);
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "groupCreate", writesContent: true, body: createGroupSchema },
+  async ({ user, body }) => {
+    const group = await GroupServerService.createGroup(user.id, body);
 
     return NextResponse.json({ group }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in groups POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

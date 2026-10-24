@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { conflict, defineRoute, notFound, validationError } from "@/lib/api/route";
 import { reviewSchema } from "@/lib/validations/review";
 import { sanitizeRichText } from "@/lib/utils/sanitizeRichText";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { CoinService } from "@/lib/services/coinService";
-import { suspendedResponse } from "@/lib/services/suspensionGuard";
 import type { Review, ReviewsResponse, VoteType } from "@/types/review";
 import {
   fetchVoteCountsMap,
@@ -12,7 +13,9 @@ import {
   enrichReviewsWithVotes,
 } from "@/lib/utils/reviewVoteQueries";
 import { logger } from "@/lib/logger";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
+
+/** gameId is read from the raw body, so the shared form schema must not strip it. */
+const reviewBodySchema = reviewSchema.extend({ gameId: z.unknown().optional() });
 
 interface ReviewRow {
   id: string;
@@ -115,90 +118,80 @@ async function fetchProfilesMap(
  * with player profiles, vote counts, user vote, average rating,
  * and whether the current user has reviewed.
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  try {
-    const gameId = request.nextUrl.searchParams.get("gameId");
-    if (!gameId) {
-      return NextResponse.json({ error: "gameId query parameter is required" }, { status: 400 });
-    }
-
-    const supabase = await createRouteHandlerClient();
-
-    // Check if game exists
-    const { data: game, error: gameError } = await supabase
-      .from("games")
-      .select("id")
-      .eq("id", gameId)
-      .single();
-
-    if (gameError || !game) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
-    }
-
-    // Fetch reviews ordered by created_at descending
-    const { data: rows, error: reviewsError } = await supabase
-      .from("game_reviews")
-      .select("*")
-      .eq("game_id", gameId)
-      .order("created_at", { ascending: false });
-
-    if (reviewsError) {
-      if (reviewsError.code === "PGRST205") {
-        const emptyResponse: ReviewsResponse = {
-          reviews: [],
-          averageRating: null,
-          totalCount: 0,
-          userHasReviewed: false,
-        };
-        return NextResponse.json(emptyResponse);
-      }
-      logger.error("Error fetching reviews", { error: reviewsError });
-      return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
-    }
-
-    const reviewRows = (rows ?? []) as ReviewRow[];
-    const reviewIds = reviewRows.map((r) => r.id);
-
-    // Fetch profiles and vote data in parallel
-    const userIds = [
-      ...new Set(reviewRows.map((r) => r.user_id).filter((id): id is string => id !== null)),
-    ];
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    const [profilesMap, voteCountsMap, userVotesMap] = await Promise.all([
-      fetchProfilesMap(supabase, userIds),
-      fetchVoteCountsMap(supabase, reviewIds),
-      user
-        ? fetchUserVotesMap(supabase, user.id, reviewIds)
-        : Promise.resolve(new Map<string, VoteType>()),
-    ]);
-
-    // Transform rows to Review objects, then enrich with vote data
-    const reviews: Review[] = reviewRows.map((row) => toReview(row, profilesMap));
-    const reviewsWithVotes = enrichReviewsWithVotes(reviews, voteCountsMap, userVotesMap);
-
-    const userHasReviewed = user ? reviews.some((r) => r.userId === user.id) : false;
-    const userReview = user ? (reviews.find((r) => r.userId === user.id) ?? null) : null;
-
-    // Sort: user's review first, then by helpful votes descending
-    const sortedReviews = sortReviewsByHelpfulVotes(reviewsWithVotes, user?.id ?? null);
-
-    const response: ReviewsResponse = {
-      reviews: sortedReviews,
-      averageRating: computeAverageRating(reviews),
-      totalCount: reviews.length,
-      userHasReviewed,
-      userReview: userReview ?? undefined,
-    };
-
-    return NextResponse.json(response);
-  } catch (error) {
-    logger.error("Error in reviews GET", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+export const GET = defineRoute({ auth: "optional" }, async ({ request, user }) => {
+  const gameId = request.nextUrl.searchParams.get("gameId");
+  if (!gameId) {
+    throw validationError(undefined, "gameId query parameter is required");
   }
-}
+
+  const supabase = await createRouteHandlerClient();
+
+  // Check if game exists
+  const { data: game, error: gameError } = await supabase
+    .from("games")
+    .select("id")
+    .eq("id", gameId)
+    .single();
+
+  if (gameError || !game) throw notFound("Game not found");
+
+  // Fetch reviews ordered by created_at descending
+  const { data: rows, error: reviewsError } = await supabase
+    .from("game_reviews")
+    .select("*")
+    .eq("game_id", gameId)
+    .order("created_at", { ascending: false });
+
+  if (reviewsError) {
+    if (reviewsError.code === "PGRST205") {
+      const emptyResponse: ReviewsResponse = {
+        reviews: [],
+        averageRating: null,
+        totalCount: 0,
+        userHasReviewed: false,
+      };
+      return NextResponse.json(emptyResponse);
+    }
+    logger.error("Error fetching reviews", { error: reviewsError });
+    return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
+  }
+
+  const reviewRows = (rows ?? []) as ReviewRow[];
+  const reviewIds = reviewRows.map((r) => r.id);
+
+  // Fetch profiles and vote data in parallel
+  const userIds = [
+    ...new Set(reviewRows.map((r) => r.user_id).filter((id): id is string => id !== null)),
+  ];
+
+  const [profilesMap, voteCountsMap, userVotesMap] = await Promise.all([
+    fetchProfilesMap(supabase, userIds),
+    fetchVoteCountsMap(supabase, reviewIds),
+    user
+      ? fetchUserVotesMap(supabase, user.id, reviewIds)
+      : Promise.resolve(new Map<string, VoteType>()),
+  ]);
+
+  // Transform rows to Review objects, then enrich with vote data
+  const reviews: Review[] = reviewRows.map((row) => toReview(row, profilesMap));
+  const reviewsWithVotes = enrichReviewsWithVotes(reviews, voteCountsMap, userVotesMap);
+
+  const userHasReviewed = user ? reviews.some((r) => r.userId === user.id) : false;
+  const userReview = user ? (reviews.find((r) => r.userId === user.id) ?? null) : null;
+
+  // Sort: user's review first, then by helpful votes descending
+  const sortedReviews = sortReviewsByHelpfulVotes(reviewsWithVotes, user?.id ?? null);
+
+  const response: ReviewsResponse = {
+    reviews: sortedReviews,
+    averageRating: computeAverageRating(reviews),
+    totalCount: reviews.length,
+    userHasReviewed,
+    userReview: userReview ?? undefined,
+  };
+
+  return NextResponse.json(response);
+});
 
 /**
  * POST /api/reviews
@@ -206,39 +199,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
  * Create a new review for a game. Validates input with reviewSchema.
  * Automatically adds the game to the user's library if not already present.
  */
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "review", writesContent: true, body: reviewBodySchema },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
 
-    // Authenticate user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const suspended = await suspendedResponse(user.id);
-    if (suspended) return suspended;
-
-    const limited = await enforceRateLimit("review", { userId: user.id });
-    if (limited) return limited;
-
-    const body = await request.json();
-    const parsed = reviewSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    const { rating, content, positivePoints, negativePoints } = parsed.data;
-    const gameId = body.gameId;
+    const { rating, content, positivePoints, negativePoints } = body;
+    const gameId = body.gameId as string;
 
     if (!gameId) {
-      return NextResponse.json({ error: "gameId is required" }, { status: 400 });
+      throw validationError(undefined, "gameId is required");
     }
 
     // Check if game exists
@@ -248,9 +218,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       .eq("id", gameId)
       .single();
 
-    if (gameError || !game) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
-    }
+    if (gameError || !game) throw notFound("Game not found");
 
     // Insert the review
     const { data: review, error: insertError } = await supabase
@@ -268,10 +236,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (insertError) {
       if (insertError.code === "23505") {
-        return NextResponse.json(
-          { error: "Vous avez déjà laissé un avis pour ce jeu" },
-          { status: 409 }
-        );
+        throw conflict("Vous avez déjà laissé un avis pour ce jeu");
       }
       logger.error("Error inserting review", { error: insertError });
       return NextResponse.json({ error: "Failed to create review" }, { status: 500 });
@@ -302,49 +267,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     return NextResponse.json({ success: true, review }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in reviews POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * PUT /api/reviews
  *
  * Update an existing review. Only the review author can update their review.
  */
-export async function PUT(request: NextRequest): Promise<NextResponse> {
-  try {
+export const PUT = defineRoute(
+  { auth: "required", rateLimit: "review", writesContent: true, body: reviewBodySchema },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const suspended = await suspendedResponse(user.id);
-    if (suspended) return suspended;
-
-    const limited = await enforceRateLimit("review", { userId: user.id });
-    if (limited) return limited;
-
-    const body = await request.json();
-    const parsed = reviewSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    const { rating, content, positivePoints, negativePoints } = parsed.data;
-    const gameId = body.gameId;
+    const { rating, content, positivePoints, negativePoints } = body;
+    const gameId = body.gameId as string;
 
     if (!gameId) {
-      return NextResponse.json({ error: "gameId is required" }, { status: 400 });
+      throw validationError(undefined, "gameId is required");
     }
 
     const { data: review, error: updateError } = await supabase
@@ -367,8 +307,5 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
     }
 
     return NextResponse.json({ success: true, review });
-  } catch (error) {
-    logger.error("Error in reviews PUT", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 const GROUP_ID = "gggggggg-gggg-4ggg-gggg-gggggggggggg";
 const OWNER_ID = "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa";
@@ -21,6 +22,8 @@ const {
   mockCreateInvitation: vi.fn(),
   mockGetUser: vi.fn(),
 }));
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: OWNER_ID }) });
 
 vi.mock("@/lib/services/groupServerService", () => ({
   GroupServerService: {
@@ -100,7 +103,6 @@ describe("/api/groups/[slug]/invitations — GET", () => {
 describe("/api/groups/[slug]/invitations — POST", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetUser.mockResolvedValue({ data: { user: { id: OWNER_ID } }, error: null });
     mockGetGroupAccess.mockResolvedValue({ id: GROUP_ID, visibility: "private", ownerId: OWNER_ID });
     mockGetMemberRole.mockResolvedValue("owner");
     mockFetchGroupBySlug.mockResolvedValue({ id: GROUP_ID, name: "RPG Fans" });
@@ -167,5 +169,31 @@ describe("/api/groups/[slug]/invitations — POST", () => {
     const res = await POST(req, makeParams());
 
     expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "Player not found", code: "not_found" });
+  });
+
+  it("returns 401 when not authenticated", async () => {
+    routeEnv.signOut();
+    const req = new NextRequest(`http://localhost/api/groups/${SLUG}/invitations`, {
+      method: "POST",
+      body: JSON.stringify({ username: "Bob" }),
+    });
+    const res = await POST(req, makeParams());
+
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+  });
+
+  it("returns 429 when the invitation limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(60);
+    const req = new NextRequest(`http://localhost/api/groups/${SLUG}/invitations`, {
+      method: "POST",
+      body: JSON.stringify({ username: "Bob" }),
+    });
+    const res = await POST(req, makeParams());
+
+    expect(res.status).toBe(429);
+    expect(routeEnv.rateLimitHits[0]).toBe(`invitation:user:${OWNER_ID}`);
+    expect(mockCreateInvitation).not.toHaveBeenCalled();
   });
 });

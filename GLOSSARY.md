@@ -165,3 +165,41 @@ _Avoid_: revert, cancellation
 A toggle whose request has not finished yet; any new toggle of the same target
 is ignored until it settles.
 _Avoid_: pending toggle, double click
+
+## API routes
+
+**Route pipeline**:
+The shared prologue an API route declares (access, rate limit, content write,
+expected input) and the server applies before the handler, in a fixed order.
+_Avoid_: middleware, guard, wrapper
+
+**Route access**:
+What a route requires from its caller: signed in (required), optional, or
+administrator (admin).
+_Avoid_: auth level, permission
+
+**Administrator**:
+A user whose `admin` role is set by the server (`app_metadata`), never a role
+they gave themselves.
+_Avoid_: superuser, staff
+
+**Content write**:
+A request that publishes content other players can see (review, comment,
+post), which a suspended account cannot make.
+_Avoid_: user write, mutation
+
+**Suspension**:
+A temporary or permanent ban on publishing content; the account keeps read
+access and access to its private data.
+_Avoid_: ban, block
+
+**Rate limit action**:
+A family of requests counted together for one caller (the user, otherwise the
+IP address) over a sliding window.
+_Avoid_: quota, throttle key
+
+**Route error**:
+An expected refusal from a route, identified by a stable code
+(`unauthorized`, `forbidden`, `suspended`, `not_found`, `validation`,
+`conflict`, `rate_limited`) that the client relies on.
+_Avoid_: exception, failure

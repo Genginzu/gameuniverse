@@ -5,12 +5,14 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mock state ---
 let mockSupabaseFrom: ReturnType<typeof vi.fn>;
-let mockGetUser: ReturnType<typeof vi.fn>;
 
-const AUTHENTICATED_USER = { id: "user-1", email: "player@test.com" };
+const AUTHENTICATED_USER = testUser("user", { id: "user-1", email: "player@test.com" });
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: AUTHENTICATED_USER });
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -18,12 +20,6 @@ vi.mock("@/lib/supabase-server", () => ({
       from: (table: string) => {
         if (mockSupabaseFrom) return mockSupabaseFrom(table);
         return {};
-      },
-      auth: {
-        getUser: () => {
-          if (mockGetUser) return mockGetUser();
-          return Promise.resolve({ data: { user: null }, error: null });
-        },
       },
     }),
 }));
@@ -40,7 +36,6 @@ function makeRequest(url: string, init?: RequestInit) {
 }
 describe("Comments API — GET /api/comments", () => {
   beforeEach(() => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
     mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
@@ -89,8 +84,6 @@ describe("Comments API — GET /api/comments", () => {
     ];
     const profiles = [{ id: "user-1", username: "player1", avatar_url: null }];
 
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: AUTHENTICATED_USER }, error: null }));
-
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "characters") {
         return {
@@ -132,14 +125,11 @@ describe("Comments API — GET /api/comments", () => {
 });
 describe("Comments API — POST /api/comments", () => {
   beforeEach(() => {
-    mockGetUser = null as unknown as ReturnType<typeof vi.fn>;
     mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   test("returns 401 if user is not authenticated (Req 7.4)", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: null }, error: { message: "Not authenticated" } })
-    );
+    routeEnv.signOut();
 
     const res = await POST(
       makeRequest("http://localhost/api/comments", {
@@ -150,11 +140,10 @@ describe("Comments API — POST /api/comments", () => {
     );
     expect(res.status).toBe(401);
     const body = await res.json();
-    expect(body.error).toBe("Unauthorized");
+    expect(body).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   test("returns 400 if content validation fails (Req 2.1)", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: AUTHENTICATED_USER }, error: null }));
 
     const res = await POST(
       makeRequest("http://localhost/api/comments", {
@@ -169,7 +158,6 @@ describe("Comments API — POST /api/comments", () => {
   });
 
   test("returns 400 if characterId is missing", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: AUTHENTICATED_USER }, error: null }));
 
     const res = await POST(
       makeRequest("http://localhost/api/comments", {
@@ -184,7 +172,6 @@ describe("Comments API — POST /api/comments", () => {
   });
 
   test("returns 409 if user already commented on this character (Req 1.3)", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: AUTHENTICATED_USER }, error: null }));
 
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "characters") {
@@ -222,7 +209,6 @@ describe("Comments API — POST /api/comments", () => {
   });
 
   test("creates comment successfully (Req 1.2)", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: AUTHENTICATED_USER }, error: null }));
 
     const insertedComment = {
       id: "new-comment",
@@ -268,14 +254,11 @@ describe("Comments API — POST /api/comments", () => {
 });
 describe("Comments API — PUT /api/comments", () => {
   beforeEach(() => {
-    mockGetUser = null as unknown as ReturnType<typeof vi.fn>;
     mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   test("returns 401 if user is not authenticated (Req 7.4)", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: null }, error: { message: "Not authenticated" } })
-    );
+    routeEnv.signOut();
 
     const res = await PUT(
       makeRequest("http://localhost/api/comments", {
@@ -286,11 +269,10 @@ describe("Comments API — PUT /api/comments", () => {
     );
     expect(res.status).toBe(401);
     const body = await res.json();
-    expect(body.error).toBe("Unauthorized");
+    expect(body).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   test("returns 400 if content validation fails", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: AUTHENTICATED_USER }, error: null }));
 
     const res = await PUT(
       makeRequest("http://localhost/api/comments", {
@@ -305,7 +287,6 @@ describe("Comments API — PUT /api/comments", () => {
   });
 
   test("returns 400 if characterId is missing", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: AUTHENTICATED_USER }, error: null }));
 
     const res = await PUT(
       makeRequest("http://localhost/api/comments", {
@@ -320,7 +301,6 @@ describe("Comments API — PUT /api/comments", () => {
   });
 
   test("updates comment successfully", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: AUTHENTICATED_USER }, error: null }));
 
     const updatedComment = {
       id: "c1",
@@ -354,5 +334,40 @@ describe("Comments API — PUT /api/comments", () => {
     const body = await res.json();
     expect(body.success).toBe(true);
     expect(body.comment.content).toBe("Updated content");
+  });
+});
+describe("Comments API — POST/PUT refusals", () => {
+  beforeEach(() => {
+    mockSupabaseFrom = vi.fn(() => ({}));
+  });
+
+  function writeRequest(method: string) {
+    return makeRequest("http://localhost/api/comments", {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ characterId: "char-1", content: "Hello" }),
+    });
+  }
+
+  test.each([
+    ["POST", POST],
+    ["PUT", PUT],
+  ])("%s returns 403 suspended for a suspended account", async (method, handler) => {
+    routeEnv.suspend("2030-01-01T00:00:00Z");
+    const res = await handler(writeRequest(method));
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ code: "suspended" });
+    expect(mockSupabaseFrom).not.toHaveBeenCalled();
+  });
+
+  test.each([
+    ["POST", POST],
+    ["PUT", PUT],
+  ])("%s returns 429 when the comment rate limit is exceeded", async (method, handler) => {
+    routeEnv.exceedRateLimit(60);
+    const res = await handler(writeRequest(method));
+    expect(res.status).toBe(429);
+    expect(await res.json()).toMatchObject({ code: "rate_limited", retryAfter: 60 });
+    expect(routeEnv.rateLimitHits).toEqual(["comment:user:user-1"]);
   });
 });

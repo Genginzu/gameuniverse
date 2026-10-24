@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { defineRoute } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
-import { requireAdmin } from "@/lib/auth-admin";
 import { isPublicHttpsUrl } from "@/lib/utils/publicUrl";
 
 const requestSchema = z.object({
@@ -53,68 +53,52 @@ async function isReachableImage(url: string): Promise<boolean> {
   }
 }
 
-export async function POST(request: Request) {
-  try {
-    await requireAdmin();
+export const POST = defineRoute({ auth: "admin", body: requestSchema }, async ({ body }) => {
+  const { characterName, gameNames, imageType } = body;
 
-    const body = await request.json();
-    const parsed = requestSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-    }
+  const apiKey = process.env.GOOGLE_CSE_API_KEY;
+  const cx = process.env.GOOGLE_CSE_CX;
 
-    const { characterName, gameNames, imageType } = parsed.data;
-
-    const apiKey = process.env.GOOGLE_CSE_API_KEY;
-    const cx = process.env.GOOGLE_CSE_CX;
-
-    if (!apiKey || !cx) {
-      logger.error("Google CSE not configured — GOOGLE_CSE_API_KEY or GOOGLE_CSE_CX missing");
-      return NextResponse.json({ error: "Image search not configured" }, { status: 503 });
-    }
-
-    const query = buildQuery(characterName, gameNames, imageType);
-    const params = new URLSearchParams({
-      key: apiKey,
-      cx,
-      q: query,
-      searchType: "image",
-      num: "5",
-      safe: "active",
-      imgType: imageType === "main" ? "photo" : "photo",
-      imgSize: imageType === "main" ? "large" : "xlarge",
-    });
-
-    const res = await fetch(`${GOOGLE_CSE_API}?${params}`, {
-      signal: AbortSignal.timeout(10_000),
-    });
-
-    if (!res.ok) {
-      const errBody = await res.text().catch(() => "");
-      logger.error("Google CSE request failed", { status: res.status, body: errBody });
-      return NextResponse.json({ imageUrl: null, source: null });
-    }
-
-    const data = await res.json();
-    const items: GoogleSearchItem[] = data.items ?? [];
-
-    // Try each result until we find one that's actually reachable
-    for (const item of items) {
-      if (await isReachableImage(item.link)) {
-        return NextResponse.json({
-          imageUrl: item.link,
-          source: item.displayLink || item.image?.contextLink || null,
-        });
-      }
-    }
-
-    // No valid image found
-    return NextResponse.json({ imageUrl: null, source: null });
-  } catch (error) {
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    logger.error("Image search failed", { error });
-    return NextResponse.json({ error: "Image search failed" }, { status: 500 });
+  if (!apiKey || !cx) {
+    logger.error("Google CSE not configured — GOOGLE_CSE_API_KEY or GOOGLE_CSE_CX missing");
+    return NextResponse.json({ error: "Image search not configured" }, { status: 503 });
   }
-}
+
+  const query = buildQuery(characterName, gameNames, imageType);
+  const params = new URLSearchParams({
+    key: apiKey,
+    cx,
+    q: query,
+    searchType: "image",
+    num: "5",
+    safe: "active",
+    imgType: imageType === "main" ? "photo" : "photo",
+    imgSize: imageType === "main" ? "large" : "xlarge",
+  });
+
+  const res = await fetch(`${GOOGLE_CSE_API}?${params}`, {
+    signal: AbortSignal.timeout(10_000),
+  });
+
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => "");
+    logger.error("Google CSE request failed", { status: res.status, body: errBody });
+    return NextResponse.json({ imageUrl: null, source: null });
+  }
+
+  const data = await res.json();
+  const items: GoogleSearchItem[] = data.items ?? [];
+
+  // Try each result until we find one that's actually reachable
+  for (const item of items) {
+    if (await isReachableImage(item.link)) {
+      return NextResponse.json({
+        imageUrl: item.link,
+        source: item.displayLink || item.image?.contextLink || null,
+      });
+    }
+  }
+
+  // No valid image found
+  return NextResponse.json({ imageUrl: null, source: null });
+});

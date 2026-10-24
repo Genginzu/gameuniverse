@@ -1,61 +1,46 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { NextResponse } from "next/server";
 import { addItem } from "@/lib/services/collectionService";
 import { addCollectionItemSchema } from "@/lib/validations/collection";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
-
-type RouteContext = { params: Promise<{ id: string; slug: string }> };
+import { conflict, defineRoute, forbidden, validationError } from "@/lib/api/route";
 
 /**
  * POST /api/players/[id]/collections/[slug]/items — Ajouter un jeu à une collection.
  * Authentification requise. Seul le propriétaire peut ajouter des jeux.
  * Retourne 409 si le jeu est déjà présent (contrainte UNIQUE).
  */
-export async function POST(request: NextRequest, { params }: RouteContext) {
-  try {
-    const { id: playerId, slug } = await params;
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "collectionItem", body: addCollectionItemSchema },
+  async ({ user, params, body }) => {
+    const { id: playerId, slug } = params;
 
     if (!playerId || !slug) {
-      return NextResponse.json({ error: "Player ID and slug are required" }, { status: 400 });
-    }
-
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      throw validationError(undefined, "Player ID and slug are required");
     }
 
     if (user.id !== playerId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      throw forbidden("Forbidden");
     }
 
-    const body = await request.json();
-    const parsed = addCollectionItemSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
+    try {
+      await addItem(user.id, slug, body);
+    } catch (error) {
+      // Handle unique constraint violation (duplicate game in collection)
+      if (
+        error instanceof Error &&
+        "code" in error &&
+        (error as { code: string }).code === "23505"
+      ) {
+        throw conflict("Ce jeu est déjà dans la collection");
+      }
+      throw error;
     }
 
-    await addItem(user.id, slug, parsed.data);
-
-    CoinService.rewardActivity(user.id, "collection_add", parsed.data.gameId).catch((err) =>
+    CoinService.rewardActivity(user.id, "collection_add", body.gameId).catch((err) =>
       logger.error("Coin reward failed", { error: err })
     );
 
     return NextResponse.json({ success: true }, { status: 201 });
-  } catch (error) {
-    // Handle unique constraint violation (duplicate game in collection)
-    if (error instanceof Error && "code" in error && (error as { code: string }).code === "23505") {
-      return NextResponse.json({ error: "Ce jeu est déjà dans la collection" }, { status: 409 });
-    }
-
-    logger.error("Error in collection items POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

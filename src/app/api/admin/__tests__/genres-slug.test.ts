@@ -4,9 +4,10 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mock setup ---
-let mockRequireAdmin: ReturnType<typeof vi.fn>;
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 
 const sampleGenre = {
@@ -27,13 +28,6 @@ const sampleGenre = {
     },
   ],
 };
-
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => {
-    if (mockRequireAdmin) return mockRequireAdmin();
-    return Promise.resolve(true);
-  },
-}));
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -57,7 +51,6 @@ function makeParams(slug: string) {
 
 describe("Admin Genres [slug] API", () => {
   beforeEach(() => {
-    mockRequireAdmin = vi.fn(() => Promise.resolve(true));
     mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
@@ -65,17 +58,24 @@ describe("Admin Genres [slug] API", () => {
   // GET /api/admin/genres/[slug]
   // =====================
   describe("GET /api/admin/genres/[slug]", () => {
+    test("returns 401 when signed out", async () => {
+      routeEnv.signOut();
+
+      const req = makeRequest("http://localhost/api/admin/genres/tower-defense");
+      const res = await GET(req, makeParams("tower-defense"));
+
+      expect(res.status).toBe(401);
+      expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
 
       const req = makeRequest("http://localhost/api/admin/genres/tower-defense");
       const res = await GET(req, makeParams("tower-defense"));
 
       expect(res.status).toBe(403);
-      const body = await res.json();
-      expect(body.error).toBe("Admin access required");
+      expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
     });
 
     test("returns genre with translations and gameCount when found", async () => {
@@ -147,9 +147,7 @@ describe("Admin Genres [slug] API", () => {
   // =====================
   describe("PUT /api/admin/genres/[slug]", () => {
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
 
       const req = makeRequest("http://localhost/api/admin/genres/tower-defense", {
         method: "PUT",
@@ -173,7 +171,8 @@ describe("Admin Genres [slug] API", () => {
 
       expect(res.status).toBe(400);
       const body = await res.json();
-      expect(body.error).toBe("Invalid input data");
+      expect(body.error).toBe("Invalid request body");
+      expect(body.code).toBe("validation");
       expect(body.details).toBeDefined();
     });
 
@@ -325,9 +324,7 @@ describe("Admin Genres [slug] API", () => {
   // =====================
   describe("DELETE /api/admin/genres/[slug]", () => {
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
 
       const req = makeRequest("http://localhost/api/admin/genres/tower-defense");
       const res = await DELETE_HANDLER(req, makeParams("tower-defense"));

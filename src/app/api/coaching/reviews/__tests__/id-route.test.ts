@@ -6,8 +6,8 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-let mockGetUser: ReturnType<typeof vi.fn>;
 let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 
 vi.mock("@/lib/logger", () => ({
@@ -17,7 +17,6 @@ vi.mock("@/lib/logger", () => ({
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
     Promise.resolve({
-      auth: { getUser: () => mockGetUser() },
       from: (table: string) => mockSupabaseFrom(table),
     }),
 }));
@@ -32,16 +31,17 @@ function makeParams(id: string) {
   return { params: Promise.resolve({ id }) };
 }
 
-const COACH_USER = { id: "coach-player-1" };
+const routeEnv = useTestRouteEnvironment({
+  signedInAs: testUser("user", { id: "coach-player-1" }),
+});
 
 describe("Coaching review response API — PATCH", () => {
   beforeEach(() => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: COACH_USER } }));
     mockSupabaseFrom = vi.fn();
   });
 
   test("returns 401 when unauthenticated", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null } }));
+    routeEnv.signOut();
     const res = await PATCH(
       makeRequest("http://localhost/api/coaching/reviews/review-1", {
         method: "PATCH",
@@ -50,6 +50,33 @@ describe("Coaching review response API — PATCH", () => {
       makeParams("review-1")
     );
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+  });
+
+  test("returns 403 suspended for a suspended account", async () => {
+    routeEnv.suspend(null);
+    const res = await PATCH(
+      makeRequest("http://localhost/api/coaching/reviews/review-1", {
+        method: "PATCH",
+        body: JSON.stringify({ response: "Thanks" }),
+      }),
+      makeParams("review-1")
+    );
+    expect(res.status).toBe(403);
+    expect((await res.json()).code).toBe("suspended");
+  });
+
+  test("returns 429 when the comment rate limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(30);
+    const res = await PATCH(
+      makeRequest("http://localhost/api/coaching/reviews/review-1", {
+        method: "PATCH",
+        body: JSON.stringify({ response: "Thanks" }),
+      }),
+      makeParams("review-1")
+    );
+    expect(res.status).toBe(429);
+    expect(routeEnv.rateLimitHits).toEqual(["comment:user:coach-player-1"]);
   });
 
   test("returns 400 when response is missing", async () => {

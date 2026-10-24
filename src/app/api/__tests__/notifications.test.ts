@@ -1,5 +1,8 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: "u1" }) });
 
 vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
@@ -84,7 +87,7 @@ describe("PATCH /api/notifications/[id]", () => {
   beforeEach(() => vi.clearAllMocks());
 
   test("returns 401 when not authenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: { message: "no auth" } });
+    routeEnv.signOut();
     const req = new NextRequest("http://localhost/api/notifications/n1", {
       method: "PATCH",
       body: JSON.stringify({ isRead: true }),
@@ -94,7 +97,6 @@ describe("PATCH /api/notifications/[id]", () => {
   });
 
   test("returns 400 when isRead is missing", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
     const req = new NextRequest("http://localhost/api/notifications/n1", {
       method: "PATCH",
       body: JSON.stringify({}),
@@ -104,7 +106,6 @@ describe("PATCH /api/notifications/[id]", () => {
   });
 
   test("returns 404 when notification not found", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
     vi.mocked(NotificationServerService.setReadStatus).mockResolvedValue(false);
     const req = new NextRequest("http://localhost/api/notifications/n1", {
       method: "PATCH",
@@ -115,7 +116,6 @@ describe("PATCH /api/notifications/[id]", () => {
   });
 
   test("returns 200 and forwards isRead when successful", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
     vi.mocked(NotificationServerService.setReadStatus).mockResolvedValue(true);
     const req = new NextRequest("http://localhost/api/notifications/n1", {
       method: "PATCH",
@@ -150,24 +150,22 @@ describe("PATCH /api/notifications/[id]/read", () => {
   beforeEach(() => vi.clearAllMocks());
 
   test("returns 401 when not authenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: { message: "no auth" } });
-    const req = new Request("http://localhost/api/notifications/n1/read", { method: "PATCH" });
+    routeEnv.signOut();
+    const req = new NextRequest("http://localhost/api/notifications/n1/read", { method: "PATCH" });
     const res = await PATCH_READ(req, { params: Promise.resolve({ id: "n1" }) });
     expect(res.status).toBe(401);
   });
 
   test("returns 404 when notification not found (markAsRead returns false)", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
     vi.mocked(NotificationServerService.markAsRead).mockResolvedValue(false);
-    const req = new Request("http://localhost/api/notifications/n1/read", { method: "PATCH" });
+    const req = new NextRequest("http://localhost/api/notifications/n1/read", { method: "PATCH" });
     const res = await PATCH_READ(req, { params: Promise.resolve({ id: "n1" }) });
     expect(res.status).toBe(404);
   });
 
   test("returns 200 when successful", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
     vi.mocked(NotificationServerService.markAsRead).mockResolvedValue(true);
-    const req = new Request("http://localhost/api/notifications/n1/read", { method: "PATCH" });
+    const req = new NextRequest("http://localhost/api/notifications/n1/read", { method: "PATCH" });
     const res = await PATCH_READ(req, { params: Promise.resolve({ id: "n1" }) });
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ success: true });
@@ -178,14 +176,14 @@ describe("PATCH /api/notifications/read-all", () => {
   beforeEach(() => vi.clearAllMocks());
 
   test("returns 401 when not authenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: { message: "no auth" } });
-    const res = await PATCH_READ_ALL();
+    routeEnv.signOut();
+    const res = await PATCH_READ_ALL(new NextRequest("http://localhost/api/notifications/read-all", { method: "PATCH" }));
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   test("returns 200 when successful", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
-    const res = await PATCH_READ_ALL();
+    const res = await PATCH_READ_ALL(new NextRequest("http://localhost/api/notifications/read-all", { method: "PATCH" }));
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ success: true });
   });

@@ -3,9 +3,9 @@
  * GET /api/admin/webhooks/events?entityType=games&eventType=update&status=received&page=1&limit=20
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
@@ -18,84 +18,74 @@ export const maxDuration = 30;
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 
-export async function GET(request: NextRequest) {
-  try {
-    await requireAdmin();
+export const GET = defineRoute({ auth: "admin" }, async ({ request }) => {
+  const { searchParams } = new URL(request.url);
+  const entityType = searchParams.get("entityType");
+  const eventType = searchParams.get("eventType");
+  const status = searchParams.get("status");
+  const notImported = searchParams.get("notImported") === "true";
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+  const limit = Math.min(
+    MAX_LIMIT,
+    Math.max(1, parseInt(searchParams.get("limit") ?? String(DEFAULT_LIMIT), 10))
+  );
+  const offset = (page - 1) * limit;
 
-    const { searchParams } = new URL(request.url);
-    const entityType = searchParams.get("entityType");
-    const eventType = searchParams.get("eventType");
-    const status = searchParams.get("status");
-    const notImported = searchParams.get("notImported") === "true";
-    const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
-    const limit = Math.min(
-      MAX_LIMIT,
-      Math.max(1, parseInt(searchParams.get("limit") ?? String(DEFAULT_LIMIT), 10))
-    );
-    const offset = (page - 1) * limit;
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  // Build query with filters.
+  // count: "estimated" évite un COUNT(*) complet sur la table (qui peut faire timeout
+  // sur statement_timeout). L'estimation pgstat suffit largement pour piloter
+  // la pagination de l'admin.
+  let query = untypedTable(supabase, "igdb_webhook_events")
+    .select("*", { count: "estimated" })
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
 
-    // Build query with filters.
-    // count: "estimated" évite un COUNT(*) complet sur la table (qui peut faire timeout
-    // sur statement_timeout). L'estimation pgstat suffit largement pour piloter
-    // la pagination de l'admin.
-    let query = untypedTable(supabase, "igdb_webhook_events")
-      .select("*", { count: "estimated" })
-      .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1);
+  if (entityType) query = query.eq("entity_type", entityType);
+  if (eventType) query = query.eq("event_type", eventType);
+  if (status) query = query.eq("status", status);
+  if (notImported) query = query.is("game_id", null);
 
-    if (entityType) query = query.eq("entity_type", entityType);
-    if (eventType) query = query.eq("event_type", eventType);
-    if (status) query = query.eq("status", status);
-    if (notImported) query = query.is("game_id", null);
+  const { data: events, count, error } = await query;
 
-    const { data: events, count, error } = await query;
-
-    if (error) {
-      logger.error("Failed to fetch webhook events", {
-        error,
-        filters: { entityType, eventType, status, notImported, page, limit },
-      });
-      return NextResponse.json(
-        { error: "Failed to fetch events", details: error.message },
-        { status: 500 }
-      );
-    }
-
-    // L'enrichissement (jointure games/characters) est best-effort : si ça échoue
-    // on retourne quand même la liste brute plutôt que de casser l'UI complète.
-    let enriched: Awaited<ReturnType<typeof enrichEventsWithNames>>;
-    try {
-      enriched = await enrichEventsWithNames(supabase, events ?? []);
-    } catch (enrichError) {
-      logger.error("Failed to enrich webhook events with names", { error: enrichError });
-      enriched = (events ?? []).map((event) => ({
-        ...event,
-        game_name: null,
-        game_slug: null,
-        character_name: null,
-        character_slug: null,
-      }));
-    }
-
-    return NextResponse.json({
-      events: enriched,
-      pagination: {
-        page,
-        limit,
-        total: count ?? 0,
-        totalPages: Math.ceil((count ?? 0) / limit),
-      },
+  if (error) {
+    logger.error("Failed to fetch webhook events", {
+      error,
+      filters: { entityType, eventType, status, notImported, page, limit },
     });
-  } catch (error) {
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-    logger.error("Admin webhook events error", { error });
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch events", details: error.message },
+      { status: 500 }
+    );
   }
-}
+
+  // L'enrichissement (jointure games/characters) est best-effort : si ça échoue
+  // on retourne quand même la liste brute plutôt que de casser l'UI complète.
+  let enriched: Awaited<ReturnType<typeof enrichEventsWithNames>>;
+  try {
+    enriched = await enrichEventsWithNames(supabase, events ?? []);
+  } catch (enrichError) {
+    logger.error("Failed to enrich webhook events with names", { error: enrichError });
+    enriched = (events ?? []).map((event) => ({
+      ...event,
+      game_name: null,
+      game_slug: null,
+      character_name: null,
+      character_slug: null,
+    }));
+  }
+
+  return NextResponse.json({
+    events: enriched,
+    pagination: {
+      page,
+      limit,
+      total: count ?? 0,
+      totalPages: Math.ceil((count ?? 0) / limit),
+    },
+  });
+});
 
 /**
  * Enrich webhook events with game/character names for display.

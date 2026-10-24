@@ -3,7 +3,7 @@ name: supabase-expert
 description:
   Supabase patterns for this project — three distinct clients (browser, server,
   admin/service-role), SWR→API-route→Supabase data flow, RLS-aware migrations,
-  RPC calls with `p_` prefix, and auth helpers (`requireAdmin`). Activate when
+  RPC calls with `p_` prefix, and auth via `defineRoute`. Activate when
   working on `src/lib/supabase*.ts`, `src/app/api/**`, `supabase/migrations/**`,
   database types, auth, or RLS.
 ---
@@ -50,14 +50,21 @@ Use `parsePaginationParams`, `handleApiError` from `src/lib/api-utils.ts`.
 
 ### Auth (per-route, no middleware)
 
+Declare it with `defineRoute` (`src/lib/api/route/`, see
+`docs/systems/route-pipeline.md`): the module answers 401/403/400/429 as
+`{ error, code, details? }` and hands the handler the user and validated input.
+
 ```ts
-const {
-  data: { user },
-} = await supabase.auth.getUser();
-if (!user)
-  return NextResponse.json({ error: "Auth required" }, { status: 401 });
-await requireAdmin(); // src/lib/auth-admin.ts — email domain check
+export const POST = defineRoute(
+  { auth: "admin", body: adminGenreFormSchema }, // or "required" / "optional"
+  async ({ user, body, params }) => {
+    if (missing) throw notFound("Genre not found");
+    return NextResponse.json({ ... }, { status: 201 });
+  }
+);
 ```
+
+Roles come from `app_metadata.role` only (`getUserRoleFromUser`).
 
 ### RPC
 

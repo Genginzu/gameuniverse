@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
+
+const routeEnv = useTestRouteEnvironment();
 
 // vi.hoisted ensures mock fns are available when vi.mock factories run
 const { mockGetUser, mockFrom, mockAddFavorite, mockRemoveFavorite } = vi.hoisted(() => ({
@@ -50,11 +53,14 @@ function mockCharacterNotFound() {
   return chain;
 }
 
+// GET still authenticates through auth.getUser; POST and DELETE go through the route environment.
 function mockAuthenticatedUser(id = "user-123") {
+  routeEnv.signIn(testUser("user", { id }));
   mockGetUser.mockResolvedValue({ data: { user: { id } }, error: null });
 }
 
 function mockUnauthenticated() {
+  routeEnv.signOut();
   mockGetUser.mockResolvedValue({ data: { user: null }, error: new Error("Not authenticated") });
 }
 
@@ -74,7 +80,7 @@ describe("/api/characters/[slug]/favorite", () => {
       });
       const res = await POST(req, PARAMS);
       expect(res.status).toBe(401);
-      expect((await res.json()).error).toBe("Unauthorized");
+      expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
     });
 
     it("should return 404 when character not found", async () => {
@@ -135,7 +141,7 @@ describe("/api/characters/[slug]/favorite", () => {
       });
       const res = await DELETE(req, PARAMS);
       expect(res.status).toBe(401);
-      expect((await res.json()).error).toBe("Unauthorized");
+      expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
     });
 
     it("should return 404 when character not found", async () => {
@@ -173,6 +179,20 @@ describe("/api/characters/[slug]/favorite", () => {
       const res = await DELETE(req, PARAMS);
       expect(res.status).toBe(500);
       expect((await res.json()).error).toBe("Internal server error");
+    });
+  });
+
+  describe("rate limit", () => {
+    it.each([
+      ["POST", POST],
+      ["DELETE", DELETE],
+    ])("%s returns 429 when the favorite rate limit is exceeded", async (method, handler) => {
+      mockAuthenticatedUser();
+      routeEnv.exceedRateLimit(60);
+      const req = new NextRequest("http://localhost/api/characters/mario/favorite", { method });
+      const res = await handler(req, PARAMS);
+      expect(res.status).toBe(429);
+      expect(mockFrom).not.toHaveBeenCalled();
     });
   });
 

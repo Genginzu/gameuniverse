@@ -1,8 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 const PLAYER_ID = "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa";
 const USER_ID = "bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb";
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: USER_ID }) });
 
 const {
   mockGetFriends,
@@ -113,7 +116,6 @@ describe("/api/players/[id]/friends — GET", () => {
 describe("/api/players/[id]/friends — POST", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetUser.mockResolvedValue({ data: { user: { id: USER_ID } }, error: null });
     mockFrom.mockReturnValue({
       select: vi.fn().mockReturnValue({
         eq: vi.fn().mockReturnValue({
@@ -149,16 +151,28 @@ describe("/api/players/[id]/friends — POST", () => {
   });
 
   it("returns 401 when not authenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: { message: "No session" } });
+    routeEnv.signOut();
     const req = new NextRequest(`http://localhost/api/players/${PLAYER_ID}/friends`, {
       method: "POST",
     });
     const res = await POST(req, makeParams());
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+  });
+
+  it("returns 429 when the friendRequest limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(60);
+    const req = new NextRequest(`http://localhost/api/players/${PLAYER_ID}/friends`, {
+      method: "POST",
+    });
+    const res = await POST(req, makeParams());
+    expect(res.status).toBe(429);
+    expect(routeEnv.rateLimitHits[0]).toBe(`friendRequest:user:${USER_ID}`);
+    expect(mockSendRequest).not.toHaveBeenCalled();
   });
 
   it("returns 400 when sending request to yourself", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: PLAYER_ID } }, error: null });
+    routeEnv.signIn(testUser("user", { id: PLAYER_ID }));
     const req = new NextRequest(`http://localhost/api/players/${PLAYER_ID}/friends`, {
       method: "POST",
     });

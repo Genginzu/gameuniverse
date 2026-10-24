@@ -4,18 +4,12 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mutable mock references ---
-let mockRequireAdmin: ReturnType<typeof vi.fn>;
 let mockSupabaseFrom: ReturnType<typeof vi.fn> | null;
 
-// --- Mock modules ---
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => {
-    if (mockRequireAdmin) return mockRequireAdmin();
-    return Promise.resolve(true);
-  },
-}));
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -71,21 +65,32 @@ const MOCK_ROW = {
 
 describe("Admin Achievements API — GET/POST", () => {
   beforeEach(() => {
-    mockRequireAdmin = vi.fn(() => Promise.resolve(true));
     mockSupabaseFrom = null;
   });
 
   // --- GET ---
 
   describe("GET /api/admin/achievements", () => {
+    test("returns 401 when signed out", async () => {
+      routeEnv.signOut();
+
+      const res = await GET(makeRequest(BASE_URL));
+      expect(res.status).toBe(401);
+      expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
     test("returns 403 when not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
 
       const res = await GET(makeRequest(BASE_URL));
       expect(res.status).toBe(403);
-      expect((await res.json()).error).toBe("Admin access required");
+      expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
+    });
+
+    test("returns 400 for invalid query parameters", async () => {
+      const res = await GET(makeRequest(`${BASE_URL}?limit=101`));
+      expect(res.status).toBe(400);
+      expect((await res.json()).error).toBe("Invalid query parameters");
     });
 
     test("returns paginated achievements", async () => {
@@ -144,9 +149,7 @@ describe("Admin Achievements API — GET/POST", () => {
 
   describe("POST /api/admin/achievements", () => {
     test("returns 403 when not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
 
       const res = await POST(
         makeRequest(BASE_URL, {
@@ -169,7 +172,8 @@ describe("Admin Achievements API — GET/POST", () => {
       );
       expect(res.status).toBe(400);
       const body = await res.json();
-      expect(body.error).toBe("Invalid input data");
+      expect(body.error).toBe("Invalid request body");
+      expect(body.code).toBe("validation");
       expect(body.details).toBeDefined();
     });
 

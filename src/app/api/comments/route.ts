@@ -1,10 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { conflict, defineRoute, notFound, validationError } from "@/lib/api/route";
 import { commentSchema } from "@/lib/validations/comment";
 import type { Comment, CommentsResponse } from "@/types/comment";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
+
+/** characterId is read from the raw body, so the shared form schema must not strip it. */
+const commentBodySchema = commentSchema.extend({ characterId: z.unknown().optional() });
 
 interface CommentRow {
   id: string;
@@ -78,82 +82,69 @@ async function fetchProfilesMap(
  * Returns all comments for a character, sorted by date descending,
  * with player profiles and whether the current user has commented.
  */
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  try {
-    const characterId = request.nextUrl.searchParams.get("characterId");
-    if (!characterId) {
-      return NextResponse.json(
-        { error: "characterId query parameter is required" },
-        { status: 400 }
-      );
-    }
-
-    const supabase = await createRouteHandlerClient();
-
-    // Check if character exists
-    const { data: character, error: characterError } = await supabase
-      .from("characters")
-      .select("id")
-      .eq("id", characterId)
-      .single();
-
-    if (characterError || !character) {
-      return NextResponse.json({ error: "Character not found" }, { status: 404 });
-    }
-
-    // Fetch comments ordered by created_at descending
-    const { data: rows, error: commentsError } = await supabase
-      .from("character_comments")
-      .select("*")
-      .eq("character_id", characterId)
-      .order("created_at", { ascending: false });
-
-    if (commentsError) {
-      if (commentsError.code === "PGRST205") {
-        const emptyResponse: CommentsResponse = {
-          comments: [],
-          totalCount: 0,
-          userHasCommented: false,
-        };
-        return NextResponse.json(emptyResponse);
-      }
-      logger.error("Error fetching comments", { error: commentsError });
-      return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 });
-    }
-
-    const commentRows = (rows ?? []) as CommentRow[];
-
-    // Fetch profiles for all comment authors
-    const userIds = [
-      ...new Set(commentRows.map((r) => r.user_id).filter((id): id is string => id !== null)),
-    ];
-    const profilesMap = await fetchProfilesMap(supabase, userIds);
-
-    // Transform rows to Comment objects
-    const comments: Comment[] = commentRows.map((row) => toComment(row, profilesMap));
-
-    // Check if current user has already commented
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    const userHasCommented = user ? comments.some((c) => c.userId === user.id) : false;
-    const userComment = user
-      ? (comments.find((c) => c.userId === user.id) ?? undefined)
-      : undefined;
-
-    const response: CommentsResponse = {
-      comments: sortCommentsByDateDesc(comments),
-      totalCount: comments.length,
-      userHasCommented,
-      userComment,
-    };
-
-    return NextResponse.json(response);
-  } catch (error) {
-    logger.error("Error in comments GET", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+export const GET = defineRoute({ auth: "optional" }, async ({ request, user }) => {
+  const characterId = request.nextUrl.searchParams.get("characterId");
+  if (!characterId) {
+    throw validationError(undefined, "characterId query parameter is required");
   }
-}
+
+  const supabase = await createRouteHandlerClient();
+
+  // Check if character exists
+  const { data: character, error: characterError } = await supabase
+    .from("characters")
+    .select("id")
+    .eq("id", characterId)
+    .single();
+
+  if (characterError || !character) throw notFound("Character not found");
+
+  // Fetch comments ordered by created_at descending
+  const { data: rows, error: commentsError } = await supabase
+    .from("character_comments")
+    .select("*")
+    .eq("character_id", characterId)
+    .order("created_at", { ascending: false });
+
+  if (commentsError) {
+    if (commentsError.code === "PGRST205") {
+      const emptyResponse: CommentsResponse = {
+        comments: [],
+        totalCount: 0,
+        userHasCommented: false,
+      };
+      return NextResponse.json(emptyResponse);
+    }
+    logger.error("Error fetching comments", { error: commentsError });
+    return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 });
+  }
+
+  const commentRows = (rows ?? []) as CommentRow[];
+
+  // Fetch profiles for all comment authors
+  const userIds = [
+    ...new Set(commentRows.map((r) => r.user_id).filter((id): id is string => id !== null)),
+  ];
+  const profilesMap = await fetchProfilesMap(supabase, userIds);
+
+  // Transform rows to Comment objects
+  const comments: Comment[] = commentRows.map((row) => toComment(row, profilesMap));
+
+  // Check if current user has already commented
+  const userHasCommented = user ? comments.some((c) => c.userId === user.id) : false;
+  const userComment = user
+    ? (comments.find((c) => c.userId === user.id) ?? undefined)
+    : undefined;
+
+  const response: CommentsResponse = {
+    comments: sortCommentsByDateDesc(comments),
+    totalCount: comments.length,
+    userHasCommented,
+    userComment,
+  };
+
+  return NextResponse.json(response);
+});
 
 /**
  * POST /api/comments
@@ -161,36 +152,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
  * Create a new comment for a character. Validates input with commentSchema.
  * Returns 409 if the user has already commented on this character.
  */
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "comment", writesContent: true, body: commentBodySchema },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
 
-    // Authenticate user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const limited = await enforceRateLimit("comment", { userId: user.id });
-    if (limited) return limited;
-
-    const body = await request.json();
-    const parsed = commentSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    const { content } = parsed.data;
-    const characterId = body.characterId;
+    const { content } = body;
+    const characterId = body.characterId as string;
 
     if (!characterId) {
-      return NextResponse.json({ error: "characterId is required" }, { status: 400 });
+      throw validationError(undefined, "characterId is required");
     }
 
     // Check if character exists
@@ -200,9 +171,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       .eq("id", characterId)
       .single();
 
-    if (characterError || !character) {
-      return NextResponse.json({ error: "Character not found" }, { status: 404 });
-    }
+    if (characterError || !character) throw notFound("Character not found");
 
     // Insert the comment
     const { data: comment, error: insertError } = await supabase
@@ -217,10 +186,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (insertError) {
       if (insertError.code === "23505") {
-        return NextResponse.json(
-          { error: "Vous avez déjà laissé un commentaire pour ce personnage" },
-          { status: 409 }
-        );
+        throw conflict("Vous avez déjà laissé un commentaire pour ce personnage");
       }
       logger.error("Error inserting comment", { error: insertError });
       return NextResponse.json({ error: "Failed to create comment" }, { status: 500 });
@@ -231,46 +197,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
 
     return NextResponse.json({ success: true, comment }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in comments POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * PUT /api/comments
  *
  * Update an existing comment. Only the comment author can update their comment.
  */
-export async function PUT(request: NextRequest): Promise<NextResponse> {
-  try {
+export const PUT = defineRoute(
+  { auth: "required", rateLimit: "comment", writesContent: true, body: commentBodySchema },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const limited = await enforceRateLimit("comment", { userId: user.id });
-    if (limited) return limited;
-
-    const body = await request.json();
-    const parsed = commentSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    const { content } = parsed.data;
-    const characterId = body.characterId;
+    const { content } = body;
+    const characterId = body.characterId as string;
 
     if (!characterId) {
-      return NextResponse.json({ error: "characterId is required" }, { status: 400 });
+      throw validationError(undefined, "characterId is required");
     }
 
     const { data: comment, error: updateError } = await supabase
@@ -290,8 +234,5 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
     }
 
     return NextResponse.json({ success: true, comment });
-  } catch (error) {
-    logger.error("Error in comments PUT", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

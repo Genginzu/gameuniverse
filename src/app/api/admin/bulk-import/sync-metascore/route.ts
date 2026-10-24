@@ -1,11 +1,15 @@
-import { NextRequest } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
-import { adminGuardResponse } from "@/lib/auth-admin";
+import { defineRoute } from "@/lib/api/route";
 
 const CONCURRENCY = 1;
 const DELAY_MS = 300;
+
+const syncMetascoreSchema = z.object({
+  games: z.array(z.custom<{ id: string; igdbId: number; slug: string }>()).min(1),
+});
 
 /**
  * POST /api/admin/bulk-import/sync-metascore
@@ -14,28 +18,8 @@ const DELAY_MS = 300;
  *
  * Body: { games: Array<{ id: string; igdbId: number; slug: string }> }
  */
-export async function POST(request: NextRequest) {
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
-
-  let games: Array<{ id: string; igdbId: number; slug: string }>;
-
-  try {
-    const body = await request.json();
-    games = body.games;
-
-    if (!Array.isArray(games) || games.length === 0) {
-      return new Response(JSON.stringify({ error: "games array is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
+export const POST = defineRoute({ auth: "admin", body: syncMetascoreSchema }, async ({ body }) => {
+  const { games } = body;
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -110,7 +94,7 @@ export async function POST(request: NextRequest) {
       Connection: "keep-alive",
     },
   });
-}
+});
 
 async function updateMetascore(gameId: string, score: number | null) {
   const supabase = await createRouteHandlerClient();

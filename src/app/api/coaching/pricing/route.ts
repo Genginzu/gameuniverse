@@ -1,10 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
-import { SESSION_TYPES } from "@/types/coaching";
+import { SESSION_TYPES, type SessionType } from "@/types/coaching";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
+
+const pricingBodySchema = z.looseObject({
+  coachGameId: z.unknown().optional(),
+  sessionType: z.unknown().optional(),
+  priceAmount: z.unknown().optional(),
+  priceCurrency: z.unknown().optional(),
+  durationMinutes: z.unknown().optional(),
+});
 
 /**
  * GET /api/coaching/pricing
@@ -72,27 +82,18 @@ export async function GET() {
  * POST /api/coaching/pricing
  * Create a new pricing entry. Body: { coachGameId, sessionType, priceAmount, priceCurrency, durationMinutes }
  */
-export async function POST(request: NextRequest) {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "coachingProfile", body: pricingBodySchema },
+  async ({ user, body }) => {
     const supabase: AnySupabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
     const { coachGameId, sessionType, priceAmount, priceCurrency, durationMinutes } = body;
 
     if (!coachGameId || !sessionType || !priceAmount || !priceCurrency || !durationMinutes) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      throw validationError(undefined, "Missing required fields");
     }
 
-    if (!SESSION_TYPES.includes(sessionType)) {
-      return NextResponse.json({ error: "Invalid session type" }, { status: 400 });
+    if (!SESSION_TYPES.includes(sessionType as SessionType)) {
+      throw validationError(undefined, "Invalid session type");
     }
 
     // Verify the coach_game belongs to the user
@@ -103,9 +104,7 @@ export async function POST(request: NextRequest) {
       .eq("coach_profiles.player_id", user.id)
       .single();
 
-    if (!coachGame) {
-      return NextResponse.json({ error: "Coach game not found" }, { status: 404 });
-    }
+    if (!coachGame) throw notFound("Coach game not found");
 
     const { data, error } = await supabase
       .from("coach_pricing")
@@ -139,8 +138,5 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
-    logger.error("Error in coaching pricing POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

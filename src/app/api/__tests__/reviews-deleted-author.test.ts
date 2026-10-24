@@ -1,17 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-const { db, mockGetUser } = vi.hoisted(() => ({
+const { db } = vi.hoisted(() => ({
   db: { current: null as ReturnType<typeof createSupabaseQueryMock> | null },
-  mockGetUser: vi.fn(),
 }));
 
+useTestRouteEnvironment();
+
 vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => ({
-    ...db.current!.client,
-    auth: { getUser: mockGetUser },
-  })),
+  createRouteHandlerClient: vi.fn(async () => db.current!.client),
 }));
 vi.mock("@/lib/utils/reviewVoteQueries", () => ({
   fetchVoteCountsMap: vi.fn(async () => new Map()),
@@ -27,7 +26,6 @@ const { GET } = await import("@/app/api/reviews/route");
 
 beforeEach(() => {
   db.current = createSupabaseQueryMock();
-  mockGetUser.mockResolvedValue({ data: { user: null } });
 });
 
 describe("GET /api/reviews with an anonymised review", () => {

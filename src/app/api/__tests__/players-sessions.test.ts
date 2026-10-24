@@ -1,13 +1,16 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
-vi.mock("@/lib/services/rateLimitService", () => ({
-  enforceRateLimit: vi.fn(async () => null),
-}));
+const VALID_PLAYER = "11111111-1111-1111-1111-111111111111";
+const VALID_GAME = "22222222-2222-2222-2222-222222222222";
+const VALID_SESSION = "33333333-3333-3333-3333-333333333333";
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: VALID_PLAYER }) });
 
 const { mockCreateSession, mockFetchSessions, mockGetSession, mockDeleteSession } = vi.hoisted(
   () => ({
@@ -34,20 +37,8 @@ vi.mock("@/lib/services/playerService", () => ({
   PlayerService: { validatePlayerId: mockValidatePlayerId, playerExists: mockPlayerExists },
 }));
 
-const { mockGetUser } = vi.hoisted(() => ({ mockGetUser: vi.fn() }));
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => ({
-    auth: { getUser: mockGetUser },
-    from: vi.fn(),
-  })),
-}));
-
 import { GET, POST } from "@/app/api/players/[id]/sessions/route";
 import { DELETE } from "@/app/api/players/[id]/sessions/[sessionId]/route";
-
-const VALID_PLAYER = "11111111-1111-1111-1111-111111111111";
-const VALID_GAME = "22222222-2222-2222-2222-222222222222";
-const VALID_SESSION = "33333333-3333-3333-3333-333333333333";
 
 const getParams = { params: Promise.resolve({ id: VALID_PLAYER }) };
 
@@ -102,28 +93,39 @@ describe("POST /api/players/[id]/sessions", () => {
   });
 
   test("returns 401 when unauthenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: { message: "no auth" } });
+    routeEnv.signOut();
     const res = await POST(makePostRequest({}), getParams);
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   test("returns 403 when user is not the player", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: "other-user" } }, error: null });
+    routeEnv.signIn(testUser("user", { id: "other-user" }));
     const res = await POST(makePostRequest({}), getParams);
     expect(res.status).toBe(403);
   });
 
+  test("returns 429 when the gameSession rate limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(30);
+    const res = await POST(
+      makePostRequest({ gameId: VALID_GAME, date: "2026-04-20", durationMinutes: 90 }),
+      getParams
+    );
+    expect(res.status).toBe(429);
+    expect(await res.json()).toMatchObject({ code: "rate_limited", retryAfter: 30 });
+    expect(mockCreateSession).not.toHaveBeenCalled();
+  });
+
   test("returns 400 for invalid gameId", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: VALID_PLAYER } }, error: null });
     const res = await POST(
       makePostRequest({ gameId: "not-uuid", date: "2026-04-20", durationMinutes: 60 }),
       getParams
     );
     expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Invalid gameId", code: "validation" });
   });
 
   test("returns 400 for invalid date", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: VALID_PLAYER } }, error: null });
     const res = await POST(
       makePostRequest({ gameId: VALID_GAME, date: "20/04/2026", durationMinutes: 60 }),
       getParams
@@ -132,7 +134,6 @@ describe("POST /api/players/[id]/sessions", () => {
   });
 
   test("returns 400 when durationMinutes < 1", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: VALID_PLAYER } }, error: null });
     const res = await POST(
       makePostRequest({ gameId: VALID_GAME, date: "2026-04-20", durationMinutes: 0 }),
       getParams
@@ -141,7 +142,6 @@ describe("POST /api/players/[id]/sessions", () => {
   });
 
   test("returns 400 when durationMinutes > 24h", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: VALID_PLAYER } }, error: null });
     const res = await POST(
       makePostRequest({ gameId: VALID_GAME, date: "2026-04-20", durationMinutes: 24 * 60 + 1 }),
       getParams
@@ -149,8 +149,20 @@ describe("POST /api/players/[id]/sessions", () => {
     expect(res.status).toBe(400);
   });
 
+  test("returns 400 with the DB guard message when the daily cap is hit", async () => {
+    mockCreateSession.mockRejectedValue(new Error("game_sessions: daily total exceeds 24h"));
+    const res = await POST(
+      makePostRequest({ gameId: VALID_GAME, date: "2026-04-20", durationMinutes: 90 }),
+      getParams
+    );
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({
+      error: "game_sessions: daily total exceeds 24h",
+      code: "validation",
+    });
+  });
+
   test("returns 201 on success", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: VALID_PLAYER } }, error: null });
     mockCreateSession.mockResolvedValue({
       id: VALID_SESSION,
       gameId: VALID_GAME,
@@ -166,6 +178,7 @@ describe("POST /api/players/[id]/sessions", () => {
       { gameId: VALID_GAME, date: "2026-04-20", durationMinutes: 90 },
       "fr"
     );
+    expect(routeEnv.rateLimitHits).toHaveLength(1);
   });
 });
 
@@ -174,59 +187,44 @@ describe("DELETE /api/players/[id]/sessions/[sessionId]", () => {
     params: Promise.resolve({ id: VALID_PLAYER, sessionId: VALID_SESSION }),
   };
 
-  beforeEach(() => vi.clearAllMocks());
-
-  test("returns 401 when unauthenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: { message: "no auth" } });
-    const req = new NextRequest(
+  function makeDeleteRequest(): NextRequest {
+    return new NextRequest(
       `http://localhost/api/players/${VALID_PLAYER}/sessions/${VALID_SESSION}`,
       { method: "DELETE" }
     );
-    const res = await DELETE(req, deleteParams);
+  }
+
+  beforeEach(() => vi.clearAllMocks());
+
+  test("returns 401 when unauthenticated", async () => {
+    routeEnv.signOut();
+    const res = await DELETE(makeDeleteRequest(), deleteParams);
     expect(res.status).toBe(401);
   });
 
   test("returns 403 when user is not the player", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: "other" } }, error: null });
-    const req = new NextRequest(
-      `http://localhost/api/players/${VALID_PLAYER}/sessions/${VALID_SESSION}`,
-      { method: "DELETE" }
-    );
-    const res = await DELETE(req, deleteParams);
+    routeEnv.signIn(testUser("user", { id: "other" }));
+    const res = await DELETE(makeDeleteRequest(), deleteParams);
     expect(res.status).toBe(403);
   });
 
   test("returns 404 when session not found", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: VALID_PLAYER } }, error: null });
     mockGetSession.mockResolvedValue(null);
-    const req = new NextRequest(
-      `http://localhost/api/players/${VALID_PLAYER}/sessions/${VALID_SESSION}`,
-      { method: "DELETE" }
-    );
-    const res = await DELETE(req, deleteParams);
+    const res = await DELETE(makeDeleteRequest(), deleteParams);
     expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "Session not found", code: "not_found" });
   });
 
   test("returns 403 when session belongs to another user", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: VALID_PLAYER } }, error: null });
     mockGetSession.mockResolvedValue({ id: VALID_SESSION, userId: "other" });
-    const req = new NextRequest(
-      `http://localhost/api/players/${VALID_PLAYER}/sessions/${VALID_SESSION}`,
-      { method: "DELETE" }
-    );
-    const res = await DELETE(req, deleteParams);
+    const res = await DELETE(makeDeleteRequest(), deleteParams);
     expect(res.status).toBe(403);
   });
 
   test("returns 200 on success", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: VALID_PLAYER } }, error: null });
     mockGetSession.mockResolvedValue({ id: VALID_SESSION, userId: VALID_PLAYER });
     mockDeleteSession.mockResolvedValue(undefined);
-    const req = new NextRequest(
-      `http://localhost/api/players/${VALID_PLAYER}/sessions/${VALID_SESSION}`,
-      { method: "DELETE" }
-    );
-    const res = await DELETE(req, deleteParams);
+    const res = await DELETE(makeDeleteRequest(), deleteParams);
     expect(res.status).toBe(200);
   });
 });

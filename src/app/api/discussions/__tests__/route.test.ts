@@ -1,5 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: "user-123" }) });
+const migratedUnauthBody = { error: "Authentication required", code: "unauthorized" };
 
 // --- Mock functions ---
 const mockGetUser = vi.fn();
@@ -67,6 +71,7 @@ describe("Discussion API Routes", () => {
   describe("Property 13: Unauthenticated calls return 401", () => {
     beforeEach(() => {
       mockGetUser.mockResolvedValue(unauthResponse);
+      routeEnv.signOut();
     });
 
     it("GET /api/discussions → 401", async () => {
@@ -82,7 +87,7 @@ describe("Discussion API Routes", () => {
       });
       const res = await POST(req);
       expect(res.status).toBe(401);
-      expect(await res.json()).toEqual({ error: "Authentication required" });
+      expect(await res.json()).toEqual(migratedUnauthBody);
     });
 
     it("GET /api/discussions/unread-count → 401", async () => {
@@ -109,7 +114,7 @@ describe("Discussion API Routes", () => {
         params: Promise.resolve({ conversationId: "conv-123" }),
       });
       expect(res.status).toBe(401);
-      expect(await res.json()).toEqual({ error: "Authentication required" });
+      expect(await res.json()).toEqual(migratedUnauthBody);
     });
 
     it("PATCH /api/discussions/[id]/read → 401", async () => {
@@ -118,7 +123,7 @@ describe("Discussion API Routes", () => {
       });
       const res = await PATCH(req, { params: Promise.resolve({ conversationId: "conv-123" }) });
       expect(res.status).toBe(401);
-      expect(await res.json()).toEqual({ error: "Authentication required" });
+      expect(await res.json()).toEqual(migratedUnauthBody);
     });
   });
 
@@ -195,7 +200,10 @@ describe("Discussion API Routes", () => {
       });
       const res = await POST(req);
       expect(res.status).toBe(403);
-      expect(await res.json()).toEqual({ error: "Cannot create conversation: not friends" });
+      expect(await res.json()).toEqual({
+        error: "Cannot create conversation: not friends",
+        code: "forbidden",
+      });
     });
 
     it("GET /api/discussions/unread-count returns count", async () => {
@@ -218,6 +226,65 @@ describe("Discussion API Routes", () => {
         senderId: "user-123",
         content: "Hello",
       });
+    });
+
+    it("POST /api/discussions/[id]/messages returns the conversationClosed code → 409", async () => {
+      mockSendMessage.mockRejectedValue(new Error("Conversation closed"));
+      const req = createRequest("http://localhost/api/discussions/conv-123/messages", {
+        method: "POST",
+        body: JSON.stringify({ content: "Hello" }),
+      });
+      const res = await POST_MESSAGE(req, routeContext);
+      expect(res.status).toBe(409);
+      expect(await res.json()).toEqual({
+        error: "Conversation closed",
+        code: "conversationClosed",
+      });
+    });
+  });
+
+  describe("Suspension and rate limits", () => {
+    const friendId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+
+    it("POST /api/discussions/[id]/messages → 403 when suspended", async () => {
+      routeEnv.suspend("2099-01-01T00:00:00Z");
+      const req = createRequest("http://localhost/api/discussions/conv-123/messages", {
+        method: "POST",
+        body: JSON.stringify({ content: "Hello" }),
+      });
+      const res = await POST_MESSAGE(req, routeContext);
+      expect(res.status).toBe(403);
+      expect(await res.json()).toMatchObject({ code: "suspended" });
+      expect(mockSendMessage).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      [
+        "POST /api/discussions",
+        () =>
+          POST(
+            createRequest("http://localhost/api/discussions", {
+              method: "POST",
+              body: JSON.stringify({ friendId }),
+            })
+          ),
+      ],
+      [
+        "POST /api/discussions/[id]/messages",
+        () =>
+          POST_MESSAGE(
+            createRequest("http://localhost/api/discussions/conv-123/messages", {
+              method: "POST",
+              body: JSON.stringify({ content: "Hello" }),
+            }),
+            routeContext
+          ),
+      ],
+    ])("%s → 429 when the message limit is exceeded", async (_label, call) => {
+      routeEnv.exceedRateLimit(30);
+      const res = await call();
+      expect(res.status).toBe(429);
+      expect(routeEnv.rateLimitHits[0]).toBe("message:user:user-123");
     });
   });
 });

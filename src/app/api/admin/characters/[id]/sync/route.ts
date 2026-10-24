@@ -1,13 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
-import { logger } from "@/lib/logger";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import type { CharacterTrackableField } from "@/types/admin-characters";
 import {
   CHARACTER_TRACKABLE_FIELDS,
   syncCharacterField,
   syncAllCharacterFields,
 } from "@/lib/services/igdb-character-sync";
+
+const syncBodySchema = z.object({ field: z.string().optional() });
 
 /**
  * POST /api/admin/characters/[id]/sync
@@ -17,22 +19,18 @@ import {
  * - If field is provided: sync that field only
  * - If field is absent: forced sync of all fields
  */
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    await requireAdmin();
+export const POST = defineRoute(
+  { auth: "admin", body: syncBodySchema },
+  async ({ params, body }) => {
+    const { id: characterId } = params;
 
-    const { id: characterId } = await params;
+    if (!characterId) throw validationError(undefined, "Character ID is required");
 
-    if (!characterId) {
-      return NextResponse.json({ error: "Character ID is required" }, { status: 400 });
-    }
-
-    const body = await request.json().catch(() => ({}));
-    const { field } = body as { field?: string };
+    const { field } = body;
 
     // Validate field name if provided
     if (field && !CHARACTER_TRACKABLE_FIELDS.includes(field as CharacterTrackableField)) {
-      return NextResponse.json({ error: `Invalid field: ${field}` }, { status: 400 });
+      throw validationError(undefined, `Invalid field: ${field}`);
     }
 
     const supabase = await createRouteHandlerClient();
@@ -48,12 +46,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .eq("id", characterId)
       .single();
 
-    if (fetchError || !character) {
-      return NextResponse.json({ error: "Character not found" }, { status: 404 });
-    }
+    if (fetchError || !character) throw notFound("Character not found");
 
     if (!character.igdb_id) {
-      return NextResponse.json({ error: "Ce personnage n'est pas lié à IGDB" }, { status: 400 });
+      throw validationError(undefined, "Ce personnage n'est pas lié à IGDB");
     }
 
     const result = field
@@ -74,12 +70,5 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       syncedFields: result.syncedFields,
       character: { id: character.id, igdb_id: character.igdb_id },
     });
-  } catch (error) {
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    logger.error("Error in admin character sync POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

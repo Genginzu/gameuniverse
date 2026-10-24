@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute, validationError } from "@/lib/api/route";
 import {
   adminCharacterFormSchema,
   adminCharacterQuerySchema,
@@ -32,31 +32,10 @@ interface CharacterRow {
 /**
  * GET /api/admin/characters - List characters with pagination, search, sort
  */
-export async function GET(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const { searchParams } = new URL(request.url);
-
-    const rawParams: Record<string, string | undefined> = {
-      page: searchParams.get("page") ?? undefined,
-      limit: searchParams.get("limit") ?? undefined,
-      search: searchParams.get("search") ?? undefined,
-      sort_by: searchParams.get("sort_by") ?? undefined,
-      sort_order: searchParams.get("sort_order") ?? undefined,
-      locale: searchParams.get("locale") ?? undefined,
-    };
-
-    const queryResult = adminCharacterQuerySchema.safeParse(rawParams);
-
-    if (!queryResult.success) {
-      return NextResponse.json(
-        { error: "Invalid query parameters", details: queryResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { page, limit, search, sort_by, sort_order, locale } = queryResult.data;
+export const GET = defineRoute(
+  { auth: "admin", query: adminCharacterQuerySchema },
+  async ({ query: queryParams }) => {
+    const { page, limit, search, sort_by, sort_order, locale } = queryParams;
 
     const supabase = await createRouteHandlerClient();
     const offset = (page - 1) * limit;
@@ -170,37 +149,16 @@ export async function GET(request: NextRequest) {
         hasPreviousPage: page > 1,
       },
     });
-  } catch (error) {
-    logger.error("Error in admin characters GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * POST /api/admin/characters - Create a new character with relations
  */
-export async function POST(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const body = await request.json();
-
-    // Validate form data then convert to payload
-    const validationResult = adminCharacterFormSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const payload = characterFormToPayload(validationResult.data);
+export const POST = defineRoute(
+  { auth: "admin", body: adminCharacterFormSchema },
+  async ({ body }) => {
+    const payload = characterFormToPayload(body);
     const supabase = await createRouteHandlerClient();
 
     // Character tables are not yet in generated Supabase types (database.types.ts)
@@ -224,15 +182,11 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (charError) {
-      logger.error("Error creating character", { error: charError });
-
       if (charError.code === "23505") {
-        return NextResponse.json(
-          { error: "Character with this slug already exists" },
-          { status: 400 }
-        );
+        throw validationError(undefined, "Character with this slug already exists");
       }
 
+      logger.error("Error creating character", { error: charError });
       return NextResponse.json({ error: "Failed to create character" }, { status: 500 });
     }
 
@@ -329,13 +283,5 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-  } catch (error) {
-    logger.error("Error in admin characters POST", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

@@ -1,7 +1,7 @@
 /**
  * Admin management of the home showcase (`home_showcase_items`).
  * Writes use the service role: clients have no write grant on the table.
- * Callers must run `adminGuardResponse()` first.
+ * Callers must be routes declared with `defineRoute({ auth: "admin" })`.
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";

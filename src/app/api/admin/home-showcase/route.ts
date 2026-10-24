@@ -6,9 +6,9 @@
  * PUT  /api/admin/home-showcase           — reorder { kind, ids }
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-import { adminGuardResponse } from "@/lib/auth-admin";
+import { defineRoute } from "@/lib/api/route";
 import {
   addShowcaseItem,
   listShowcaseItems,
@@ -18,10 +18,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { addShowcaseItemSchema, reorderShowcaseSchema } from "@/lib/validations/home-showcase";
 import { showcaseErrorResponse } from "@/lib/utils/showcaseErrorResponse";
 
-export async function GET(request: NextRequest) {
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
-
+export const GET = defineRoute({ auth: "admin" }, async ({ request }) => {
   try {
     const locale = request.nextUrl.searchParams.get("locale") === "en" ? "en" : "fr";
     const items = await listShowcaseItems(getSupabaseAdmin(), locale);
@@ -29,34 +26,22 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return showcaseErrorResponse(error, "list");
   }
-}
+});
 
-export async function POST(request: NextRequest) {
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
-
-  const parsed = addShowcaseItemSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
-
+export const POST = defineRoute({ auth: "admin", body: addShowcaseItemSchema }, async ({ body }) => {
   try {
-    const created = await addShowcaseItem(getSupabaseAdmin(), parsed.data);
+    const created = await addShowcaseItem(getSupabaseAdmin(), body);
     return NextResponse.json(created, { status: 201 });
   } catch (error) {
     return showcaseErrorResponse(error, "add");
   }
-}
+});
 
-export async function PUT(request: NextRequest) {
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
-
-  const parsed = reorderShowcaseSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
-
+export const PUT = defineRoute({ auth: "admin", body: reorderShowcaseSchema }, async ({ body }) => {
   try {
-    await reorderShowcaseItems(getSupabaseAdmin(), parsed.data);
+    await reorderShowcaseItems(getSupabaseAdmin(), body);
     return NextResponse.json({ success: true });
   } catch (error) {
     return showcaseErrorResponse(error, "reorder");
   }
-}
+});

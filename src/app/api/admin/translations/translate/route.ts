@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { translateBodySchema } from "@/lib/validations/admin-translation";
 import { getSourceText, upsertTranslation } from "@/lib/services/translationService";
 import { translateFields } from "@/lib/services/aiTranslateService";
@@ -11,22 +11,10 @@ import { logger } from "@/lib/logger";
 /**
  * POST /api/admin/translations/translate - Translate a single entity to a target language
  */
-export async function POST(request: NextRequest) {
+export const POST = defineRoute({ auth: "admin", body: translateBodySchema }, async ({ body }) => {
+  const { entityType, entityId, targetLang, saveToDb } = body;
+
   try {
-    await requireAdmin();
-
-    const body = await request.json();
-    const parseResult = translateBodySchema.safeParse(body);
-
-    if (!parseResult.success) {
-      return NextResponse.json(
-        { error: "Invalid request body", details: parseResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { entityType, entityId, targetLang, saveToDb } = parseResult.data;
-
     const supabase = await createRouteHandlerClient();
 
     // Check entity exists
@@ -38,9 +26,7 @@ export async function POST(request: NextRequest) {
       .eq("id", entityId)
       .single();
 
-    if (entityError || !entity) {
-      return NextResponse.json({ error: "Entity not found" }, { status: 404 });
-    }
+    if (entityError || !entity) throw notFound("Entity not found");
 
     // Get source text
     const source = await getSourceText({
@@ -50,9 +36,7 @@ export async function POST(request: NextRequest) {
       excludeLang: targetLang,
     });
 
-    if (!source) {
-      return NextResponse.json({ error: "No source translation available" }, { status: 400 });
-    }
+    if (!source) throw validationError(undefined, "No source translation available");
 
     // Translate via AI
     const translatedFields = await translateFields({
@@ -90,20 +74,16 @@ export async function POST(request: NextRequest) {
       saved: saveToDb,
     });
   } catch (error) {
-    logger.error("Error in admin translations translate POST", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
     if (error instanceof Error && error.message.includes("timed out")) {
+      logger.error("Error in admin translations translate POST", { error });
       return NextResponse.json({ error: "Translation timed out after 30s" }, { status: 504 });
     }
 
     if (error instanceof Error && error.message.includes("AI Gateway")) {
+      logger.error("Error in admin translations translate POST", { error });
       return NextResponse.json({ error: error.message }, { status: 502 });
     }
 
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    throw error;
   }
-}
+});
