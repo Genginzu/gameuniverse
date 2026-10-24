@@ -5,11 +5,3 @@ export interface SupportedLanguage {
   name: string;
   native_name: string | null;
 }
-
-export interface FetchLanguagesParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}

@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import dynamic from "next/dynamic";
-import { useAdminPlatforms } from "@/hooks/useAdminPlatforms";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { platformsResource } from "@/lib/admin-resource/resources/platforms";
 import type { AdminPlatform } from "@/types/admin-platforms";
 import { PlatformList } from "@/components/admin/platforms/PlatformList";
 import { PlatformForm } from "@/components/admin/platforms/PlatformForm";
@@ -24,112 +26,18 @@ function getPlatformName(platform: AdminPlatform, locale: string): string {
 export default function AdminPlatformsPage() {
   const t = useTranslations("admin.platforms");
   const locale = useLocale();
-  const { platforms, pagination, loading, fetchPlatforms, deletePlatform, checkPlatformUsage } =
-    useAdminPlatforms();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "slug",
-    order: "asc",
+  const platforms = useAdminResource(platformsResource);
+  const deletion = useAdminDeleteFlow(platforms, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
 
-  // Form state: null = hidden, undefined = create, AdminPlatform = edit
   const [editingPlatform, setEditingPlatform] = useState<AdminPlatform | null | undefined>(null);
-  const [platformToDelete, setPlatformToDelete] = useState<AdminPlatform | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
 
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchPlatforms({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-        locale,
-      });
-    },
-    [fetchPlatforms, currentSort, locale]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchPlatforms({ search: currentSearch, sortBy: field, sortOrder: order, page: 1, locale });
-    },
-    [fetchPlatforms, currentSearch, locale]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchPlatforms({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-        locale,
-      });
-    },
-    [fetchPlatforms, currentSearch, currentSort, locale]
-  );
-
-  const handleEdit = useCallback((platform: AdminPlatform) => {
-    setEditingPlatform(platform);
-  }, []);
-
-  const handleCreate = useCallback(() => {
-    setEditingPlatform(undefined);
-  }, []);
-
-  const handleFormSuccess = useCallback(() => {
+  const handleFormSuccess = () => {
     setEditingPlatform(null);
-    fetchPlatforms({
-      search: currentSearch,
-      sortBy: currentSort.field,
-      sortOrder: currentSort.order,
-      page: pagination.currentPage,
-      locale,
-    });
-  }, [fetchPlatforms, currentSearch, currentSort, pagination.currentPage, locale]);
-
-  const handleFormCancel = useCallback(() => {
-    setEditingPlatform(null);
-  }, []);
-
-  const handleDeleteRequest = useCallback(
-    async (platform: AdminPlatform) => {
-      setPlatformToDelete(platform);
-      setUsageCount(undefined);
-      try {
-        const count = await checkPlatformUsage(platform.slug);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkPlatformUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!platformToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deletePlatform(platformToDelete.slug);
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setPlatformToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [platformToDelete, deletePlatform, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) {
-      setPlatformToDelete(null);
-    }
-  }, [isDeleting]);
+    platforms.revalidate();
+  };
 
   const showForm = editingPlatform !== null;
 
@@ -140,7 +48,7 @@ export default function AdminPlatformsPage() {
           <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
             {t("title")}
           </h1>
-          <Button onClick={handleCreate}>
+          <Button onClick={() => setEditingPlatform(undefined)}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newPlatform")}
           </Button>
@@ -151,34 +59,30 @@ export default function AdminPlatformsPage() {
             <PlatformForm
               platform={editingPlatform ?? null}
               onSuccess={handleFormSuccess}
-              onCancel={handleFormCancel}
+              onCancel={() => setEditingPlatform(null)}
             />
           </div>
         )}
 
         <PlatformList
-          platforms={platforms}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-          onSearch={handleSearch}
-          onSort={handleSort}
-          onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
-          isLoading={loading}
-          currentSort={currentSort}
-          currentSearch={currentSearch}
+          platforms={platforms.rows}
+          pagination={platforms.pagination}
+          onPageChange={platforms.setPage}
+          onSearch={platforms.setSearch}
+          onSort={(field, order) => platforms.setSort({ field, order })}
+          onEdit={setEditingPlatform}
+          onDelete={deletion.request}
+          isLoading={platforms.isLoading}
+          currentSort={platforms.sort}
+          currentSearch={platforms.search}
         />
 
         <AdminDeleteDialog
-          isOpen={platformToDelete !== null}
+          {...deletion.dialog}
           translationNamespace="admin.platforms.deleteDialog"
           warningParams={{
-            name: platformToDelete ? getPlatformName(platformToDelete, locale) : "",
+            name: deletion.target ? getPlatformName(deletion.target, locale) : "",
           }}
-          onClose={handleDeleteClose}
-          onConfirm={handleDeleteConfirm}
-          isDeleting={isDeleting}
-          usageCount={usageCount}
         />
       </section>
     </div>

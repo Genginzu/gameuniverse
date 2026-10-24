@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useGenreForm } from "@/hooks/useGenreForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { genreForm } from "@/lib/admin-resource/forms/translatedForms";
 import { GenreForm } from "@/components/admin/genres/GenreForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -16,13 +17,18 @@ import { Icon } from "@iconify/react";
 
 /**
  * Inner component that mounts only when initialData is ready,
- * so useGenreForm receives correct defaultValues on first render.
+ * so useAdminEntityForm receives correct defaultValues on first render.
  */
 function EditGenreForm({ initialData }: { initialData: GenreFormData }) {
   const t = useTranslations("admin.genres");
   const router = useRouter();
 
-  const { form, submitGenre, isSubmitting, supportedLanguages } = useGenreForm("edit", initialData);
+  const {
+    form,
+    submit: submitGenre,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(genreForm, "edit", { initialData });
 
   const handleSubmit = useCallback(
     async (data: GenreFormData) => {

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
-import { useAdminRatingSystems } from "@/hooks/useAdminRatingSystems";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { ratingSystemsResource } from "@/lib/admin-resource/resources/ratingSystems";
 import { RatingSystemsTable } from "@/components/admin/age-classifications/RatingSystemsTable";
 const AdminDeleteDialog = dynamic(
   () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
@@ -12,110 +13,16 @@ const AdminDeleteDialog = dynamic(
 );
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-
-import type { AdminRatingSystem } from "@/types/admin-age-classifications";
 import { Icon } from "@iconify/react";
 
 export default function AdminAgeClassificationsPage() {
   const t = useTranslations("admin.ageClassifications");
   const router = useRouter();
-  const {
-    ratingSystems,
-    pagination,
-    loading,
-    fetchRatingSystems,
-    deleteRatingSystem,
-    checkRatingSystemUsage,
-  } = useAdminRatingSystems();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{
-    field: string;
-    order: "asc" | "desc";
-  }>({ field: "code", order: "asc" });
-
-  const [systemToDelete, setSystemToDelete] = useState<AdminRatingSystem | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchRatingSystems({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
-    },
-    [fetchRatingSystems, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchRatingSystems({
-        search: currentSearch,
-        sortBy: field,
-        sortOrder: order,
-        page: 1,
-      });
-    },
-    [fetchRatingSystems, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchRatingSystems({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
-    },
-    [fetchRatingSystems, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (id: string) => {
-      router.push(`/admin/age-classifications/${id}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback(
-    async (system: AdminRatingSystem) => {
-      setSystemToDelete(system);
-      setUsageCount(undefined);
-      try {
-        const count = await checkRatingSystemUsage(system.id);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkRatingSystemUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!systemToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteRatingSystem(systemToDelete.id);
-      toast({ title: t("toast.systemDeleted"), variant: "success" });
-      setSystemToDelete(null);
-    } catch {
-      toast({ title: t("toast.deleteError"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [systemToDelete, deleteRatingSystem]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) {
-      setSystemToDelete(null);
-    }
-  }, [isDeleting]);
+  const ratingSystems = useAdminResource(ratingSystemsResource);
+  const deletion = useAdminDeleteFlow(ratingSystems, {
+    onDeleted: () => toast({ title: t("toast.systemDeleted"), variant: "success" }),
+    onError: () => toast({ title: t("toast.deleteError"), variant: "destructive" }),
+  });
 
   return (
     <div className="space-y-8 p-4 lg:p-6">
@@ -131,29 +38,25 @@ export default function AdminAgeClassificationsPage() {
         </div>
 
         <RatingSystemsTable
-          systems={ratingSystems}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-          onSearch={handleSearch}
-          onSort={handleSort}
-          onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
-          isLoading={loading}
-          currentSort={currentSort}
-          currentSearch={currentSearch}
+          systems={ratingSystems.rows}
+          pagination={ratingSystems.pagination}
+          onPageChange={ratingSystems.setPage}
+          onSearch={ratingSystems.setSearch}
+          onSort={(field, order) => ratingSystems.setSort({ field, order })}
+          onEdit={(id) => router.push(`/admin/age-classifications/${id}/edit`)}
+          onDelete={deletion.request}
+          isLoading={ratingSystems.isLoading}
+          currentSort={ratingSystems.sort}
+          currentSearch={ratingSystems.search}
         />
 
         <AdminDeleteDialog
-          isOpen={systemToDelete !== null}
+          {...deletion.dialog}
           translationNamespace="admin.ageClassifications.deleteSystem"
-          warningParams={{ name: systemToDelete?.name ?? "" }}
+          warningParams={{ name: deletion.target?.name ?? "" }}
           warningKey="confirm"
           confirmKey="delete"
           blockOnUsage
-          onClose={handleDeleteClose}
-          onConfirm={handleDeleteConfirm}
-          isDeleting={isDeleting}
-          usageCount={usageCount}
         />
       </section>
     </div>

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useAdminAchievements } from "@/hooks/useAdminAchievements";
 import dynamic from "next/dynamic";
-import type { AdminAchievement } from "@/types/admin-achievements";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { achievementsResource } from "@/lib/admin-resource/resources/achievements";
 import { AchievementsTable } from "@/components/admin/achievements/AchievementsTable";
 const AdminDeleteDialog = dynamic(
   () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
@@ -18,97 +18,11 @@ import { Icon } from "@iconify/react";
 export default function AdminAchievementsPage() {
   const t = useTranslations("adminAchievements");
   const router = useRouter();
-  const { achievements, pagination, loading, fetchAchievements, deleteAchievement, checkUsage } =
-    useAdminAchievements();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{
-    field: string;
-    order: "asc" | "desc";
-  }>({ field: "sort_order", order: "asc" });
-
-  const [achievementToDelete, setAchievementToDelete] = useState<AdminAchievement | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchAchievements({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
-    },
-    [fetchAchievements, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchAchievements({
-        search: currentSearch,
-        sortBy: field,
-        sortOrder: order,
-        page: 1,
-      });
-    },
-    [fetchAchievements, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchAchievements({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
-    },
-    [fetchAchievements, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (id: string) => {
-      router.push(`/admin/achievements/${id}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback(
-    async (achievement: AdminAchievement) => {
-      setAchievementToDelete(achievement);
-      setUsageCount(undefined);
-      try {
-        const count = await checkUsage(achievement.id);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!achievementToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteAchievement(achievementToDelete.id);
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setAchievementToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [achievementToDelete, deleteAchievement, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) {
-      setAchievementToDelete(null);
-    }
-  }, [isDeleting]);
+  const achievements = useAdminResource(achievementsResource);
+  const deletion = useAdminDeleteFlow(achievements, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
+  });
 
   return (
     <div className="space-y-8 p-4 lg:p-6">
@@ -130,28 +44,24 @@ export default function AdminAchievementsPage() {
         </div>
 
         <AchievementsTable
-          achievements={achievements}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-          onSearch={handleSearch}
-          onSort={handleSort}
-          onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
-          isLoading={loading}
-          currentSort={currentSort}
-          currentSearch={currentSearch}
+          achievements={achievements.rows}
+          pagination={achievements.pagination}
+          onPageChange={achievements.setPage}
+          onSearch={achievements.setSearch}
+          onSort={(field, order) => achievements.setSort({ field, order })}
+          onEdit={(id) => router.push(`/admin/achievements/${id}/edit`)}
+          onDelete={deletion.request}
+          isLoading={achievements.isLoading}
+          currentSort={achievements.sort}
+          currentSearch={achievements.search}
         />
 
         <AdminDeleteDialog
-          isOpen={achievementToDelete !== null}
+          {...deletion.dialog}
           translationNamespace="adminAchievements.deleteDialog"
-          warningParams={{ name: achievementToDelete?.key ?? "" }}
+          warningParams={{ name: deletion.target?.key ?? "" }}
           forceConfirmKey="forceConfirm"
           forceWarningKey="forceWarning"
-          onClose={handleDeleteClose}
-          onConfirm={handleDeleteConfirm}
-          isDeleting={isDeleting}
-          usageCount={usageCount}
         />
       </section>
     </div>

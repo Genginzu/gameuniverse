@@ -12,14 +12,6 @@ export interface AdminGame {
   updatedAt: string;
 }
 
-export interface FetchGamesParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
-
 export interface AdminGenre {
   id: string;
   slug: string;

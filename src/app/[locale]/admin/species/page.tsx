@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { useAdminSpecies, type AdminSpeciesListItem } from "@/hooks/useAdminSpecies";
 import dynamic from "next/dynamic";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { useAdminDeleteFlow } from "@/hooks/useAdminDeleteFlow";
+import { speciesResource } from "@/lib/admin-resource/resources/species";
+import type { AdminSpeciesListItem } from "@/types/admin-species";
 import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
 const AdminDeleteDialog = dynamic(
   () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
@@ -18,79 +20,11 @@ export default function AdminSpeciesPage() {
   const t = useTranslations("admin.species");
   const locale = useLocale();
   const router = useRouter();
-  const { species, pagination, loading, fetchSpecies, deleteSpecies, checkSpeciesUsage } =
-    useAdminSpecies();
-
-  const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
-    field: "slug",
-    order: "asc",
+  const species = useAdminResource(speciesResource);
+  const deletion = useAdminDeleteFlow(species, {
+    onDeleted: () => toast({ title: t("deleteDialog.success"), variant: "success" }),
+    onError: () => toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" }),
   });
-  const [speciesToDelete, setSpeciesToDelete] = useState<AdminSpeciesListItem | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      setCurrentSearch(query);
-      fetchSpecies({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
-    },
-    [fetchSpecies, currentSort]
-  );
-
-  const handleSort = useCallback(
-    (field: string, order: "asc" | "desc") => {
-      setCurrentSort({ field, order });
-      fetchSpecies({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
-    },
-    [fetchSpecies, currentSearch]
-  );
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchSpecies({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
-    },
-    [fetchSpecies, currentSearch, currentSort]
-  );
-
-  const handleEdit = useCallback(
-    (sp: AdminSpeciesListItem) => {
-      router.push(`/admin/species/${sp.slug}/edit`);
-    },
-    [router]
-  );
-
-  const handleDeleteRequest = useCallback(
-    async (sp: AdminSpeciesListItem) => {
-      setSpeciesToDelete(sp);
-      setUsageCount(undefined);
-      try {
-        const count = await checkSpeciesUsage(sp.id);
-        setUsageCount(count);
-      } catch {
-        setUsageCount(undefined);
-      }
-    },
-    [checkSpeciesUsage]
-  );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!speciesToDelete) return;
-    setIsDeleting(true);
-    try {
-      await deleteSpecies(speciesToDelete.id);
-      toast({ title: t("deleteDialog.success"), variant: "success" });
-      setSpeciesToDelete(null);
-    } catch {
-      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [speciesToDelete, deleteSpecies, t]);
-
-  const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) setSpeciesToDelete(null);
-  }, [isDeleting]);
 
   const speciesColumns: AdminColumnDef<AdminSpeciesListItem>[] = [
     {
@@ -121,7 +55,9 @@ export default function AdminSpeciesPage() {
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
+            {t("title")}
+          </h1>
           <Button onClick={() => router.push("/admin/species/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newSpecies")}
@@ -129,30 +65,26 @@ export default function AdminSpeciesPage() {
         </div>
 
         <AdminDataTable<AdminSpeciesListItem>
-          items={species}
+          items={species.rows}
           columns={speciesColumns}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-          onSearch={handleSearch}
-          onSort={handleSort}
-          onEdit={handleEdit}
-          onDelete={handleDeleteRequest}
-          isLoading={loading}
-          currentSort={currentSort}
-          currentSearch={currentSearch}
+          pagination={species.pagination}
+          onPageChange={species.setPage}
+          onSearch={species.setSearch}
+          onSort={(field, order) => species.setSort({ field, order })}
+          onEdit={(sp) => router.push(`/admin/species/${sp.slug}/edit`)}
+          onDelete={deletion.request}
+          isLoading={species.isLoading}
+          currentSort={species.sort}
+          currentSearch={species.search}
           translationNamespace="admin.species"
           totalCountKey="totalSpecies"
           emptyKey="noSpecies"
         />
 
         <AdminDeleteDialog
-          isOpen={speciesToDelete !== null}
+          {...deletion.dialog}
           translationNamespace="admin.species.deleteDialog"
-          warningParams={{ name: speciesToDelete?.slug ?? "" }}
-          onClose={handleDeleteClose}
-          onConfirm={handleDeleteConfirm}
-          isDeleting={isDeleting}
-          usageCount={usageCount}
+          warningParams={{ name: deletion.target?.slug ?? "" }}
         />
       </section>
     </div>

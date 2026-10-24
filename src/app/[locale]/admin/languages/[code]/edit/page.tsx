@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useLanguageForm } from "@/hooks/useLanguageForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { languageForm } from "@/lib/admin-resource/forms/catalogForms";
 import { LanguageForm } from "@/components/admin/languages/LanguageForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -21,13 +22,17 @@ interface LanguageApiResponse {
 
 /**
  * Inner component that mounts only when initialData is ready,
- * so useLanguageForm receives correct defaultValues on first render.
+ * so useAdminEntityForm receives correct defaultValues on first render.
  */
 function EditLanguageForm({ initialData }: { initialData: LanguageFormData }) {
   const t = useTranslations("admin.languages");
   const router = useRouter();
 
-  const { form, submitLanguage, isSubmitting } = useLanguageForm("edit", initialData);
+  const {
+    form,
+    submit: submitLanguage,
+    isSubmitting,
+  } = useAdminEntityForm(languageForm, "edit", { initialData });
 
   const handleSubmit = useCallback(
     async (data: LanguageFormData) => {

@@ -11,12 +11,3 @@ export interface AdminGroup {
   ownerEmail: string | null;
   createdAt: string;
 }
-
-/** Query params for the admin groups list */
-export interface FetchAdminGroupsParams {
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  page?: number;
-  limit?: number;
-}

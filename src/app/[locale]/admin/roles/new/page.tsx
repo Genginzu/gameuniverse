@@ -3,7 +3,8 @@
 import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useRoleForm } from "@/hooks/useRoleForm";
+import { useAdminEntityForm } from "@/hooks/useAdminEntityForm";
+import { roleForm } from "@/lib/admin-resource/forms/translatedForms";
 import { RoleForm } from "@/components/admin/roles/RoleForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -14,7 +15,12 @@ import { Icon } from "@iconify/react";
 export default function NewRolePage() {
   const t = useTranslations("admin.characterRoles");
   const router = useRouter();
-  const { form, submitRole, isSubmitting, supportedLanguages } = useRoleForm("create");
+  const {
+    form,
+    submit: submitRole,
+    isSubmitting,
+    supportedLanguages,
+  } = useAdminEntityForm(roleForm, "create");
 
   const handleSubmit = useCallback(
     async (data: RoleFormData) => {

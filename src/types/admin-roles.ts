@@ -12,12 +12,3 @@ export interface AdminRole {
   characterCount: number;
   translations: RoleTranslation[];
 }
-
-export interface FetchRolesParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  locale?: string;
-}

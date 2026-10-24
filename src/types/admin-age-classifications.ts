@@ -44,14 +44,6 @@ export interface AdminContentDescriptor {
   gameCount: number;
 }
 
-export interface FetchRatingSystemsParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
-
 export interface FetchRatingsParams {
   ratingSystemId: string;
   page?: number;

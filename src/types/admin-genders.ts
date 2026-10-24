@@ -8,6 +8,13 @@ export interface AdminGender {
   updatedAt: string;
 }
 
+export interface AdminGenderListItem {
+  id: string;
+  slug: string;
+  characterCount: number;
+  translations: { language_code: string; name: string }[];
+}
+
 export interface GenderTranslation {
   language_code: string;
   name: string;

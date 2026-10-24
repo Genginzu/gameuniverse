@@ -1,14 +1,15 @@
 "use client";
 
 import type { CharacterFormTabProps } from "@/types/admin-characters";
-import { useAdminGenders } from "@/hooks/useAdminGenders";
+import { useAdminResource } from "@/hooks/useAdminResource";
+import { gendersResource } from "@/lib/admin-resource/resources/genders";
 import { useLocale } from "next-intl";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 
 export function CharacterFormGenderTab({ form, t }: CharacterFormTabProps) {
   const locale = useLocale();
-  const { genders, loading } = useAdminGenders();
+  const { rows: genders, isLoading: loading } = useAdminResource(gendersResource);
 
   const currentGenderId = form.watch("gender_id") ?? null;
 

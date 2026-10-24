@@ -45,6 +45,13 @@ vi.mock("next/image", () => ({
     React.createElement("img", { ...props, alt: props.alt || "" }),
 }));
 
+// Real Iconify fetches icons over the network; a late response updates state after
+// jsdom teardown and fails the run with "window is not defined".
+vi.mock("@iconify/react", () => ({
+  Icon: ({ icon, className }: { icon: string; className?: string }) =>
+    React.createElement("span", { "data-icon": icon, className, "aria-hidden": true }),
+}));
+
 // Mock next/link
 vi.mock("next/link", () => ({
   default: ({
