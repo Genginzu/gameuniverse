@@ -1,5 +1,3 @@
-export { connectPlatform } from "./connectPlatform";
-export type { ConnectPlatformParams } from "./connectPlatform";
 export { getValidAccessToken } from "./refresh";
 export { getXboxAuthForPlayer } from "./xboxPlayerAuth";
 export { xboxAuthorizationHeader } from "./xboxLive";

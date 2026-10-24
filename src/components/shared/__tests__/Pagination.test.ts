@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getVisiblePages } from "@/components/shared/Pagination";
+import { getVisiblePages } from "@/components/shared/paginationUtils";
 
 describe("getVisiblePages helper", () => {
   describe("basic pagination", () => {

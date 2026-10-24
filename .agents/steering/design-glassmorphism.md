@@ -138,7 +138,7 @@ Garde-fous automatiques :
   (`paletteFromHex(game.accentColor, game.slug)`, fallback `DEFAULT_PALETTE`).
 
 > Pour le périmètre éditorial, voir le système d'accent dynamique
-> (`paletteFromHex`, `useGameAccent`, `DynamicAccent`) dans
+> (`paletteFromHex`, `DynamicAccent`) dans
 > [`docs/design/editorial-components.md`](../../docs/design/editorial-components.md).
 
 ## Gradient principal (obligatoire)

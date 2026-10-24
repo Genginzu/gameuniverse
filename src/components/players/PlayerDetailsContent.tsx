@@ -165,8 +165,3 @@ export function PlayerDetailsContent({ player, locale, currentUserId }: PlayerDe
     </div>
   );
 }
-
-// Keep these helpers re-exported for legacy consumers that imported
-// them from the public API of this module.
-export { getDefaultTab } from "./profile-tabs";
-export type { ProfileTab } from "./profile-tabs";

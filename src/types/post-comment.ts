@@ -11,8 +11,3 @@ export interface PostComment {
     avatarUrl: string | null;
   };
 }
-
-export interface PostCommentsResponse {
-  comments: PostComment[];
-  totalCount: number;
-}

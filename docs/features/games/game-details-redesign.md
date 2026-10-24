@@ -184,5 +184,5 @@ Toutes les nouvelles clés sont sous `gameDetails.editorial.*` dans
 
 - Tests existants conservés :
   `test/unit/components/games/details/PriceHistoryTab.test.tsx`
-- Tests de hooks éditoriaux : `useGameAccent`, `useEditorialRailState`
+- Tests de hooks éditoriaux : `useEditorialRailState`
 - Pas de régression sur les services (IGDB, GameService)

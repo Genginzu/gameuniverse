@@ -20,9 +20,6 @@ import {
   queryYearReviewCount,
 } from "./playerStatsYearHelpers";
 
-// Re-export formatPlayTime from client-safe utility so existing imports keep working
-export { formatPlayTime } from "@/lib/utils/formatPlayTime";
-
 // Interface pour les fonctions pures testables sans DB
 export interface LibraryEntryWithGenres {
   playTimeHours: number;

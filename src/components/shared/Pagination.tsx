@@ -7,9 +7,6 @@ import { PaginationButton } from "./PaginationButton";
 import { MobilePageSelector } from "./MobilePageSelector";
 import { getVisiblePages } from "./paginationUtils";
 
-// Re-export for backward compatibility
-export { getVisiblePages } from "./paginationUtils";
-
 /**
  * Variantes visuelles supportées par le composant Pagination.
  *
