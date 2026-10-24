@@ -18,14 +18,15 @@
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 
-import { EDITORIAL_MEGA_MENU_ENTRIES } from "./EditorialMegaMenu";
+import { EDITORIAL_MEGA_MENU_ENTRIES } from "./megaMenuEntries";
 import { EDITORIAL_SPACES } from "./EditorialRail";
 import { NavCountBadge } from "./NavCountBadge";
 
@@ -63,6 +64,8 @@ const ACCOUNT_LINKS: readonly AccountLink[] = [
 export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
   const t = useTranslations("editorial");
   const tAccount = useTranslations("editorial.mobileNav.account");
@@ -107,26 +110,14 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
     setExpandedId(null);
   };
 
-  // Escape closes the overlay
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
-
-  // Body scroll lock while open
-  useEffect(() => {
-    if (!isOpen) return;
-    if (typeof document === "undefined") return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previous;
-    };
-  }, [isOpen]);
+  // Escape closes; scroll locked and focus trapped while the overlay is open.
+  useDismissableLayer(overlayRef, {
+    open: isOpen,
+    onDismiss: close,
+    insideRefs: [toggleRef],
+    lockScroll: true,
+    trapFocus: true,
+  });
 
   const renderGroups = (groups: NavGroup[]) =>
     groups.map((group) => {
@@ -182,6 +173,7 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
   return (
     <>
       <button
+        ref={toggleRef}
         type="button"
         onClick={() => setIsOpen(true)}
         aria-label={t("mobileNav.openAriaLabel")}
@@ -194,6 +186,7 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
 
       {isOpen && (
         <div
+          ref={overlayRef}
           id="editorial-mobile-nav-overlay"
           role="dialog"
           aria-modal="true"

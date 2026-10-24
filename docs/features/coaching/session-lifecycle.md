@@ -53,7 +53,8 @@ Voir [ADR 0001](../../adr/0001-coaching-lifecycle-owns-session-writes.md).
 
 ## Prérequis
 
-- Migration `20261023000001_coaching_refund_pending.sql` appliquée.
+- Migrations `20261023000002_coaching_refund_pending.sql` et
+  `20261023000003_purge_keeps_refund_pending_sessions.sql` appliquées.
 - `STRIPE_WEBHOOK_SECRET` configuré, événements `checkout.session.completed`,
   `checkout.session.async_payment_succeeded`, `charge.refunded`, `account.updated`.
 
@@ -61,4 +62,4 @@ Voir [ADR 0001](../../adr/0001-coaching-lifecycle-owns-session-writes.md).
 
 - Page `/coaching/sessions` : actions coach / élève, paiement, message de remboursement.
 - Une session `refund_pending` bloque la suppression de compte comme une session `paid`, et la purge
-  RGPD la conserve comme pièce comptable (migration `20261023000002`).
+  RGPD la conserve comme pièce comptable (migration `20261023000003`).

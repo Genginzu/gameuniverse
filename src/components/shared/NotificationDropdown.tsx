@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useRef, useCallback, type RefObject } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { NotificationItem } from "@/components/shared/NotificationItem";
-import { useClickOutside } from "@/hooks/useClickOutside";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import type { Notification } from "@/types/notification";
 
 interface NotificationDropdownProps {
@@ -13,6 +12,8 @@ interface NotificationDropdownProps {
   onDismiss: (id: string) => void;
   onDismissAll: () => void;
   onClose: () => void;
+  /** The bell button: an inside region, so pressing it toggles instead of re-opening. */
+  triggerRef?: RefObject<HTMLElement | null>;
 }
 
 const MAX_VISIBLE = 5;
@@ -22,6 +23,7 @@ export function NotificationDropdown({
   onDismiss,
   onDismissAll,
   onClose,
+  triggerRef,
 }: NotificationDropdownProps) {
   const t = useTranslations("notifications");
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -31,13 +33,12 @@ export function NotificationDropdown({
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, MAX_VISIBLE);
 
-  useClickOutside(dropdownRef, onClose);
-  useEscapeKey(onClose);
-
-  // Focus first item on open
-  useEffect(() => {
-    firstItemRef.current?.focus();
-  }, []);
+  useDismissableLayer(dropdownRef, {
+    open: true,
+    onDismiss: onClose,
+    insideRefs: triggerRef ? [triggerRef] : undefined,
+    initialFocusRef: firstItemRef,
+  });
 
   const prefersReducedMotion =
     typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

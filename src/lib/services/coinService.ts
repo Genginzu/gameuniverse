@@ -8,15 +8,20 @@ import type {
   CoinActivityType,
   CoinRewardConfig,
   RewardResult,
+  AdminGrant,
+  LedgerPostResult,
+  LedgerRefusal,
 } from "@/types/coins";
 
-const SIGNUP_BONUS = 500;
-
 /**
- * Service for managing GU Coins: wallets, transactions, and activity rewards.
+ * Service for managing GU Coins: wallets, ledger entries, and activity rewards.
  * All methods use the service-role Supabase client (supabase-admin.ts) because
  * coin_transactions / player_wallets are server-only writes (issue #372). It is
  * always invoked from trusted server code with an explicit playerId.
+ *
+ * Every ledger write goes through the post_coin_entry DB function (migration
+ * 20261023000001): wallet opening, ledger key de-duplication, overdraft refusal
+ * and balance_after are decided there, under one per-player lock.
  */
 export class CoinService {
   static async getWallet(playerId: string): Promise<PlayerWallet> {
@@ -38,55 +43,27 @@ export class CoinService {
     return mapWallet(data);
   }
 
-  /** Signup bonus is granted once, under a per-player lock (migration 20261019000004). */
+  /** The signup bonus is granted once, under the per-player ledger lock. */
   private static async initializeWallet(playerId: string): Promise<PlayerWallet> {
     const supabase = getSupabaseAdmin();
     const { error: ensureError } = await supabase.rpc("ensure_player_wallet", {
       p_player_id: playerId,
-      p_signup_bonus: SIGNUP_BONUS,
     });
     if (ensureError) {
       logger.error("Failed to initialize wallet", { playerId, error: ensureError });
       throw new Error("Failed to initialize wallet");
     }
 
-    const { data } = await untypedTable(supabase, "player_wallets")
+    const { data, error } = await untypedTable(supabase, "player_wallets")
       .select("player_id, balance, total_earned, total_spent")
       .eq("player_id", playerId)
       .single();
 
-    return data
-      ? mapWallet(data)
-      : { playerId, balance: SIGNUP_BONUS, totalEarned: SIGNUP_BONUS, totalSpent: 0 };
-  }
-
-  static async creditCoins(
-    playerId: string,
-    amount: number,
-    type: CoinTransactionType,
-    activityType?: CoinActivityType,
-    referenceId?: string,
-    description?: string
-  ): Promise<CoinTransaction> {
-    if (amount <= 0) throw new Error("Credit amount must be positive");
-    return this.insertTransaction(playerId, amount, type, activityType, referenceId, description);
-  }
-
-  static async debitCoins(
-    playerId: string,
-    amount: number,
-    type: CoinTransactionType,
-    referenceId?: string,
-    description?: string
-  ): Promise<CoinTransaction> {
-    if (amount <= 0) throw new Error("Debit amount must be positive");
-
-    const wallet = await this.getWallet(playerId);
-    if (wallet.balance < amount) {
-      throw new Error("Insufficient balance");
+    if (error || !data) {
+      logger.error("Failed to read the opened wallet", { playerId, error });
+      throw new Error("Failed to initialize wallet");
     }
-
-    return this.insertTransaction(playerId, -amount, type, undefined, referenceId, description);
+    return mapWallet(data);
   }
 
   /**
@@ -219,61 +196,33 @@ export class CoinService {
     return mapConfig(data);
   }
 
-  static async grantCoins(
-    adminId: string,
-    playerId: string,
-    amount: number,
-    description: string
-  ): Promise<CoinTransaction> {
-    if (amount === 0) throw new Error("Amount cannot be zero");
-    const desc = `[Admin ${adminId}] ${description}`;
+  /**
+   * Posts an admin grant (positive or negative). The nonce identifies the
+   * attempt: replaying it (double click, retry) is a no-op, and a negative
+   * grant never overdraws the wallet.
+   */
+  static async grant(grant: AdminGrant): Promise<LedgerPostResult> {
+    if (grant.amount === 0) throw new Error("Amount cannot be zero");
 
-    if (amount > 0) {
-      return this.creditCoins(playerId, amount, "admin_grant", undefined, undefined, desc);
-    }
-
-    // Negative = debit
-    return this.insertTransaction(playerId, amount, "admin_grant", undefined, undefined, desc);
-  }
-
-  private static async insertTransaction(
-    playerId: string,
-    amount: number,
-    type: CoinTransactionType,
-    activityType?: CoinActivityType,
-    referenceId?: string,
-    description?: string
-  ): Promise<CoinTransaction> {
     const supabase = getSupabaseAdmin();
-
-    // Get current balance to compute balance_after
-    const { data: wallet } = await untypedTable(supabase, "player_wallets")
-      .select("balance")
-      .eq("player_id", playerId)
-      .single();
-
-    const currentBalance = wallet?.balance ?? 0;
-    const balanceAfter = currentBalance + amount;
-
-    const { data, error } = await untypedTable(supabase, "coin_transactions")
-      .insert({
-        player_id: playerId,
-        amount,
-        type,
-        activity_type: activityType ?? null,
-        reference_id: referenceId ?? null,
-        description: description ?? null,
-        balance_after: balanceAfter,
-      })
-      .select("*")
-      .single();
+    const { data, error } = await supabase.rpc("post_coin_entry", {
+      p_player_id: grant.playerId,
+      p_amount: grant.amount,
+      p_type: "admin_grant",
+      p_ledger_key: `admin_grant:${grant.nonce}`,
+      p_description: `[Admin ${grant.adminId}] ${grant.description}`,
+    });
 
     if (error || !data) {
-      logger.error("Failed to insert transaction", { playerId, amount, type, error });
-      throw new Error("Failed to insert transaction");
+      logger.error("Failed to post admin grant", { playerId: grant.playerId, error });
+      throw new Error("Failed to post ledger entry");
     }
 
-    return mapTransaction(data);
+    const result = data as { posted: boolean; reason?: string; transaction?: Record<string, unknown> };
+    if (result.posted && result.transaction) {
+      return { posted: true, transaction: mapTransaction(result.transaction) };
+    }
+    return { posted: false, reason: result.reason as LedgerRefusal };
   }
 }
 

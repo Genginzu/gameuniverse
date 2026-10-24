@@ -1,7 +1,7 @@
 -- =============================================================================
 -- Account purge keeps refund_pending coaching sessions
 -- =============================================================================
--- 20261023000001 added payment_status 'refund_pending' (paid session cancelled,
+-- 20261023000002 added payment_status 'refund_pending' (paid session cancelled,
 -- refund owed, not yet confirmed by Stripe). The session moved money, so it is
 -- an accounting record like paid / released / refunded: purge_account_data must
 -- keep it (party columns cleared) instead of letting it cascade away with the

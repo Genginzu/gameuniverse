@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
+import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import { Icon } from "@iconify/react";
 import {
   SESSION_TYPES,
@@ -27,13 +28,7 @@ function CustomSelect({
   const ref = useRef<HTMLDivElement>(null);
   const selected = options.find((o) => o.value === value);
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  useDismissableLayer(ref, { open, onDismiss: () => setOpen(false) });
 
   return (
     <div ref={ref} className="relative">

@@ -1,6 +1,6 @@
 /**
- * Structural regression guards for migration 20261023000001.
- * Vitest has no database, so these read the real migration file.
+ * Structural regression guards for migrations 20261023000002 and 20261023000003.
+ * Vitest has no database, so these read the real migration files.
  */
 
 import { describe, it, expect } from "vitest";
@@ -8,11 +8,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const sql = readFileSync(
-  join(process.cwd(), "supabase", "migrations", "20261023000001_coaching_refund_pending.sql"),
+  join(process.cwd(), "supabase", "migrations", "20261023000002_coaching_refund_pending.sql"),
   "utf8"
 );
 
-describe("Migration 20261023000001 - coaching refund_pending", () => {
+describe("Migration 20261023000002 - coaching refund_pending", () => {
   it("allows refund_pending in the payment_status check", () => {
     expect(sql).toMatch(
       /coaching_sessions_payment_status_check\s+CHECK \(payment_status IN \([^)]*'refund_pending'/
@@ -30,9 +30,9 @@ describe("Migration 20261023000001 - coaching refund_pending", () => {
   });
 });
 
-describe("Migration 20261023000002 - purge keeps refund_pending sessions", () => {
+describe("Migration 20261023000003 - purge keeps refund_pending sessions", () => {
   const purgeSql = readFileSync(
-    join(process.cwd(), "supabase", "migrations", "20261023000002_purge_keeps_refund_pending_sessions.sql"),
+    join(process.cwd(), "supabase", "migrations", "20261023000003_purge_keeps_refund_pending_sessions.sql"),
     "utf8"
   );
 
