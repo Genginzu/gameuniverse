@@ -1,51 +1,49 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-const { mockGetUser, adminDb } = vi.hoisted(() => ({
-  mockGetUser: vi.fn(),
+const { adminDb } = vi.hoisted(() => ({
   adminDb: { current: null as ReturnType<typeof createSupabaseQueryMock> | null },
 }));
 
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => ({ auth: { getUser: mockGetUser } })),
-  createServerClient: vi.fn(async () => ({ auth: { getUser: mockGetUser } })),
-}));
 vi.mock("@/lib/supabase-admin", () => ({ getSupabaseAdmin: () => adminDb.current!.client }));
 vi.mock("@/lib/services/accountPurgeService", () => ({ purgeAccount: vi.fn() }));
 vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
 }));
 
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
+
 const { GET } = await import("@/app/api/admin/account-deletions/route");
 const { POST, DELETE } = await import("@/app/api/admin/account-deletions/[id]/route");
 const { purgeAccount } = await import("@/lib/services/accountPurgeService");
 
-const ADMIN = { id: "admin-1", app_metadata: { role: "admin" } };
-const PLAYER = { id: "player-1", app_metadata: {} };
 const TARGET = "0f8fad5b-d9cb-469f-a165-70867728950e";
-
-function signIn(user: object | null) {
-  mockGetUser.mockResolvedValue({ data: { user }, error: null });
-}
 
 function context(id = TARGET) {
   return { params: Promise.resolve({ id }) };
 }
 
+const listRequest = () => new NextRequest("http://localhost/api/admin/account-deletions");
 const request = new NextRequest(`http://localhost/api/admin/account-deletions/${TARGET}`);
 
 beforeEach(() => {
   vi.clearAllMocks();
   adminDb.current = createSupabaseQueryMock();
-  signIn(ADMIN);
 });
 
 describe("admin account deletions", () => {
   it("is reserved to admins", async () => {
-    signIn(PLAYER);
-    expect((await GET()).status).toBe(403);
+    routeEnv.signIn("user");
+    expect((await GET(listRequest())).status).toBe(403);
     expect((await POST(request, context())).status).toBe(403);
+  });
+
+  it("requires authentication", async () => {
+    routeEnv.signOut();
+    expect((await GET(listRequest())).status).toBe(401);
+    expect((await DELETE(request, context())).status).toBe(401);
   });
 
   it("lists pending deletions, soonest first", async () => {
@@ -61,7 +59,7 @@ describe("admin account deletions", () => {
       ],
     });
 
-    const body = await (await GET()).json();
+    const body = await (await GET(listRequest())).json();
     expect(body.deletions).toEqual([
       {
         id: TARGET,
@@ -90,12 +88,16 @@ describe("admin account deletions", () => {
 
   it("never purges an account without a pending deletion", async () => {
     adminDb.current!.enqueue("profiles", { data: { deletion_requested_at: null } });
-    expect((await POST(request, context())).status).toBe(404);
+    const res = await POST(request, context());
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "No pending deletion", code: "not_found" });
     expect(purgeAccount).not.toHaveBeenCalled();
   });
 
   it("rejects malformed ids", async () => {
-    expect((await DELETE(request, context("not-a-uuid"))).status).toBe(400);
+    const res = await DELETE(request, context("not-a-uuid"));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Invalid id", code: "validation" });
   });
 
   it("cancels a pending deletion", async () => {

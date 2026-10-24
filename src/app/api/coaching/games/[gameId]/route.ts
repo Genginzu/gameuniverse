@@ -1,22 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, notFound } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
 
-type RouteContext = { params: Promise<{ gameId: string }> };
+const coachGameUpdateSchema = z.looseObject({
+  rankLevel: z.unknown().optional(),
+  hoursExperience: z.unknown().optional(),
+  specialties: z.unknown().optional(),
+  isActive: z.unknown().optional(),
+});
 
-export async function PATCH(request: NextRequest, { params }: RouteContext) {
-  try {
+export const PATCH = defineRoute(
+  { auth: "required", rateLimit: "coachingProfile", body: coachGameUpdateSchema },
+  async ({ params, body }) => {
     const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { gameId } = await params;
-    const body = await request.json();
+    const { gameId } = params;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updates: Record<string, any> = {};
@@ -37,42 +39,27 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
     // RLS only lets the owning coach update the row: no row = not found / not yours.
-    if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!row) throw notFound("Not found");
 
     return NextResponse.json({ game: row });
-  } catch (error) {
-    logger.error("Error in coaching games PATCH", { error });
+  }
+);
+
+export const DELETE = defineRoute({ auth: "required" }, async ({ params }) => {
+  const supabase = await createRouteHandlerClient();
+  const { gameId } = params;
+
+  const { data: deleted, error } = await (supabase as AnySupabase)
+    .from("coach_games")
+    .delete()
+    .eq("id", gameId)
+    .select("id");
+
+  if (error) {
+    logger.error("Error deleting coach game", { error, gameId });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+  if (!deleted || deleted.length === 0) throw notFound("Not found");
 
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
-  try {
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { gameId } = await params;
-
-    const { data: deleted, error } = await (supabase as AnySupabase)
-      .from("coach_games")
-      .delete()
-      .eq("id", gameId)
-      .select("id");
-
-    if (error) {
-      logger.error("Error deleting coach game", { error, gameId });
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-    }
-    if (!deleted || deleted.length === 0) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in coaching games DELETE", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
+  return NextResponse.json({ success: true });
+});

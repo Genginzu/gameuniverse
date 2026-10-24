@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
+
+const routeEnv = useTestRouteEnvironment();
 
 // vi.hoisted ensures mock fns are available when vi.mock factories run
 const { mockGetUser, mockFetchCollections, mockCreateCollection } = vi.hoisted(() => ({
@@ -29,11 +32,14 @@ function makeParams(id = PLAYER_ID): { params: Promise<{ id: string }> } {
   return { params: Promise.resolve({ id }) };
 }
 
+// GET still reads auth.getUser; POST goes through the route environment.
 function mockAuthenticatedUser(id = PLAYER_ID) {
+  routeEnv.signIn(testUser("user", { id }));
   mockGetUser.mockResolvedValue({ data: { user: { id } }, error: null });
 }
 
 function mockUnauthenticated() {
+  routeEnv.signOut();
   mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
 }
 
@@ -106,7 +112,32 @@ describe("/api/players/[id]/collections", () => {
       });
       const res = await POST(req, makeParams());
       expect(res.status).toBe(401);
-      expect((await res.json()).error).toBe("Unauthorized");
+      expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
+    it("should return 403 suspended when the account is suspended", async () => {
+      mockAuthenticatedUser(PLAYER_ID);
+      routeEnv.suspend("2099-01-01T00:00:00Z");
+      const req = new NextRequest("http://localhost/api/players/player-123/collections", {
+        method: "POST",
+        body: JSON.stringify({ name: "Ma collection" }),
+      });
+      const res = await POST(req, makeParams());
+      expect(res.status).toBe(403);
+      expect(await res.json()).toMatchObject({ code: "suspended" });
+      expect(mockCreateCollection).not.toHaveBeenCalled();
+    });
+
+    it("should return 429 when the collection rate limit is exceeded", async () => {
+      mockAuthenticatedUser(PLAYER_ID);
+      routeEnv.exceedRateLimit(60);
+      const req = new NextRequest("http://localhost/api/players/player-123/collections", {
+        method: "POST",
+        body: JSON.stringify({ name: "Ma collection" }),
+      });
+      const res = await POST(req, makeParams());
+      expect(res.status).toBe(429);
+      expect(mockCreateCollection).not.toHaveBeenCalled();
     });
 
     it("should return 403 when user is not the player", async () => {

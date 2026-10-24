@@ -1,21 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { defineRoute } from "@/lib/api/route";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
-async function requireAdmin() {
-  const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data } = await supabase.rpc("is_admin", { user_id: user.id });
-  return data ? user : null;
-}
-
-export async function GET(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+export const GET = defineRoute({ auth: "admin" }, async ({ request }) => {
   const { searchParams } = request.nextUrl;
   const search = searchParams.get("search") || "";
   const page = parseInt(searchParams.get("page") || "1", 10);
@@ -54,4 +42,4 @@ export async function GET(request: NextRequest) {
   });
 
   return NextResponse.json({ wallets, total: count ?? 0 });
-}
+});

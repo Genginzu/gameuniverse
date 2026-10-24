@@ -1,8 +1,10 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mock state ---
 let mockSupabaseFrom: ReturnType<typeof vi.fn> | null;
-let mockGetUser: ReturnType<typeof vi.fn>;
+
+const routeEnv = useTestRouteEnvironment();
 
 function supaChain(result: any) {
   const c: any = new Proxy(
@@ -24,35 +26,11 @@ vi.mock("@/lib/supabase-server", () => ({
         if (mockSupabaseFrom) return mockSupabaseFrom(table);
         return {};
       },
-      auth: {
-        getUser: () => {
-          if (mockGetUser) return mockGetUser();
-          return Promise.resolve({ data: { user: null }, error: null });
-        },
-      },
     }),
 }));
 
 vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
-}));
-
-vi.mock("@/lib/validations/review", () => ({
-  reviewSchema: {
-    safeParse: vi.fn((data: any) => {
-      if (!data.rating && data.rating !== 0)
-        return { success: false, error: { issues: [{ message: "rating required" }] } };
-      return {
-        success: true,
-        data: {
-          rating: data.rating,
-          content: data.content ?? "",
-          positivePoints: data.positivePoints ?? [],
-          negativePoints: data.negativePoints ?? [],
-        },
-      };
-    }),
-  },
 }));
 
 vi.mock("@/lib/services/achievementEngine", () => ({
@@ -101,8 +79,7 @@ describe("sortReviewsByHelpfulVotes", () => {
 });
 
 describe("GET /api/reviews", () => {
-  beforeEach(() => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
+  beforeEach(() => {
     mockSupabaseFrom = null;
   });
 
@@ -124,13 +101,12 @@ describe("GET /api/reviews", () => {
 });
 
 describe("POST /api/reviews", () => {
-  beforeEach(() => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
+  beforeEach(() => {
     mockSupabaseFrom = null;
   });
 
   test("returns 401 when not authenticated", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: { message: "no" } }));
+    routeEnv.signOut();
     const res = await POST(
       makeRequest("http://localhost/api/reviews", {
         method: "POST",
@@ -144,10 +120,11 @@ describe("POST /api/reviews", () => {
       })
     );
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   test("returns 400 for invalid body", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: { id: "user-1" } }, error: null }));
+    routeEnv.signIn(testUser("user", { id: "user-1" }));
     const res = await POST(
       makeRequest("http://localhost/api/reviews", {
         method: "POST",
@@ -158,8 +135,7 @@ describe("POST /api/reviews", () => {
   });
 
   test("returns 201 on success", async () => {
-    const user = { id: "user-1" };
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user }, error: null }));
+    const user = routeEnv.signIn(testUser("user", { id: "user-1" }));
 
     const insertedReview = { id: "r1", user_id: user.id, game_id: "g1", rating: 15 };
 
@@ -193,5 +169,46 @@ describe("POST /api/reviews", () => {
     expect(res.status).toBe(201);
     const body = await res.json();
     expect(body.success).toBe(true);
+  });
+});
+
+describe("POST/PUT /api/reviews refusals", () => {
+  const reviewBody = JSON.stringify({
+    gameId: "g1",
+    rating: 15,
+    content: "Great game",
+    positivePoints: [],
+    negativePoints: [],
+  });
+
+  beforeEach(() => {
+    mockSupabaseFrom = vi.fn(() => ({}));
+    routeEnv.signIn(testUser("user", { id: "user-1" }));
+  });
+
+  test.each([
+    ["POST", POST],
+    ["PUT", PUT],
+  ])("%s returns 403 suspended for a suspended account", async (method, handler) => {
+    routeEnv.suspend("2030-01-01T00:00:00Z");
+    const res = await handler(
+      makeRequest("http://localhost/api/reviews", { method, body: reviewBody })
+    );
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ code: "suspended" });
+    expect(mockSupabaseFrom).not.toHaveBeenCalled();
+  });
+
+  test.each([
+    ["POST", POST],
+    ["PUT", PUT],
+  ])("%s returns 429 when the review rate limit is exceeded", async (method, handler) => {
+    routeEnv.exceedRateLimit(120);
+    const res = await handler(
+      makeRequest("http://localhost/api/reviews", { method, body: reviewBody })
+    );
+    expect(res.status).toBe(429);
+    expect(await res.json()).toMatchObject({ code: "rate_limited", retryAfter: 120 });
+    expect(routeEnv.rateLimitHits).toEqual(["review:user:user-1"]);
   });
 });

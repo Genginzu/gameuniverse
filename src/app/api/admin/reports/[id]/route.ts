@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin, getCurrentUser } from "@/lib/auth-admin";
-import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { ReportServerService } from "@/lib/services/reportServerService";
 import { isValidSuspensionDays } from "@/lib/utils/suspension";
 import {
@@ -10,8 +10,6 @@ import {
   type ReportStatus,
 } from "@/types/report";
 
-type RouteParams = { params: Promise<{ id: string }> };
-
 const DECISION_STATUS: Record<ReportDecision, ReportStatus> = {
   review: "reviewed",
   resolve: "resolved",
@@ -20,17 +18,22 @@ const DECISION_STATUS: Record<ReportDecision, ReportStatus> = {
 
 const ACTIONS: ReportAction[] = ["none", "content_deleted", "author_warned", "author_suspended"];
 
-/** PATCH /api/admin/reports/[id] — Admin: resolve, review or dismiss a report. */
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
-    const admin = await getCurrentUser();
+// Field values are checked below so the dedicated 400 messages and codes stay unchanged.
+const patchReportSchema = z.object({
+  decision: z.any().optional(),
+  actionTaken: z.any().optional(),
+  suspensionDays: z.any().optional(),
+});
 
-    const { id } = await params;
-    const { decision, actionTaken, suspensionDays } = await request.json();
+/** PATCH /api/admin/reports/[id] — Admin: resolve, review or dismiss a report. */
+export const PATCH = defineRoute(
+  { auth: "admin", body: patchReportSchema },
+  async ({ params, body, user }) => {
+    const { id } = params;
+    const { decision, actionTaken, suspensionDays } = body;
 
     if (!["review", "resolve", "dismiss"].includes(decision)) {
-      return NextResponse.json({ error: "Invalid decision" }, { status: 400 });
+      throw validationError(undefined, "Invalid decision");
     }
     const action: ReportAction =
       actionTaken && ACTIONS.includes(actionTaken) ? actionTaken : "none";
@@ -47,12 +50,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const status = DECISION_STATUS[decision as ReportDecision];
-    const result = await ReportServerService.updateReport(id, status, action, admin.id, {
+    const result = await ReportServerService.updateReport(id, status, action, user.id, {
       suspensionDays: days,
     });
-    if (result === "not_found") {
-      return NextResponse.json({ error: "Report not found" }, { status: 404 });
-    }
+    if (result === "not_found") throw notFound("Report not found");
     if (result === "closed") {
       return NextResponse.json(
         { error: "Report already handled", code: "closed" },
@@ -64,11 +65,5 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-    logger.error("Error in admin report PATCH", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

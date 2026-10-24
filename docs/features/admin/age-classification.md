@@ -66,7 +66,7 @@ admin.
 
 - **Rôle administrateur** : Seuls les utilisateurs avec le rôle admin peuvent
   accéder à cette fonctionnalité. Les routes API sont protégées par
-  `requireAdmin()` (403 si non admin).
+  `defineRoute({ auth: "admin" })` (401 si déconnecté, 403 si non admin).
 - **Tables en base** : `rating_systems`, `ratings`, `rating_translations`,
   `content_descriptors`, `content_descriptor_translations`, `game_ratings` et
   `game_rating_descriptors` doivent exister dans Supabase.

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute, notFound } from "@/lib/api/route";
 import { saveTranslationBodySchema } from "@/lib/validations/admin-translation";
 import { upsertTranslation } from "@/lib/services/translationService";
 import { ENTITY_TABLE_MAP } from "@/types/admin-translations";
@@ -10,21 +10,10 @@ import { logger } from "@/lib/logger";
 /**
  * PUT /api/admin/translations/save - Save a manually edited translation
  */
-export async function PUT(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const body = await request.json();
-    const parseResult = saveTranslationBodySchema.safeParse(body);
-
-    if (!parseResult.success) {
-      return NextResponse.json(
-        { error: "Invalid request body", details: parseResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { entityType, entityId, targetLang, translations } = parseResult.data;
+export const PUT = defineRoute(
+  { auth: "admin", body: saveTranslationBodySchema },
+  async ({ body }) => {
+    const { entityType, entityId, targetLang, translations } = body;
 
     const supabase = await createRouteHandlerClient();
 
@@ -37,9 +26,7 @@ export async function PUT(request: NextRequest) {
       .eq("id", entityId)
       .single();
 
-    if (entityError || !entity) {
-      return NextResponse.json({ error: "Entity not found" }, { status: 404 });
-    }
+    if (entityError || !entity) throw notFound("Entity not found");
 
     // Save translation
     await upsertTranslation({
@@ -62,13 +49,5 @@ export async function PUT(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in admin translations save PUT", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

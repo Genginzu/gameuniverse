@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { conflict, defineRoute, notFound, validationError } from "@/lib/api/route";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { CoinService } from "@/lib/services/coinService";
 import { logger } from "@/lib/logger";
@@ -257,26 +259,21 @@ export async function GET() {
   }
 }
 
+// Field values are checked in the handler so the dedicated 400 message stays unchanged.
+const addToLibrarySchema = z.object({
+  gameId: z.any().optional(),
+  status: z.any().optional(),
+});
+
 // POST /api/library - Add game to user's library
-export async function POST(request: NextRequest) {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "library", body: addToLibrarySchema },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
-
-    // Get authenticated user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
     const { gameId, status = "owned" } = body;
 
     if (!gameId) {
-      return NextResponse.json({ error: "Game ID is required" }, { status: 400 });
+      throw validationError(undefined, "Game ID is required");
     }
 
     // Check if game exists
@@ -287,7 +284,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (gameError || !game) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+      throw notFound("Game not found");
     }
 
     // Add game to user's library
@@ -312,7 +309,7 @@ export async function POST(request: NextRequest) {
       }
       if (error.code === "23505") {
         // Unique constraint violation
-        return NextResponse.json({ error: "Game already in library" }, { status: 409 });
+        throw conflict("Game already in library");
       }
       logger.error("Error adding game to library", { error });
       return NextResponse.json({ error: "Failed to add game to library" }, { status: 500 });
@@ -331,8 +328,5 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json({ success: true, data });
-  } catch (error) {
-    logger.error("Error in library POST API", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

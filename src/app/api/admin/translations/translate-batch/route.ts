@@ -1,7 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute } from "@/lib/api/route";
 import { translateBatchBodySchema } from "@/lib/validations/admin-translation";
 import { getSourceText, upsertTranslation } from "@/lib/services/translationService";
 import { translateFields } from "@/lib/services/aiTranslateService";
@@ -13,21 +12,10 @@ import { logger } from "@/lib/logger";
  * Translates multiple entities sequentially, streaming progress as NDJSON.
  * Each line is a JSON object with { entityId, status, translatedFields? | error? }.
  */
-export async function POST(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const body = await request.json();
-    const parseResult = translateBatchBodySchema.safeParse(body);
-
-    if (!parseResult.success) {
-      return NextResponse.json(
-        { error: "Invalid request body", details: parseResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { entityType, entityIds, targetLang } = parseResult.data;
+export const POST = defineRoute(
+  { auth: "admin", body: translateBatchBodySchema },
+  async ({ request, body }) => {
+    const { entityType, entityIds, targetLang } = body;
     const supabase = await createRouteHandlerClient();
 
     const encoder = new TextEncoder();
@@ -135,13 +123,5 @@ export async function POST(request: NextRequest) {
         "Transfer-Encoding": "chunked",
       },
     });
-  } catch (error) {
-    logger.error("Error in admin translations translate-batch POST", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

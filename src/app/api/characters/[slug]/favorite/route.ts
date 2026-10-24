@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { CharacterFavoriteService } from "@/lib/services/characterFavoriteService";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
+import { conflict, defineRoute, notFound } from "@/lib/api/route";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -30,72 +31,49 @@ async function resolveCharacterId(
 }
 
 // POST /api/characters/[slug]/favorite — Ajouter aux favoris
-export async function POST(_request: NextRequest, { params }: RouteContext) {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "favorite" },
+  async ({ user, params }) => {
     const supabase = await createRouteHandlerClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { slug } = await params;
-    const characterId = await resolveCharacterId(supabase, slug);
+    const characterId = await resolveCharacterId(supabase, params.slug);
 
     if (!characterId) {
-      return NextResponse.json({ error: "Character not found" }, { status: 404 });
+      throw notFound("Character not found");
     }
 
-    await CharacterFavoriteService.addFavorite(characterId, user.id);
+    try {
+      await CharacterFavoriteService.addFavorite(characterId, user.id);
+    } catch (error: unknown) {
+      if ((error as { code?: string }).code === "23505") {
+        throw conflict("Already favorited");
+      }
+      throw error;
+    }
 
     CoinService.rewardActivity(user.id, "character_favorite", characterId).catch((err) =>
       logger.error("Coin reward failed", { error: err })
     );
 
     return NextResponse.json({ success: true });
-  } catch (error: unknown) {
-    const pgError = error as { code?: string };
-    if (pgError.code === "23505") {
-      return NextResponse.json({ error: "Already favorited" }, { status: 409 });
-    }
-    logger.error("Error in favorite POST API", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 // DELETE /api/characters/[slug]/favorite — Retirer des favoris
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
-  try {
+export const DELETE = defineRoute(
+  { auth: "required", rateLimit: "favorite" },
+  async ({ user, params }) => {
     const supabase = await createRouteHandlerClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { slug } = await params;
-    const characterId = await resolveCharacterId(supabase, slug);
+    const characterId = await resolveCharacterId(supabase, params.slug);
 
     if (!characterId) {
-      return NextResponse.json({ error: "Character not found" }, { status: 404 });
+      throw notFound("Character not found");
     }
 
     await CharacterFavoriteService.removeFavorite(characterId, user.id);
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in favorite DELETE API", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 // GET /api/characters/[slug]/favorite — Statut du favori pour l'utilisateur courant
 export async function GET(_request: NextRequest, { params }: RouteContext) {

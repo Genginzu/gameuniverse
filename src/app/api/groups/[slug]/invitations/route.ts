@@ -5,7 +5,7 @@ import { GroupMembersServerService } from "@/lib/services/groupMembersServerServ
 import { GroupInvitationsServerService } from "@/lib/services/groupInvitationsServerService";
 import { createGroupInvitationSchema } from "@/lib/validations/group";
 import { logger } from "@/lib/logger";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
+import { conflict, defineRoute, forbidden, notFound } from "@/lib/api/route";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -46,72 +46,42 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
   }
 }
 
+const NOT_FOUND_ERRORS = new Set(["Player not found", "Either email or username is required"]);
+const CONFLICT_ERRORS = new Set(["An invitation is already pending for this player"]);
+
 /**
  * POST /api/groups/[slug]/invitations — Invite a player by email or username.
  * Authentication required. Only owner/admin members can invite.
  */
-export async function POST(request: NextRequest, { params }: RouteContext) {
-  try {
-    const { slug } = await params;
-
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "invitation", body: createGroupInvitationSchema },
+  async ({ user, params, body }) => {
+    const { slug } = params;
 
     const access = await GroupServerService.getGroupAccess(slug);
-    if (!access) {
-      return NextResponse.json({ error: "Group not found" }, { status: 404 });
-    }
+    if (!access) throw notFound("Group not found");
 
     const role = await GroupMembersServerService.getMemberRole(access.id, user.id);
-    if (role !== "owner" && role !== "moderator") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    const limited = await enforceRateLimit("invitation", { userId: user.id });
-    if (limited) return limited;
-
-    const body = await request.json();
-    const parsed = createGroupInvitationSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
+    if (role !== "owner" && role !== "moderator") throw forbidden("Forbidden");
 
     const group = await GroupServerService.fetchGroupBySlug(slug);
-    if (!group) {
-      return NextResponse.json({ error: "Group not found" }, { status: 404 });
+    if (!group) throw notFound("Group not found");
+
+    try {
+      const invitation = await GroupInvitationsServerService.createInvitation(
+        access.id,
+        slug,
+        group.name,
+        user.id,
+        body
+      );
+
+      return NextResponse.json({ invitation }, { status: 201 });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (NOT_FOUND_ERRORS.has(message)) throw notFound(message);
+      if (CONFLICT_ERRORS.has(message)) throw conflict(message);
+      throw error;
     }
-
-    const invitation = await GroupInvitationsServerService.createInvitation(
-      access.id,
-      slug,
-      group.name,
-      user.id,
-      parsed.data
-    );
-
-    return NextResponse.json({ invitation }, { status: 201 });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
-    const status =
-      message === "Player not found" || message === "Either email or username is required"
-        ? 404
-        : message === "An invitation is already pending for this player"
-          ? 409
-          : 500;
-
-    if (status === 500) {
-      logger.error("Error in group invitations POST", { error });
-    }
-
-    return NextResponse.json({ error: message }, { status });
   }
-}
+);

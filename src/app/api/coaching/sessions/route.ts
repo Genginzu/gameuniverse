@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, notFound } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 import { coachingSessionRequested } from "@/lib/services/notifications";
 import { createCoachingSessionSchema } from "@/lib/validations/coaching-session";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
@@ -12,26 +12,11 @@ type AnySupabase = any;
  * POST /api/coaching/sessions
  * Create a coaching session request. Auth required (student = current user).
  */
-export async function POST(request: NextRequest) {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "coachingBooking", body: createCoachingSessionSchema },
+  async ({ user, body }) => {
     const supabase: AnySupabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const limited = await enforceRateLimit("coachingBooking", { userId: user.id });
-    if (limited) return limited;
-
-    const parsed = createCoachingSessionSchema.safeParse(await request.json());
-    if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid session request" }, { status: 400 });
-    }
-    const { coachId, gameId, pricingId, scheduledAt } = parsed.data;
+    const { coachId, gameId, pricingId, scheduledAt } = body;
 
     const { data: coach } = await supabase
       .from("coach_profiles")
@@ -39,9 +24,7 @@ export async function POST(request: NextRequest) {
       .eq("id", coachId)
       .single();
 
-    if (!coach) {
-      return NextResponse.json({ error: "Coach not found" }, { status: 404 });
-    }
+    if (!coach) throw notFound("Coach not found");
 
     if (!coach.is_active) {
       return NextResponse.json({ error: "Coach is not active" }, { status: 400 });
@@ -78,11 +61,8 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ session: data }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in coaching sessions POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /** Resolve coach_profiles.id for a given player_id. */
 async function resolveCoachId(supabase: AnySupabase, playerId: string): Promise<string | null> {

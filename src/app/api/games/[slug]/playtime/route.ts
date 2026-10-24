@@ -5,6 +5,7 @@ import { computePlaytimeAverage } from "@/lib/services/player-playtime-utils";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import type { PlayerPlaytimeEntry, PlayerPlaytimeContributor } from "@/types/game";
 import { logger } from "@/lib/logger";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 
 /**
  * Resolve a game slug to its id. Returns the game id or null.
@@ -185,41 +186,22 @@ export async function GET(
 /**
  * POST /api/games/[slug]/playtime
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-): Promise<NextResponse> {
-  try {
-    const { slug } = await params;
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "gameSession", body: playerPlaytimeSchema },
+  async ({ user, params, body }) => {
+    const { slug } = params;
 
     if (!slug) {
-      return NextResponse.json({ error: "Game slug is required" }, { status: 400 });
+      throw validationError(undefined, "Game slug is required");
     }
 
     const supabase = await createRouteHandlerClient();
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const parsed = playerPlaytimeSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const message = parsed.error.issues.map((e) => e.message).join(", ");
-      return NextResponse.json({ error: message }, { status: 400 });
-    }
-
-    const { playTimeHastily, playTimeNormally, playTimeCompletely } = parsed.data;
+    const { playTimeHastily, playTimeNormally, playTimeCompletely } = body;
 
     const gameId = await resolveGameId(supabase, slug);
     if (!gameId) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+      throw notFound("Game not found");
     }
 
     const updateFields: Record<string, number | null> = {};
@@ -286,8 +268,5 @@ export async function POST(
     }
 
     return NextResponse.json(stats);
-  } catch (error) {
-    logger.error("Error submitting player playtime", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

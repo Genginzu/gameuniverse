@@ -21,7 +21,7 @@ et les personnages les plus vus.
 
 ## Prérequis
 
-- Rôle `admin` (`app_metadata.role`), vérifié par `adminGuardResponse()`.
+- Rôle `admin` (`app_metadata.role`), vérifié par `defineRoute({ auth: "admin" })`.
 - Migration `20261021000001_home_showcase_items.sql` appliquée.
 
 ## Utilisation

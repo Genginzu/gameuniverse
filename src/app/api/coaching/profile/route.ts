@@ -1,7 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, validationError } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 import * as coachProfileService from "@/lib/services/coachProfileService";
+
+type CoachProfileUpdate = Parameters<typeof coachProfileService.update>[2];
+
+const createProfileSchema = z.looseObject({
+  bio: z.any().optional(),
+  experience: z.any().optional(),
+  languages: z.any().optional(),
+});
+
+// The whole body is forwarded to the service, which picks the known fields.
+const updateProfileSchema = z.looseObject({});
 
 export async function GET() {
   try {
@@ -19,15 +32,15 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
+export const POST = defineRoute(
+  {
+    auth: "required",
+    rateLimit: "coachingProfile",
+    writesContent: true,
+    body: createProfileSchema,
+  },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const body = await request.json();
     const profile = await coachProfileService.create(supabase, user.id, {
       bio: body.bio,
       experience: body.experience,
@@ -35,29 +48,30 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ profile }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in coaching profile POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
-export async function PATCH(request: NextRequest) {
-  try {
+export const PATCH = defineRoute(
+  {
+    auth: "required",
+    rateLimit: "coachingProfile",
+    writesContent: true,
+    body: updateProfileSchema,
+  },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const body = await request.json();
-    const profile = await coachProfileService.update(supabase, user.id, body);
-
-    return NextResponse.json({ profile });
-  } catch (error) {
-    if ((error as { code?: string } | null)?.code === "22023") {
-      return NextResponse.json({ error: "Invalid cancellation policy" }, { status: 400 });
+    try {
+      const profile = await coachProfileService.update(
+        supabase,
+        user.id,
+        body as CoachProfileUpdate
+      );
+      return NextResponse.json({ profile });
+    } catch (error) {
+      if ((error as { code?: string } | null)?.code === "22023") {
+        throw validationError(undefined, "Invalid cancellation policy");
+      }
+      throw error;
     }
-    logger.error("Error in coaching profile PATCH", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

@@ -161,8 +161,11 @@ real perimeter.
 
 - **Roles**: admin/contributor come from `app_metadata.role` only
   (`getUserRoleFromUser`, `public.is_admin()`). Never trust `user_metadata`.
-- **Admin routes**: call `adminGuardResponse()` / `requireAdminUser()` first,
-  then use `getSupabaseAdmin()` for writes RLS would block.
+- **Route prologue**: declare auth, rate limit, suspension and zod input with
+  `defineRoute` (`src/lib/api/route/`); it answers every refusal as
+  `{ error, code, details? }`. Docs: `docs/systems/route-pipeline.md`.
+- **Admin routes**: `defineRoute({ auth: "admin" }, ...)` (401 signed out, 403
+  non-admin), then use `getSupabaseAdmin()` for writes RLS would block.
 - **Server-only columns** (prices, payment status, balances, ratings,
   verification, roles, Stripe ids, tokens): protect with a `BEFORE INSERT OR
   UPDATE` trigger for `authenticated`/`anon` callers and write them with the
@@ -171,8 +174,9 @@ real perimeter.
   (`.eq("status", current)`), use Stripe idempotency keys, keep webhooks
   idempotent (`stripe_webhook_events`).
 - **User HTML**: sanitize with `sanitizeRichText()` on write and on read.
-- **Rate limiting**: every user-generated write and anonymous search calls
-  `enforceRateLimit(action, identity)` (`src/lib/services/rateLimitService.ts`).
+- **Rate limiting**: every user-generated write and anonymous search declares
+  `rateLimit: action` in `defineRoute` (legacy routes still call
+  `enforceRateLimit(action, identity)` from `src/lib/services/rateLimitService.ts`).
   Add new actions to `RATE_LIMITS`. Docs: `docs/systems/rate-limiting.md`.
 - **Privacy**: `profiles.stats_private` hides library, sessions, activity,
   friends and subscriptions (RLS via `is_stats_private()`).

@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { z } from "zod";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { PostCommentServerService } from "@/lib/services/postCommentServerService";
 import { PlayerPostsServerService } from "@/lib/services/playerPostsServerService";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
-import { suspendedResponse } from "@/lib/services/suspensionGuard";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
+
+const postCommentBodySchema = z.looseObject({ content: z.unknown().optional() });
 
 /**
  * GET /api/posts/[postId]/comments — Fetch comments for a post.
@@ -29,53 +30,33 @@ export async function GET(
 /**
  * POST /api/posts/[postId]/comments — Create a comment on a post.
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ postId: string }> }
-) {
-  try {
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "comment", writesContent: true, body: postCommentBodySchema },
+  async ({ user, params, body }) => {
+    const { postId } = params;
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
-    }
-
-    const suspended = await suspendedResponse(user.id);
-    if (suspended) return suspended;
-
-    const limited = await enforceRateLimit("comment", { userId: user.id });
-    if (limited) return limited;
-
-    const { postId } = await params;
-
-    const body = await request.json().catch(() => null);
-    const content = typeof body?.content === "string" ? body.content : "";
+    const content = typeof body.content === "string" ? body.content : "";
 
     const post = await PlayerPostsServerService.getPost(postId);
-    if (!post) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
-    }
+    if (!post) throw notFound("Post not found");
 
-    const comment = await PostCommentServerService.createComment(postId, user.id, content);
+    let comment: Awaited<ReturnType<typeof PostCommentServerService.createComment>>;
+    try {
+      comment = await PostCommentServerService.createComment(postId, user.id, content);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === "Content must be between 1 and 500 characters"
+      ) {
+        throw validationError(undefined, error.message);
+      }
+      throw error;
+    }
 
     CoinService.rewardActivity(user.id, "post_comment", comment.id).catch((err) =>
       logger.error("Coin reward failed", { error: err })
     );
 
     return NextResponse.json(comment, { status: 201 });
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message === "Content must be between 1 and 500 characters"
-    ) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    logger.error("Error in post comments POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

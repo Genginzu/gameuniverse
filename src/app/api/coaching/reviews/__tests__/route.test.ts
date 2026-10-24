@@ -7,8 +7,8 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-let mockGetUser: ReturnType<typeof vi.fn>;
 let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 
 vi.mock("@/lib/logger", () => ({
@@ -18,7 +18,6 @@ vi.mock("@/lib/logger", () => ({
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
     Promise.resolve({
-      auth: { getUser: () => mockGetUser() },
       from: (table: string) => mockSupabaseFrom(table),
     }),
 }));
@@ -33,7 +32,7 @@ function makeRequest(url: string, init?: RequestInit) {
   return req as unknown as import("next/server").NextRequest;
 }
 
-const STUDENT = { id: "student-1" };
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: "student-1" }) });
 
 const completedSession = {
   id: "session-1",
@@ -44,7 +43,6 @@ const completedSession = {
 
 describe("Coaching reviews API — GET", () => {
   beforeEach(() => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: STUDENT } }));
     mockSupabaseFrom = vi.fn();
   });
 
@@ -121,12 +119,11 @@ describe("Coaching reviews API — GET", () => {
 
 describe("Coaching reviews API — POST", () => {
   beforeEach(() => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: STUDENT } }));
     mockSupabaseFrom = vi.fn();
   });
 
   test("returns 401 when unauthenticated", async () => {
-    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null } }));
+    routeEnv.signOut();
     const res = await POST(
       makeRequest("http://localhost/api/coaching/reviews", {
         method: "POST",
@@ -134,6 +131,31 @@ describe("Coaching reviews API — POST", () => {
       })
     );
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+  });
+
+  test("returns 403 suspended for a suspended account", async () => {
+    routeEnv.suspend("2026-12-31T00:00:00Z");
+    const res = await POST(
+      makeRequest("http://localhost/api/coaching/reviews", {
+        method: "POST",
+        body: JSON.stringify({ sessionId: "session-1", rating: 5 }),
+      })
+    );
+    expect(res.status).toBe(403);
+    expect((await res.json()).code).toBe("suspended");
+  });
+
+  test("returns 429 when the review rate limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(30);
+    const res = await POST(
+      makeRequest("http://localhost/api/coaching/reviews", {
+        method: "POST",
+        body: JSON.stringify({ sessionId: "session-1", rating: 5 }),
+      })
+    );
+    expect(res.status).toBe(429);
+    expect(routeEnv.rateLimitHits).toEqual(["review:user:student-1"]);
   });
 
   test("returns 400 when sessionId or rating missing", async () => {

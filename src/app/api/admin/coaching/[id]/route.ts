@@ -1,25 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import { adminAuthErrorStatus, requireAdminUser } from "@/lib/auth-admin";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
 
-type RouteParams = { params: Promise<{ id: string }> };
+const coachActionSchema = z.object({
+  action: z.unknown().optional(),
+  reason: z.unknown().optional(),
+});
 
 /**
  * PATCH /api/admin/coaching/[id] — Admin actions: verify, suspend, unsuspend.
  * coach_profiles only lets owners update their row, so the admin check runs
  * first and the update uses the service-role client (issue #385).
  */
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdminUser();
+export const PATCH = defineRoute(
+  { auth: "admin", body: coachActionSchema },
+  async ({ params, body }) => {
     const supabase: S = getSupabaseAdmin();
 
-    const { id } = await params;
-    const { action, reason } = await request.json();
+    const { id } = params;
+    const { action, reason } = body;
 
     const updates: Record<string, unknown> = {};
 
@@ -44,7 +48,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         updates.suspended_reason = null;
         break;
       default:
-        return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+        throw validationError(undefined, "Invalid action");
     }
 
     const { data: updatedRows, error } = await supabase
@@ -56,17 +60,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       logger.error("Error updating coach", { error });
       return NextResponse.json({ error: "Failed to update" }, { status: 500 });
     }
-    if (!updatedRows?.length) {
-      return NextResponse.json({ error: "Coach not found" }, { status: 404 });
-    }
+    if (!updatedRows?.length) throw notFound("Coach not found");
 
     return NextResponse.json({ success: true, action });
-  } catch (error) {
-    const authStatus = adminAuthErrorStatus(error);
-    if (authStatus) {
-      return NextResponse.json({ error: (error as Error).message }, { status: authStatus });
-    }
-    logger.error("Error in admin coaching PATCH", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

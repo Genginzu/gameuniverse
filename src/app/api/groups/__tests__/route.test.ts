@@ -1,23 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 const OWNER_ID = "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa";
 
-const { mockSearchGroups, mockCreateGroup, mockGetUser } = vi.hoisted(() => ({
+const { mockSearchGroups, mockCreateGroup } = vi.hoisted(() => ({
   mockSearchGroups: vi.fn(),
   mockCreateGroup: vi.fn(),
-  mockGetUser: vi.fn(),
 }));
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: testUser("user", { id: OWNER_ID }) });
 
 vi.mock("@/lib/services/groupServerService", () => ({
   GroupServerService: {
     searchGroups: mockSearchGroups,
     createGroup: mockCreateGroup,
   },
-}));
-
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => ({ auth: { getUser: mockGetUser } })),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -42,6 +40,13 @@ const SAMPLE_GROUP = {
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
 };
+
+function createRequest(body: object) {
+  return new NextRequest("http://localhost/api/groups", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
 
 describe("/api/groups — GET", () => {
   beforeEach(() => {
@@ -90,39 +95,49 @@ describe("/api/groups — GET", () => {
 describe("/api/groups — POST", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetUser.mockResolvedValue({ data: { user: { id: OWNER_ID } }, error: null });
     mockCreateGroup.mockResolvedValue(SAMPLE_GROUP);
   });
 
   it("returns 201 with the created group", async () => {
-    const req = new NextRequest("http://localhost/api/groups", {
-      method: "POST",
-      body: JSON.stringify({ name: "RPG Fans" }),
-    });
-    const res = await POST(req);
+    const res = await POST(createRequest({ name: "RPG Fans" }));
 
     expect(res.status).toBe(201);
-    expect(mockCreateGroup).toHaveBeenCalledWith(OWNER_ID, expect.objectContaining({ name: "RPG Fans" }));
+    expect(mockCreateGroup).toHaveBeenCalledWith(
+      OWNER_ID,
+      expect.objectContaining({ name: "RPG Fans" })
+    );
   });
 
   it("returns 401 when not authenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
-    const req = new NextRequest("http://localhost/api/groups", {
-      method: "POST",
-      body: JSON.stringify({ name: "RPG Fans" }),
-    });
-    const res = await POST(req);
+    routeEnv.signOut();
+    const res = await POST(createRequest({ name: "RPG Fans" }));
 
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   it("returns 400 on invalid input", async () => {
-    const req = new NextRequest("http://localhost/api/groups", {
-      method: "POST",
-      body: JSON.stringify({ name: "" }),
-    });
-    const res = await POST(req);
+    const res = await POST(createRequest({ name: "" }));
 
     expect(res.status).toBe(400);
+    expect(await res.json()).toMatchObject({ code: "validation" });
+  });
+
+  it("returns 403 when the account is suspended", async () => {
+    routeEnv.suspend("2099-01-01T00:00:00Z");
+    const res = await POST(createRequest({ name: "RPG Fans" }));
+
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ code: "suspended" });
+    expect(mockCreateGroup).not.toHaveBeenCalled();
+  });
+
+  it("returns 429 when the groupCreate rate limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(60);
+    const res = await POST(createRequest({ name: "RPG Fans" }));
+
+    expect(res.status).toBe(429);
+    expect(routeEnv.rateLimitHits[0]).toContain("groupCreate");
+    expect(mockCreateGroup).not.toHaveBeenCalled();
   });
 });

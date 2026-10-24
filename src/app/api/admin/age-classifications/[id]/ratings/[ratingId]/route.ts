@@ -1,109 +1,80 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { conflict, defineRoute, notFound } from "@/lib/api/route";
 import { adminRatingFormSchema } from "@/lib/validations/admin-rating-form";
 import { logger } from "@/lib/logger";
-
-type RouteParams = { params: Promise<{ id: string; ratingId: string }> };
 
 /**
  * GET /api/admin/age-classifications/[id]/ratings/[ratingId] - Get a single rating with translations
  */
-export async function GET(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const GET = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { ratingId } = params;
 
-    const { ratingId } = await params;
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  const { data: rating, error } = await supabase
+    .from("ratings")
+    .select(
+      "id, rating_system_id, code, display_name, minimum_age, color_hex, icon_url, sort_order, rating_translations(rating_id, language_code, description)"
+    )
+    .eq("id", ratingId)
+    .single();
 
-    const { data: rating, error } = await supabase
-      .from("ratings")
-      .select(
-        "id, rating_system_id, code, display_name, minimum_age, color_hex, icon_url, sort_order, rating_translations(rating_id, language_code, description)"
-      )
-      .eq("id", ratingId)
-      .single();
+  if (error || !rating) throw notFound("Rating not found");
 
-    if (error || !rating) {
-      return NextResponse.json({ error: "Rating not found" }, { status: 404 });
-    }
+  type RatingWithTranslations = {
+    id: string;
+    rating_system_id: string;
+    code: string;
+    display_name: string;
+    minimum_age: number;
+    color_hex: string | null;
+    icon_url: string | null;
+    sort_order: number;
+    rating_translations: {
+      rating_id: string;
+      language_code: string;
+      description: string;
+    }[];
+  };
 
-    type RatingWithTranslations = {
-      id: string;
-      rating_system_id: string;
-      code: string;
-      display_name: string;
-      minimum_age: number;
-      color_hex: string | null;
-      icon_url: string | null;
-      sort_order: number;
-      rating_translations: {
-        rating_id: string;
-        language_code: string;
-        description: string;
-      }[];
-    };
+  const typedRating = rating as unknown as RatingWithTranslations;
 
-    const typedRating = rating as unknown as RatingWithTranslations;
+  // Count game associations
+  const { count } = await supabase
+    .from("game_ratings")
+    .select("id", { count: "exact", head: true })
+    .eq("rating_id", ratingId);
 
-    // Count game associations
-    const { count } = await supabase
-      .from("game_ratings")
-      .select("id", { count: "exact", head: true })
-      .eq("rating_id", ratingId);
+  const translations = (typedRating.rating_translations || []).map((t) => ({
+    language_code: t.language_code,
+    description: t.description,
+  }));
 
-    const translations = (typedRating.rating_translations || []).map((t) => ({
-      language_code: t.language_code,
-      description: t.description,
-    }));
-
-    return NextResponse.json({
-      rating: {
-        id: typedRating.id,
-        rating_system_id: typedRating.rating_system_id,
-        code: typedRating.code,
-        display_name: typedRating.display_name,
-        minimum_age: typedRating.minimum_age,
-        color_hex: typedRating.color_hex,
-        icon_url: typedRating.icon_url,
-        sort_order: typedRating.sort_order,
-        translations,
-        gameCount: count || 0,
-      },
-    });
-  } catch (error) {
-    logger.error("Error in admin rating GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
+  return NextResponse.json({
+    rating: {
+      id: typedRating.id,
+      rating_system_id: typedRating.rating_system_id,
+      code: typedRating.code,
+      display_name: typedRating.display_name,
+      minimum_age: typedRating.minimum_age,
+      color_hex: typedRating.color_hex,
+      icon_url: typedRating.icon_url,
+      sort_order: typedRating.sort_order,
+      translations,
+      gameCount: count || 0,
+    },
+  });
+});
 
 /**
  * PUT /api/admin/age-classifications/[id]/ratings/[ratingId] - Update a rating with translations
  */
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
-
-    const { id, ratingId } = await params;
-    const body = await request.json();
-
-    const validationResult = adminRatingFormSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { code, display_name, minimum_age, color_hex, icon_url, sort_order, translations } =
-      validationResult.data;
+export const PUT = defineRoute(
+  { auth: "admin", body: adminRatingFormSchema },
+  async ({ params, body }) => {
+    const { id, ratingId } = params;
+    const { code, display_name, minimum_age, color_hex, icon_url, sort_order, translations } = body;
 
     const supabase = await createRouteHandlerClient();
 
@@ -114,9 +85,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", ratingId)
       .single();
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Rating not found" }, { status: 404 });
-    }
+    if (checkError || !existing) throw notFound("Rating not found");
 
     // Check for duplicate code within the same system (excluding current rating)
     const { data: duplicate } = await supabase
@@ -127,12 +96,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .neq("id", ratingId)
       .maybeSingle();
 
-    if (duplicate) {
-      return NextResponse.json(
-        { error: "A rating with this code already exists in this system" },
-        { status: 409 }
-      );
-    }
+    if (duplicate) throw conflict("A rating with this code already exists in this system");
 
     // Update the rating fields (no description column)
     const { error: updateError } = await supabase
@@ -209,73 +173,44 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         gameCount: count || 0,
       },
     });
-  } catch (error) {
-    logger.error("Error in admin rating PUT", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/admin/age-classifications/[id]/ratings/[ratingId] - Delete a rating
  * Translations are deleted by cascade. Only allowed if not associated with games.
  */
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const DELETE = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { ratingId } = params;
 
-    const { ratingId } = await params;
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  // Check if rating exists
+  const { data: existing, error: checkError } = await supabase
+    .from("ratings")
+    .select("id")
+    .eq("id", ratingId)
+    .single();
 
-    // Check if rating exists
-    const { data: existing, error: checkError } = await supabase
-      .from("ratings")
-      .select("id")
-      .eq("id", ratingId)
-      .single();
+  if (checkError || !existing) throw notFound("Rating not found");
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Rating not found" }, { status: 404 });
-    }
+  // Check for game associations
+  const { count: usageCount } = await supabase
+    .from("game_ratings")
+    .select("id", { count: "exact", head: true })
+    .eq("rating_id", ratingId);
 
-    // Check for game associations
-    const { count: usageCount } = await supabase
-      .from("game_ratings")
-      .select("id", { count: "exact", head: true })
-      .eq("rating_id", ratingId);
-
-    if (usageCount && usageCount > 0) {
-      return NextResponse.json(
-        {
-          error: "Rating is in use",
-          type: "IN_USE",
-          usageCount,
-        },
-        { status: 409 }
-      );
-    }
-
-    // Delete the rating (translations are deleted by CASCADE)
-    const { error: deleteError } = await supabase.from("ratings").delete().eq("id", ratingId);
-
-    if (deleteError) {
-      logger.error("Error deleting rating", { error: deleteError });
-      return NextResponse.json({ error: "Failed to delete rating" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in admin rating DELETE", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (usageCount && usageCount > 0) {
+    throw conflict("Rating is in use", { type: "IN_USE", usageCount });
   }
-}
+
+  // Delete the rating (translations are deleted by CASCADE)
+  const { error: deleteError } = await supabase.from("ratings").delete().eq("id", ratingId);
+
+  if (deleteError) {
+    logger.error("Error deleting rating", { error: deleteError });
+    return NextResponse.json({ error: "Failed to delete rating" }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+});

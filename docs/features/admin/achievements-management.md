@@ -5,7 +5,7 @@
 Interface d'administration CRUD complète pour le catalogue de succès
 (`achievement_catalog`), avec un gestionnaire d'attribution/retrait manuel de
 succès pour les joueurs. Suit les patterns existants (genres, companies,
-languages) : API routes protégées par `requireAdmin()`, validation Zod, hooks de
+languages) : API routes protégées par `defineRoute({ auth: "admin" })`, validation Zod, hooks de
 data fetching, composants table/form/dialog, i18n FR/EN.
 
 ### Fonctionnalités
@@ -16,7 +16,7 @@ data fetching, composants table/form/dialog, i18n FR/EN.
   positifs, champs bilingues obligatoires
 - **Player Achievement Manager** : recherche de joueur, visualisation des succès
   débloqués/verrouillés, attribution et retrait manuels avec recalcul XP/niveau
-- **Protection admin** : toutes les routes protégées par `requireAdmin()`
+- **Protection admin** : toutes les routes protégées par `defineRoute({ auth: "admin" })`
 - **Internationalisation** : namespace `adminAchievements` avec 102 clés FR/EN
 
 ## Accès
@@ -49,7 +49,7 @@ data fetching, composants table/form/dialog, i18n FR/EN.
 ### Permissions
 
 Accès réservé aux utilisateurs avec le rôle **admin** (vérifié par
-`requireAdmin()` sur chaque route).
+`defineRoute({ auth: "admin" })` sur chaque route).
 
 ### Tables existantes
 

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getComments, addComment } from "@/lib/services/matchDiscussionService";
 import { logger } from "@/lib/logger";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
+import { defineRoute, validationError } from "@/lib/api/route";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -17,39 +18,26 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params;
+const addCommentSchema = z.looseObject({
+  content: z.unknown().optional(),
+  source: z.any().optional(),
+});
+
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "comment", writesContent: true, body: addCommentSchema },
+  async ({ user, params, body }) => {
+    const content = typeof body.content === "string" ? body.content.trim() : undefined;
+    if (!content || content.length > 2000) throw validationError(undefined, "Invalid content");
+
     const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const limited = await enforceRateLimit("comment", { userId: user.id });
-    if (limited) return limited;
-
-    const body = await request.json();
-    const content = body.content?.trim();
-    if (!content || content.length > 2000) {
-      return NextResponse.json({ error: "Invalid content" }, { status: 400 });
-    }
-
     const source = body.source || "pandascore";
     const comment = await addComment(supabase, {
-      matchId: id,
+      matchId: params.id,
       matchSource: source,
       playerId: user.id,
       content,
     });
 
     return NextResponse.json({ comment }, { status: 201 });
-  } catch (error) {
-    logger.error("Error adding match comment", { error });
-    return NextResponse.json({ error: "Failed to add comment" }, { status: 500 });
   }
-}
+);

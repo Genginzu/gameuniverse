@@ -1,8 +1,8 @@
-import { NextRequest } from "next/server";
+import { z } from "zod";
 import { syncCharacterField } from "@/lib/services/bulkCharacterFieldSync";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import { adminGuardResponse } from "@/lib/auth-admin";
+import { defineRoute, validationError } from "@/lib/api/route";
 
 const DELAY_MS = 100;
 const PAGE_SIZE = 1000;
@@ -18,37 +18,32 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
   background: "background_image",
 };
 
+const bulkSyncSchema = z.object({
+  field: z.string().optional(),
+  all: z.unknown().optional(),
+  gameIds: z.array(z.custom<{ id: string; igdbId: number }>()).optional(),
+});
+
 /**
  * POST /api/admin/bulk-import-characters/sync
  * Two modes:
  * - Normal: { gameIds: [...], field } — sync provided characters
  * - All:    { all: true, field }      — server fetches & syncs all
  */
-export async function POST(request: NextRequest) {
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
-
+export const POST = defineRoute({ auth: "admin", body: bulkSyncSchema }, async ({ body }) => {
   let charIds: Array<{ id: string; igdbId: number }> | null = null;
-  let field: string | undefined;
-  let allMode = false;
+  const field = body.field;
+  const allMode = body.all === true;
 
-  try {
-    const body = await request.json();
-    field = body.field;
-    allMode = body.all === true;
-
-    if (!allMode) {
-      charIds = body.gameIds;
-      if (!Array.isArray(charIds) || charIds.length === 0) {
-        return jsonError("gameIds array is required");
-      }
+  if (!allMode) {
+    charIds = body.gameIds ?? null;
+    if (!charIds || charIds.length === 0) {
+      throw validationError(undefined, "gameIds array is required");
     }
+  }
 
-    if (allMode && (!field || !IMPORTABLE_FIELDS[field])) {
-      return jsonError("field is required for all mode");
-    }
-  } catch {
-    return jsonError("Invalid JSON");
+  if (allMode && (!field || !IMPORTABLE_FIELDS[field])) {
+    throw validationError(undefined, "field is required for all mode");
   }
 
   const fallbackConfig = field ? FIELD_FALLBACKS[field] : undefined;
@@ -134,14 +129,7 @@ export async function POST(request: NextRequest) {
       Connection: "keep-alive",
     },
   });
-}
-
-function jsonError(message: string) {
-  return new Response(JSON.stringify({ error: message }), {
-    status: 400,
-    headers: { "Content-Type": "application/json" },
-  });
-}
+});
 
 async function applyFallback(charId: string, column: string, fallback: string) {
   try {

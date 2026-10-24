@@ -5,7 +5,7 @@ import { discussionMessageSent } from "@/lib/services/notifications";
 import { sendMessageSchema } from "@/lib/validations/discussion";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
+import { defineRoute, notFound } from "@/lib/api/route";
 
 type RouteContext = { params: Promise<{ conversationId: string }> };
 
@@ -50,55 +50,32 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
 /**
  * POST /api/discussions/[conversationId]/messages — Send a message.
  */
-export async function POST(request: NextRequest, { params }: RouteContext) {
-  try {
-    const { conversationId } = await params;
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "message", writesContent: true, body: sendMessageSchema },
+  async ({ user, params, body }) => {
+    const { conversationId } = params;
 
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    try {
+      const msg = await DiscussionServerService.sendMessage(conversationId, user.id, body.content);
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+      await discussionMessageSent({
+        conversationId,
+        senderId: user.id,
+        content: body.content,
+      });
+
+      CoinService.rewardActivity(user.id, "discussion_message", msg.id).catch((err) =>
+        logger.error("Coin reward failed", { error: err })
+      );
+
+      return NextResponse.json(msg, { status: 201 });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (message === "Conversation not found") throw notFound(message);
+      if (message === "Conversation closed") {
+        return NextResponse.json({ error: message, code: "conversationClosed" }, { status: 409 });
+      }
+      throw error;
     }
-
-    const limited = await enforceRateLimit("message", { userId: user.id });
-    if (limited) return limited;
-
-    const body = await request.json();
-    const parsed = sendMessageSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
-    }
-
-    const msg = await DiscussionServerService.sendMessage(
-      conversationId,
-      user.id,
-      parsed.data.content
-    );
-
-    await discussionMessageSent({
-      conversationId,
-      senderId: user.id,
-      content: parsed.data.content,
-    });
-
-    CoinService.rewardActivity(user.id, "discussion_message", msg.id).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
-
-    return NextResponse.json(msg, { status: 201 });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
-    if (message === "Conversation not found") {
-      return NextResponse.json({ error: message }, { status: 404 });
-    }
-    if (message === "Conversation closed") {
-      return NextResponse.json({ error: message, code: "conversationClosed" }, { status: 409 });
-    }
-    logger.error("Error in discussions messages POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

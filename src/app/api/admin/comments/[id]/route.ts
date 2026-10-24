@@ -1,11 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { commentSchema } from "@/lib/validations/comment";
 import type { AdminCommentDetail } from "@/types/admin-comments";
 import { logger } from "@/lib/logger";
-
-type RouteParams = { params: Promise<{ id: string }> };
 
 /** Row shape returned by the detail query */
 interface CommentDetailRow {
@@ -54,78 +52,44 @@ async function fetchPlayerName(
 /**
  * GET /api/admin/comments/[id] — Full comment detail for editing
  */
-export async function GET(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const GET = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { id: commentId } = params;
 
-    const { id: commentId } = await params;
+  if (!commentId) throw validationError(undefined, "Comment ID is required");
 
-    if (!commentId) {
-      return NextResponse.json({ error: "Comment ID is required" }, { status: 400 });
-    }
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  const { data, error } = await supabase
+    .from("character_comments")
+    .select(DETAIL_SELECT)
+    .eq("id", commentId)
+    .single();
 
-    const { data, error } = await supabase
-      .from("character_comments")
-      .select(DETAIL_SELECT)
-      .eq("id", commentId)
-      .single();
-
-    if (error) {
-      if (error.code === "PGRST116") {
-        return NextResponse.json({ error: "Comment not found" }, { status: 404 });
-      }
-      logger.error("Error fetching comment", { error });
-      return NextResponse.json({ error: "Failed to fetch comment" }, { status: 500 });
-    }
-
-    if (!data) {
-      return NextResponse.json({ error: "Comment not found" }, { status: 404 });
-    }
-
-    const row = data as unknown as CommentDetailRow;
-    const playerName = await fetchPlayerName(supabase, row.user_id);
-
-    return NextResponse.json(toAdminCommentDetail(row, playerName));
-  } catch (error) {
-    logger.error("Error in admin comment GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (error) {
+    if (error.code === "PGRST116") throw notFound("Comment not found");
+    logger.error("Error fetching comment", { error });
+    return NextResponse.json({ error: "Failed to fetch comment" }, { status: 500 });
   }
-}
+
+  if (!data) throw notFound("Comment not found");
+
+  const row = data as unknown as CommentDetailRow;
+  const playerName = await fetchPlayerName(supabase, row.user_id);
+
+  return NextResponse.json(toAdminCommentDetail(row, playerName));
+});
 
 /**
  * PUT /api/admin/comments/[id] — Update a comment
  */
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const PUT = defineRoute(
+  { auth: "admin", body: commentSchema },
+  async ({ params, body }) => {
+    const { id: commentId } = params;
 
-    const { id: commentId } = await params;
+    if (!commentId) throw validationError(undefined, "Comment ID is required");
 
-    if (!commentId) {
-      return NextResponse.json({ error: "Comment ID is required" }, { status: 400 });
-    }
-
-    const body = await request.json();
-    const validationResult = commentSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          error: "Invalid input data",
-          details: validationResult.error.issues,
-        },
-        { status: 400 }
-      );
-    }
-
-    const { content } = validationResult.data;
+    const { content } = body;
     const supabase = await createRouteHandlerClient();
 
     // Check existence
@@ -135,9 +99,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", commentId)
       .single();
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Comment not found" }, { status: 404 });
-    }
+    if (checkError || !existing) throw notFound("Comment not found");
 
     // Update
     const { error: updateError } = await supabase
@@ -169,61 +131,37 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const playerName = await fetchPlayerName(supabase, row.user_id);
 
     return NextResponse.json(toAdminCommentDetail(row, playerName));
-  } catch (error) {
-    logger.error("Error in admin comment PUT", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/admin/comments/[id] — Delete a comment
  */
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const DELETE = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { id: commentId } = params;
 
-    const { id: commentId } = await params;
+  if (!commentId) throw validationError(undefined, "Comment ID is required");
 
-    if (!commentId) {
-      return NextResponse.json({ error: "Comment ID is required" }, { status: 400 });
-    }
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  // Check existence
+  const { data: existing, error: checkError } = await supabase
+    .from("character_comments")
+    .select("id")
+    .eq("id", commentId)
+    .single();
 
-    // Check existence
-    const { data: existing, error: checkError } = await supabase
-      .from("character_comments")
-      .select("id")
-      .eq("id", commentId)
-      .single();
+  if (checkError || !existing) throw notFound("Comment not found");
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Comment not found" }, { status: 404 });
-    }
+  const { error: deleteError } = await supabase
+    .from("character_comments")
+    .delete()
+    .eq("id", commentId);
 
-    const { error: deleteError } = await supabase
-      .from("character_comments")
-      .delete()
-      .eq("id", commentId);
-
-    if (deleteError) {
-      logger.error("Error deleting comment", { error: deleteError });
-      return NextResponse.json({ error: "Failed to delete comment" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in admin comment DELETE", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (deleteError) {
+    logger.error("Error deleting comment", { error: deleteError });
+    return NextResponse.json({ error: "Failed to delete comment" }, { status: 500 });
   }
-}
+
+  return NextResponse.json({ success: true });
+});

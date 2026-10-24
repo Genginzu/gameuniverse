@@ -1,53 +1,28 @@
-import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { generateSignedUploadUrl } from "@/lib/services/uploadService";
 import { uploadRequestSchema } from "@/lib/validations/uploadValidation";
 import { getExtensionFromMimeType } from "@/lib/utils/uploadUtils";
-import { NextRequest, NextResponse } from "next/server";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
+import { NextResponse } from "next/server";
+import { defineRoute } from "@/lib/api/route";
 
-export async function POST(request: NextRequest) {
-  const supabase = await createRouteHandlerClient();
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "upload", body: uploadRequestSchema },
+  async ({ user, body }) => {
+    const { context, contentType } = body;
+    const extension = getExtensionFromMimeType(contentType);
 
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+    try {
+      const { signedUrl, publicUrl } = await generateSignedUploadUrl({
+        context,
+        userId: user.id,
+        contentType,
+        extension,
+      });
 
-  if (userError || !user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ signedUrl, publicUrl });
+    } catch (error) {
+      logger.error("Upload signed URL generation failed", { error });
+      return NextResponse.json({ error: "Service temporarily unavailable" }, { status: 503 });
+    }
   }
-
-  const limited = await enforceRateLimit("upload", { userId: user.id });
-  if (limited) return limited;
-
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
-
-  const result = uploadRequestSchema.safeParse(body);
-  if (!result.success) {
-    const message = result.error.issues[0]?.message ?? "Invalid request body";
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
-
-  const { context, contentType } = result.data;
-  const extension = getExtensionFromMimeType(contentType);
-
-  try {
-    const { signedUrl, publicUrl } = await generateSignedUploadUrl({
-      context,
-      userId: user.id,
-      contentType,
-      extension,
-    });
-
-    return NextResponse.json({ signedUrl, publicUrl });
-  } catch (error) {
-    logger.error("Upload signed URL generation failed", { error });
-    return NextResponse.json({ error: "Service temporarily unavailable" }, { status: 503 });
-  }
-}
+);

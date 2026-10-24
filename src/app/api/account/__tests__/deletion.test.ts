@@ -1,23 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
+import type { User } from "@supabase/supabase-js";
 import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-const { mockGetUser, mockSignIn, mockSignOut, adminDb, mockSendEmail } = vi.hoisted(() => ({
-  mockGetUser: vi.fn(),
+const { mockSignIn, mockSignOut, adminDb, mockSendEmail } = vi.hoisted(() => ({
   mockSignIn: vi.fn(),
   mockSignOut: vi.fn(),
   adminDb: { current: null as ReturnType<typeof createSupabaseQueryMock> | null },
   mockSendEmail: vi.fn(),
 }));
 
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => ({ auth: { getUser: mockGetUser } })),
-}));
 vi.mock("@/lib/supabase-admin", () => ({ getSupabaseAdmin: () => adminDb.current!.client }));
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({ auth: { signInWithPassword: mockSignIn, signOut: mockSignOut } }),
 }));
-vi.mock("@/lib/services/rateLimitService", () => ({ enforceRateLimit: vi.fn(async () => null) }));
 vi.mock("@/lib/email", () => ({ sendEmail: mockSendEmail }));
 vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
@@ -25,15 +22,17 @@ vi.mock("@/lib/logger", () => ({
 
 const { GET, POST, DELETE } = await import("@/app/api/account/deletion/route");
 
-const USER = {
+const routeEnv = useTestRouteEnvironment();
+
+const USER = testUser("user", {
   id: "user-1",
   email: "player@example.com",
   app_metadata: { provider: "email", providers: ["email"] },
-  identities: [{ provider: "email" }],
-};
+  identities: [{ provider: "email" }] as unknown as User["identities"],
+});
 
-function signIn(user: object | null) {
-  mockGetUser.mockResolvedValue({ data: { user }, error: null });
+function deletionRequest(method = "GET") {
+  return new NextRequest("http://localhost/api/account/deletion", { method });
 }
 
 function postRequest(body: object) {
@@ -57,13 +56,13 @@ beforeEach(() => {
   mockSignIn.mockResolvedValue({ data: { session: { access_token: "t" } }, error: null });
   mockSignOut.mockResolvedValue({ error: null });
   mockSendEmail.mockResolvedValue({ sent: true });
-  signIn(USER);
+  routeEnv.signIn(USER);
 });
 
 describe("GET /api/account/deletion", () => {
   it("rejects guests", async () => {
-    signIn(null);
-    expect((await GET()).status).toBe(401);
+    routeEnv.signOut();
+    expect((await GET(deletionRequest())).status).toBe(401);
   });
 
   it("returns the pending deletion of the signed-in user", async () => {
@@ -73,7 +72,7 @@ describe("GET /api/account/deletion", () => {
         deletion_scheduled_for: "2026-11-19T10:00:00.000Z",
       },
     });
-    const body = await (await GET()).json();
+    const body = await (await GET(deletionRequest())).json();
     expect(body).toEqual({
       pending: true,
       requestedAt: "2026-10-20T10:00:00.000Z",
@@ -83,6 +82,16 @@ describe("GET /api/account/deletion", () => {
 });
 
 describe("POST /api/account/deletion (request)", () => {
+  it("returns 429 when the accountDeletion rate limit is exceeded", async () => {
+    routeEnv.exceedRateLimit(600);
+    const res = await POST(
+      postRequest({ password: "pw", confirmation: "SUPPRIMER", locale: "fr" })
+    );
+    expect(res.status).toBe(429);
+    expect(await res.json()).toMatchObject({ code: "rate_limited", retryAfter: 600 });
+    expect(routeEnv.rateLimitHits).toEqual(["accountDeletion:user:user-1"]);
+    expect(mockSignIn).not.toHaveBeenCalled();
+  });
   it("requires the localized confirmation word", async () => {
     const res = await POST(postRequest({ password: "pw", confirmation: "DELETE", locale: "fr" }));
     expect(res.status).toBe(400);
@@ -166,7 +175,7 @@ describe("DELETE /api/account/deletion (cancel)", () => {
       data: { deletion_requested_at: null, deletion_scheduled_for: null },
     });
 
-    const res = await DELETE();
+    const res = await DELETE(deletionRequest("DELETE"));
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ pending: false, requestedAt: null, scheduledFor: null });
     expect(adminDb.current!.callsFor("profiles", "update")[0]).toEqual([
@@ -176,6 +185,6 @@ describe("DELETE /api/account/deletion (cancel)", () => {
 
   it("returns 404 when no deletion is pending", async () => {
     adminDb.current!.enqueue("profiles", { data: null });
-    expect((await DELETE()).status).toBe(404);
+    expect((await DELETE(deletionRequest("DELETE"))).status).toBe(404);
   });
 });

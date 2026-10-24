@@ -7,6 +7,7 @@ import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { createCollectionSchema } from "@/lib/validations/collection";
 import { logger } from "@/lib/logger";
 import type { CollectionSortOption, PlayerCollectionsResponse } from "@/types/playerCollection";
+import { defineRoute, forbidden, validationError } from "@/lib/api/route";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -153,37 +154,25 @@ async function handlePaginatedGet(playerId: string, searchParams: URLSearchParam
  * POST /api/players/[id]/collections — Crée une nouvelle collection.
  * Authentification requise. Seul le propriétaire (user.id === playerId) peut créer.
  */
-export async function POST(request: NextRequest, { params }: RouteContext) {
-  try {
-    const { id: playerId } = await params;
+export const POST = defineRoute(
+  {
+    auth: "required",
+    rateLimit: "collection",
+    writesContent: true,
+    body: createCollectionSchema,
+  },
+  async ({ user, params, body }) => {
+    const { id: playerId } = params;
 
     if (!playerId) {
-      return NextResponse.json({ error: "Player ID is required" }, { status: 400 });
-    }
-
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      throw validationError(undefined, "Player ID is required");
     }
 
     if (user.id !== playerId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      throw forbidden("Forbidden");
     }
 
-    const body = await request.json();
-    const parsed = createCollectionSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    const result = await createCollection(user.id, parsed.data);
+    const result = await createCollection(user.id, body);
 
     // Evaluate achievements (non-blocking)
     try {
@@ -193,8 +182,5 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     }
 
     return NextResponse.json({ collection: result }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in collections POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

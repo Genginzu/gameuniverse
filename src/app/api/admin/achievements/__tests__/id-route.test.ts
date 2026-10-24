@@ -4,13 +4,11 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-let mockRequireAdmin: ReturnType<typeof vi.fn>;
 let mockSupabaseFrom: ReturnType<typeof vi.fn> | null;
 
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => (mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true)),
-}));
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -99,30 +97,33 @@ function mockSelectEqNeqMaybe(data: unknown) {
 }
 
 function denyAdmin() {
-  mockRequireAdmin = vi.fn(() => {
-    throw new Error("Admin access required");
-  });
+  routeEnv.signIn("user");
 }
 
 describe("Admin Achievements API — GET/PUT/DELETE [id]", () => {
   beforeEach(() => {
-    mockRequireAdmin = vi.fn(() => Promise.resolve(true));
     mockSupabaseFrom = null;
   });
 
   describe("GET [id]", () => {
+    test("returns 401 when signed out", async () => {
+      routeEnv.signOut();
+      const res = await GET(req(`${URL}/${ID}`), ctx());
+      expect(res.status).toBe(401);
+    });
+
     test("returns 403 when not admin", async () => {
       denyAdmin();
       const res = await GET(req(`${URL}/${ID}`), ctx());
       expect(res.status).toBe(403);
-      expect((await res.json()).error).toBe("Admin access required");
+      expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
     });
 
     test("returns 404 when not found", async () => {
       mockSupabaseFrom = vi.fn(() => mockSelectEqMaybe(null));
       const res = await GET(req(`${URL}/${ID}`), ctx());
       expect(res.status).toBe(404);
-      expect((await res.json()).error).toBe("Achievement not found");
+      expect(await res.json()).toEqual({ error: "Achievement not found", code: "not_found" });
     });
 
     test("returns achievement by ID", async () => {
@@ -145,7 +146,7 @@ describe("Admin Achievements API — GET/PUT/DELETE [id]", () => {
     test("returns 400 for invalid data", async () => {
       const res = await PUT(putReq({ ...BODY, key: "" }), ctx());
       expect(res.status).toBe(400);
-      expect((await res.json()).error).toBe("Invalid input data");
+      expect((await res.json()).error).toBe("Invalid request body");
     });
 
     test("returns 404 when not found", async () => {

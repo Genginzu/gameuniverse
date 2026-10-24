@@ -1,16 +1,17 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-const { mockGetUser, adminDb, sessionFrom } = vi.hoisted(() => ({
-  mockGetUser: vi.fn(),
+const { adminDb, sessionFrom } = vi.hoisted(() => ({
   adminDb: { current: null as ReturnType<typeof createSupabaseQueryMock> | null },
   sessionFrom: vi.fn(),
 }));
 
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
+
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: vi.fn(async () => ({
-    auth: { getUser: mockGetUser },
     from: sessionFrom,
   })),
 }));
@@ -30,22 +31,7 @@ vi.mock("@/lib/logger", () => ({
 const { GET } = await import("@/app/api/admin/coaching/route");
 const { PATCH } = await import("@/app/api/admin/coaching/[id]/route");
 
-const ADMIN = {
-  id: "admin-1",
-  email: "boss@example.com",
-  app_metadata: { role: "admin" },
-  user_metadata: {},
-};
-const SELF_PROMOTED = {
-  id: "u-1",
-  email: "p@example.com",
-  app_metadata: {},
-  user_metadata: { role: "admin" },
-};
-
-function signIn(user: object | null) {
-  mockGetUser.mockResolvedValue({ data: { user }, error: null });
-}
+const SELF_PROMOTED = testUser("user", { user_metadata: { role: "admin" } });
 
 function listRequest(query = "") {
   return new NextRequest(`http://localhost/api/admin/coaching${query}`);
@@ -82,18 +68,21 @@ describe("/api/admin/coaching", () => {
   });
 
   test("GET returns 401 when signed out", async () => {
-    signIn(null);
-    expect((await GET(listRequest())).status).toBe(401);
+    routeEnv.signOut();
+    const res = await GET(listRequest());
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   test("GET returns 403 for a user who set role=admin in their own user_metadata", async () => {
-    signIn(SELF_PROMOTED);
-    expect((await GET(listRequest())).status).toBe(403);
+    routeEnv.signIn(SELF_PROMOTED);
+    const res = await GET(listRequest());
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
     expect(adminDb.current!.calls).toHaveLength(0);
   });
 
   test("GET lists every coach, including suspended ones, through the service-role client", async () => {
-    signIn(ADMIN);
     adminDb.current!.enqueue("coach_profiles", { data: [coachRow], count: 1 });
 
     const res = await GET(listRequest("?status=suspended"));
@@ -113,13 +102,12 @@ describe("/api/admin/coaching", () => {
   });
 
   test("PATCH returns 403 for a self-promoted user and writes nothing", async () => {
-    signIn(SELF_PROMOTED);
+    routeEnv.signIn(SELF_PROMOTED);
     expect((await PATCH(patchRequest({ action: "verify" }), params)).status).toBe(403);
     expect(adminDb.current!.calls).toHaveLength(0);
   });
 
   test("PATCH verifies a coach through the service-role client", async () => {
-    signIn(ADMIN);
     adminDb.current!.enqueue("coach_profiles", { data: [{ id: "cp-1" }] });
 
     const res = await PATCH(patchRequest({ action: "verify" }), params);
@@ -132,13 +120,15 @@ describe("/api/admin/coaching", () => {
   });
 
   test("PATCH returns 404 when the coach does not exist", async () => {
-    signIn(ADMIN);
     adminDb.current!.enqueue("coach_profiles", { data: [] });
-    expect((await PATCH(patchRequest({ action: "suspend" }), params)).status).toBe(404);
+    const res = await PATCH(patchRequest({ action: "suspend" }), params);
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "Coach not found", code: "not_found" });
   });
 
   test("PATCH rejects an unknown action", async () => {
-    signIn(ADMIN);
-    expect((await PATCH(patchRequest({ action: "delete" }), params)).status).toBe(400);
+    const res = await PATCH(patchRequest({ action: "delete" }), params);
+    expect(res.status).toBe(400);
+    expect(await res.json()).toMatchObject({ error: "Invalid action", code: "validation" });
   });
 });

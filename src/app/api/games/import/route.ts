@@ -1,13 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { GameImportService } from "@/lib/services/gameImportService";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { getUserRoleFromUser } from "@/lib/auth-admin";
+import { getUserRoleFromUser } from "@/lib/utils/userRole";
 import {
   checkImportRateLimit,
   recordImportEvent,
   IMPORT_RATE_LIMIT,
 } from "@/lib/services/gameImportRateLimit";
-import { logger } from "@/lib/logger";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
+
+// igdbId is checked in the handler so the dedicated 400 messages stay unchanged.
+const importBodySchema = z.object({ igdbId: z.unknown().optional() });
 
 /**
  * POST /api/games/import
@@ -33,37 +36,20 @@ import { logger } from "@/lib/logger";
  * - 429: Rate limit exceeded
  * - 500: Internal server error
  */
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
-    // --- Authentication (before any IGDB call or DB write) ---
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
-    }
-
-    // Parse request body
-    let body: { igdbId?: unknown };
-    try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
-    }
-
+export const POST = defineRoute(
+  { auth: "required", body: importBodySchema },
+  async ({ user, body }) => {
     // Validate igdbId
     const { igdbId } = body;
 
     if (igdbId === undefined || igdbId === null) {
-      return NextResponse.json({ error: "igdbId is required" }, { status: 400 });
+      throw validationError(undefined, "igdbId is required");
     }
 
     const parsedIgdbId = typeof igdbId === "number" ? igdbId : parseInt(String(igdbId), 10);
 
     if (isNaN(parsedIgdbId) || parsedIgdbId <= 0) {
-      return NextResponse.json({ error: "igdbId must be a positive integer" }, { status: 400 });
+      throw validationError(undefined, "igdbId must be a positive integer");
     }
 
     // --- Existing game short-circuit (no IGDB call, no rate-limit charge) ---
@@ -97,7 +83,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (!result.success) {
       if (result.error?.includes("not found")) {
-        return NextResponse.json({ error: result.error }, { status: 404 });
+        throw notFound(result.error);
       }
       return NextResponse.json({ error: result.error || "Failed to import game" }, { status: 500 });
     }
@@ -114,8 +100,5 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
       { status: 201 }
     );
-  } catch (error) {
-    logger.error("Error in game import API", { error });
-    return NextResponse.json({ error: "Internal server error during import" }, { status: 500 });
   }
-}
+);

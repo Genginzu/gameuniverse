@@ -12,14 +12,11 @@
  * handles authentication and forwards the request.
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { defineRoute } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
-import type { ApplyDiffRequest, ApplyDiffResult } from "@/types/webhook-diff";
-
-interface RouteParams {
-  params: Promise<{ eventId: string }>;
-}
+import type { ApplyDiffResult } from "@/types/webhook-diff";
 
 interface ProcessorResponse {
   success?: boolean;
@@ -28,11 +25,14 @@ interface ProcessorResponse {
   error?: string;
 }
 
-export async function POST(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
-    const { eventId } = await params;
-    const body = (await request.json()) as ApplyDiffRequest;
+const applyBodySchema = z.object({
+  forceFields: z.array(z.string()).optional(),
+});
+
+export const POST = defineRoute(
+  { auth: "admin", body: applyBodySchema },
+  async ({ params, body }) => {
+    const { eventId } = params;
     const forceFields = body.forceFields ?? [];
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -70,10 +70,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         status: response.status,
         error: errorMessage,
       });
-      return NextResponse.json(
-        { error: `Failed to apply diff: ${errorMessage}` },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: `Failed to apply diff: ${errorMessage}` }, { status: 500 });
     }
 
     if (result.error) {
@@ -93,11 +90,5 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     });
 
     return NextResponse.json(apiResponse);
-  } catch (error) {
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-    logger.error("Webhook apply route error", { error });
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
-}
+);

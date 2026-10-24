@@ -5,10 +5,12 @@
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mock setup ---
-let mockRequireAdmin: ReturnType<typeof vi.fn>;
 let mockSupabaseFrom: ReturnType<typeof vi.fn>;
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 
 const sampleReviewRow = {
   id: "review-1",
@@ -36,13 +38,6 @@ const sampleProfiles = [
   { id: "user-1", username: "player1" },
   { id: "user-2", username: "player2" },
 ];
-
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => {
-    if (mockRequireAdmin) return mockRequireAdmin();
-    return Promise.resolve(true);
-  },
-}));
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -91,7 +86,6 @@ function makeParams(id: string) {
 
 describe("Admin Reviews API", () => {
   beforeEach(() => {
-    mockRequireAdmin = vi.fn(() => Promise.resolve(true));
     mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
@@ -99,13 +93,24 @@ describe("Admin Reviews API", () => {
   // GET /api/admin/reviews (list)
   // =====================
   describe("GET /api/admin/reviews", () => {
+    test("returns 401 when signed out", async () => {
+      routeEnv.signOut();
+      const res = await GET_LIST(makeRequest("http://localhost/api/admin/reviews"));
+      expect(res.status).toBe(401);
+      expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
       const res = await GET_LIST(makeRequest("http://localhost/api/admin/reviews"));
       expect(res.status).toBe(403);
-      expect((await res.json()).error).toBe("Admin access required");
+      expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
+    });
+
+    test("returns 400 for invalid query parameters", async () => {
+      const res = await GET_LIST(makeRequest("http://localhost/api/admin/reviews?limit=101"));
+      expect(res.status).toBe(400);
+      expect((await res.json()).error).toBe("Invalid query parameters");
     });
 
     test("returns paginated reviews with correct structure", async () => {
@@ -216,9 +221,7 @@ describe("Admin Reviews API", () => {
   // =====================
   describe("GET /api/admin/reviews/[id]", () => {
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
       const res = await GET_DETAIL(
         makeRequest("http://localhost/api/admin/reviews/review-1"),
         makeParams("review-1")
@@ -291,9 +294,7 @@ describe("Admin Reviews API", () => {
     };
 
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
       const res = await PUT(
         makeRequest("http://localhost/api/admin/reviews/review-1", {
           method: "PUT",
@@ -315,7 +316,7 @@ describe("Admin Reviews API", () => {
         makeParams("review-1")
       );
       expect(res.status).toBe(400);
-      expect((await res.json()).error).toBe("Invalid input data");
+      expect((await res.json()).error).toBe("Invalid request body");
     });
 
     test("returns 404 when review does not exist", async () => {
@@ -406,9 +407,7 @@ describe("Admin Reviews API", () => {
   // =====================
   describe("DELETE /api/admin/reviews/[id]", () => {
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
       const res = await DELETE_HANDLER(
         makeRequest("http://localhost/api/admin/reviews/review-1"),
         makeParams("review-1")

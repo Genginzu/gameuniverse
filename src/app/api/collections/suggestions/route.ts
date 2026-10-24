@@ -6,6 +6,7 @@ import { acceptSuggestionSchema } from "@/lib/validations/collection";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { logger } from "@/lib/logger";
 import type { CollectionSuggestionsResponse } from "@/types/smartCollection";
+import { defineRoute } from "@/lib/api/route";
 
 /**
  * GET /api/collections/suggestions
@@ -47,27 +48,15 @@ export async function GET(request: NextRequest) {
  * Accept a suggestion: create a collection pre-filled with the given games.
  * Body: { name, gameIds, isPublic? }. Requires authentication.
  */
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
-    const parsed = acceptSuggestionSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    const { name, gameIds, isPublic } = parsed.data;
+export const POST = defineRoute(
+  {
+    auth: "required",
+    rateLimit: "collection",
+    writesContent: true,
+    body: acceptSuggestionSchema,
+  },
+  async ({ user, body }) => {
+    const { name, gameIds, isPublic } = body;
     const collection = await SmartCollectionServerService.createCollectionFromSuggestion(
       user.id,
       name,
@@ -83,8 +72,5 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ collection }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in collection suggestions POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

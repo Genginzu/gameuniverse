@@ -1,10 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 import type { CoachGame } from "@/types/coaching";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
+
+const coachGameBodySchema = z.looseObject({
+  gameId: z.unknown().optional(),
+  rankLevel: z.unknown().optional(),
+  hoursExperience: z.unknown().optional(),
+  specialties: z.unknown().optional(),
+});
 
 interface CoachGameRow {
   id: string;
@@ -86,13 +95,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "coachingProfile", body: coachGameBodySchema },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { data: profile } = await (supabase as AnySupabase)
       .from("coach_profiles")
@@ -104,7 +110,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Coach profile required" }, { status: 400 });
     }
 
-    const body = await request.json();
     const { data: row, error } = await (supabase as AnySupabase)
       .from("coach_games")
       .insert({
@@ -123,8 +128,5 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ game: mapRow(row) }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in coaching games POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

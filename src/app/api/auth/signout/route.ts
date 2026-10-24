@@ -1,8 +1,9 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { NextResponse } from "next/server";
+import { defineRoute } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
-export async function POST() {
+export const POST = defineRoute({ auth: "optional" }, async () => {
   const supabase = await createRouteHandlerClient();
 
   const { error } = await supabase.auth.signOut();
@@ -13,4 +14,4 @@ export async function POST() {
   }
 
   return NextResponse.json({ success: true });
-}
+});

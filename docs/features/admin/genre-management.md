@@ -33,7 +33,7 @@ Le module suit les mêmes patterns que la gestion des langues admin
 
 - **Rôle administrateur** : Seuls les utilisateurs avec le rôle admin peuvent
   accéder à cette fonctionnalité. Les routes API sont protégées par
-  `requireAdmin()` (403 si non admin).
+  `defineRoute({ auth: "admin" })` (401 si déconnecté, 403 si non admin).
 - **Tables en base** : `genres`, `genre_translations`, `game_genres` et
   `supported_languages` doivent exister dans Supabase.
 - **Langues supportées** : Au moins une langue doit être présente dans

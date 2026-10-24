@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getUserRoleFromUser } from "@/lib/auth-admin";
+import { getUserRoleFromUser } from "@/lib/utils/userRole";
 import type { User } from "@supabase/supabase-js";
 
 function makeUser(overrides: Partial<User> = {}): User {
@@ -14,7 +14,7 @@ function makeUser(overrides: Partial<User> = {}): User {
   } as User;
 }
 
-describe("auth-admin getUserRoleFromUser", () => {
+describe("getUserRoleFromUser", () => {
   it("returns 'admin' when app_metadata.role is admin", () => {
     const user = makeUser({ app_metadata: { role: "admin" } });
     expect(getUserRoleFromUser(user)).toBe("admin");

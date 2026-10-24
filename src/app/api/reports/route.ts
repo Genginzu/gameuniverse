@@ -1,16 +1,24 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, validationError } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 import { ReportServerService } from "@/lib/services/reportServerService";
 import { ReportUserServerService } from "@/lib/services/reportUserServerService";
 import type { ReportContentType, ReportReason } from "@/types/report";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
 
 const CONTENT_TYPES: ReportContentType[] = ["review", "post", "comment", "profile"];
 const REASONS: ReportReason[] = ["spam", "harassment", "inappropriate", "other"];
+
+const reportBodySchema = z.looseObject({
+  contentType: z.unknown().optional(),
+  contentId: z.unknown().optional(),
+  reason: z.unknown().optional(),
+  description: z.unknown().optional(),
+});
 
 /** GET /api/reports — Authenticated user: list their own reports. */
 export async function GET() {
@@ -30,33 +38,25 @@ export async function GET() {
 }
 
 /** POST /api/reports — Authenticated users flag a piece of content. */
-export async function POST(request: NextRequest) {
-  try {
-    const supabase: S = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "report", body: reportBodySchema },
+  async ({ user, body }) => {
+    const { contentType, contentId, reason, description } = body;
 
-    const limited = await enforceRateLimit("report", { userId: user.id });
-    if (limited) return limited;
-
-    const { contentType, contentId, reason, description } = await request.json();
-
-    if (!CONTENT_TYPES.includes(contentType)) {
-      return NextResponse.json({ error: "Invalid contentType" }, { status: 400 });
+    if (!CONTENT_TYPES.includes(contentType as ReportContentType)) {
+      throw validationError(undefined, "Invalid contentType");
     }
     if (!contentId || typeof contentId !== "string") {
-      return NextResponse.json({ error: "contentId required" }, { status: 400 });
+      throw validationError(undefined, "contentId required");
     }
-    if (!REASONS.includes(reason)) {
-      return NextResponse.json({ error: "Invalid reason" }, { status: 400 });
+    if (!REASONS.includes(reason as ReportReason)) {
+      throw validationError(undefined, "Invalid reason");
     }
 
     const result = await ReportServerService.createReport(user.id, {
-      contentType,
+      contentType: contentType as ReportContentType,
       contentId,
-      reason,
+      reason: reason as ReportReason,
       description: typeof description === "string" ? description.slice(0, 1000) : null,
     });
 
@@ -77,8 +77,5 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ report: result.report }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in reports POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

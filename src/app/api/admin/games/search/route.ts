@@ -1,15 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute } from "@/lib/api/route";
 
 /**
  * GET /api/admin/games/search?q=...&locale=fr
  * Lightweight game search by title for admin use (autocomplete).
  */
-export async function GET(request: NextRequest) {
+export const GET = defineRoute({ auth: "admin" }, async ({ request }) => {
   try {
-    await requireAdmin();
-
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q")?.trim() ?? "";
     const locale = searchParams.get("locale") ?? "fr";
@@ -72,4 +70,4 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.json([], { status: 200 });
   }
-}
+});

@@ -5,9 +5,10 @@
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import { languageQuerySchema } from "@/lib/validations/admin-language-form";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
 // --- Mock setup ---
-let mockRequireAdmin: ReturnType<typeof vi.fn>;
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 let mockLanguagesData: Array<{ code: string; name: string; native_name: string | null }>;
 
@@ -46,13 +47,6 @@ const createMockChain = (overrides: Record<string, unknown> = {}) => {
 };
 
 // Mock modules before importing the route
-vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () => {
-    if (mockRequireAdmin) return mockRequireAdmin();
-    return Promise.resolve(true);
-  },
-}));
-
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
     Promise.resolve({
@@ -72,7 +66,6 @@ function makeRequest(url: string, init?: RequestInit) {
 
 describe("Admin Languages API", () => {
   beforeEach(() => {
-    mockRequireAdmin = vi.fn(() => Promise.resolve(true));
     mockLanguagesData = [
       { code: "en", name: "English", native_name: "English" },
       { code: "fr", name: "French", native_name: "Français" },
@@ -133,17 +126,32 @@ describe("Admin Languages API", () => {
   });
 
   describe("GET /api/admin/languages", () => {
+    test("returns 401 when signed out", async () => {
+      routeEnv.signOut();
+
+      const res = await GET(makeRequest("http://localhost/api/admin/languages"));
+
+      expect(res.status).toBe(401);
+      expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
 
       const req = makeRequest("http://localhost/api/admin/languages");
       const res = await GET(req);
 
       expect(res.status).toBe(403);
+      expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
+    });
+
+    test("returns 400 for invalid query parameters", async () => {
+      const res = await GET(makeRequest("http://localhost/api/admin/languages?limit=101"));
+
+      expect(res.status).toBe(400);
       const body = await res.json();
-      expect(body.error).toBe("Admin access required");
+      expect(body.error).toBe("Invalid query parameters");
+      expect(body.code).toBe("validation");
     });
 
     test("returns languages with pagination structure", async () => {
@@ -290,9 +298,7 @@ describe("Admin Languages API", () => {
 
   describe("POST /api/admin/languages", () => {
     test("returns 403 when user is not admin", async () => {
-      mockRequireAdmin = vi.fn(() => {
-        throw new Error("Admin access required");
-      });
+      routeEnv.signIn("user");
 
       const req = makeRequest("http://localhost/api/admin/languages", {
         method: "POST",
@@ -316,7 +322,8 @@ describe("Admin Languages API", () => {
 
       expect(res.status).toBe(400);
       const body = await res.json();
-      expect(body.error).toBe("Invalid input data");
+      expect(body.error).toBe("Invalid request body");
+      expect(body.code).toBe("validation");
       expect(body.details).toBeDefined();
     });
 

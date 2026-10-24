@@ -1,9 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { logger } from "@/lib/logger";
+import { defineRoute, validationError } from "@/lib/api/route";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UntypedFrom = any;
+
+// The array check stays in the handler so the dedicated 400 message is unchanged.
+const batchStatusSchema = z.object({ slugs: z.any().optional() });
 
 /**
  * POST /api/favorites/characters/batch-status
@@ -11,23 +15,14 @@ type UntypedFrom = any;
  * Body: { slugs: string[] }
  * Returns: { statuses: Record<string, boolean> } (slug → isFavorite)
  */
-export async function POST(request: NextRequest) {
-  try {
+export const POST = defineRoute(
+  { auth: "required", body: batchStatusSchema },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { slugs } = await request.json();
+    const { slugs } = body;
 
     if (!Array.isArray(slugs) || slugs.length === 0) {
-      return NextResponse.json({ error: "slugs array is required" }, { status: 400 });
+      throw validationError(undefined, "slugs array is required");
     }
 
     const limitedSlugs = slugs.slice(0, 100);
@@ -79,8 +74,5 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ statuses });
-  } catch (error) {
-    logger.error("Error in favorites/characters batch-status API", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

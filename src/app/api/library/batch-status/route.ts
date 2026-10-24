@@ -1,25 +1,21 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { defineRoute, validationError } from "@/lib/api/route";
+
+// The array check stays in the handler so the dedicated 400 message is unchanged.
+const batchStatusSchema = z.object({ gameIds: z.any().optional() });
 
 // POST /api/library/batch-status - Check library status for multiple games at once
-export async function POST(request: NextRequest) {
-  try {
+export const POST = defineRoute(
+  { auth: "required", body: batchStatusSchema },
+  async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { gameIds } = await request.json();
+    const { gameIds } = body;
 
     if (!Array.isArray(gameIds) || gameIds.length === 0) {
-      return NextResponse.json({ error: "gameIds array is required" }, { status: 400 });
+      throw validationError(undefined, "gameIds array is required");
     }
 
     // Limiter à 100 IDs par requête pour éviter les abus
@@ -48,8 +44,5 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ statuses });
-  } catch (error) {
-    logger.error("Error in library batch-status API", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

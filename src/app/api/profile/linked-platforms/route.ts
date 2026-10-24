@@ -1,6 +1,7 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { defineRoute, validationError } from "@/lib/api/route";
 import {
   getLinkedPlatforms,
   upsertManualPlatform,
@@ -13,56 +14,46 @@ import {
 } from "@/lib/services/manualPlatformValidation";
 import { GAMING_PLATFORMS, PLATFORM_META, type GamingPlatform } from "@/types/linked-platforms";
 
-export async function GET() {
-  const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+const platformBodySchema = z.looseObject({
+  platform: z.unknown().optional(),
+  platformUsername: z.unknown().optional(),
+  isPublic: z.unknown().optional(),
+});
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    const platforms = await getLinkedPlatforms(supabase, user.id);
-    return NextResponse.json(platforms);
-  } catch (error) {
-    logger.error("Failed to fetch linked platforms", { error });
-    return NextResponse.json({ error: "Failed to fetch linked platforms" }, { status: 500 });
+function assertPlatform(platform: unknown): asserts platform is GamingPlatform {
+  if (!platform || !GAMING_PLATFORMS.includes(platform as GamingPlatform)) {
+    throw validationError(undefined, "Invalid platform");
   }
 }
 
-/** PUT — only for manual (pseudo) platforms */
-export async function PUT(request: NextRequest) {
+export const GET = defineRoute({ auth: "required" }, async ({ user }) => {
   const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const platforms = await getLinkedPlatforms(supabase, user.id);
+  return NextResponse.json(platforms);
+});
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+/** PUT — only for manual (pseudo) platforms */
+export const PUT = defineRoute(
+  { auth: "required", rateLimit: "platformLink", body: platformBodySchema },
+  async ({ user, body }) => {
+    const supabase = await createRouteHandlerClient();
+    const { platform, platformUsername } = body;
 
-  try {
-    const { platform, platformUsername } = await request.json();
-
-    if (!platform || !GAMING_PLATFORMS.includes(platform as GamingPlatform)) {
-      return NextResponse.json({ error: "Invalid platform" }, { status: 400 });
-    }
+    assertPlatform(platform);
 
     // Only allow manual platforms through this endpoint
-    const meta = PLATFORM_META[platform as GamingPlatform];
+    const meta = PLATFORM_META[platform];
     if (meta.authType !== "manual") {
-      return NextResponse.json({ error: "Use OAuth flow for this platform" }, { status: 400 });
+      throw validationError(undefined, "Use OAuth flow for this platform");
     }
 
-    if (!platformUsername?.trim()) {
-      return NextResponse.json({ error: "Username is required" }, { status: 400 });
+    if (typeof platformUsername !== "string" || !platformUsername.trim()) {
+      throw validationError(undefined, "Username is required");
     }
 
     let normalized: string;
     try {
-      normalized = await validateManualUsername(platform as GamingPlatform, platformUsername);
+      normalized = await validateManualUsername(platform, platformUsername);
     } catch (err) {
       if (err instanceof ManualPlatformValidationError) {
         return NextResponse.json({ error: "Invalid username", code: err.code }, { status: 400 });
@@ -72,58 +63,34 @@ export async function PUT(request: NextRequest) {
 
     const result = await upsertManualPlatform(supabase, user.id, platform, normalized);
     return NextResponse.json(result);
-  } catch (error) {
-    logger.error("Failed to upsert linked platform", { error });
-    return NextResponse.json({ error: "Failed to save platform" }, { status: 500 });
   }
-}
+);
 
-export async function PATCH(request: NextRequest) {
-  const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export const PATCH = defineRoute(
+  { auth: "required", body: platformBodySchema },
+  async ({ user, body }) => {
+    const supabase = await createRouteHandlerClient();
+    const { platform, isPublic } = body;
 
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  try {
-    const { platform, isPublic } = await request.json();
-    if (!platform || !GAMING_PLATFORMS.includes(platform as GamingPlatform)) {
-      return NextResponse.json({ error: "Invalid platform" }, { status: 400 });
-    }
+    assertPlatform(platform);
     if (typeof isPublic !== "boolean") {
-      return NextResponse.json({ error: "isPublic must be boolean" }, { status: 400 });
+      throw validationError(undefined, "isPublic must be boolean");
     }
 
     await setPlatformVisibility(supabase, user.id, platform, isPublic);
     return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Failed to update platform visibility", { error });
-    return NextResponse.json({ error: "Failed to update visibility" }, { status: 500 });
   }
-}
+);
 
-export async function DELETE(request: NextRequest) {
-  const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export const DELETE = defineRoute(
+  { auth: "required", body: platformBodySchema },
+  async ({ user, body }) => {
+    const supabase = await createRouteHandlerClient();
+    const { platform } = body;
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    const { platform } = await request.json();
-
-    if (!platform || !GAMING_PLATFORMS.includes(platform as GamingPlatform)) {
-      return NextResponse.json({ error: "Invalid platform" }, { status: 400 });
-    }
+    assertPlatform(platform);
 
     await deleteLinkedPlatform(supabase, user.id, platform);
     return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Failed to delete linked platform", { error });
-    return NextResponse.json({ error: "Failed to delete platform" }, { status: 500 });
   }
-}
+);

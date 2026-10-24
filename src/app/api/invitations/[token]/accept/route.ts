@@ -1,49 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { NextResponse } from "next/server";
 import { GroupInvitationsServerService } from "@/lib/services/groupInvitationsServerService";
-import { logger } from "@/lib/logger";
+import { conflict, defineRoute, forbidden, notFound } from "@/lib/api/route";
 
-type RouteContext = { params: Promise<{ token: string }> };
+const CONFLICT_ERRORS = new Set([
+  "This invitation has already been answered",
+  "This invitation has expired",
+  "This group has reached the maximum of 50 members",
+]);
+
+/** Maps the service's expected refusals to route errors; anything else stays a 500. */
+function toRouteError(error: unknown): unknown {
+  const message = error instanceof Error ? error.message : "";
+  if (message === "Invitation not found") return notFound(message);
+  if (message === "This invitation is not addressed to you") return forbidden(message);
+  if (CONFLICT_ERRORS.has(message)) return conflict(message);
+  return error;
+}
 
 /**
  * POST /api/invitations/[token]/accept — Accept a group invitation.
  * Authentication required. The invitation must be addressed to the caller,
  * still pending, not expired, and the group must not have reached 50 members.
  */
-export async function POST(_request: NextRequest, { params }: RouteContext) {
+export const POST = defineRoute({ auth: "required" }, async ({ user, params }) => {
   try {
-    const { token } = await params;
-
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    await GroupInvitationsServerService.acceptInvitation(token, user.id);
-
-    return NextResponse.json({ success: true });
+    await GroupInvitationsServerService.acceptInvitation(params.token, user.id);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
-    const status =
-      message === "Invitation not found"
-        ? 404
-        : message === "This invitation is not addressed to you"
-          ? 403
-          : message === "This invitation has already been answered" ||
-              message === "This invitation has expired" ||
-              message === "This group has reached the maximum of 50 members"
-            ? 409
-            : 500;
-
-    if (status === 500) {
-      logger.error("Error in invitation accept POST", { error });
-    }
-
-    return NextResponse.json({ error: message }, { status });
+    throw toRouteError(error);
   }
-}
+
+  return NextResponse.json({ success: true });
+});

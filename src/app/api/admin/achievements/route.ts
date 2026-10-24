@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { conflict, defineRoute } from "@/lib/api/route";
 import {
   achievementQuerySchema,
   adminAchievementFormSchema,
@@ -49,40 +49,19 @@ function toAdminAchievement(row: AchievementRow): AdminAchievement {
 /**
  * GET /api/admin/achievements — List achievements with pagination, search, sort
  */
-export async function GET(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const { searchParams } = new URL(request.url);
-
-    const rawParams: Record<string, string | undefined> = {
-      page: searchParams.get("page") ?? undefined,
-      limit: searchParams.get("limit") ?? undefined,
-      search: searchParams.get("search") ?? undefined,
-      sort_by: searchParams.get("sort_by") ?? undefined,
-      sort_order: searchParams.get("sort_order") ?? undefined,
-      locale: searchParams.get("locale") ?? undefined,
-    };
-
-    const queryResult = achievementQuerySchema.safeParse(rawParams);
-
-    if (!queryResult.success) {
-      return NextResponse.json(
-        { error: "Invalid query parameters", details: queryResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { page, limit, search, sort_by, sort_order, locale } = queryResult.data;
+export const GET = defineRoute(
+  { auth: "admin", query: achievementQuerySchema },
+  async ({ query }) => {
+    const { page, limit, search, sort_by, sort_order, locale } = query;
 
     const supabase = await createRouteHandlerClient();
     const offset = (page - 1) * limit;
 
     // Search on key + localized name column
-    const applySearchFilter = (query: ReturnType<typeof supabase.from>) => {
-      if (!search?.trim()) return query;
+    const applySearchFilter = (dbQuery: ReturnType<typeof supabase.from>) => {
+      if (!search?.trim()) return dbQuery;
       const nameCol = locale === "en" ? "name_en" : "name_fr";
-      return query.or(ilikeAnyFilter(["key", nameCol], search));
+      return dbQuery.or(ilikeAnyFilter(["key", nameCol], search));
     };
 
     // Count
@@ -123,36 +102,15 @@ export async function GET(request: NextRequest) {
         hasPreviousPage: page > 1,
       },
     });
-  } catch (error) {
-    logger.error("Error in admin achievements GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * POST /api/admin/achievements — Create a new achievement
  */
-export async function POST(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const body = await request.json();
-
-    const validationResult = adminAchievementFormSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const data = validationResult.data;
+export const POST = defineRoute(
+  { auth: "admin", body: adminAchievementFormSchema },
+  async ({ body: data }) => {
     const supabase = await createRouteHandlerClient();
 
     // Check key uniqueness before insert
@@ -162,9 +120,7 @@ export async function POST(request: NextRequest) {
       .eq("key", data.key)
       .maybeSingle();
 
-    if (existing) {
-      return NextResponse.json({ error: "Achievement key already exists" }, { status: 409 });
-    }
+    if (existing) throw conflict("Achievement key already exists");
 
     const { data: created, error: insertError } = await supabase
       .from("achievement_catalog")
@@ -185,13 +141,10 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      logger.error("Error creating achievement", { error: insertError });
-
       // Fallback: handle race condition where key was inserted between check and insert
-      if (insertError.code === "23505") {
-        return NextResponse.json({ error: "Achievement key already exists" }, { status: 409 });
-      }
+      if (insertError.code === "23505") throw conflict("Achievement key already exists");
 
+      logger.error("Error creating achievement", { error: insertError });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
@@ -199,13 +152,5 @@ export async function POST(request: NextRequest) {
       { achievement: toAdminAchievement(created as AchievementRow) },
       { status: 201 }
     );
-  } catch (error) {
-    logger.error("Error in admin achievements POST", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

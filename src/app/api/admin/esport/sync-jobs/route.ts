@@ -7,8 +7,8 @@
  * can show progress (cursor + counts).
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { NextResponse } from "next/server";
+import { defineRoute } from "@/lib/api/route";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 
@@ -18,13 +18,7 @@ export const maxDuration = 30;
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
 
-export async function GET(request: NextRequest) {
-  try {
-    await requireAdmin();
-  } catch {
-    return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-  }
-
+export const GET = defineRoute({ auth: "admin" }, async ({ request }) => {
   const { searchParams } = new URL(request.url);
   const limit = Math.min(
     MAX_LIMIT,
@@ -49,4 +43,4 @@ export async function GET(request: NextRequest) {
   }
 
   return NextResponse.json({ jobs: data ?? [] });
-}
+});

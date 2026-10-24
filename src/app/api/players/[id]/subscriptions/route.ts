@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { z } from "zod";
 import { PlayerService } from "@/lib/services/playerService";
 import { SubscriptionServerService } from "@/lib/services/subscriptionServerService";
 import { logger } from "@/lib/logger";
+import { defineRoute, forbidden, validationError } from "@/lib/api/route";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -26,45 +27,32 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
   }
 }
 
+const subscribeSchema = z.looseObject({ targetId: z.any().optional() });
+
 /**
  * POST /api/players/[id]/subscriptions — [id] s'abonne à targetId (body).
  * Requiert que [id] === auth.uid(). Idempotent.
  */
-export async function POST(request: NextRequest, { params }: RouteContext) {
-  try {
-    const { id: playerId } = await params;
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "follow", body: subscribeSchema },
+  async ({ user, params, body }) => {
+    const { id: playerId } = params;
 
     if (!PlayerService.validatePlayerId(playerId)) {
-      return NextResponse.json({ error: "Format d'identifiant invalide" }, { status: 400 });
+      throw validationError(undefined, "Format d'identifiant invalide");
     }
 
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    if (user.id !== playerId) throw forbidden("Forbidden");
 
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    if (user.id !== playerId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    const body = await request.json().catch(() => null);
-    const targetId = body?.targetId;
+    const targetId = body.targetId;
 
     if (!targetId || !PlayerService.validatePlayerId(targetId)) {
-      return NextResponse.json({ error: "targetId invalide" }, { status: 400 });
+      throw validationError(undefined, "targetId invalide");
     }
 
-    if (targetId === playerId) {
-      return NextResponse.json({ error: "Cannot subscribe to yourself" }, { status: 400 });
-    }
+    if (targetId === playerId) throw validationError(undefined, "Cannot subscribe to yourself");
 
     await SubscriptionServerService.subscribe(playerId, targetId);
     return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in subscriptions POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

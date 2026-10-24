@@ -8,6 +8,7 @@ import {
 import { CollectionAdvancedStatsService } from "@/lib/services/collectionAdvancedStatsService";
 import { updateCollectionSchema } from "@/lib/validations/collection";
 import { logger } from "@/lib/logger";
+import { defineRoute, forbidden, validationError } from "@/lib/api/route";
 
 type RouteContext = { params: Promise<{ id: string; slug: string }> };
 
@@ -56,76 +57,46 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
  * Authentification requise. Seul le propriétaire peut modifier.
  * Le slug n'est pas modifié.
  */
-export async function PATCH(request: NextRequest, { params }: RouteContext) {
-  try {
-    const { id: playerId, slug } = await params;
+export const PATCH = defineRoute(
+  {
+    auth: "required",
+    rateLimit: "collection",
+    writesContent: true,
+    body: updateCollectionSchema,
+  },
+  async ({ user, params, body }) => {
+    const { id: playerId, slug } = params;
 
     if (!playerId || !slug) {
-      return NextResponse.json({ error: "Player ID and slug are required" }, { status: 400 });
-    }
-
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      throw validationError(undefined, "Player ID and slug are required");
     }
 
     if (user.id !== playerId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      throw forbidden("Forbidden");
     }
 
-    const body = await request.json();
-    const parsed = updateCollectionSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    const result = await updateCollection(user.id, slug, parsed.data);
+    const result = await updateCollection(user.id, slug, body);
 
     return NextResponse.json({ collection: result });
-  } catch (error) {
-    logger.error("Error in collection PATCH", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/players/[id]/collections/[slug] — Supprimer une collection.
  * Authentification requise. Seul le propriétaire peut supprimer.
  */
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
-  try {
-    const { id: playerId, slug } = await params;
+export const DELETE = defineRoute({ auth: "required" }, async ({ user, params }) => {
+  const { id: playerId, slug } = params;
 
-    if (!playerId || !slug) {
-      return NextResponse.json({ error: "Player ID and slug are required" }, { status: 400 });
-    }
-
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (user.id !== playerId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    await deleteCollection(user.id, slug);
-
-    return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    logger.error("Error in collection DELETE", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (!playerId || !slug) {
+    throw validationError(undefined, "Player ID and slug are required");
   }
-}
+
+  if (user.id !== playerId) {
+    throw forbidden("Forbidden");
+  }
+
+  await deleteCollection(user.id, slug);
+
+  return new NextResponse(null, { status: 204 });
+});

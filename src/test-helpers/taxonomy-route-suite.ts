@@ -6,9 +6,10 @@
  * each route with a queue-based Supabase mock.
  */
 
-import { describe, test, expect, beforeEach, type Mock } from "vitest";
+import { describe, test, expect, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 import type { SupabaseQueryMock } from "./supabase-query-mock";
+import type { TestRouteEnvironment } from "./route-environment";
 
 type ListHandler = (request: NextRequest) => Promise<Response>;
 type DetailHandler = (
@@ -25,7 +26,8 @@ export interface TaxonomyRouteSuiteConfig {
   itemKey: string;
   notFoundMessage: string;
   db: SupabaseQueryMock;
-  requireAdmin: Mock;
+  /** From `useTestRouteEnvironment({ signedInAs: "admin" })`. */
+  routeEnv: TestRouteEnvironment;
   list: { GET: ListHandler; POST: ListHandler };
   detail: { GET: DetailHandler; PUT: DetailHandler; DELETE: DetailHandler };
 }
@@ -68,24 +70,31 @@ export function runTaxonomyRouteSuite(config: TaxonomyRouteSuiteConfig) {
 
   beforeEach(() => {
     db.reset();
-    config.requireAdmin.mockReset();
-    config.requireAdmin.mockResolvedValue(true);
   });
 
   describe("auth", () => {
-    test("every handler maps the admin guard error to 403", async () => {
-      config.requireAdmin.mockRejectedValue(new Error("Admin access required"));
-      const responses = await Promise.all([
+    const callEveryHandler = () =>
+      Promise.all([
         config.list.GET(makeRequest(listUrl)),
         config.list.POST(makeRequest(listUrl, "POST", VALID_PAYLOAD)),
         config.detail.GET(makeRequest(detailUrl), ctx()),
         config.detail.PUT(makeRequest(detailUrl, "PUT", VALID_PAYLOAD), ctx()),
         config.detail.DELETE(makeRequest(detailUrl, "DELETE"), ctx()),
       ]);
-      for (const res of responses) {
+
+    test("every handler answers 401 to a signed-out caller", async () => {
+      config.routeEnv.signOut();
+      for (const res of await callEveryHandler()) expect(res.status).toBe(401);
+      expect(db.calls).toHaveLength(0);
+    });
+
+    test("every handler answers 403 to a non-admin", async () => {
+      config.routeEnv.signIn("user");
+      for (const res of await callEveryHandler()) {
         expect(res.status).toBe(403);
-        expect(await res.json()).toEqual({ error: "Admin access required" });
+        expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
       }
+      expect(db.calls).toHaveLength(0);
     });
   });
 
@@ -223,7 +232,7 @@ export function runTaxonomyRouteSuite(config: TaxonomyRouteSuiteConfig) {
       db.enqueue(table, { error: { code: "PGRST116" } });
       const res = await config.detail.GET(makeRequest(detailUrl), ctx());
       expect(res.status).toBe(404);
-      expect(await res.json()).toEqual({ error: config.notFoundMessage });
+      expect(await res.json()).toEqual({ error: config.notFoundMessage, code: "not_found" });
     });
 
     test("returns the item with igdbId and character count", async () => {

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { syncAllGameFields } from "@/lib/services/igdb-sync";
 import { logger } from "@/lib/logger";
-import { adminGuardResponse } from "@/lib/auth-admin";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 
 /**
  * POST /api/games/[slug]/sync
@@ -13,75 +13,59 @@ import { adminGuardResponse } from "@/lib/auth-admin";
  *
  * Metascore is fetched from Metacritic (handled by igdb-sync metascore field).
  * Overridden fields (manually edited by admins) are preserved.
+ *
+ * Writes only succeed for admins (RLS), so restrict the IGDB / Metacritic
+ * calls to them too instead of letting anyone burn the API quotas.
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-): Promise<NextResponse> {
-  // Writes only succeed for admins (RLS), so restrict the IGDB / Metacritic
-  // calls to them too instead of letting anyone burn the API quotas.
-  const denied = await adminGuardResponse();
-  if (denied) return denied;
+export const POST = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { slug } = params;
 
-  try {
-    const { slug } = await params;
-
-    if (!slug) {
-      return NextResponse.json({ error: "Game slug is required" }, { status: 400 });
-    }
-
-    const supabase = await createRouteHandlerClient();
-
-    const { data: game, error: fetchError } = await supabase
-      .from("games")
-      .select("id, igdb_id")
-      .eq("slug", slug)
-      .single();
-
-    if (fetchError || !game) {
-      if (fetchError?.code === "PGRST116") {
-        return NextResponse.json({ error: "Game not found" }, { status: 404 });
-      }
-      logger.error("Error fetching game for sync", { error: fetchError });
-      return NextResponse.json({ error: "Failed to fetch game" }, { status: 500 });
-    }
-
-    if (!game.igdb_id) {
-      return NextResponse.json(
-        { error: "Game has no IGDB ID and cannot be synchronized" },
-        { status: 400 }
-      );
-    }
-
-    // Fire-and-forget: sync all fields (metascore fetched from Metacritic via igdb-sync)
-    syncAllGameFields(supabase as never, game.id, game.igdb_id, "respect-overrides")
-      .then((result) => {
-        if (result.success) {
-          logger.info(`Background sync completed for game ${slug}`, {
-            syncedFields: result.syncedFields,
-          });
-        } else {
-          logger.error(`Background sync failed for game ${slug}`, { error: result.error });
-        }
-      })
-      .catch((error) => {
-        logger.error(`Background sync error for game ${slug}`, { error });
-      });
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Sync initiated",
-        gameId: game.id,
-        igdbId: game.igdb_id,
-      },
-      { status: 202 }
-    );
-  } catch (error) {
-    logger.error("Error in game sync API", { error });
-    return NextResponse.json(
-      { error: "Internal server error during sync initiation" },
-      { status: 500 }
-    );
+  if (!slug) {
+    throw validationError(undefined, "Game slug is required");
   }
-}
+
+  const supabase = await createRouteHandlerClient();
+
+  const { data: game, error: fetchError } = await supabase
+    .from("games")
+    .select("id, igdb_id")
+    .eq("slug", slug)
+    .single();
+
+  if (fetchError || !game) {
+    if (fetchError?.code === "PGRST116") {
+      throw notFound("Game not found");
+    }
+    logger.error("Error fetching game for sync", { error: fetchError });
+    return NextResponse.json({ error: "Failed to fetch game" }, { status: 500 });
+  }
+
+  if (!game.igdb_id) {
+    throw validationError(undefined, "Game has no IGDB ID and cannot be synchronized");
+  }
+
+  // Fire-and-forget: sync all fields (metascore fetched from Metacritic via igdb-sync)
+  syncAllGameFields(supabase as never, game.id, game.igdb_id, "respect-overrides")
+    .then((result) => {
+      if (result.success) {
+        logger.info(`Background sync completed for game ${slug}`, {
+          syncedFields: result.syncedFields,
+        });
+      } else {
+        logger.error(`Background sync failed for game ${slug}`, { error: result.error });
+      }
+    })
+    .catch((error) => {
+      logger.error(`Background sync error for game ${slug}`, { error });
+    });
+
+  return NextResponse.json(
+    {
+      success: true,
+      message: "Sync initiated",
+      gameId: game.id,
+      igdbId: game.igdb_id,
+    },
+    { status: 202 }
+  );
+});

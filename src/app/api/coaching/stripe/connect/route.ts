@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
+import { defineRoute, notFound } from "@/lib/api/route";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
@@ -46,13 +47,10 @@ export async function GET() {
 }
 
 /** POST — Create or resume Stripe Connect onboarding for the current coach */
-export async function POST() {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "coachingPayout" },
+  async ({ user }) => {
     const supabase: S = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { data: coach } = await supabase
       .from("coach_profiles")
@@ -60,7 +58,7 @@ export async function POST() {
       .eq("player_id", user.id)
       .single();
 
-    if (!coach) return NextResponse.json({ error: "Coach profile not found" }, { status: 404 });
+    if (!coach) throw notFound("Coach profile not found");
 
     let accountId = coach.stripe_account_id;
 
@@ -88,8 +86,5 @@ export async function POST() {
     });
 
     return NextResponse.json({ url: accountLink.url });
-  } catch (error) {
-    logger.error("Error in Stripe Connect onboarding", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

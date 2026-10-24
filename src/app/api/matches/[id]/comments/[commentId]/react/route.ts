@@ -1,34 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { addReaction } from "@/lib/services/matchDiscussionService";
-import { logger } from "@/lib/logger";
+import { defineRoute, validationError } from "@/lib/api/route";
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string; commentId: string }> }
-) {
-  try {
-    const { commentId } = await params;
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+const reactionSchema = z.looseObject({ emoji: z.unknown().optional() });
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "reaction", body: reactionSchema },
+  async ({ params, body }) => {
     const emoji = typeof body.emoji === "string" ? body.emoji.trim() : "";
-    if (!emoji || emoji.length > 16) {
-      return NextResponse.json({ error: "emoji is required" }, { status: 400 });
-    }
+    if (!emoji || emoji.length > 16) throw validationError(undefined, "emoji is required");
 
-    const comment = await addReaction(supabase, commentId, emoji);
+    const supabase = await createRouteHandlerClient();
+    const comment = await addReaction(supabase, params.commentId, emoji);
     return NextResponse.json({ comment });
-  } catch (error) {
-    logger.error("Error adding reaction", { error });
-    return NextResponse.json({ error: "Failed to add reaction" }, { status: 500 });
   }
-}
+);

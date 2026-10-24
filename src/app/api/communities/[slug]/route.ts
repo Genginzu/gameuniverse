@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, forbidden, notFound } from "@/lib/api/route";
 import { CommunityServerService } from "@/lib/services/communityServerService";
 import { CommunityMembersServerService } from "@/lib/services/communityMembersServerService";
 import { updateCommunitySchema } from "@/lib/validations/community";
@@ -41,80 +42,37 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
  * PATCH /api/communities/[slug] — Update a community.
  * Authentication required. Only owner/moderator members can update.
  */
-export async function PATCH(request: NextRequest, { params }: RouteContext) {
-  try {
-    const { slug } = await params;
-
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export const PATCH = defineRoute(
+  { auth: "required", rateLimit: "groupUpdate", writesContent: true, body: updateCommunitySchema },
+  async ({ user, params, body }) => {
+    const { slug } = params;
 
     const access = await CommunityServerService.getCommunityAccess(slug);
-    if (!access) {
-      return NextResponse.json({ error: "Community not found" }, { status: 404 });
-    }
+    if (!access) throw notFound("Community not found");
 
     const role = await CommunityMembersServerService.getMemberRole(access.id, user.id);
-    if (role !== "owner" && role !== "moderator") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    if (role !== "owner" && role !== "moderator") throw forbidden("Forbidden");
 
-    const body = await request.json();
-    const parsed = updateCommunitySchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    await CommunityServerService.updateCommunity(slug, parsed.data);
+    await CommunityServerService.updateCommunity(slug, body);
     const updated = await CommunityServerService.fetchCommunityBySlug(slug, user.id);
 
     return NextResponse.json({ community: updated });
-  } catch (error) {
-    logger.error("Error in community PATCH", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/communities/[slug] — Delete a community.
  * Authentication required. Only the owner can delete.
  */
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
-  try {
-    const { slug } = await params;
+export const DELETE = defineRoute({ auth: "required" }, async ({ user, params }) => {
+  const { slug } = params;
 
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+  const access = await CommunityServerService.getCommunityAccess(slug);
+  if (!access) throw notFound("Community not found");
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (access.ownerId !== user.id) throw forbidden("Forbidden");
 
-    const access = await CommunityServerService.getCommunityAccess(slug);
-    if (!access) {
-      return NextResponse.json({ error: "Community not found" }, { status: 404 });
-    }
+  await CommunityServerService.deleteCommunity(slug);
 
-    if (access.ownerId !== user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    await CommunityServerService.deleteCommunity(slug);
-
-    return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    logger.error("Error in community DELETE", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
+  return new NextResponse(null, { status: 204 });
+});

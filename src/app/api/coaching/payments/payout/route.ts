@@ -1,19 +1,16 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getStripe } from "@/lib/stripe";
-import { logger } from "@/lib/logger";
+import { defineRoute } from "@/lib/api/route";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
 
 /** POST /api/coaching/payments/payout — Request payout to coach's bank account */
-export async function POST() {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "coachingPayout" },
+  async ({ user }) => {
     const supabase: S = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { data: coach } = await supabase
       .from("coach_profiles")
@@ -47,8 +44,5 @@ export async function POST() {
       currency: payout.currency,
       arrivalDate: payout.arrival_date,
     });
-  } catch (error) {
-    logger.error("Error creating payout", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

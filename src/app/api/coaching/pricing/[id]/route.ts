@@ -1,11 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
 
-type RouteParams = { params: Promise<{ id: string }> };
+const pricingUpdateSchema = z.looseObject({
+  priceAmount: z.unknown().optional(),
+  durationMinutes: z.unknown().optional(),
+  isActive: z.unknown().optional(),
+});
 
 /** Verify the pricing entry belongs to the authenticated user. */
 async function verifyOwnership(supabase: AnySupabase, pricingId: string, userId: string) {
@@ -22,26 +28,16 @@ async function verifyOwnership(supabase: AnySupabase, pricingId: string, userId:
  * PATCH /api/coaching/pricing/[id]
  * Update a pricing entry. Body: { priceAmount?, durationMinutes?, isActive? }
  */
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
-  try {
+export const PATCH = defineRoute(
+  { auth: "required", rateLimit: "coachingProfile", body: pricingUpdateSchema },
+  async ({ user, params, body }) => {
     const supabase: AnySupabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { id } = await params;
+    const { id } = params;
     const owned = await verifyOwnership(supabase, id, user.id);
 
-    if (!owned) {
-      return NextResponse.json({ error: "Pricing not found" }, { status: 404 });
-    }
+    if (!owned) throw notFound("Pricing not found");
 
-    const body = await request.json();
     const updates: Record<string, unknown> = {};
 
     if (body.priceAmount !== undefined) updates.price_amount = body.priceAmount;
@@ -49,7 +45,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (body.isActive !== undefined) updates.is_active = body.isActive;
 
     if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+      throw validationError(undefined, "No fields to update");
     }
 
     const { data, error } = await supabase
@@ -76,45 +72,27 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         createdAt: data.created_at,
       },
     });
-  } catch (error) {
-    logger.error("Error in coaching pricing PATCH", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/coaching/pricing/[id]
  * Delete a pricing entry.
  */
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
-  try {
-    const supabase: AnySupabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+export const DELETE = defineRoute({ auth: "required" }, async ({ user, params }) => {
+  const supabase: AnySupabase = await createRouteHandlerClient();
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const { id } = params;
+  const owned = await verifyOwnership(supabase, id, user.id);
 
-    const { id } = await params;
-    const owned = await verifyOwnership(supabase, id, user.id);
+  if (!owned) throw notFound("Pricing not found");
 
-    if (!owned) {
-      return NextResponse.json({ error: "Pricing not found" }, { status: 404 });
-    }
+  const { error } = await supabase.from("coach_pricing").delete().eq("id", id);
 
-    const { error } = await supabase.from("coach_pricing").delete().eq("id", id);
-
-    if (error) {
-      logger.error("Error deleting coach pricing", { error });
-      return NextResponse.json({ error: "Failed to delete pricing" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in coaching pricing DELETE", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (error) {
+    logger.error("Error deleting coach pricing", { error });
+    return NextResponse.json({ error: "Failed to delete pricing" }, { status: 500 });
   }
-}
+
+  return NextResponse.json({ success: true });
+});

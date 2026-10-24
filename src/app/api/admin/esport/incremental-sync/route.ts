@@ -16,19 +16,13 @@
  */
 
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { defineRoute } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-export async function POST() {
-  try {
-    await requireAdmin();
-  } catch {
-    return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-  }
-
+export const POST = defineRoute({ auth: "admin" }, async () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -69,4 +63,4 @@ export async function POST() {
       { status: 502 },
     );
   }
-}
+});

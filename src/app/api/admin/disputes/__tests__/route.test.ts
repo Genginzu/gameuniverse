@@ -1,16 +1,17 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-const { mockGetUser, adminDb, sessionDb } = vi.hoisted(() => ({
-  mockGetUser: vi.fn(),
+const { adminDb, sessionDb } = vi.hoisted(() => ({
   adminDb: { current: null as ReturnType<typeof createSupabaseQueryMock> | null },
   sessionDb: { current: null as ReturnType<typeof createSupabaseQueryMock> | null },
 }));
 
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
+
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: vi.fn(async () => ({
-    auth: { getUser: mockGetUser },
     from: (table: string) => sessionDb.current!.client.from(table),
   })),
 }));
@@ -26,22 +27,7 @@ vi.mock("@/lib/logger", () => ({
 const { GET, POST } = await import("@/app/api/admin/disputes/route");
 const { PATCH } = await import("@/app/api/admin/disputes/[id]/route");
 
-const ADMIN = {
-  id: "admin-1",
-  email: "boss@example.com",
-  app_metadata: { role: "admin" },
-  user_metadata: {},
-};
-const SELF_PROMOTED = {
-  id: "u-1",
-  email: "p@example.com",
-  app_metadata: {},
-  user_metadata: { role: "admin" },
-};
-
-function signIn(user: object | null) {
-  mockGetUser.mockResolvedValue({ data: { user }, error: null });
-}
+const SELF_PROMOTED = testUser("user", { user_metadata: { role: "admin" } });
 
 function request(url: string, init?: RequestInit) {
   return new NextRequest(url, init as ConstructorParameters<typeof NextRequest>[1]);
@@ -57,18 +43,21 @@ describe("/api/admin/disputes", () => {
   });
 
   test("GET returns 401 when signed out", async () => {
-    signIn(null);
-    expect((await GET(request("http://localhost/api/admin/disputes"))).status).toBe(401);
+    routeEnv.signOut();
+    const res = await GET(request("http://localhost/api/admin/disputes"));
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
   });
 
   test("GET returns 403 for a user who set role=admin in their own user_metadata", async () => {
-    signIn(SELF_PROMOTED);
-    expect((await GET(request("http://localhost/api/admin/disputes"))).status).toBe(403);
+    routeEnv.signIn(SELF_PROMOTED);
+    const res = await GET(request("http://localhost/api/admin/disputes"));
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: "Admin access required", code: "forbidden" });
     expect(adminDb.current!.calls).toHaveLength(0);
   });
 
   test("GET lists all disputes through the service-role client", async () => {
-    signIn(ADMIN);
     adminDb.current!.enqueue("coaching_disputes", {
       data: [
         {
@@ -94,7 +83,7 @@ describe("/api/admin/disputes", () => {
   });
 
   test("POST still lets any signed-in user report through their own session", async () => {
-    signIn(SELF_PROMOTED);
+    routeEnv.signIn(SELF_PROMOTED);
     sessionDb.current!.enqueue("coaching_disputes", { data: { id: "d-2" } });
 
     const res = await POST(
@@ -108,7 +97,7 @@ describe("/api/admin/disputes", () => {
   });
 
   test("POST requires the coaching session the dispute is about", async () => {
-    signIn(SELF_PROMOTED);
+    routeEnv.signIn(SELF_PROMOTED);
 
     const res = await POST(
       request("http://localhost/api/admin/disputes", {
@@ -120,8 +109,34 @@ describe("/api/admin/disputes", () => {
     expect(sessionDb.current!.calls).toHaveLength(0);
   });
 
+  test("POST returns 401 when signed out", async () => {
+    routeEnv.signOut();
+    const res = await POST(
+      request("http://localhost/api/admin/disputes", {
+        method: "POST",
+        body: JSON.stringify({ sessionId: "session-1", reportedId: "coach-1", reason: "no_show" }),
+      })
+    );
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Authentication required", code: "unauthorized" });
+  });
+
+  test("POST returns 429 when the report rate limit is exceeded", async () => {
+    routeEnv.signIn(SELF_PROMOTED);
+    routeEnv.exceedRateLimit(120);
+    const res = await POST(
+      request("http://localhost/api/admin/disputes", {
+        method: "POST",
+        body: JSON.stringify({ sessionId: "session-1", reportedId: "coach-1", reason: "no_show" }),
+      })
+    );
+    expect(res.status).toBe(429);
+    expect(routeEnv.rateLimitHits).toEqual(["report:user:user-1"]);
+    expect(sessionDb.current!.calls).toHaveLength(0);
+  });
+
   test("PATCH returns 403 for a self-promoted user and writes nothing", async () => {
-    signIn(SELF_PROMOTED);
+    routeEnv.signIn(SELF_PROMOTED);
     const res = await PATCH(
       request("http://localhost/api/admin/disputes/d-1", {
         method: "PATCH",
@@ -133,8 +148,20 @@ describe("/api/admin/disputes", () => {
     expect(adminDb.current!.calls).toHaveLength(0);
   });
 
+  test("PATCH rejects an unknown action", async () => {
+    const res = await PATCH(
+      request("http://localhost/api/admin/disputes/d-1", {
+        method: "PATCH",
+        body: JSON.stringify({ action: "delete" }),
+      }),
+      params
+    );
+    expect(res.status).toBe(400);
+    expect((await res.json()).code).toBe("validation");
+    expect(adminDb.current!.calls).toHaveLength(0);
+  });
+
   test("PATCH resolves a dispute and records the admin as resolver", async () => {
-    signIn(ADMIN);
     adminDb.current!.enqueue("coaching_disputes", { data: [{ id: "d-1" }] });
 
     const res = await PATCH(
@@ -156,7 +183,6 @@ describe("/api/admin/disputes", () => {
   });
 
   test("PATCH returns 404 when the dispute does not exist", async () => {
-    signIn(ADMIN);
     adminDb.current!.enqueue("coaching_disputes", { data: [] });
     const res = await PATCH(
       request("http://localhost/api/admin/disputes/d-1", {
@@ -166,5 +192,6 @@ describe("/api/admin/disputes", () => {
       params
     );
     expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "Dispute not found", code: "not_found" });
   });
 });

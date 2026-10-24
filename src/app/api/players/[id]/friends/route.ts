@@ -5,7 +5,7 @@ import { friendRequested } from "@/lib/services/notifications";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { parsePaginationParams } from "@/lib/api-utils";
 import { logger } from "@/lib/logger";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
+import { conflict, defineRoute, notFound, validationError } from "@/lib/api/route";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -47,48 +47,29 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
  * The authenticated user is the sender; [id] is the receiver.
  * Validates: auth, self-request, target exists, no duplicate relationship.
  */
-export async function POST(_request: NextRequest, { params }: RouteContext) {
-  try {
-    const { id: playerId } = await params;
-
-    // Auth required
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const limited = await enforceRateLimit("friendRequest", { userId: user.id });
-    if (limited) return limited;
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "friendRequest" },
+  async ({ user, params }) => {
+    const { id: playerId } = params;
 
     // Cannot send a request to yourself
     if (user.id === playerId) {
-      return NextResponse.json(
-        { error: "Cannot send friend request to yourself" },
-        { status: 400 }
-      );
+      throw validationError(undefined, "Cannot send friend request to yourself");
     }
 
     // Target player must exist
+    const supabase = await createRouteHandlerClient();
     const { data: targetProfile } = await supabase
       .from("profiles")
       .select("id")
       .eq("id", playerId)
       .maybeSingle();
 
-    if (!targetProfile) {
-      return NextResponse.json({ error: "Player not found" }, { status: 404 });
-    }
+    if (!targetProfile) throw notFound("Player not found");
 
     // No existing relationship allowed
     const relationship = await FriendServerService.getRelationshipStatus(user.id, playerId);
-    if (relationship.status !== "none") {
-      return NextResponse.json({ error: "Friendship already exists" }, { status: 409 });
-    }
+    if (relationship.status !== "none") throw conflict("Friendship already exists");
 
     const friendship = await FriendServerService.sendRequest(user.id, playerId);
 
@@ -106,8 +87,5 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
     }
 
     return NextResponse.json(friendship, { status: 201 });
-  } catch (error) {
-    logger.error("Error in friends POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

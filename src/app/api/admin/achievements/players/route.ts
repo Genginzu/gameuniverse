@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import { requireAdmin } from "@/lib/auth-admin";
+import { conflict, defineRoute, notFound, validationError } from "@/lib/api/route";
 import { playerAchievementActionSchema } from "@/lib/validations/admin-achievement-form";
 import { computeLevel } from "@/lib/services/levelSystem";
 import { logger } from "@/lib/logger";
@@ -10,65 +10,39 @@ import { logger } from "@/lib/logger";
  * GET /api/admin/achievements/players?userId=<uuid>
  * Returns the list of achievement_keys unlocked by the player.
  */
-export async function GET(request: NextRequest) {
-  try {
-    await requireAdmin();
+export const GET = defineRoute({ auth: "admin" }, async ({ request }) => {
+  const { searchParams } = new URL(request.url);
+  const userId = searchParams.get("userId");
 
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("userId");
+  if (!userId) {
+    throw validationError([{ message: "userId is required" }], "Invalid input data");
+  }
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: [{ message: "userId is required" }] },
-        { status: 400 }
-      );
-    }
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  const { data: rows, error } = await supabase
+    .from("player_achievements")
+    .select("achievement_key")
+    .eq("user_id", userId);
 
-    const { data: rows, error } = await supabase
-      .from("player_achievements")
-      .select("achievement_key")
-      .eq("user_id", userId);
-
-    if (error) {
-      logger.error("Error fetching player achievements", { error, userId });
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-    }
-
-    const achievements = (rows ?? []).map((r) => r.achievement_key);
-
-    return NextResponse.json({ achievements });
-  } catch (error) {
-    logger.error("Error in player achievements GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
+  if (error) {
+    logger.error("Error fetching player achievements", { error, userId });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+
+  const achievements = (rows ?? []).map((r) => r.achievement_key);
+
+  return NextResponse.json({ achievements });
+});
 
 /**
  * POST /api/admin/achievements/players
  * Assign an achievement to a player: insert player_achievements, add XP, update level.
  */
-export async function POST(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const body = await request.json();
-    const validation = playerAchievementActionSchema.safeParse(body);
-
-    if (!validation.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validation.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { userId, achievementKey } = validation.data;
+export const POST = defineRoute(
+  { auth: "admin", body: playerAchievementActionSchema },
+  async ({ body }) => {
+    const { userId, achievementKey } = body;
     // Admin writes to player_achievements / player_xp / profiles are server-only
     // (issue #372): use the service-role client, authz already done above.
     const supabase = getSupabaseAdmin();
@@ -85,9 +59,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
-    if (!achievement) {
-      return NextResponse.json({ error: "Achievement not found" }, { status: 404 });
-    }
+    if (!achievement) throw notFound("Achievement not found");
 
     // 2. Check if player already has this achievement
     const { data: existing } = await supabase
@@ -97,9 +69,7 @@ export async function POST(request: NextRequest) {
       .eq("achievement_key", achievementKey)
       .maybeSingle();
 
-    if (existing) {
-      return NextResponse.json({ error: "Achievement already assigned" }, { status: 409 });
-    }
+    if (existing) throw conflict("Achievement already assigned");
 
     // 3. Insert into player_achievements
     const { error: insertError } = await supabase.from("player_achievements").insert({
@@ -110,9 +80,7 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       // Handle race condition (unique constraint)
-      if (insertError.code === "23505") {
-        return NextResponse.json({ error: "Achievement already assigned" }, { status: 409 });
-      }
+      if (insertError.code === "23505") throw conflict("Achievement already assigned");
       logger.error("Error inserting player achievement", { error: insertError, userId });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
@@ -122,36 +90,17 @@ export async function POST(request: NextRequest) {
     await upsertPlayerXp(supabase, userId, xpValue, "add");
 
     return NextResponse.json({ success: true }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in player achievements POST", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/admin/achievements/players
  * Revoke an achievement from a player: remove player_achievements, subtract XP, update level.
  */
-export async function DELETE(request: NextRequest) {
-  try {
-    await requireAdmin();
-
-    const body = await request.json();
-    const validation = playerAchievementActionSchema.safeParse(body);
-
-    if (!validation.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validation.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { userId, achievementKey } = validation.data;
+export const DELETE = defineRoute(
+  { auth: "admin", body: playerAchievementActionSchema },
+  async ({ body }) => {
+    const { userId, achievementKey } = body;
     // Server-only writes (issue #372): service-role client, authz done above.
     const supabase = getSupabaseAdmin();
 
@@ -167,9 +116,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
-    if (!achievement) {
-      return NextResponse.json({ error: "Achievement not found" }, { status: 404 });
-    }
+    if (!achievement) throw notFound("Achievement not found");
 
     // 2. Check if player has this achievement
     const { data: existing } = await supabase
@@ -179,9 +126,7 @@ export async function DELETE(request: NextRequest) {
       .eq("achievement_key", achievementKey)
       .maybeSingle();
 
-    if (!existing) {
-      return NextResponse.json({ error: "Achievement not assigned to player" }, { status: 404 });
-    }
+    if (!existing) throw notFound("Achievement not assigned to player");
 
     // 3. Delete from player_achievements
     const { error: deleteError } = await supabase
@@ -200,16 +145,8 @@ export async function DELETE(request: NextRequest) {
     await upsertPlayerXp(supabase, userId, xpValue, "subtract");
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in player achievements DELETE", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 // --- Helper ---
 

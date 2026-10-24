@@ -1,46 +1,32 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { defineRoute } from "@/lib/api/route";
 import { CoinService } from "@/lib/services/coinService";
 import type { CoinActivityType } from "@/types/coins";
 
-async function requireAdmin() {
-  const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+type RewardConfigUpdates = Parameters<typeof CoinService.updateRewardConfig>[1];
 
-  const { data } = await supabase.rpc("is_admin", { user_id: user.id });
-  return data ? user : null;
-}
+const configUpdateSchema = z.looseObject({ activityType: z.string().min(1) });
 
-export async function GET() {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+export const GET = defineRoute({ auth: "admin" }, async () => {
   try {
     const config = await CoinService.getRewardConfig();
     return NextResponse.json({ config });
   } catch {
     return NextResponse.json({ error: "Failed to fetch config" }, { status: 500 });
   }
-}
+});
 
-export async function PATCH(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+export const PATCH = defineRoute({ auth: "admin", body: configUpdateSchema }, async ({ body }) => {
   try {
-    const body = await request.json();
     const { activityType, ...updates } = body;
 
-    if (!activityType) {
-      return NextResponse.json({ error: "activityType is required" }, { status: 400 });
-    }
-
-    const config = await CoinService.updateRewardConfig(activityType as CoinActivityType, updates);
+    const config = await CoinService.updateRewardConfig(
+      activityType as CoinActivityType,
+      updates as RewardConfigUpdates
+    );
     return NextResponse.json({ config });
   } catch {
     return NextResponse.json({ error: "Failed to update config" }, { status: 500 });
   }
-}
+});

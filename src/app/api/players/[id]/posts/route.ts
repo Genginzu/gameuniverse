@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { z } from "zod";
+import { defineRoute, forbidden, validationError } from "@/lib/api/route";
 import { PlayerService } from "@/lib/services/playerService";
 import { PlayerPostsServerService } from "@/lib/services/playerPostsServerService";
 import { isValidImageUrl } from "@/lib/utils/postContentParser";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
-import { suspendedResponse } from "@/lib/services/suspensionGuard";
 import type { PostsResponse } from "@/types/post";
-import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 const PAGE_SIZE = 20;
+
+const postBodySchema = z.looseObject({
+  content: z.unknown().optional(),
+  imageUrl: z.unknown().optional(),
+  tags: z.unknown().optional(),
+});
 
 function parsePage(searchParams: URLSearchParams): number {
   const raw = searchParams.get("page");
@@ -58,51 +63,35 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 /**
  * POST /api/players/[id]/posts — Create a new post.
  */
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id: playerId } = await params;
-
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
-    }
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "post", writesContent: true, body: postBodySchema },
+  async ({ user, params, body }) => {
+    const { id: playerId } = params;
 
     // Only the profile owner can post on their own profile
-    if (user.id !== playerId) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    if (user.id !== playerId) throw forbidden("Forbidden");
 
-    const limited = await enforceRateLimit("post", { userId: user.id });
-    if (limited) return limited;
-
-    const suspended = await suspendedResponse(user.id);
-    if (suspended) return suspended;
-
-    const body = await request.json().catch(() => null);
-    const content = typeof body?.content === "string" ? body.content : "";
+    const content = typeof body.content === "string" ? body.content : "";
 
     if (!content.trim()) {
-      return NextResponse.json({ error: "Content is required" }, { status: 400 });
+      throw validationError(undefined, "Content is required");
     }
 
     if (content.length > 2000) {
-      return NextResponse.json({ error: "Content exceeds 2000 characters" }, { status: 400 });
+      throw validationError(undefined, "Content exceeds 2000 characters");
     }
 
-    const imageUrl = typeof body?.imageUrl === "string" ? body.imageUrl : undefined;
+    const imageUrl = typeof body.imageUrl === "string" ? body.imageUrl : undefined;
 
     if (imageUrl && !isValidImageUrl(imageUrl)) {
-      return NextResponse.json({ error: "Invalid image URL (must be https://)" }, { status: 400 });
+      throw validationError(undefined, "Invalid image URL (must be https://)");
     }
 
     // Accept explicit tags from the client (TagInput component)
-    const explicitTags = Array.isArray(body?.tags)
-      ? body.tags.filter((t: unknown) => typeof t === "string" && t.length > 0).slice(0, 10)
+    const explicitTags = Array.isArray(body.tags)
+      ? body.tags
+          .filter((t: unknown): t is string => typeof t === "string" && t.length > 0)
+          .slice(0, 10)
       : undefined;
 
     const post = await PlayerPostsServerService.createPost(
@@ -116,8 +105,5 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     );
 
     return NextResponse.json(post, { status: 201 });
-  } catch (error) {
-    logger.error("Error in player posts POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);

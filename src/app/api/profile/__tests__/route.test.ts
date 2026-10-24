@@ -1,30 +1,23 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { testUser, useTestRouteEnvironment } from "@/test-helpers/route-environment";
 
-// Create mock functions
-const mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
 const mockFrom = vi.fn(() => ({}));
 
 const mockSupabase = {
-  auth: {
-    getUser: mockGetUser,
-  },
   from: mockFrom,
 };
 
-// Mock the module
 vi.mock("@/lib/supabase-server", () => ({
   createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
   createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
 }));
 
-// Import after mocking
 import { GET, PATCH } from "@/app/api/profile/route";
 
-const mockUser = {
-  id: "123",
-  email: "test@example.com",
-};
+const routeEnv = useTestRouteEnvironment({ signedInAs: "user" });
+
+const mockUser = testUser("user", { id: "123", email: "test@example.com" });
 
 const mockProfile = {
   id: "123",
@@ -35,19 +28,26 @@ const mockProfile = {
   updated_at: "2024-01-01T00:00:00Z",
 };
 
+function patchRequest(body: object) {
+  return new NextRequest("http://localhost:3000/api/profile", {
+    method: "PATCH",
+    body: JSON.stringify(body),
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+function getRequest() {
+  return new NextRequest("http://localhost:3000/api/profile");
+}
+
 describe("/api/profile", () => {
   beforeEach(() => {
-    mockGetUser.mockReset();
     mockFrom.mockReset();
+    routeEnv.signIn(mockUser);
   });
 
   describe("GET", () => {
     it("should return user profile successfully", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: mockUser },
-        error: null,
-      });
-
       const mockSelect = {
         eq: vi.fn(() => mockSelect),
         single: vi.fn(() =>
@@ -62,7 +62,7 @@ describe("/api/profile", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -73,24 +73,16 @@ describe("/api/profile", () => {
     });
 
     it("should return 401 when user not authenticated", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: null },
-        error: { message: "Not authenticated" },
-      });
+      routeEnv.signOut();
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(401);
-      expect(data.error).toBe("Unauthorized");
+      expect(data).toEqual({ error: "Authentication required", code: "unauthorized" });
     });
 
     it("should return 500 when profile fetch fails", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: mockUser },
-        error: null,
-      });
-
       const mockSelect = {
         eq: vi.fn(() => mockSelect),
         single: vi.fn(() =>
@@ -105,7 +97,7 @@ describe("/api/profile", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -120,11 +112,6 @@ describe("/api/profile", () => {
         username: "Updated Name",
         updated_at: expect.any(String),
       };
-
-      mockGetUser.mockResolvedValue({
-        data: { user: mockUser },
-        error: null,
-      });
 
       const mockUpdate = {
         eq: vi.fn(() => mockUpdate),
@@ -141,13 +128,7 @@ describe("/api/profile", () => {
         update: vi.fn(() => mockUpdate),
       });
 
-      const request = new NextRequest("http://localhost:3000/api/profile", {
-        method: "PATCH",
-        body: JSON.stringify({ username: "Updated Name" }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const response = await PATCH(request);
+      const response = await PATCH(patchRequest({ username: "Updated Name" }));
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -155,30 +136,36 @@ describe("/api/profile", () => {
     });
 
     it("should return 401 when user not authenticated", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: null },
-        error: { message: "Not authenticated" },
-      });
+      routeEnv.signOut();
 
-      const request = new NextRequest("http://localhost:3000/api/profile", {
-        method: "PATCH",
-        body: JSON.stringify({ username: "Updated Name" }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const response = await PATCH(request);
+      const response = await PATCH(patchRequest({ username: "Updated Name" }));
       const data = await response.json();
 
       expect(response.status).toBe(401);
-      expect(data.error).toBe("Unauthorized");
+      expect(data).toEqual({ error: "Authentication required", code: "unauthorized" });
+    });
+
+    it("should return 403 when the account is suspended", async () => {
+      routeEnv.suspend("2030-01-01T00:00:00Z");
+
+      const response = await PATCH(patchRequest({ username: "Updated Name" }));
+
+      expect(response.status).toBe(403);
+      expect(await response.json()).toMatchObject({ code: "suspended" });
+      expect(mockFrom).not.toHaveBeenCalled();
+    });
+
+    it("should return 429 when the profileUpdate rate limit is exceeded", async () => {
+      routeEnv.exceedRateLimit(30);
+
+      const response = await PATCH(patchRequest({ username: "Updated Name" }));
+
+      expect(response.status).toBe(429);
+      expect(await response.json()).toMatchObject({ code: "rate_limited", retryAfter: 30 });
+      expect(routeEnv.rateLimitHits).toEqual(["profileUpdate:user:123"]);
     });
 
     it("should filter out invalid fields", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: mockUser },
-        error: null,
-      });
-
       const mockUpdate = {
         eq: vi.fn(() => mockUpdate),
         select: vi.fn(() => mockUpdate),
@@ -194,58 +181,39 @@ describe("/api/profile", () => {
         update: vi.fn(() => mockUpdate),
       });
 
-      const request = new NextRequest("http://localhost:3000/api/profile", {
-        method: "PATCH",
-        body: JSON.stringify({
+      const response = await PATCH(
+        patchRequest({
           username: "Updated Name",
           invalid_field: "should be filtered",
           email: "should be filtered",
-        }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const response = await PATCH(request);
+        })
+      );
 
       expect(response.status).toBe(200);
     });
 
     it("should return 400 when no valid fields provided", async () => {
-      mockGetUser.mockResolvedValue({
-        data: { user: mockUser },
-        error: null,
-      });
-
-      const request = new NextRequest("http://localhost:3000/api/profile", {
-        method: "PATCH",
-        body: JSON.stringify({ invalid_field: "value" }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const response = await PATCH(request);
+      const response = await PATCH(patchRequest({ invalid_field: "value" }));
       const data = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data.error).toBe("No valid fields to update");
+      expect(data).toEqual({ error: "No valid fields to update", code: "validation" });
     });
 
     it("should toggle stats_private and ignore privileged fields", async () => {
-      mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
-
       const updateChain = {
         eq: vi.fn(() => updateChain),
         select: vi.fn(() => updateChain),
-        single: vi.fn(() => Promise.resolve({ data: { ...mockProfile, stats_private: true }, error: null })),
+        single: vi.fn(() =>
+          Promise.resolve({ data: { ...mockProfile, stats_private: true }, error: null })
+        ),
       };
       const update = vi.fn(() => updateChain);
       mockFrom.mockReturnValue({ update });
 
-      const request = new NextRequest("http://localhost:3000/api/profile", {
-        method: "PATCH",
-        body: JSON.stringify({ stats_private: true, level: 99, avatar_url: "https://evil.test/x.png" }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const response = await PATCH(request);
+      const response = await PATCH(
+        patchRequest({ stats_private: true, level: 99, avatar_url: "https://evil.test/x.png" })
+      );
 
       expect(response.status).toBe(200);
       const payload = (update.mock.calls[0] as unknown[])[0] as Record<string, unknown>;
@@ -255,16 +223,7 @@ describe("/api/profile", () => {
     });
 
     it("should reject a non-boolean stats_private", async () => {
-      mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
-      mockFrom.mockClear();
-
-      const request = new NextRequest("http://localhost:3000/api/profile", {
-        method: "PATCH",
-        body: JSON.stringify({ stats_private: "yes" }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const response = await PATCH(request);
+      const response = await PATCH(patchRequest({ stats_private: "yes" }));
 
       expect(response.status).toBe(400);
       expect(mockFrom).not.toHaveBeenCalled();

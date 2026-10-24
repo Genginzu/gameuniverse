@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import type { User } from "@supabase/supabase-js";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { validatePlayerId } from "@/lib/utils/statsFormatters";
 import { untypedTable } from "@/lib/utils/untypedTable";
 import { logger } from "@/lib/logger";
+import { defineRoute, forbidden, notFound, validationError } from "@/lib/api/route";
 
 const VALID_GOAL_TYPES = [
   "games_to_complete",
@@ -11,54 +14,49 @@ const VALID_GOAL_TYPES = [
   "collections_to_create",
 ] as const;
 
-/** Authenticate and verify ownership. Returns user id or error response. */
-async function authenticateOwner(params: Promise<{ id: string }>) {
-  const { id: playerId } = await params;
+// Field values are checked in the handlers so the dedicated 400/404 messages stay unchanged.
+const createGoalSchema = z.object({
+  goal_type: z.any().optional(),
+  target_value: z.any().optional(),
+  deadline: z.any().optional(),
+});
 
+const updateGoalSchema = z.object({
+  id: z.any().optional(),
+  target_value: z.any().optional(),
+  deadline: z.any().optional(),
+});
+
+/** Verify the caller owns the player profile. Returns the user id and a Supabase client. */
+async function authorizeOwner(user: User, playerId: string) {
   if (!validatePlayerId(playerId)) {
-    return {
-      error: NextResponse.json({ error: "Format d'identifiant invalide" }, { status: 400 }),
-    };
-  }
-
-  const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return {
-      error: NextResponse.json({ error: "Non authentifié" }, { status: 401 }),
-    };
+    throw validationError(undefined, "Format d'identifiant invalide");
   }
 
   if (user.id !== playerId) {
-    return {
-      error: NextResponse.json({ error: "Non autorisé" }, { status: 403 }),
-    };
+    throw forbidden("Non autorisé");
   }
 
+  const supabase = await createRouteHandlerClient();
   return { playerId, userId: user.id, supabase };
 }
 
 /** POST — Create a new personal goal */
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const auth = await authenticateOwner(params);
-    if ("error" in auth) return auth.error;
-    const { userId, supabase } = auth;
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "goal", body: createGoalSchema },
+  async ({ user, params, body }) => {
+    const { userId, supabase } = await authorizeOwner(user, params.id);
 
-    const body = await request.json();
     const { goal_type, target_value, deadline } = body;
 
     // Validate goal_type
     if (!VALID_GOAL_TYPES.includes(goal_type)) {
-      return NextResponse.json({ error: "Type d'objectif invalide" }, { status: 400 });
+      throw validationError(undefined, "Type d'objectif invalide");
     }
 
     // Validate target_value
     if (typeof target_value !== "number" || target_value <= 0) {
-      return NextResponse.json({ error: "Valeur cible invalide" }, { status: 400 });
+      throw validationError(undefined, "Valeur cible invalide");
     }
 
     const { data, error } = await untypedTable(supabase, "player_goals")
@@ -77,29 +75,24 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     return NextResponse.json(data, { status: 201 });
-  } catch (error) {
-    logger.error("Error in POST goals API", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /** PUT — Update an existing goal */
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const auth = await authenticateOwner(params);
-    if ("error" in auth) return auth.error;
-    const { userId, supabase } = auth;
+export const PUT = defineRoute(
+  { auth: "required", body: updateGoalSchema },
+  async ({ user, params, body }) => {
+    const { userId, supabase } = await authorizeOwner(user, params.id);
 
-    const body = await request.json();
     const { id, target_value, deadline } = body;
 
     if (!id) {
-      return NextResponse.json({ error: "Objectif non trouvé" }, { status: 404 });
+      throw notFound("Objectif non trouvé");
     }
 
     // Validate target_value if provided
     if (target_value !== undefined && (typeof target_value !== "number" || target_value <= 0)) {
-      return NextResponse.json({ error: "Valeur cible invalide" }, { status: 400 });
+      throw validationError(undefined, "Valeur cible invalide");
     }
 
     // Check goal exists and belongs to user
@@ -110,7 +103,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .single();
 
     if (fetchError || !existing) {
-      return NextResponse.json({ error: "Objectif non trouvé" }, { status: 404 });
+      throw notFound("Objectif non trouvé");
     }
 
     // Build update payload
@@ -131,63 +124,50 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     return NextResponse.json(data);
-  } catch (error) {
-    logger.error("Error in PUT goals API", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /** DELETE — Delete a goal */
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const auth = await authenticateOwner(params);
-    if ("error" in auth) return auth.error;
-    const { userId, supabase } = auth;
+export const DELETE = defineRoute({ auth: "required" }, async ({ request, user, params }) => {
+  const { userId, supabase } = await authorizeOwner(user, params.id);
 
-    // Try query param first, then body
-    const { searchParams } = new URL(request.url);
-    let goalId = searchParams.get("id");
+  // Try query param first, then body
+  const { searchParams } = new URL(request.url);
+  let goalId = searchParams.get("id");
 
-    if (!goalId) {
-      try {
-        const body = await request.json();
-        goalId = body.id;
-      } catch {
-        // No body provided
-      }
+  if (!goalId) {
+    try {
+      const body = await request.json();
+      goalId = body.id;
+    } catch {
+      // No body provided
     }
+  }
 
-    if (!goalId) {
-      return NextResponse.json({ error: "Objectif non trouvé" }, { status: 404 });
-    }
+  if (!goalId) {
+    throw notFound("Objectif non trouvé");
+  }
 
-    // Check goal exists and belongs to user
-    const { data: existing, error: fetchError } = await untypedTable(supabase, "player_goals")
-      .select("id")
-      .eq("id", goalId)
-      .eq("user_id", userId)
-      .single();
+  // Check goal exists and belongs to user
+  const { data: existing, error: fetchError } = await untypedTable(supabase, "player_goals")
+    .select("id")
+    .eq("id", goalId)
+    .eq("user_id", userId)
+    .single();
 
-    if (fetchError || !existing) {
-      return NextResponse.json({ error: "Objectif non trouvé" }, { status: 404 });
-    }
+  if (fetchError || !existing) {
+    throw notFound("Objectif non trouvé");
+  }
 
-    const { error } = await untypedTable(supabase, "player_goals")
-      .delete()
-      .eq("id", goalId)
-      .eq("user_id", userId);
+  const { error } = await untypedTable(supabase, "player_goals")
+    .delete()
+    .eq("id", goalId)
+    .eq("user_id", userId);
 
-    if (error) {
-      logger.error("Error deleting goal", { error });
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-    }
-
-    return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    logger.error("Error in DELETE goals API", { error });
+  if (error) {
+    logger.error("Error deleting goal", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+
+  return new NextResponse(null, { status: 204 });
+});

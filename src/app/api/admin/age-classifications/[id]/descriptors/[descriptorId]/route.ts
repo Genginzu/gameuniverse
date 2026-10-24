@@ -1,98 +1,70 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { conflict, defineRoute, notFound } from "@/lib/api/route";
 import { adminDescriptorFormSchema } from "@/lib/validations/admin-descriptor-form";
 import { logger } from "@/lib/logger";
-
-type RouteParams = { params: Promise<{ id: string; descriptorId: string }> };
 
 /**
  * GET /api/admin/age-classifications/[id]/descriptors/[descriptorId]
  * Get a single content descriptor with translations and game count
  */
-export async function GET(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const GET = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { descriptorId } = params;
 
-    const { descriptorId } = await params;
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  const { data: descriptor, error } = await supabase
+    .from("content_descriptors")
+    .select(
+      "id, rating_system_id, code, icon_url, content_descriptor_translations(content_descriptor_id, language_code, name, description)"
+    )
+    .eq("id", descriptorId)
+    .single();
 
-    const { data: descriptor, error } = await supabase
-      .from("content_descriptors")
-      .select(
-        "id, rating_system_id, code, icon_url, content_descriptor_translations(content_descriptor_id, language_code, name, description)"
-      )
-      .eq("id", descriptorId)
-      .single();
+  if (error || !descriptor) throw notFound("Content descriptor not found");
 
-    if (error || !descriptor) {
-      return NextResponse.json({ error: "Content descriptor not found" }, { status: 404 });
-    }
+  // Count game associations
+  const { count } = await supabase
+    .from("game_rating_descriptors")
+    .select("id", { count: "exact", head: true })
+    .eq("content_descriptor_id", descriptorId);
 
-    // Count game associations
-    const { count } = await supabase
-      .from("game_rating_descriptors")
-      .select("id", { count: "exact", head: true })
-      .eq("content_descriptor_id", descriptorId);
+  type TranslationRow = {
+    content_descriptor_id: string;
+    language_code: string;
+    name: string;
+    description: string | null;
+  };
 
-    type TranslationRow = {
-      content_descriptor_id: string;
-      language_code: string;
-      name: string;
-      description: string | null;
-    };
-
-    const translations = (
-      (descriptor.content_descriptor_translations || []) as TranslationRow[]
-    ).map((t) => ({
+  const translations = ((descriptor.content_descriptor_translations || []) as TranslationRow[]).map(
+    (t) => ({
       language_code: t.language_code,
       name: t.name,
       description: t.description || "",
-    }));
+    })
+  );
 
-    return NextResponse.json({
-      descriptor: {
-        id: descriptor.id,
-        rating_system_id: descriptor.rating_system_id,
-        code: descriptor.code,
-        icon_url: descriptor.icon_url,
-        translations,
-        gameCount: count || 0,
-      },
-    });
-  } catch (error) {
-    logger.error("Error in admin descriptor GET", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
+  return NextResponse.json({
+    descriptor: {
+      id: descriptor.id,
+      rating_system_id: descriptor.rating_system_id,
+      code: descriptor.code,
+      icon_url: descriptor.icon_url,
+      translations,
+      gameCount: count || 0,
+    },
+  });
+});
 
 /**
  * PUT /api/admin/age-classifications/[id]/descriptors/[descriptorId]
  * Update a content descriptor and upsert its translations
  */
-export async function PUT(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
-
-    const { id, descriptorId } = await params;
-    const body = await request.json();
-
-    const validationResult = adminDescriptorFormSchema.safeParse(body);
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { code, icon_url, translations } = validationResult.data;
+export const PUT = defineRoute(
+  { auth: "admin", body: adminDescriptorFormSchema },
+  async ({ params, body }) => {
+    const { id, descriptorId } = params;
+    const { code, icon_url, translations } = body;
 
     const supabase = await createRouteHandlerClient();
 
@@ -103,9 +75,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", descriptorId)
       .single();
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Content descriptor not found" }, { status: 404 });
-    }
+    if (checkError || !existing) throw notFound("Content descriptor not found");
 
     // Check for duplicate code within the same system (excluding current descriptor)
     const { data: duplicate } = await supabase
@@ -117,10 +87,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .maybeSingle();
 
     if (duplicate) {
-      return NextResponse.json(
-        { error: "A content descriptor with this code already exists in this system" },
-        { status: 409 }
-      );
+      throw conflict("A content descriptor with this code already exists in this system");
     }
 
     // Update the descriptor fields
@@ -187,90 +154,61 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         gameCount: count || 0,
       },
     });
-  } catch (error) {
-    logger.error("Error in admin descriptor PUT", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/admin/age-classifications/[id]/descriptors/[descriptorId]
  * Delete a content descriptor (only if not associated with games)
  */
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
-  try {
-    await requireAdmin();
+export const DELETE = defineRoute({ auth: "admin" }, async ({ params }) => {
+  const { descriptorId } = params;
 
-    const { descriptorId } = await params;
+  const supabase = await createRouteHandlerClient();
 
-    const supabase = await createRouteHandlerClient();
+  // Check if descriptor exists
+  const { data: existing, error: checkError } = await supabase
+    .from("content_descriptors")
+    .select("id")
+    .eq("id", descriptorId)
+    .single();
 
-    // Check if descriptor exists
-    const { data: existing, error: checkError } = await supabase
-      .from("content_descriptors")
-      .select("id")
-      .eq("id", descriptorId)
-      .single();
+  if (checkError || !existing) throw notFound("Content descriptor not found");
 
-    if (checkError || !existing) {
-      return NextResponse.json({ error: "Content descriptor not found" }, { status: 404 });
-    }
+  // Check for game associations
+  const { count: usageCount } = await supabase
+    .from("game_rating_descriptors")
+    .select("id", { count: "exact", head: true })
+    .eq("content_descriptor_id", descriptorId);
 
-    // Check for game associations
-    const { count: usageCount } = await supabase
-      .from("game_rating_descriptors")
-      .select("id", { count: "exact", head: true })
-      .eq("content_descriptor_id", descriptorId);
-
-    if (usageCount && usageCount > 0) {
-      return NextResponse.json(
-        {
-          error: "Content descriptor is in use",
-          type: "IN_USE",
-          usageCount,
-        },
-        { status: 409 }
-      );
-    }
-
-    // Delete translations first
-    const { error: translationDeleteError } = await supabase
-      .from("content_descriptor_translations")
-      .delete()
-      .eq("content_descriptor_id", descriptorId);
-
-    if (translationDeleteError) {
-      logger.error("Error deleting descriptor translations", { error: translationDeleteError });
-      return NextResponse.json(
-        { error: "Failed to delete descriptor translations" },
-        { status: 500 }
-      );
-    }
-
-    // Delete the descriptor
-    const { error: deleteError } = await supabase
-      .from("content_descriptors")
-      .delete()
-      .eq("id", descriptorId);
-
-    if (deleteError) {
-      logger.error("Error deleting descriptor", { error: deleteError });
-      return NextResponse.json({ error: "Failed to delete descriptor" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    logger.error("Error in admin descriptor DELETE", { error });
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  if (usageCount && usageCount > 0) {
+    throw conflict("Content descriptor is in use", { type: "IN_USE", usageCount });
   }
-}
+
+  // Delete translations first
+  const { error: translationDeleteError } = await supabase
+    .from("content_descriptor_translations")
+    .delete()
+    .eq("content_descriptor_id", descriptorId);
+
+  if (translationDeleteError) {
+    logger.error("Error deleting descriptor translations", { error: translationDeleteError });
+    return NextResponse.json(
+      { error: "Failed to delete descriptor translations" },
+      { status: 500 }
+    );
+  }
+
+  // Delete the descriptor
+  const { error: deleteError } = await supabase
+    .from("content_descriptors")
+    .delete()
+    .eq("id", descriptorId);
+
+  if (deleteError) {
+    logger.error("Error deleting descriptor", { error: deleteError });
+    return NextResponse.json({ error: "Failed to delete descriptor" }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+});

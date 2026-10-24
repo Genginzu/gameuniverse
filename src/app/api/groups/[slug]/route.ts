@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { defineRoute, forbidden, notFound } from "@/lib/api/route";
 import { GroupServerService } from "@/lib/services/groupServerService";
 import { GroupMembersServerService } from "@/lib/services/groupMembersServerService";
 import { updateGroupSchema } from "@/lib/validations/group";
@@ -41,80 +42,37 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
  * PATCH /api/groups/[slug] — Update a group.
  * Authentication required. Only owner/admin members can update.
  */
-export async function PATCH(request: NextRequest, { params }: RouteContext) {
-  try {
-    const { slug } = await params;
-
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export const PATCH = defineRoute(
+  { auth: "required", rateLimit: "groupUpdate", writesContent: true, body: updateGroupSchema },
+  async ({ user, params, body }) => {
+    const { slug } = params;
 
     const access = await GroupServerService.getGroupAccess(slug);
-    if (!access) {
-      return NextResponse.json({ error: "Group not found" }, { status: 404 });
-    }
+    if (!access) throw notFound("Group not found");
 
     const role = await GroupMembersServerService.getMemberRole(access.id, user.id);
-    if (role !== "owner" && role !== "moderator") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    if (role !== "owner" && role !== "moderator") throw forbidden("Forbidden");
 
-    const body = await request.json();
-    const parsed = updateGroupSchema.safeParse(body);
-
-    if (!parsed.success) {
-      const messages = parsed.error.issues.map((issue) => issue.message);
-      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
-    }
-
-    await GroupServerService.updateGroup(slug, parsed.data);
+    await GroupServerService.updateGroup(slug, body);
     const updated = await GroupServerService.fetchGroupBySlug(slug, user.id);
 
     return NextResponse.json({ group: updated });
-  } catch (error) {
-    logger.error("Error in group PATCH", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
 
 /**
  * DELETE /api/groups/[slug] — Delete a group.
  * Authentication required. Only the owner can delete.
  */
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
-  try {
-    const { slug } = await params;
+export const DELETE = defineRoute({ auth: "required" }, async ({ user, params }) => {
+  const { slug } = params;
 
-    const supabase = await createRouteHandlerClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+  const access = await GroupServerService.getGroupAccess(slug);
+  if (!access) throw notFound("Group not found");
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (access.ownerId !== user.id) throw forbidden("Forbidden");
 
-    const access = await GroupServerService.getGroupAccess(slug);
-    if (!access) {
-      return NextResponse.json({ error: "Group not found" }, { status: 404 });
-    }
+  await GroupServerService.deleteGroup(slug);
 
-    if (access.ownerId !== user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    await GroupServerService.deleteGroup(slug);
-
-    return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    logger.error("Error in group DELETE", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
-}
+  return new NextResponse(null, { status: 204 });
+});

@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { conflict, defineRoute, forbidden, notFound, validationError } from "@/lib/api/route";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
+
+const createReviewSchema = z.looseObject({
+  sessionId: z.any().optional(),
+  rating: z.any().optional(),
+  comment: z.any().optional(),
+});
 
 /** GET /api/coaching/reviews?coachId=xxx — Public: get reviews for a coach */
 export async function GET(request: NextRequest) {
@@ -46,19 +54,14 @@ export async function GET(request: NextRequest) {
 }
 
 /** POST /api/coaching/reviews — Create a review for a completed session */
-export async function POST(request: NextRequest) {
-  try {
+export const POST = defineRoute(
+  { auth: "required", rateLimit: "review", writesContent: true, body: createReviewSchema },
+  async ({ user, body }) => {
     const supabase: S = await createRouteHandlerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { sessionId, rating, comment } = await request.json();
-    if (!sessionId || !rating)
-      return NextResponse.json({ error: "sessionId and rating required" }, { status: 400 });
-    if (rating < 1 || rating > 5)
-      return NextResponse.json({ error: "Rating must be 1-5" }, { status: 400 });
+    const { sessionId, rating, comment } = body;
+    if (!sessionId || !rating) throw validationError(undefined, "sessionId and rating required");
+    if (rating < 1 || rating > 5) throw validationError(undefined, "Rating must be 1-5");
 
     // Verify session is completed and belongs to user
     const { data: session } = await supabase
@@ -67,9 +70,8 @@ export async function POST(request: NextRequest) {
       .eq("id", sessionId)
       .single();
 
-    if (!session) return NextResponse.json({ error: "Session not found" }, { status: 404 });
-    if (session.student_id !== user.id)
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!session) throw notFound("Session not found");
+    if (session.student_id !== user.id) throw forbidden("Forbidden");
     if (session.status !== "completed")
       return NextResponse.json({ error: "Session must be completed" }, { status: 400 });
 
@@ -79,7 +81,7 @@ export async function POST(request: NextRequest) {
       .select("id")
       .eq("session_id", sessionId)
       .single();
-    if (existing) return NextResponse.json({ error: "Already reviewed" }, { status: 409 });
+    if (existing) throw conflict("Already reviewed");
 
     const { data: review, error } = await supabase
       .from("coaching_reviews")
@@ -99,8 +101,5 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ review }, { status: 201 });
-  } catch (error) {
-    logger.error("Error in reviews POST", { error });
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+);
