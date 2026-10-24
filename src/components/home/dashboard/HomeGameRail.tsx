@@ -21,6 +21,10 @@ import { HOME_RAIL_ITEM as ITEM_CLASSES } from "./layout";
 export interface HomeRailItem {
   game: GameSummary;
   overlay?: GameCardOverlay;
+  /** Control layered over the card (positioned absolutely by the caller). */
+  action?: ReactNode;
+  /** Short text under the card (e.g. why it is recommended). */
+  caption?: string;
 }
 
 interface HomeGameRailProps {
@@ -62,9 +66,18 @@ export function HomeGameRail({
 
   return (
     <ul ref={railRef} className={RAIL_CLASSES} aria-label={label}>
-      {items.map(({ game, overlay }, index) => (
-        <li key={game.id} className={ITEM_CLASSES}>
-          <GameCard game={game} overlay={overlay} priority={index < priorityCount} />
+      {items.map(({ game, overlay, action, caption }, index) => (
+        <li key={game.id} className={`${ITEM_CLASSES} flex flex-col gap-2`}>
+          {/* The action is a sibling of the card link: no button nested in <a>. */}
+          <div className="group/card relative">
+            <GameCard game={game} overlay={overlay} priority={index < priorityCount} />
+            {action}
+          </div>
+          {caption && (
+            <p className="text-editorial-muted line-clamp-2 px-0.5 text-xs leading-snug sm:text-sm">
+              {caption}
+            </p>
+          )}
         </li>
       ))}
     </ul>

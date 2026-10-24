@@ -90,11 +90,11 @@ bout, puis la page reprend (`useHorizontalWheelScroll`).
 
 `/dashboard` reste la page compte (infos du compte, stats, accès rapides).
 
-Recommandations : le calcul serveur peut être long (un passage par jeu de la
-bibliothèque, résultat mis en cache 1 h). Pendant le chargement, `HomeLoadingNotice`
-affiche un message (plus un second après 6 s). Le bouton « Recalculer » appelle
-`/api/recommendations/personal?refresh=1`, qui ignore le cache agrégé (limité à
-5 fois / 10 min, action `recommendationRefresh`).
+Recommandations : le moteur SQL note tout le catalogue en une passe (≈ 1 s,
+voir [Recommandations](games/recommendations.md)), sans cache serveur. Pendant
+le chargement, `HomeLoadingNotice` affiche un message (plus un second après
+6 s). « Recalculer » relance le calcul. Chaque carte indique le jeu source le
+plus proche (« Proche de … ») et propose « Pas intéressé » (avec « Annuler »).
 
 ## Tendances (`hybrid_popularity_score`)
 

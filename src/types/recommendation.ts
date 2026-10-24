@@ -1,3 +1,10 @@
+/** Library game that explains a recommendation ("because you play …"). */
+export interface RecommendationReason {
+  id: string;
+  slug: string;
+  title: string;
+}
+
 /** Résultat de recommandation pour un jeu */
 export interface GameRecommendation {
   id: string;
@@ -8,6 +15,8 @@ export interface GameRecommendation {
   developer: string;
   metascore: number | null;
   combinedScore: number;
+  /** Source game closest to this pick; null for game-page recommendations. */
+  reason?: RecommendationReason | null;
 }
 
 /** Réponse de l'API de recommandations */
@@ -22,21 +31,4 @@ export interface PersonalRecommendationsResponse {
   recommendations: GameRecommendation[];
   basedOnGameCount: number;
   generatedAt: string;
-}
-
-/** Configuration des poids de scoring */
-export interface ScoringWeights {
-  genre: number;
-  collaborative: number;
-  review: number;
-  metacritic: number;
-}
-
-/** Scores individuels d'un candidat */
-export interface CandidateScores {
-  genreScore: number;
-  collaborativeScore: number;
-  reviewScore: number;
-  /** null when the candidate game has no metascore — signal is excluded from weighting */
-  metacriticScore: number | null;
 }

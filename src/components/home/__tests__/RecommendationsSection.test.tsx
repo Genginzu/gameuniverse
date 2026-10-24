@@ -20,6 +20,20 @@ const recs = vi.hoisted(() => ({
 vi.mock("@/hooks/usePersonalRecommendations", () => ({
   usePersonalRecommendations: () => recs.state,
 }));
+
+const dismissal = vi.hoisted(() => ({
+  state: {
+    dismiss: (() => Promise.resolve()) as (rec: unknown) => Promise<void>,
+    undo: (() => Promise.resolve()) as () => Promise<void>,
+    lastDismissed: null as { id: string; title: string } | null,
+    failed: false,
+    isPending: false,
+  },
+}));
+
+vi.mock("@/hooks/useDismissWithUndo", () => ({
+  useDismissWithUndo: () => dismissal.state,
+}));
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
 
 vi.mock("@/components/games/GameCard", () => ({
@@ -51,6 +65,52 @@ beforeEach(() => {
     error: null,
     recompute: vi.fn().mockResolvedValue(undefined),
   };
+  dismissal.state = {
+    dismiss: vi.fn().mockResolvedValue(undefined),
+    undo: vi.fn().mockResolvedValue(undefined),
+    lastDismissed: null,
+    failed: false,
+    isPending: false,
+  };
+});
+
+describe("RecommendationsSection feedback", () => {
+  it("explains each pick with its source game", () => {
+    recs.state = {
+      ...recs.state,
+      recommendations: [{ ...REC, reason: { id: "s", slug: "s", title: "Source" } }],
+      basedOnGameCount: 4,
+    };
+    render(<RecommendationsSection />);
+    expect(screen.getByText("because")).toBeInTheDocument();
+  });
+
+  it("dismisses a pick from its card", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
+    render(<RecommendationsSection />);
+
+    fireEvent.click(screen.getByRole("button", { name: "dismiss" }));
+
+    expect(dismissal.state.dismiss).toHaveBeenCalledWith(REC);
+  });
+
+  it("offers an undo after a dismissal", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
+    dismissal.state = { ...dismissal.state, lastDismissed: { id: "x", title: "Gone" } };
+    render(<RecommendationsSection />);
+
+    expect(screen.getByRole("status")).toHaveTextContent("dismissed");
+    fireEvent.click(screen.getByRole("button", { name: "undo" }));
+    expect(dismissal.state.undo).toHaveBeenCalled();
+  });
+
+  it("reports a failed dismissal", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
+    dismissal.state = { ...dismissal.state, failed: true };
+    render(<RecommendationsSection />);
+
+    expect(screen.getByRole("alert")).toHaveTextContent("dismissError");
+  });
 });
 
 describe("RecommendationsSection", () => {

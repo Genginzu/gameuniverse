@@ -1,11 +1,10 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import useSWR from "swr";
-import type { GameRecommendation } from "@/types/recommendation";
 
-interface RecommendationsResponse {
-  recommendations: GameRecommendation[];
-}
+import { gameRecommendationsKey } from "@/lib/swr/keys";
+import type { GameRecommendation, RecommendationsResponse } from "@/types/recommendation";
 
 interface UseRecommendationsReturn {
   recommendations: GameRecommendation[];
@@ -14,13 +13,11 @@ interface UseRecommendationsReturn {
   refetch: () => Promise<void>;
 }
 
-/**
- * Hook pour fetch les recommandations d'un jeu via SWR.
- * Cache automatique + revalidation au focus.
- */
+/** Games like `gameSlug`, localised to the current locale. */
 export function useRecommendations(gameSlug: string): UseRecommendationsReturn {
+  const locale = useLocale();
   const { data, error, isLoading, mutate } = useSWR<RecommendationsResponse>(
-    gameSlug ? `/api/games/${gameSlug}/recommendations` : null
+    gameSlug ? gameRecommendationsKey(gameSlug, locale) : null
   );
 
   return {

@@ -2111,6 +2111,7 @@
         "musicYoutubeUrl": "URL YouTube (vidéo ou embed)",
         "videos": "Vidéos",
         "similarGames": "Jeux similaires",
+        "taxonomies": "Thèmes, modes, perspectives et franchises",
         "similarGamesSearchLabel": "Rechercher un jeu à ajouter",
         "similarGamesSearchPlaceholder": "Tapez le nom d'un jeu...",
         "similarGamesNoResults": "Aucun jeu trouvé",
@@ -4841,6 +4842,11 @@
       "loadingSlow": "Le calcul peut prendre un peu de temps, tes recommandations arrivent.",
       "recompute": "Recalculer",
       "recomputeError": "Impossible de recalculer pour le moment, réessaie dans quelques minutes.",
+      "because": "Proche de {title}",
+      "dismiss": "Pas intéressé par {title}",
+      "dismissed": "« {title} » ne te sera plus proposé.",
+      "undo": "Annuler",
+      "dismissError": "Impossible d'enregistrer ton choix, réessaie.",
       "error": "Les recommandations sont indisponibles pour le moment."
     },
     "friendsActivity": {

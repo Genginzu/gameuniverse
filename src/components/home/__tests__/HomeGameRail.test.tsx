@@ -47,6 +47,25 @@ describe("HomeGameRail", () => {
     expect(priorities).toEqual(["true", "true", "false"]);
   });
 
+  it("renders the per-card action and caption next to the card", () => {
+    render(
+      <HomeGameRail
+        label="rail"
+        items={[
+          {
+            game: makeGame("a"),
+            caption: "Close to Source",
+            action: <button type="button">hide</button>,
+          },
+        ]}
+        isLoading={false}
+        empty={EMPTY}
+      />
+    );
+    expect(screen.getByRole("button", { name: "hide" })).toBeInTheDocument();
+    expect(screen.getByText("Close to Source")).toBeInTheDocument();
+  });
+
   it("keeps showing items during a background revalidation", () => {
     render(
       <HomeGameRail label="rail" items={[{ game: makeGame("a") }]} isLoading empty={EMPTY} />
