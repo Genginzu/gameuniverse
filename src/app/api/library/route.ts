@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { conflict, defineRoute, notFound, validationError } from "@/lib/api/route";
