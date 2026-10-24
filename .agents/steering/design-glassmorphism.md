@@ -116,7 +116,9 @@ Pour changer les couleurs du site, modifier uniquement les valeurs hex des
 `--color-palette-*` dans le `@theme` de `globals.css` + les triplets RGB des
 `--neon-*` dans `:root` + `BRAND_COLORS` dans `src/lib/utils/brand-colors.ts`
 (miroir hex pour le JS non-CSS : icônes, OG image, manifest). Puis relancer
-`bun scripts/dev/recolor-no-cover.ts` pour reteinter l'image placeholder.
+`bun scripts/dev/recolor-no-cover.ts` pour reteinter l'image placeholder et,
+serveur de dev lancé, `bun scripts/dev/generate-favicon.ts` pour régénérer
+`src/app/favicon.ico`.
 
 Garde-fous automatiques :
 
