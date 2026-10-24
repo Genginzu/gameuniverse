@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { AuthLoadingFallback } from "@/components/auth/AuthLoadingFallback";
 import {
   AuthCard,
   AUTH_PRIMARY_BTN_CLASS,
@@ -50,7 +51,7 @@ function AuthErrorContent() {
 
 export default function AuthErrorPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-editorial-bg" />}>
+    <Suspense fallback={<AuthLoadingFallback />}>
       <AuthErrorContent />
     </Suspense>
   );
