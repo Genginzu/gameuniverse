@@ -33,6 +33,8 @@ export interface RecommendationOptions {
   limit?: number;
   excludeGameIds?: string[];
   weights?: Partial<ScoringWeights>;
+  /** Skip the cached personal aggregate (user-triggered refresh). */
+  bypassCache?: boolean;
 }
 
 const DEFAULT_LIMIT = 10;
@@ -120,7 +122,7 @@ export async function getPersonalRecommendations(
 
   // Check cache first
   const cacheKey = `personal:${userId}`;
-  const cached = cacheGet<GameRecommendation[]>(cacheKey);
+  const cached = options?.bypassCache ? null : cacheGet<GameRecommendation[]>(cacheKey);
   if (cached) return cached.slice(0, limit);
 
   const libraryGameIds = await fetchUserLibraryGameIds(userId);
