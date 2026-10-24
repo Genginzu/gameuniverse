@@ -5,6 +5,7 @@ import { conflict, defineRoute, notFound, validationError } from "@/lib/api/rout
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { CoinService } from "@/lib/services/coinService";
 import { logger } from "@/lib/logger";
+import { parseLibraryQueryParams } from "@/lib/utils/libraryQueryParams";
 
 // Type definitions for Supabase query results
 interface GameTranslation {
@@ -86,10 +87,14 @@ interface LibraryEntry {
   games: LibraryGame | null;
 }
 
-// GET /api/library - Get user's library
-export async function GET() {
+// GET /api/library - Get user's library.
+// Optional `?status=` and `?limit=` keep small views (e.g. the home "continue
+// playing" rail) from loading every game with all its embeds, which can exceed
+// the database statement timeout on large libraries.
+export async function GET(request: NextRequest) {
   try {
     const supabase = await createRouteHandlerClient();
+    const { status, limit } = parseLibraryQueryParams(request.nextUrl.searchParams);
 
     // Get authenticated user
     const {
@@ -102,7 +107,7 @@ export async function GET() {
     }
 
     // Get user's library with game details
-    const { data: libraryGames, error } = await supabase
+    let libraryQuery = supabase
       .from("user_library")
       .select(
         `
@@ -162,8 +167,14 @@ export async function GET() {
         )
       `
       )
-      .eq("user_id", user.id)
-      .order("added_at", { ascending: false });
+      .eq("user_id", user.id);
+
+    if (status) libraryQuery = libraryQuery.eq("status", status);
+
+    const orderedQuery = libraryQuery.order("added_at", { ascending: false });
+    const { data: libraryGames, error } = await (limit
+      ? orderedQuery.limit(limit)
+      : orderedQuery);
 
     if (error) {
       // PGRST205 = table not found (migration not applied yet)
