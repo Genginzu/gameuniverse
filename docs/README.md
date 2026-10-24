@@ -70,6 +70,12 @@
 | -------------------------------------- | ------------------------------------------ |
 | [esport.md](features/esport/esport.md) | Module esport complet (PandaScore + rangs) |
 
+## 🎓 Features — Coaching
+
+| Document                                                     | Description                                              |
+| ------------------------------------------------------------ | -------------------------------------------------------- |
+| [session-lifecycle.md](features/coaching/session-lifecycle.md) | Cycle de vie des sessions : statuts, paiement, remboursement |
+
 ## ⚙️ Features — Admin
 
 | Document                                                                | Description                             |

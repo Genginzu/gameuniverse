@@ -68,8 +68,7 @@ export function CoachingSessionsContent() {
           setPaymentMessage({ type: "success", text: t("paymentSuccess") });
           await mutate();
         } else {
-          const data = await res.json();
-          setPaymentMessage({ type: "error", text: data.error || t("paymentError") });
+          setPaymentMessage({ type: "error", text: t("paymentError") });
         }
         // Clean URL
         window.history.replaceState({}, "", window.location.pathname);
@@ -81,11 +80,19 @@ export function CoachingSessionsContent() {
   }, []);
 
   const handleAction = async (sessionId: string, action: string) => {
-    await fetch(`/api/coaching/sessions/${sessionId}`, {
+    const res = await fetch(`/api/coaching/sessions/${sessionId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action }),
     });
+    const body = await res.json().catch(() => null);
+    if (!res.ok) {
+      setPaymentMessage({ type: "error", text: t("actionError") });
+    } else if (body?.refund === "pending") {
+      setPaymentMessage({ type: "error", text: t("refundPending") });
+    } else if (body?.refund === "refunded") {
+      setPaymentMessage({ type: "success", text: t("refundIssued") });
+    }
     await mutate();
   };
 

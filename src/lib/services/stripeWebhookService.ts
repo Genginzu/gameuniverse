@@ -1,7 +1,11 @@
 import type Stripe from "stripe";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
+import {
+  getCoachingLifecycle,
+  paymentReportFromCheckout,
+  type CoachingLifecycle,
+} from "@/lib/services/coaching-lifecycle";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Db = any;
@@ -24,40 +28,6 @@ export async function releaseEvent(db: Db, eventId: string): Promise<void> {
   await db.from("stripe_webhook_events").delete().eq("id", eventId);
 }
 
-async function markSessionPaid(db: Db, checkout: Stripe.Checkout.Session): Promise<void> {
-  const sessionId = checkout.metadata?.coaching_session_id;
-  if (!sessionId) return;
-
-  // async payment methods emit checkout.session.completed while still unpaid.
-  if (checkout.payment_status !== "paid") return;
-
-  const { data: session, error } = await db
-    .from("coaching_sessions")
-    .select("payment_amount, payment_status")
-    .eq("id", sessionId)
-    .maybeSingle();
-  if (error) throw new Error(`Failed to load coaching session: ${error.message}`);
-  if (!session || session.payment_status !== "pending") return;
-
-  const expectedCents = Math.round(Number(session.payment_amount ?? 0) * 100);
-  if (!expectedCents || checkout.amount_total !== expectedCents) {
-    logger.error("Stripe checkout amount does not match the session price", {
-      sessionId,
-      amountTotal: checkout.amount_total,
-      expectedCents,
-    });
-    return;
-  }
-
-  const { error: updateError } = await db
-    .from("coaching_sessions")
-    .update({ payment_status: "paid" })
-    .eq("id", sessionId)
-    .eq("payment_status", "pending");
-  if (updateError) throw new Error(`Failed to mark session paid: ${updateError.message}`);
-  logger.info("Payment completed for session", { sessionId });
-}
-
 async function markOnboardingComplete(db: Db, account: Stripe.Account): Promise<void> {
   if (!account.charges_enabled || !account.details_submitted) return;
   const { error } = await db
@@ -68,34 +38,42 @@ async function markOnboardingComplete(db: Db, account: Stripe.Account): Promise<
   logger.info("Stripe onboarding complete", { accountId: account.id });
 }
 
-async function markSessionRefunded(db: Db, charge: Stripe.Charge): Promise<void> {
-  const pi = typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id;
-  if (!pi) return;
+async function recordCheckout(
+  lifecycle: CoachingLifecycle,
+  checkout: Stripe.Checkout.Session
+): Promise<void> {
+  const report = paymentReportFromCheckout(checkout);
+  // Async payment methods emit checkout.session.completed while still unpaid.
+  if (!report?.paid) return;
+  await lifecycle.recordPayment(report);
+}
 
-  const paymentIntent = await getStripe().paymentIntents.retrieve(pi);
-  const sessionId = paymentIntent.metadata?.coaching_session_id;
-  if (!sessionId) return;
-
-  const { error } = await db
-    .from("coaching_sessions")
-    .update({ payment_status: "refunded" })
-    .eq("id", sessionId);
-  if (error) throw new Error(`Failed to mark session refunded: ${error.message}`);
-  logger.info("Refund processed for session", { sessionId });
+async function recordChargeRefund(lifecycle: CoachingLifecycle, charge: Stripe.Charge): Promise<void> {
+  const paymentIntentId =
+    typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id;
+  if (!paymentIntentId) return;
+  await lifecycle.recordExternalRefund({
+    paymentIntentId,
+    amountRefundedCents: charge.amount_refunded,
+  });
 }
 
 /** Apply a verified Stripe event. Throws on DB failure so the caller returns 500. */
-export async function handleStripeEvent(event: Stripe.Event, db: Db = getSupabaseAdmin()): Promise<void> {
+export async function handleStripeEvent(
+  event: Stripe.Event,
+  db: Db = getSupabaseAdmin(),
+  lifecycle: CoachingLifecycle = getCoachingLifecycle()
+): Promise<void> {
   switch (event.type) {
     case "checkout.session.completed":
     case "checkout.session.async_payment_succeeded":
-      await markSessionPaid(db, event.data.object as Stripe.Checkout.Session);
+      await recordCheckout(lifecycle, event.data.object as Stripe.Checkout.Session);
       return;
     case "account.updated":
       await markOnboardingComplete(db, event.data.object as Stripe.Account);
       return;
     case "charge.refunded":
-      await markSessionRefunded(db, event.data.object as Stripe.Charge);
+      await recordChargeRefund(lifecycle, event.data.object as Stripe.Charge);
       return;
     default:
       return;

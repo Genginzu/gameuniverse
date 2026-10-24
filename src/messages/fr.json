@@ -5069,6 +5069,9 @@
       "paymentError": "Erreur lors du paiement.",
       "paymentCancelled": "Paiement annulé.",
       "paymentDone": "Paiement effectué",
+      "refundIssued": "Session annulée. Le remboursement a été effectué.",
+      "refundPending": "Session annulée. Le remboursement est en attente de confirmation par Stripe.",
+      "actionError": "Impossible de mettre à jour la session. Rafraîchissez la page et réessayez.",
       "loginRequired": "Connectez-vous pour voir vos sessions de coaching.",
       "login": "Se connecter"
     },

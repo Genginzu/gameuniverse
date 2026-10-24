@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
-import { coachingSessionPaid } from "@/lib/services/notifications";
+import { getCoachingLifecycle, paymentReportFromCheckout } from "@/lib/services/coaching-lifecycle";
+import type { RecordPaymentResult } from "@/types/coaching-lifecycle";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
 
-/** POST /api/coaching/stripe/verify — Verify a Stripe checkout session and update payment status */
+const FAILURE_STATUS: Record<Extract<RecordPaymentResult, { ok: false }>["reason"], number> = {
+  not_paid: 400,
+  not_found: 404,
+  forbidden: 403,
+  amount_mismatch: 409,
+  not_payable: 409,
+};
+
+/** POST /api/coaching/stripe/verify — Confirm a Stripe checkout on the student's return. */
 export async function POST(request: NextRequest) {
   try {
     const supabase: S = await createRouteHandlerClient();
@@ -21,54 +29,22 @@ export async function POST(request: NextRequest) {
     if (!checkoutSessionId)
       return NextResponse.json({ error: "checkoutSessionId required" }, { status: 400 });
 
-    const stripe = getStripe();
-    const checkoutSession = await stripe.checkout.sessions.retrieve(checkoutSessionId);
+    const checkout = await getStripe().checkout.sessions.retrieve(checkoutSessionId);
+    const report = paymentReportFromCheckout(checkout);
+    if (!report) return NextResponse.json({ error: "No session linked" }, { status: 400 });
 
-    if (checkoutSession.payment_status !== "paid") {
+    const result = await getCoachingLifecycle().recordPayment({
+      ...report,
+      expectedStudentId: user.id,
+    });
+
+    if (!result.ok) {
       return NextResponse.json(
-        { error: "Payment not completed", status: checkoutSession.payment_status },
-        { status: 400 }
+        { error: result.reason, status: checkout.payment_status },
+        { status: FAILURE_STATUS[result.reason] }
       );
     }
-
-    const coachingSessionId = checkoutSession.metadata?.coaching_session_id;
-    if (!coachingSessionId)
-      return NextResponse.json({ error: "No session linked" }, { status: 400 });
-
-    // Verify the user is the student
-    const { data: session } = await supabase
-      .from("coaching_sessions")
-      .select("student_id, payment_status, payment_amount")
-      .eq("id", coachingSessionId)
-      .single();
-    if (!session || session.student_id !== user.id)
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
-    // Already paid — idempotent
-    if (session.payment_status === "paid") {
-      return NextResponse.json({ success: true, alreadyPaid: true });
-    }
-
-    const expectedCents = Math.round(Number(session.payment_amount ?? 0) * 100);
-    if (!expectedCents || checkoutSession.amount_total !== expectedCents) {
-      logger.error("Checkout amount does not match session price", {
-        coachingSessionId,
-        amountTotal: checkoutSession.amount_total,
-        expectedCents,
-      });
-      return NextResponse.json({ error: "Payment amount mismatch" }, { status: 409 });
-    }
-
-    // payment_status is server-only (trigger on coaching_sessions).
-    await getSupabaseAdmin()
-      .from("coaching_sessions")
-      .update({ payment_status: "paid" })
-      .eq("id", coachingSessionId)
-      .eq("payment_status", "pending");
-
-    await coachingSessionPaid({ sessionId: coachingSessionId, studentId: user.id });
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, alreadyPaid: result.outcome === "already_recorded" });
   } catch (error) {
     logger.error("Error verifying payment", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
