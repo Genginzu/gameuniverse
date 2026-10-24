@@ -7,6 +7,7 @@ import { fetcher } from "@/lib/swr/fetcher";
 import { useAuth } from "@/hooks/useAuth";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { CoachProfileForm } from "./CoachProfileForm";
 import { CoachGamesSection } from "./CoachGamesSection";
 import { CoachPricingSection } from "./CoachPricingSection";
@@ -41,12 +42,19 @@ export function CoachSettingsContent() {
     );
   }
 
+  const header = (
+    <EditorialPageHeader
+      kicker={t("kicker")}
+      title={t("titlePrefix")}
+      titleAccent={t("titleAccent")}
+      subtitle={t("subtitle")}
+    />
+  );
+
   if (!user) {
     return (
       <div className="space-y-6 p-4 md:p-6 lg:p-8">
-        <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
-          {t("title")}
-        </h1>
+        {header}
         <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-3 rounded-xl border p-8 text-center">
           <Icon icon="lucide:lock" className="text-editorial-muted size-10" />
           <p className="text-editorial-muted text-sm">{t("loginRequired")}</p>
@@ -63,12 +71,7 @@ export function CoachSettingsContent() {
 
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
-      <div>
-        <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
-          {t("title")}
-        </h1>
-        <p className="text-editorial-muted mt-1 text-sm">{t("subtitle")}</p>
-      </div>
+      {header}
 
       <div className="flex gap-2 overflow-x-auto">
         {TABS.map((tab) => {
