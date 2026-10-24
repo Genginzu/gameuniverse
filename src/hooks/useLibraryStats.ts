@@ -2,7 +2,8 @@
 
 import useSWR from "swr";
 
-import { LIBRARY_STATS_ENDPOINT, type LibraryStats } from "@/types/library";
+import { LIBRARY_STATS_KEY } from "@/lib/swr/keys";
+import type { LibraryStats } from "@/types/library";
 
 interface UseLibraryStatsReturn {
   /** `null` until loaded (or when the request failed). */
@@ -18,7 +19,7 @@ interface UseLibraryStatsReturn {
  * large libraries.
  */
 export function useLibraryStats(): UseLibraryStatsReturn {
-  const { data, isLoading } = useSWR<LibraryStats>(LIBRARY_STATS_ENDPOINT, {
+  const { data, isLoading } = useSWR<LibraryStats>(LIBRARY_STATS_KEY, {
     onError: () => {},
   });
 

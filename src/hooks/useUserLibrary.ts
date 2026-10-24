@@ -5,39 +5,7 @@ import useSWR from "swr";
 import { useAuth } from "./useAuth";
 import { useLibraryToggle, type LibraryToggleArgs } from "./useLibraryToggle";
 import { LIBRARY_LIST_KEY, LIBRARY_STATS_KEY } from "@/lib/swr/keys";
-
-interface LibraryGame {
-  id: string;
-  slug: string;
-  title: string;
-  description?: string;
-  coverImage?: string;
-  backgroundImage?: string;
-  backgroundColor?: string;
-  releaseDate?: string;
-  releaseYear?: number;
-  genres: Array<{ name: string; id?: string }>;
-  developer: string;
-  publisher: string;
-  metascore?: number;
-  libraryStatus: string;
-  addedAt: string;
-  playTimeHours: number;
-  userRating?: number;
-  notes?: string;
-}
-
-interface LibraryStats {
-  totalGames: number;
-  ownedGames: number;
-  completedGames: number;
-  totalPlayTime: number;
-  averageRating?: number;
-}
-
-interface LibraryResponse {
-  games: LibraryGame[];
-}
+import type { LibraryResponse, LibraryStats } from "@/types/library";
 
 const DEFAULT_STATS: LibraryStats = {
   totalGames: 0,

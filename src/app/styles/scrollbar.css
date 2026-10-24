@@ -1,0 +1,48 @@
+/*
+ * Editorial scrollbar : thin, dark, theme-independent scrollbar for horizontal
+ * rails and scrollable editorial panels (e.g. home dashboard game rails).
+ *
+ * Chromium/Firefox use the standard `scrollbar-*` properties (no arrow
+ * buttons, transparent track). When they are set, Chromium ignores the
+ * `::-webkit-scrollbar` rules below, which only serve Safari as a fallback.
+ * Overrides the light legacy scrollbar of glass-deprecated.css.
+ */
+
+.editorial-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.14) transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+
+.editorial-scrollbar:hover,
+.editorial-scrollbar:focus-within {
+  scrollbar-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.7) transparent;
+}
+
+.editorial-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.editorial-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editorial-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
+.editorial-scrollbar::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.14);
+  border-radius: 9999px;
+}
+
+.editorial-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-scrollbar {
+    transition: none;
+  }
+}

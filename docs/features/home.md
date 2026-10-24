@@ -8,10 +8,17 @@ orchestrées par `HomeContent` :
 - **Visiteur déconnecté** (rendu par défaut) : landing marketing `HomeLanding`
   rendu côté serveur (HTML ISR + premier paint), avec 6 aperçus produit live,
   trending, stats réelles et CTA d'inscription.
-- **Utilisateur connecté** : `HomeDashboard` (Jeux tendances + Sorties du mois).
-  La bascule a lieu côté client une fois `useAuth` résolu : un bref flash du
-  landing est accepté pour conserver l'ISR (pas de cookies, pas de
-  `force-dynamic`).
+- **Utilisateur connecté** : `HomeDashboard`, accueil personnalisé (#427).
+  Voir [Accueil connecté](#structure-utilisateur-connecté).
+
+La page reste ISR (pas de cookies, pas de `force-dynamic`) : le HTML serveur
+contient toujours le landing. Pour éviter de le montrer à un utilisateur
+connecté, un script inline du layout racine (`AUTH_HINT_SCRIPT`,
+`src/lib/utils/authHint.ts`) pose `<html data-auth-hint>` avant le premier paint
+si un cookie de session Supabase (`sb-*-auth-token`) existe. Tant que `useAuth`
+charge, le CSS masque alors le landing et affiche `HomeDashboardSkeleton`
+(sombre, éditorial). `useAuthCookieHint` resynchronise l'attribut côté client
+(navigation douce, cookie supprimé après déconnexion).
 
 ## Accès
 
@@ -63,6 +70,31 @@ d'écran. Le contenu des avis est réduit à un extrait texte
 | reviews    | `ReviewCard`                             | dernier avis public, sinon démo   |
 
 Les données de démo sont dans `previews/previewDemoData.ts`.
+
+## Structure (utilisateur connecté)
+
+Composants dans `src/components/home/dashboard/`, partagés via `HomeSection`
+(kicker + titre + lien « voir tout ») et `HomeGameRail` (rail horizontal
+scroll-snap de `GameCard`, skeletons puis état vide `HomeEmptyState`). À la
+souris, la molette fait défiler le rail horizontalement tant qu'il n'est pas au
+bout, puis la page reprend (`useHorizontalWheelScroll`).
+
+| Section              | Composant                | Données                                           |
+| -------------------- | ------------------------ | ------------------------------------------------- |
+| Hero                 | `HomeHero`               | `/api/profile`, `/api/players/:id/xp`, `/api/library/stats` (`useHomeHero`) |
+| Raccourcis           | `HomeShortcuts`          | bibliothèque, backlog, fil, profil                |
+| Reprendre            | `ContinuePlayingSection` | `/api/library`, statut `playing`                  |
+| Recommandations      | `RecommendationsSection` | `usePersonalRecommendations`                      |
+| Activité des amis    | `FriendsActivitySection` | `/api/feed?page=1` (4 événements, `FeedItem`)     |
+| Tendances / sorties  | `DiscoverSections`       | `/api/home` (ISR en `fallbackData`)               |
+
+`/dashboard` reste la page compte (infos du compte, stats, accès rapides).
+
+Recommandations : le calcul serveur peut être long (un passage par jeu de la
+bibliothèque, résultat mis en cache 1 h). Pendant le chargement, `HomeLoadingNotice`
+affiche un message (plus un second après 6 s). Le bouton « Recalculer » appelle
+`/api/recommendations/personal?refresh=1`, qui ignore le cache agrégé (limité à
+5 fois / 10 min, action `recommendationRefresh`).
 
 ## Tendances (`hybrid_popularity_score`)
 
@@ -123,7 +155,9 @@ scores chaque lundi à 5 h 45, même si le cron Vercel échoue.
 ## Tests
 
 - `src/components/home/__tests__/` : `HomeContent`, `HomeLanding`,
-  `StatsSection`, `ProductPreviewsSection`.
+  `StatsSection`, `ProductPreviewsSection`, `HomeGameRail`,
+  `ContinuePlayingSection`, `RecommendationsSection`.
+- `src/lib/utils/__tests__/authHint.test.ts`.
 - `src/app/api/__tests__/home.test.ts`,
   `src/lib/services/__tests__/homeLandingService.test.ts`.
 

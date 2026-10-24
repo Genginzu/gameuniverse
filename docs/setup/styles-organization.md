@@ -37,6 +37,7 @@ src/app/styles/
 ├── neon.css             # .neon-glow, .neon-border, .neon-text, .neon-btn
 ├── landing-grid.css     # .landing-grid-bg + @keyframes gridPulse (legacy)
 ├── glass-deprecated.css # .glass-*, .topbar, .dashboard-bg, scrollbar (legacy admin)
+├── scrollbar.css        # .editorial-scrollbar (rails horizontaux, scrollbar sombre fine)
 └── editorial/
     ├── typography.css   # SpotlightCard, .editorial-display/-light, .editorial-kicker,
     │                    # .editorial-divider, .editorial-scanlines, .editorial-hero, .marquee
