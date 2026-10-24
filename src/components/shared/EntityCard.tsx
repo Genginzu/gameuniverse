@@ -55,15 +55,7 @@ function HeartSpinner({ className }: { className?: string }) {
 }
 
 // Re-export types for backward compatibility
-export type {
-  BadgeVariant,
-  BadgeConfig,
-  HoverOverlayField,
-  HoverOverlayConfig,
-  ActionsConfig,
-  EntityCardConfig,
-  EntityCardProps,
-} from "@/types/entity-card";
+export type { EntityCardConfig } from "@/types/entity-card";
 
 // Generic EntityCard component — mémoïsé pour éviter les re-renders
 // quand les props (entity, config, locale, priority) n'ont pas changé
@@ -270,5 +262,3 @@ function EntityCardInner<T extends object>({
 
 // Memo wrapper preserving generic type signature
 export const EntityCard = memo(EntityCardInner) as typeof EntityCardInner;
-
-export default EntityCard;

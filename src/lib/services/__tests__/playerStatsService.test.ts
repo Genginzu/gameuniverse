@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import {
   computeFavoriteGenre,
   computeMostActiveMonth,
-  formatPlayTime,
   type LibraryEntryWithGenres,
   type LibraryEntryWithDate,
 } from "@/lib/services/playerStatsService";
+import { formatPlayTime } from "@/lib/utils/formatPlayTime";
 
 describe("computeFavoriteGenre", () => {
   it("should return null for empty library", () => {

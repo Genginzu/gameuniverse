@@ -2,69 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import { PostCard } from "../posts/PostCard";
-import type { Post } from "@/types/post";
-
-interface FeedContentProps {
-  posts: Post[];
-  isLoading: boolean;
-  error: string | null;
-  searchTerm: string;
-  playerName: string | null;
-  playerAvatar: string | null;
-  locale: string;
-  isOwner: boolean;
-  onDelete: (postId: string) => void;
-  className?: string;
-}
-
-/** Renders the feed content: loading, error, empty, or posts list */
-export function FeedContent({
-  posts,
-  isLoading,
-  error,
-  searchTerm,
-  playerName,
-  playerAvatar,
-  locale,
-  isOwner,
-  onDelete,
-  className = "space-y-4",
-}: FeedContentProps) {
-  const t = useTranslations("players.posts");
-
-  if (isLoading) return <SkeletonCards count={3} />;
-
-  if (error) {
-    return <p className="py-8 text-center text-sm text-red-500 dark:text-red-400">{t("error")}</p>;
-  }
-
-  if (posts.length === 0 && searchTerm) {
-    return (
-      <p className="py-8 text-center text-sm text-gray-500 dark:text-slate-400">
-        {t("noResults", { term: searchTerm })}
-      </p>
-    );
-  }
-
-  if (posts.length === 0) return <PostsFeedEmpty />;
-
-  return (
-    <div className={className}>
-      {posts.map((post) => (
-        <PostCard
-          key={post.id}
-          post={post}
-          playerName={playerName}
-          playerAvatar={playerAvatar}
-          locale={locale}
-          isOwner={isOwner}
-          onDelete={onDelete}
-        />
-      ))}
-    </div>
-  );
-}
 
 export function SkeletonCards({ count }: { count: number }) {
   return (

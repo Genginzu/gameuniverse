@@ -103,16 +103,3 @@ export async function update(
   if (error) throw error;
   return mapRow(row);
 }
-
-export async function toggleActive(
-  supabase: SupabaseClient,
-  playerId: string,
-  isActive: boolean
-): Promise<void> {
-  const { error } = await supabase
-    .from("coach_profiles")
-    .update({ is_active: isActive })
-    .eq("player_id", playerId);
-
-  if (error) throw error;
-}

@@ -166,34 +166,6 @@ export async function withRetry<T>(
   throw lastError!;
 }
 
-// Wrapper pour les appels API avec gestion d'erreur automatique
-export async function apiCall<T>(
-  operation: () => Promise<T>,
-  options?: {
-    showErrorToast?: boolean;
-    retryConfig?: Partial<RetryConfig>;
-    errorMessage?: string;
-  }
-): Promise<T> {
-  const { showErrorToast = true, retryConfig = {}, errorMessage } = options || {};
-
-  try {
-    return await withRetry(operation, retryConfig);
-  } catch (error) {
-    const appError = classifyError(error);
-
-    if (showErrorToast) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: errorMessage || appError.message,
-      });
-    }
-
-    throw appError;
-  }
-}
-
 // Hook pour gérer les erreurs dans les composants React
 export function useErrorHandler() {
   const handleError = (error: unknown, context?: string) => {
@@ -223,30 +195,4 @@ export function reportError(error: AppError | Error, context?: string) {
     details: appError.details,
     retryable: appError.retryable,
   });
-}
-
-// Utilitaires pour les messages d'erreur localisés
-export const ERROR_MESSAGES = {
-  fr: {
-    [ErrorType.NETWORK]: "Erreur de connexion réseau. Vérifiez votre connexion internet.",
-    [ErrorType.VALIDATION]: "Les données saisies ne sont pas valides.",
-    [ErrorType.AUTHENTICATION]: "Session expirée. Veuillez vous reconnecter.",
-    [ErrorType.AUTHORIZATION]: "Vous n'avez pas les permissions nécessaires.",
-    [ErrorType.NOT_FOUND]: "La ressource demandée n'a pas été trouvée.",
-    [ErrorType.SERVER]: "Erreur serveur temporaire. Veuillez réessayer.",
-    [ErrorType.UNKNOWN]: "Une erreur inattendue s'est produite.",
-  },
-  en: {
-    [ErrorType.NETWORK]: "Network connection error. Please check your internet connection.",
-    [ErrorType.VALIDATION]: "The entered data is not valid.",
-    [ErrorType.AUTHENTICATION]: "Session expired. Please log in again.",
-    [ErrorType.AUTHORIZATION]: "You don't have the necessary permissions.",
-    [ErrorType.NOT_FOUND]: "The requested resource was not found.",
-    [ErrorType.SERVER]: "Temporary server error. Please try again.",
-    [ErrorType.UNKNOWN]: "An unexpected error occurred.",
-  },
-};
-
-export function getErrorMessage(type: ErrorType, locale: string = "fr"): string {
-  return ERROR_MESSAGES[locale as keyof typeof ERROR_MESSAGES]?.[type] || ERROR_MESSAGES.fr[type];
 }

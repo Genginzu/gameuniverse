@@ -20,9 +20,6 @@ import {
   queryYearReviewCount,
 } from "./playerStatsYearHelpers";
 
-// Re-export formatPlayTime from client-safe utility so existing imports keep working
-export { formatPlayTime } from "@/lib/utils/formatPlayTime";
-
 // Interface pour les fonctions pures testables sans DB
 export interface LibraryEntryWithGenres {
   playTimeHours: number;
@@ -133,22 +130,6 @@ export function computeMostActiveMonth(entries: LibraryEntryWithDate[]): MostAct
   }
 
   return { month: bestMonth, gamesAdded: bestCount };
-}
-
-/**
- * Filtre les entrées de bibliothèque par année (basé sur le champ `addedAt`).
- * Fonction pure — pas d'accès DB — testable en property-based.
- */
-export interface LibraryEntryForYear {
-  addedAt: string;
-  playTimeHours: number;
-}
-
-export function filterEntriesByYear(
-  entries: LibraryEntryForYear[],
-  year: number
-): LibraryEntryForYear[] {
-  return entries.filter((e) => new Date(e.addedAt).getFullYear() === year);
 }
 
 /**

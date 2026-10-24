@@ -33,18 +33,6 @@ export async function getTeams(page: number, limit: number, search?: string) {
   return { teams: (data ?? []) as EsportTeam[], total: count ?? 0 };
 }
 
-export async function getTeamById(id: string): Promise<EsportTeam | null> {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("esport_teams" as UntypedFrom)
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error?.code === "PGRST116") return null;
-  if (error) throw error;
-  return data as EsportTeam;
-}
-
 export async function upsertTeam(teamData: Partial<EsportTeam>) {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
@@ -54,15 +42,6 @@ export async function upsertTeam(teamData: Partial<EsportTeam>) {
     .single();
   if (error) throw error;
   return data as EsportTeam;
-}
-
-export async function deleteTeam(id: string): Promise<void> {
-  const supabase = getSupabaseAdmin();
-  const { error } = await supabase
-    .from("esport_teams" as UntypedFrom)
-    .delete()
-    .eq("id", id);
-  if (error) throw error;
 }
 
 // ─── Players ─────────────────────────────────────────────────────────
@@ -89,18 +68,6 @@ export async function getPlayers(page: number, limit: number, search?: string) {
   return { players, total: count ?? 0 };
 }
 
-export async function getPlayerById(id: string): Promise<EsportPlayer | null> {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("esport_players" as UntypedFrom)
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error?.code === "PGRST116") return null;
-  if (error) throw error;
-  return data as EsportPlayer;
-}
-
 export async function upsertPlayer(playerData: Partial<EsportPlayer>) {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
@@ -110,15 +77,6 @@ export async function upsertPlayer(playerData: Partial<EsportPlayer>) {
     .single();
   if (error) throw error;
   return data as EsportPlayer;
-}
-
-export async function deletePlayer(id: string): Promise<void> {
-  const supabase = getSupabaseAdmin();
-  const { error } = await supabase
-    .from("esport_players" as UntypedFrom)
-    .delete()
-    .eq("id", id);
-  if (error) throw error;
 }
 
 // ─── Tournaments ─────────────────────────────────────────────────────
@@ -138,18 +96,6 @@ export async function getTournaments(page: number, limit: number, search?: strin
   return { tournaments: (data ?? []) as EsportTournament[], total: count ?? 0 };
 }
 
-export async function getTournamentById(id: string): Promise<EsportTournament | null> {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("esport_tournaments" as UntypedFrom)
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error?.code === "PGRST116") return null;
-  if (error) throw error;
-  return data as EsportTournament;
-}
-
 export async function upsertTournament(tournamentData: Partial<EsportTournament>) {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
@@ -159,15 +105,6 @@ export async function upsertTournament(tournamentData: Partial<EsportTournament>
     .single();
   if (error) throw error;
   return data as EsportTournament;
-}
-
-export async function deleteTournament(id: string): Promise<void> {
-  const supabase = getSupabaseAdmin();
-  const { error } = await supabase
-    .from("esport_tournaments" as UntypedFrom)
-    .delete()
-    .eq("id", id);
-  if (error) throw error;
 }
 
 // ─── Matches ─────────────────────────────────────────────────────────
@@ -207,18 +144,6 @@ export async function getMatches(
   return { matches, total: count ?? 0 };
 }
 
-export async function getMatchById(id: string): Promise<EsportMatch | null> {
-  const supabase = getSupabaseAdmin();
-  const { data, error } = await supabase
-    .from("esport_matches" as UntypedFrom)
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error?.code === "PGRST116") return null;
-  if (error) throw error;
-  return data as EsportMatch;
-}
-
 export async function upsertMatch(matchData: Partial<EsportMatch>) {
   const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
@@ -230,11 +155,3 @@ export async function upsertMatch(matchData: Partial<EsportMatch>) {
   return data as EsportMatch;
 }
 
-export async function deleteMatch(id: string): Promise<void> {
-  const supabase = getSupabaseAdmin();
-  const { error } = await supabase
-    .from("esport_matches" as UntypedFrom)
-    .delete()
-    .eq("id", id);
-  if (error) throw error;
-}

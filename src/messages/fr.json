@@ -62,10 +62,6 @@
       "title": "Rétrospective {year} de {player}",
       "description": "Découvrez la rétrospective gaming {year} de {player} sur Gamers Universe"
     },
-    "esportCalendar": {
-      "title": "Calendrier Esport",
-      "description": "Suivez les tournois esport professionnels à venir et en cours"
-    },
     "coins": {
       "title": "Historique GU Coins",
       "description": "Consultez l'historique de vos GU Coins gagnés et dépensés"
@@ -1655,36 +1651,6 @@
       "esportTournaments": "Une erreur s'est produite lors du chargement des tournois esport.",
       "esportTeam": "Erreur lors du chargement de l'équipe.",
       "esportPlayer": "Erreur lors du chargement du joueur."
-    },
-    "demo": {
-      "title": "Démonstration du système de gestion d'erreurs",
-      "description": "Ce composant est uniquement visible en développement pour tester les différents types d'erreurs.",
-      "criticalErrors": "Erreurs critiques (Error Boundary)",
-      "triggerBoundary": "Déclencher Error Boundary",
-      "networkErrors": "Erreurs réseau (avec retry)",
-      "networkError": "Erreur réseau",
-      "attempting": "Tentative...",
-      "validationErrors": "Erreurs de validation",
-      "validationError": "Erreur de validation",
-      "authErrors": "Erreurs d'authentification",
-      "sessionExpired": "Session expirée",
-      "asyncFallback": "Async avec fallback",
-      "processing": "Traitement...",
-      "asyncExecute": "Async avec executeAsync",
-      "howToUse": "Comment utiliser le système :",
-      "boundaryHook": "Pour déclencher l'Error Boundary",
-      "asyncHook": "Pour gérer les erreurs async avec toasts",
-      "apiClient": "Client API avec retry automatique",
-      "errorProvider": "Provider global avec Toaster intégré",
-      "errorBoundary": "Composant pour capturer les erreurs React",
-      "simulatedCriticalError": "Erreur critique simulée pour tester l'Error Boundary",
-      "networkErrorCaptured": "Erreur réseau capturée et gérée par le système",
-      "invalidData": "Les données saisies ne sont pas valides",
-      "invalidEmailFormat": "Format d'email invalide",
-      "yourSessionExpired": "Votre session a expiré",
-      "reconnect": "Se reconnecter",
-      "simulatedAsyncError": "Erreur async simulée",
-      "asyncErrorWithExecute": "Erreur async avec executeAsync"
     }
   },
   "accountDeletion": {
@@ -3724,9 +3690,6 @@
       "completedCount": "{completed} / {total} terminés",
       "empty": "Pas assez de données pour afficher des statistiques."
     },
-    "gameCard": {
-      "noteLabel": "Note"
-    },
     "form": {
       "createTitle": "Créer une collection",
       "editTitle": "Modifier la collection",
@@ -3904,40 +3867,6 @@
       },
       "emptyHint": "Commencez à saisir pour voir les résultats."
     }
-  },
-  "pageBanner": {
-    "games": "Jeux",
-    "gamesDesc": "Explorez notre catalogue complet de jeux vidéo",
-    "characters": "Personnages",
-    "charactersDesc": "Découvrez les personnages emblématiques du jeu vidéo",
-    "players": "Joueurs",
-    "playersDesc": "Retrouvez les joueurs de la communauté",
-    "dashboard": "Tableau de bord",
-    "dashboardDesc": "Votre espace personnel en un coup d'œil",
-    "library": "Bibliothèque",
-    "libraryDesc": "Gérez et explorez votre collection personnelle",
-    "myCharacters": "Mes personnages favoris",
-    "favoritesDesc": "Vos personnages préférés au même endroit",
-    "collections": "Collections",
-    "collectionsDesc": "Organisez vos jeux en collections personnalisées",
-    "profile": "Profil",
-    "profileDesc": "Consultez et gérez vos informations",
-    "settings": "Paramètres",
-    "settingsDesc": "Configurez vos préférences",
-    "esportLive": "Live Esport",
-    "esportLiveDesc": "Suivez les matchs en direct",
-    "esportCalendar": "Calendrier Esport",
-    "esportCalendarDesc": "Les prochains matchs et tournois",
-    "esportTournaments": "Tournois Esport",
-    "esportTournamentsDesc": "Tournois professionnels en cours et à venir",
-    "esportResults": "Résultats Esport",
-    "esportResultsDesc": "Scores et classements récents",
-    "esportTeams": "Équipes Esport",
-    "esportTeamsDesc": "Découvrez les équipes professionnelles",
-    "esportPlayers": "Joueurs Esport",
-    "esportPlayersDesc": "Les joueurs professionnels",
-    "esportPredictions": "Prédictions Esport",
-    "esportPredictionsDesc": "Pariez sur les résultats des matchs"
   },
   "groups": {
     "card": {
@@ -4832,14 +4761,6 @@
       "signIn": "Se connecter"
     }
   },
-  "postComments": {
-    "title": "Commentaires",
-    "noComments": "Aucun commentaire",
-    "placeholder": "Écrire un commentaire...",
-    "submit": "Envoyer",
-    "deleteLabel": "Supprimer le commentaire",
-    "charCount": "{remaining} caractères restants"
-  },
   "posts": {
     "tags": {
       "metaTitle": "Posts avec le tag #{tag}",
@@ -5348,13 +5269,6 @@
       },
       "noLeagues": "Aucune ligue disponible",
       "noLeaguesDescription": "Aucune ligue fantasy n'est ouverte pour le moment"
-    },
-    "discussion": {
-      "title": "Discussion",
-      "noComments": "Aucun commentaire pour le moment. Soyez le premier à réagir !",
-      "placeholder": "Écrire un commentaire...",
-      "loginRequired": "Connectez-vous pour participer à la discussion",
-      "anonymous": "Anonyme"
     }
   },
   "feedPage": {

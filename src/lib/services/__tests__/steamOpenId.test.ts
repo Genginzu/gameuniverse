@@ -3,12 +3,12 @@ import {
   STEAM_OPENID_URL,
   isValidSteamVerification,
   parseSteamAssertion,
-  steamReturnUrl,
 } from "@/lib/services/steamOpenId";
 
 const BASE = "https://gameuniverse.example";
 const STATE = "abcDEF123_-xyz";
 const STEAM_ID = "76561198000000001";
+const returnUrl = (state: string) => `${BASE}/api/auth/steam/callback?state=${state}`;
 const CLAIMED = `https://steamcommunity.com/openid/id/${STEAM_ID}`;
 
 function assertion(overrides: Record<string, string> = {}): URLSearchParams {
@@ -19,7 +19,7 @@ function assertion(overrides: Record<string, string> = {}): URLSearchParams {
     "openid.op_endpoint": STEAM_OPENID_URL,
     "openid.claimed_id": CLAIMED,
     "openid.identity": CLAIMED,
-    "openid.return_to": steamReturnUrl(BASE, STATE),
+    "openid.return_to": returnUrl(STATE),
     "openid.response_nonce": "2026-10-19T10:00:00Zabc",
     "openid.assoc_handle": "1234567890",
     "openid.signed": "signed,op_endpoint,claimed_id,identity,return_to,response_nonce,assoc_handle",
@@ -30,7 +30,7 @@ function assertion(overrides: Record<string, string> = {}): URLSearchParams {
 
 describe("parseSteamAssertion", () => {
   it("accepts an assertion bound to our callback and state", () => {
-    const parsed = parseSteamAssertion(assertion(), steamReturnUrl(BASE, STATE));
+    const parsed = parseSteamAssertion(assertion(), returnUrl(STATE));
 
     expect(parsed?.steamId).toBe(STEAM_ID);
     expect(parsed?.verifyBody.get("openid.mode")).toBe("check_authentication");
@@ -40,11 +40,11 @@ describe("parseSteamAssertion", () => {
   it("rejects an assertion issued for another site (replayed return_to)", () => {
     const replayed = assertion({ "openid.return_to": "https://attacker.example/steam/return" });
 
-    expect(parseSteamAssertion(replayed, steamReturnUrl(BASE, STATE))).toBeNull();
+    expect(parseSteamAssertion(replayed, returnUrl(STATE))).toBeNull();
   });
 
   it("rejects an assertion bound to another state", () => {
-    expect(parseSteamAssertion(assertion(), steamReturnUrl(BASE, "other-state"))).toBeNull();
+    expect(parseSteamAssertion(assertion(), returnUrl("other-state"))).toBeNull();
   });
 
   it.each([
@@ -54,14 +54,14 @@ describe("parseSteamAssertion", () => {
     ["unsigned return_to", { "openid.signed": "op_endpoint,claimed_id,identity,response_nonce" }],
     ["claimed_id host", { "openid.claimed_id": "https://evil.example/openid/id/76561198000000001", "openid.identity": "https://evil.example/openid/id/76561198000000001" }],
   ])("rejects a tampered %s", (_label, overrides) => {
-    expect(parseSteamAssertion(assertion(overrides), steamReturnUrl(BASE, STATE))).toBeNull();
+    expect(parseSteamAssertion(assertion(overrides), returnUrl(STATE))).toBeNull();
   });
 
   it("rejects duplicated openid parameters", () => {
     const params = assertion();
     params.append("openid.claimed_id", "https://steamcommunity.com/openid/id/76561198000000002");
 
-    expect(parseSteamAssertion(params, steamReturnUrl(BASE, STATE))).toBeNull();
+    expect(parseSteamAssertion(params, returnUrl(STATE))).toBeNull();
   });
 });
 

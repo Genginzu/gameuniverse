@@ -4,7 +4,6 @@ import {
   uploadRequestSchema,
   uploadConfirmSchema,
   isAllowedMimeType,
-  isAllowedContext,
   isValidFileSize,
 } from "@/lib/validations/uploadValidation";
 import { MAX_FILE_SIZE_BYTES } from "@/types/upload";
@@ -147,16 +146,6 @@ describe("isAllowedMimeType", () => {
       expect(isAllowedMimeType(mime)).toBe(false);
     }
   );
-});
-
-describe("isAllowedContext", () => {
-  it.each(["avatars", "banners"])("returns true for %s", (ctx) => {
-    expect(isAllowedContext(ctx)).toBe(true);
-  });
-
-  it.each(["photos", "collections", "profile", ""])("returns false for %s", (ctx) => {
-    expect(isAllowedContext(ctx)).toBe(false);
-  });
 });
 
 describe("isValidFileSize", () => {

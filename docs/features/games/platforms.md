@@ -69,7 +69,6 @@ au moins une des plateformes sélectionnées.
 - `src/types/platform.ts` — Types publics (PlatformSummary, GamePlatform)
 - `src/types/admin-platforms.ts` — Types admin (AdminPlatform,
   FetchPlatformsParams)
-- `src/lib/services/platformService.ts` — Service client (fetch via API)
 - `src/lib/validations/admin-platform-form.ts` — Schémas Zod
 - `src/components/games/PlatformFilter.tsx` — Filtre UI jeux
 - `src/components/characters/CharacterPlatformFilter.tsx` — Filtre UI

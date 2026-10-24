@@ -11,7 +11,6 @@ global, la direction artistique et les choix de design.
 - [Design tokens](#design-tokens)
 - [Système d'accent dynamique](#systeme-daccent-dynamique)
   - [`paletteFromHex` — `src/lib/utils/accent-palette.ts`](#palettefromhex)
-  - [`useGameAccent` — `src/hooks/useGameAccent.ts`](#usegameaccent)
   - [`DynamicAccent` — `src/components/shared/DynamicAccent.tsx`](#dynamicaccent)
 - [Composants partagés (`src/components/shared/`)](#composants-partages)
   - [`EditorialHero`](#editorialhero)
@@ -112,29 +111,6 @@ paletteFromHex(null)        // ⇒ DEFAULT_PALETTE
 5 palettes prédéfinies sont aussi exportées : `MAGENTA_PALETTE`,
 `CYBERPUNK_PALETTE`, `VALORANT_PALETTE`, `GOLD_PALETTE`, `CYAN_PALETTE`.
 
-### `useGameAccent` <a id="usegameaccent"></a>
-
-**Fichier :** `src/hooks/useGameAccent.ts`
-**Usage :** Client component uniquement.
-
-Hook memoïzé qui retourne une `AccentPalette` dérivée d'un objet
-`{ accentColor }` ou directement d'une chaîne hex. Memoize sur la
-chaîne hex pour éviter les régénérations inutiles.
-
-```tsx
-import { useGameAccent } from "@/hooks/useGameAccent";
-
-function GameDetail({ game }) {
-  const palette = useGameAccent(game);
-  // …
-}
-
-// Variantes accept�es
-useGameAccent(game.accentColor);   // string direct
-useGameAccent("#ff4655", "valorant");
-useGameAccent(null);  // ⇒ DEFAULT_PALETTE
-```
-
 ### `DynamicAccent` <a id="dynamicaccent"></a>
 
 **Fichier :** `src/components/shared/DynamicAccent.tsx`
@@ -234,7 +210,7 @@ type EditorialHeroPart =
 #### Quand l'utiliser
 
 - ✅ Page d'accueil, sections "Jeu en avant", landing pages éditoriales.
-- ❌ En-têtes de pages d'admin ou utilitaires (utiliser `PageBanner`).
+- ❌ En-têtes de pages d'admin ou utilitaires.
 
 ---
 

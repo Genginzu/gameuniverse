@@ -18,16 +18,6 @@ Types pour les APIs et les erreurs Supabase :
 Types liés à l'authentification :
 
 - `AuthMode` - Modes d'authentification (login/register)
-- `AuthSuccessMessage` - Messages de succès d'authentification
-
-### `components.ts`
-
-Types pour les props des composants React :
-
-- Types de layout (`DashboardSidebarProps`, `LandingLayoutProps`, etc.)
-- Types de composants de jeux (`GameCardProps`, `GameDetailsProps`, etc.)
-- Types de composants d'authentification (`AuthFormProps`, etc.)
-- Types de composants UI (`SpinnerProps`, `LoadingSpinnerProps`, etc.)
 
 ### `game.ts`
 
@@ -47,8 +37,7 @@ Types pour les genres de jeux :
 
 Types pour les hooks personnalisés :
 
-- `UseGameDetailsReturn` - Retour du hook useGameDetails
-- `UseGamesOptions`, `UseGamesReturn` - Types pour le hook useGames
+- `UseCharacterFiltersReturn` - Retour du hook useCharacterFilters
 
 ### `pagination.ts`
 
@@ -77,32 +66,25 @@ Types pour les composants UI de base :
 - `SpinnerConfig`, `LoadingSpinnerConfig` - Configurations des spinners
 - `ButtonVariant`, `InputVariant` - Variantes des composants UI
 
-### `index.ts`
-
-Export central de tous les types pour faciliter les imports.
-
 ## Conventions de nommage
 
 1. **Types de base de données** : Préfixés par `Database` (ex:
    `DatabaseGameData`)
 2. **Types transformés** : Noms simples (ex: `GameDetails`)
 3. **Props de composants** : Suffixés par `Props` (ex: `GameCardProps`)
-4. **Retours de hooks** : Suffixés par `Return` (ex: `UseGameDetailsReturn`)
-5. **Options de hooks** : Suffixées par `Options` (ex: `UseGamesOptions`)
+4. **Retours de hooks** : Suffixés par `Return` (ex: `UseCharacterFiltersReturn`)
+5. **Options de hooks** : Suffixées par `Options`
 
 ## Usage
 
 ```typescript
-// Import depuis l'index central
-import { GameDetails, SupabaseError, GameCardProps } from "@/types";
-
-// Ou import spécifique
-import { UseGameDetailsReturn } from "@/types/hooks";
+// Import depuis le fichier du domaine
+import type { GameDetails } from "@/types/game";
+import type { UseCharacterFiltersReturn } from "@/types/hooks";
 ```
 
 ## Maintenance
 
 - Lors de l'ajout de nouveaux types, les placer dans le fichier approprié
-- Mettre à jour `index.ts` pour exporter les nouveaux types
 - Éviter les doublons entre les fichiers
 - Préférer les types spécifiques aux types génériques quand possible

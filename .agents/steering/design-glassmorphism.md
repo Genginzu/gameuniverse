@@ -133,10 +133,12 @@ Garde-fous automatiques :
   `--color-brand-*` dans le `@theme` de `globals.css` (`bg-brand-facebook`,
   `bg-brand-x`, `bg-brand-twitch`). Ils ne changent pas lors d'un rebrand du site.
 - ❌ Ne pas utiliser de couleur stockée en base (`accent_color`, `background_color`)
-  pour styliser l'UI publique : l'accent est toujours `DEFAULT_PALETTE`.
+  pour styliser l'UI publique : l'accent est `DEFAULT_PALETTE`, **sauf sur la page
+  détail d'un jeu** où l'accent est dérivé de la cover
+  (`paletteFromHex(game.accentColor, game.slug)`, fallback `DEFAULT_PALETTE`).
 
 > Pour le périmètre éditorial, voir le système d'accent dynamique
-> (`paletteFromHex`, `useGameAccent`, `DynamicAccent`) dans
+> (`paletteFromHex`, `DynamicAccent`) dans
 > [`docs/design/editorial-components.md`](../../docs/design/editorial-components.md).
 
 ## Gradient principal (obligatoire)

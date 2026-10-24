@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode, useCallback } from "react";
+import React, { createContext, useContext, ReactNode } from "react";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { useErrorHandler, reportError, AppError } from "@/lib/error-handling";
@@ -42,23 +42,4 @@ export function useError() {
     throw new Error("useError must be used within an ErrorProvider");
   }
   return context;
-}
-
-// Hook spécialisé pour les erreurs async (utile pour les composants)
-export function useAsyncError() {
-  const { handleError } = useError();
-
-  const executeAsync = useCallback(
-    async function <T>(operation: () => Promise<T>, context?: string): Promise<T | null> {
-      try {
-        return await operation();
-      } catch (error) {
-        handleError(error, context);
-        return null;
-      }
-    },
-    [handleError]
-  );
-
-  return { executeAsync };
 }

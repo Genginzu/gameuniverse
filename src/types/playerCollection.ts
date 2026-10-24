@@ -50,10 +50,3 @@ export interface PlayerCollectionsResponse {
     hasNextPage: boolean;
   };
 }
-
-/** Paramètres de requête pour l'API */
-export interface PlayerCollectionsQueryParams {
-  page?: number;
-  sort?: CollectionSortOption;
-  locale?: string;
-}

@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  formatLocalizedNumber,
-  getLocalizedMonthLabel,
-  validatePlayerId,
-} from "@/lib/utils/statsFormatters";
+import { formatLocalizedNumber, validatePlayerId } from "@/lib/utils/statsFormatters";
 
 describe("formatLocalizedNumber", () => {
   it("formats integer correctly for 'fr' locale", () => {
@@ -39,54 +35,6 @@ describe("formatLocalizedNumber", () => {
 
     const resultFr = formatLocalizedNumber(-1500, "fr");
     expect(resultFr).toMatch(/-1\s500/);
-  });
-});
-
-describe("getLocalizedMonthLabel", () => {
-  it("returns French month name for 'fr' locale", () => {
-    const label = getLocalizedMonthLabel(1, 2024, "fr");
-    expect(label.toLowerCase()).toBe("janvier");
-  });
-
-  it("returns English month name for 'en' locale", () => {
-    const label = getLocalizedMonthLabel(1, 2024, "en");
-    expect(label.toLowerCase()).toBe("january");
-  });
-
-  it("works for all 12 months", () => {
-    const frMonths = [
-      "janvier",
-      "février",
-      "mars",
-      "avril",
-      "mai",
-      "juin",
-      "juillet",
-      "août",
-      "septembre",
-      "octobre",
-      "novembre",
-      "décembre",
-    ];
-    const enMonths = [
-      "january",
-      "february",
-      "march",
-      "april",
-      "may",
-      "june",
-      "july",
-      "august",
-      "september",
-      "october",
-      "november",
-      "december",
-    ];
-
-    for (let m = 1; m <= 12; m++) {
-      expect(getLocalizedMonthLabel(m, 2024, "fr").toLowerCase()).toBe(frMonths[m - 1]);
-      expect(getLocalizedMonthLabel(m, 2024, "en").toLowerCase()).toBe(enMonths[m - 1]);
-    }
   });
 });
 

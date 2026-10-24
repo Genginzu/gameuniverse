@@ -1,7 +1,6 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
-import { Icon } from "@iconify/react";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import type { Rating, ContentDescriptor } from "@/types/admin-games";
 import { buildGameColors } from "@/lib/utils/game-utils";
@@ -32,54 +31,6 @@ function resolveOneRating(
     .map((cdId) => contentDescriptors.find((cd) => cd.id === cdId))
     .filter(Boolean) as ContentDescriptor[];
   return { ...rating, isPrimary: wr.is_primary, descriptors };
-}
-
-function resolveRatings(
-  watchedRatings: { rating_id: string; is_primary: boolean; content_descriptors: string[] }[],
-  ratings: Rating[],
-  contentDescriptors: ContentDescriptor[]
-): ResolvedRating[] {
-  return watchedRatings
-    .map((wr) => resolveOneRating(wr, ratings, contentDescriptors))
-    .filter(Boolean) as ResolvedRating[];
-}
-
-export function GameAgeRatingsPreview({
-  form,
-  ratings,
-  contentDescriptors,
-}: {
-  form: UseFormReturn<AdminGameFormData>;
-  ratings: Rating[];
-  contentDescriptors: ContentDescriptor[];
-}) {
-  const watchedRatings = form.watch("age_ratings");
-  const colors = usePreviewColors(form);
-  const resolvedRatings = resolveRatings(watchedRatings, ratings, contentDescriptors);
-
-  if (resolvedRatings.length === 0) {
-    return (
-      <div
-        className="flex flex-col items-center justify-center rounded-xl border border-gray-200/60 py-8 dark:border-gray-700/40"
-        style={{ backgroundColor: colors.backgroundColor }}
-      >
-        <Icon icon="lucide:shield" className="mb-2 h-8 w-8 text-slate-400 opacity-50" />
-        <p className="text-xs text-slate-400">Aucune classification</p>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className="space-y-3 rounded-xl border border-gray-200/60 p-4 dark:border-gray-700/40"
-      style={{ backgroundColor: colors.backgroundColor }}
-      data-testid="age-ratings-preview"
-    >
-      {resolvedRatings.map((rating) => (
-        <AgeRatingPreviewCard key={rating.id} rating={rating} colors={colors} />
-      ))}
-    </div>
-  );
 }
 
 export function SingleAgeRatingPreview({

@@ -94,48 +94,34 @@ const data = await apiClient.get("/api/games", {
 
 ## Hooks utilitaires
 
-### useAsyncError
+### useErrorHandler
 
-Pour gérer les erreurs dans les opérations asynchrones :
+Classifie une erreur, affiche un toast destructif et la journalise :
 
 ```typescript
-import { useAsyncError } from "@/components/providers/ErrorProvider";
+import { useErrorHandler } from "@/lib/error-handling";
 
-const { executeAsync } = useAsyncError();
+const { handleError } = useErrorHandler();
 
-const result = await executeAsync(async () => {
-  return await apiClient.get("/api/data");
-}, "fetchData");
+try {
+  await apiClient.get("/api/data");
+} catch (error) {
+  handleError(error, "fetchData");
+}
 ```
 
-### useErrorBoundary
+### useError
 
-Pour déclencher manuellement l'Error Boundary :
-
-```typescript
-import { useErrorBoundary } from "@/hooks/use-error-boundary";
-
-const { showBoundary } = useErrorBoundary();
-
-// Déclencher l'Error Boundary pour une erreur critique
-showBoundary(new Error("Erreur critique"));
-```
-
-### useFormErrorHandler
-
-Pour gérer les erreurs de formulaire :
+Accès au contexte de l'`ErrorProvider` (`handleError`, `reportError`) depuis
+un composant enfant :
 
 ```typescript
-import { useFormErrorHandler } from "@/hooks/use-error-boundary";
+import { useError } from "@/components/providers/ErrorProvider";
 
-const { handleFormError } = useFormErrorHandler();
-
-// Gérer une erreur de validation
-handleFormError(validationError, "email");
+const { handleError } = useError();
 ```
 
 ## Utilisation pratique
-
 ### 1. Erreurs réseau avec retry
 
 ```typescript
@@ -148,38 +134,6 @@ const fetchGames = async () => {
     // L'erreur est automatiquement classifiée et un toast est affiché
     console.error("Erreur lors du chargement des jeux:", error);
   }
-};
-```
-
-### 2. Erreurs de composants
-
-```typescript
-// Utiliser executeAsync pour les opérations qui peuvent échouer
-const { executeAsync } = useAsyncError();
-
-const loadData = async () => {
-  const result = await executeAsync(async () => {
-    const response = await fetch("/api/data");
-    if (!response.ok) throw new Error("Erreur de chargement");
-    return response.json();
-  }, "loadData");
-
-  if (result) {
-    setData(result);
-  }
-  // Si erreur, un toast est automatiquement affiché
-};
-```
-
-### 3. Erreurs critiques
-
-```typescript
-// Pour les erreurs qui nécessitent l'Error Boundary
-const { showBoundary } = useErrorBoundary();
-
-const handleCriticalError = (error: Error) => {
-  // Déclenche l'Error Boundary avec interface de récupération
-  showBoundary(error);
 };
 ```
 
@@ -197,17 +151,6 @@ const data = await apiClient.get("/api/endpoint", {
     retryableErrors: [ErrorType.NETWORK, ErrorType.SERVER],
   },
 });
-```
-
-## Messages d'erreur localisés
-
-Le système supporte la localisation des messages d'erreur :
-
-```typescript
-import { getErrorMessage, ErrorType } from "@/lib/error-handling";
-
-const message = getErrorMessage(ErrorType.NETWORK, "fr");
-// "Erreur de connexion réseau. Vérifiez votre connexion internet."
 ```
 
 ## Monitoring et reporting
@@ -239,21 +182,7 @@ const data = await apiClient.get("/api/games");
 const response = await fetch("/api/games");
 ```
 
-### 2. Utiliser executeAsync pour les opérations async
-
-```typescript
-// ✅ Bon
-const result = await executeAsync(() => loadData(), "loadData");
-
-// ❌ Éviter les try/catch manuels partout
-try {
-  const result = await loadData();
-} catch (error) {
-  // Gestion manuelle...
-}
-```
-
-### 3. Laisser le système gérer les erreurs courantes
+### 2. Laisser le système gérer les erreurs courantes
 
 ```typescript
 // ✅ Le système gère automatiquement
@@ -265,7 +194,7 @@ if (data.status === "empty") {
 }
 ```
 
-### 4. Utiliser Error Boundaries pour les erreurs critiques
+### 3. Utiliser Error Boundaries pour les erreurs critiques
 
 ```typescript
 // ✅ Pour les erreurs qui cassent l'interface
@@ -274,63 +203,33 @@ if (data.status === "empty") {
 </ErrorBoundary>
 ```
 
-## Tests
-
-Le système inclut un composant de démonstration pour tester tous les types
-d'erreurs :
-
-```typescript
-import { ErrorDemo } from "@/components/shared/ErrorDemo";
-
-// Uniquement visible en développement
-<ErrorDemo />
-```
-
 ## Exemple complet
-
-Voici un exemple complet d'utilisation dans un composant :
 
 ```typescript
 "use client";
 
 import { useState, useEffect } from "react";
 import { useApiClient } from "@/lib/api-client";
-import { useAsyncError } from "@/components/providers/ErrorProvider";
+import { useErrorHandler } from "@/lib/error-handling";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ComponentErrorFallback } from "@/components/shared/ErrorFallback";
 
 function MyComponent() {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
   const apiClient = useApiClient();
-  const { executeAsync } = useAsyncError();
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
+    apiClient
+      .get("/api/my-data", { retryConfig: { maxAttempts: 3 } })
+      .then(setData)
+      .catch((error) => handleError(error, "loadMyData"));
+  }, [apiClient, handleError]);
 
-      const result = await executeAsync(async () => {
-        return await apiClient.get("/api/my-data", {
-          retryConfig: { maxAttempts: 3 }
-        });
-      }, "loadMyData");
-
-      if (result) {
-        setData(result);
-      }
-      setLoading(false);
-    };
-
-    loadData();
-  }, [apiClient, executeAsync]);
-
-  if (loading) return <div>Chargement...</div>;
-  if (!data) return <div>Aucune donnée</div>;
-
+  if (!data) return <div>Chargement...</div>;
   return <div>{/* Afficher les données */}</div>;
 }
 
-// Utilisation avec Error Boundary
 export default function MyPage() {
   return (
     <ErrorBoundary fallback={<ComponentErrorFallback />}>
@@ -339,7 +238,6 @@ export default function MyPage() {
   );
 }
 ```
-
 Ce système fournit une gestion d'erreurs robuste et cohérente dans toute
 l'application, avec un minimum de code boilerplate pour les développeurs.
 
@@ -416,8 +314,6 @@ Squelettes disponibles pour toutes les sections majeures :
    options de récupération (reload, back, home).
 3. **Mode dev vs prod** — stack complet en dev, message court en prod, log
    console systématique.
-4. **Test des boundaries** — composant `ErrorDemo` en dev (`/test-error`) pour
-   déclencher boundary errors, async errors, form errors et network errors.
 
 ## Évolutions possibles
 

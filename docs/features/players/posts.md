@@ -91,7 +91,6 @@ Supprime un post appartenant à l'utilisateur authentifié (204).
 | `src/hooks/usePlayerPosts.ts`                         | Hook React                           |
 | `src/components/players/PostComposer.tsx`             | Formulaire de création               |
 | `src/components/players/PostCard.tsx`                 | Carte d'affichage                    |
-| `src/components/players/PostsFeed.tsx`                | Feed + scroll infini                 |
 | `supabase/migrations/20240310000001_player_posts.sql` | Migration : table, index, RLS        |
 
 ### Enrichissements (enhanced-posts)
@@ -108,9 +107,9 @@ Les services, routes, hooks et composants de base ont été étendus pour suppor
 
 ## Intégration profil
 
-- `PlayerProfileTabs.tsx` — onglet `posts`, icône `MessageSquare`
-- `PlayerTabContent.tsx` — case `"posts"` → `PostsFeed`
-- `PlayerDetailsContent.tsx` — onglet par défaut `"posts"`
+- `PlayerTabContent.tsx` — onglet `"activity"` → `ActivityFeed`
+  (`src/components/players/activity/`), qui affiche le `PostComposer` et la
+  colonne `PostsFeedColumn` (posts) à côté de l'activité.
 
 i18n : clés `players.posts.*` et `players.tabs.posts` dans
 `src/messages/{fr,en}.json`.
@@ -118,7 +117,7 @@ i18n : clés `players.posts.*` et `players.tabs.posts` dans
 ## Tests
 
 - **Unitaires** : routes API, service client, `PostComposer`, `PostCard`,
-  `PostsFeed`, `SearchBar`, `PostContentRenderer`
+  `SearchBar`, `PostContentRenderer`
 - **Property-based** (fast-check) :
   - **Base (12 propriétés)** : round-trip création, validation longueur, rejet
     whitespace, tri par date, pagination, suppression, visibilité composer et

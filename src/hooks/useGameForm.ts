@@ -17,16 +17,6 @@ import type {
 } from "@/types/admin-games";
 import type { SupportedLanguage } from "@/types/admin-languages";
 
-export type {
-  AdminGenre as Genre,
-  Company,
-  Rating,
-  ContentDescriptor,
-  SupportedLanguage,
-  AdminStore,
-  AdminCurrency,
-};
-
 export interface UseGameFormReturn {
   form: UseFormReturn<AdminGameFormData>;
   genres: AdminGenre[];

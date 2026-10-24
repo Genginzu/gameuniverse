@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach } from "vitest";
 import {
   cacheGet,
   cacheSet,
-  cacheInvalidate,
   cacheClear,
   invalidateForDeletedGame,
 } from "@/lib/services/recommendation/cache";
@@ -28,14 +27,6 @@ describe("recommendation/cache", () => {
     vi.advanceTimersByTime(2);
     expect(cacheGet("exp")).toBeNull();
     vi.useRealTimers();
-  });
-
-  it("cacheInvalidate removes specific key", () => {
-    cacheSet("a", 1);
-    cacheSet("b", 2);
-    cacheInvalidate("a");
-    expect(cacheGet("a")).toBeNull();
-    expect(cacheGet("b")).toBe(2);
   });
 
   it("cacheClear removes all entries", () => {

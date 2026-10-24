@@ -6,15 +6,6 @@ import { countActiveFilters } from "@/lib/utils/filter-utils";
 import { ActiveFiltersDisplay } from "./ActiveFiltersDisplay";
 import { FilterOptionsGrid } from "./FilterOptionsGrid";
 
-// Re-export types and utils for backward compatibility
-export type {
-  FilterOption,
-  FilterConfig,
-  FilterPanelProps,
-  FilterPanelLabels,
-} from "@/types/filters";
-export { hasActiveFilters, countActiveFilters, toggleFilterValue } from "@/lib/utils/filter-utils";
-
 const defaultLabels = {
   activeFilters: "Active filters",
   selected: "selected",

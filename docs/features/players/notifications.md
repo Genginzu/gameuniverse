@@ -9,8 +9,7 @@ d'interagir directement sous les posts des joueurs.
 
 ## Accès
 
-- **Notifications** : icône cloche dans le header global (TopBar +
-  LandingHeader), à gauche du sélecteur de langue. Visible uniquement pour les
+- **Notifications** : icône cloche dans le header global (TopBar), à gauche du sélecteur de langue. Visible uniquement pour les
   joueurs authentifiés.
 - **Commentaires** : section sous chaque post dans l'onglet Posts du profil
   joueur.

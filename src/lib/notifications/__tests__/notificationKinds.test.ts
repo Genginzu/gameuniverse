@@ -5,9 +5,7 @@ import {
   NOTIFICATION_CATEGORIES,
   NOTIFICATION_KINDS,
   NOTIFICATION_TYPES,
-  categoryForType,
   categoryIcon,
-  isSystemNotification,
   notificationKind,
   typesForCategory,
 } from "@/lib/notifications/notificationKinds";
@@ -61,16 +59,15 @@ describe("notification kind registry", () => {
     expect(typesForCategory("all")).toBeNull();
     expect(typesForCategory("friends")).toEqual(["friend_request", "friend_accepted"]);
     expect(typesForCategory("moderation")).toEqual(["moderation_warning"]);
-    expect(categoryForType("coaching_paid")).toBe("coaching");
-    expect(categoryForType("post_comment")).toBe("activity");
-    expect(categoryForType("unknown" as NotificationType)).toBeNull();
     for (const category of NOTIFICATION_CATEGORIES) {
       expect(categoryIcon(category)).toBeTruthy();
     }
   });
 
   it("flags only achievements as system notifications", () => {
-    expect(NOTIFICATION_TYPES.filter(isSystemNotification)).toEqual(["achievement_unlocked"]);
+    expect(NOTIFICATION_TYPES.filter((type) => NOTIFICATION_KINDS[type].system)).toEqual([
+      "achievement_unlocked",
+    ]);
   });
 
   it("falls back to a neutral kind for unknown types", () => {

@@ -38,5 +38,3 @@ export function GridSkeleton({
     </div>
   );
 }
-
-export default GridSkeleton;

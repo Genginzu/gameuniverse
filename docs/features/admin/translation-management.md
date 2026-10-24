@@ -130,7 +130,6 @@ Clés sous le namespace `admin.translations` dans `src/messages/fr.json` et
 | Fichier                        | Rôle                                     |
 | ------------------------------ | ---------------------------------------- |
 | `TranslationDashboard.tsx`     | Orchestrateur principal du dashboard     |
-| `TranslationStatsCards.tsx`    | Cartes de statistiques par type d'entité |
 | `TranslationProgressBar.tsx`   | Barre de progression globale             |
 | `TranslationTable.tsx`         | Tableau paginé et filtrable              |
 | `TranslationTableRow.tsx`      | Ligne du tableau avec actions            |
