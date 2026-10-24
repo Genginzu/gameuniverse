@@ -1,12 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import React, { useRef } from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 
 // Mock @/i18n/navigation
-const mockUsePathname = vi.fn<[], string>(() => "/");
 vi.mock("@/i18n/navigation", () => ({
-  usePathname: () => mockUsePathname(),
-  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn(), back: vi.fn() }),
   Link: ({
     children,
     href,
@@ -33,43 +30,22 @@ vi.mock("@/i18n/navigation", () => ({
     ),
 }));
 
-// Mock useAuth, useNotifications, useMyGroups, useMyCommunities — all pulled
-// in transitively by EditorialSubSidebar (notification badge + membership
-// sections). Return empty/idle state so no real SWR/Supabase call happens.
-vi.mock("@/hooks/useAuth", () => ({
-  useAuth: () => ({ user: null, loading: false, signOut: vi.fn() }),
-}));
 vi.mock("@/hooks/useNotifications", () => ({
   useNotifications: () => ({ unreadCount: 0 }),
 }));
-vi.mock("@/hooks/useMyGroups", () => ({
-  useMyGroups: () => ({ groups: [], isLoading: false, error: null }),
-}));
-vi.mock("@/hooks/useMyCommunities", () => ({
-  useMyCommunities: () => ({ communities: [], isLoading: false, error: null }),
+vi.mock("@/hooks/usePendingRequestCount", () => ({
+  usePendingRequestCount: () => ({ count: 0 }),
 }));
 
-// Mock useTranslations with a deterministic dictionary tailored to the
-// editorial namespace (subSidebar, spaces, links). The sidebar now exposes
-// user-specific spaces only.
 const editorialTranslations: Record<string, string> = {
   "subSidebar.closeAriaLabel": "Close sub-sidebar",
   "subSidebar.navAriaLabel": "{space} links",
+  "subSidebar.loading": "Loading…",
   "spaces.library": "My library",
   "spaces.esport": "Predictions",
-  "spaces.coaching": "Coaching",
-  "spaces.account": "My account",
   "spaces.groups": "Groups",
-  "spaces.communities": "Communities",
-  "subSidebar.noMyGroups": "You haven't joined any group yet",
-  "subSidebar.noMyCommunities": "You haven't joined any community yet",
-  "subSidebar.loading": "Loading…",
-  "subSidebar.unreadBadge": "{count} unread notifications",
-  // Library links
   "links.library.myLibrary": "My library",
   "links.library.collections": "My collections",
-  "links.library.favoriteCharacters": "Favorite characters",
-  // Esport links
   "links.esport.predictions": "Predictions",
   "links.esport.fantasy": "Fantasy",
 };
@@ -87,20 +63,16 @@ vi.mock("next-intl", () => ({
 }));
 
 import { EditorialSubSidebar } from "@/components/layout/editorial/EditorialSubSidebar";
-import { EDITORIAL_SPACES } from "@/components/layout/editorial/EditorialRail";
+import { dictionaryTranslator, renderWithNavigation } from "@/test-helpers/editorial-navigation";
+import type { NavigationInput } from "@/types/navigation";
 
-const librarySpace = EDITORIAL_SPACES.find((s) => s.key === "library")!;
-const esportSpace = EDITORIAL_SPACES.find((s) => s.key === "esport")!;
-
+const translate = dictionaryTranslator(editorialTranslations);
+const render = (ui: React.ReactElement, input: Partial<NavigationInput> = {}) =>
+  renderWithNavigation(ui, input, translate);
 describe("EditorialSubSidebar", () => {
-  beforeEach(() => {
-    mockUsePathname.mockReset();
-    mockUsePathname.mockReturnValue("/");
-  });
-
   describe("rendering", () => {
     it("renders nothing visible when space is null (collapsed state)", () => {
-      const { container } = render(<EditorialSubSidebar space={null} onClose={() => {}} />);
+      const { container } = render(<EditorialSubSidebar spaceKey={null} onClose={() => {}} />);
       const aside = container.querySelector("aside");
       expect(aside).not.toBeNull();
       expect(aside?.className).toContain("editorial-sub-sidebar");
@@ -110,69 +82,63 @@ describe("EditorialSubSidebar", () => {
     });
 
     it("renders the i18n space label as the header h2", () => {
-      render(<EditorialSubSidebar space={librarySpace} onClose={() => {}} />);
+      render(<EditorialSubSidebar spaceKey="library" onClose={() => {}} />);
       const heading = screen.getByRole("heading", { level: 2 });
       expect(heading.textContent).toBe("My library");
     });
 
     it("renders one link per space.links entry, with translated labels", () => {
-      render(<EditorialSubSidebar space={esportSpace} onClose={() => {}} />);
+      render(<EditorialSubSidebar spaceKey="esport" onClose={() => {}} />);
       expect(screen.getByTestId("link-/esport/predictions").textContent).toContain("Predictions");
       expect(screen.getByTestId("link-/esport/fantasy").textContent).toContain("Fantasy");
     });
 
     it("uses the i18n nav aria-label with interpolated space name", () => {
-      render(<EditorialSubSidebar space={librarySpace} onClose={() => {}} />);
+      render(<EditorialSubSidebar spaceKey="library" onClose={() => {}} />);
       const navs = screen.getAllByRole("navigation", { name: "My library links" });
       expect(navs.length).toBe(1);
     });
 
     it("adds is-open class when open", () => {
-      const { container } = render(
-        <EditorialSubSidebar space={librarySpace} onClose={() => {}} />
-      );
+      const { container } = render(<EditorialSubSidebar spaceKey="library" onClose={() => {}} />);
       const aside = container.querySelector("aside");
       expect(aside?.className).toContain("is-open");
       expect(aside?.getAttribute("aria-hidden")).toBe("false");
     });
 
     it("sets data-space attribute for testing/debug", () => {
-      const { container } = render(
-        <EditorialSubSidebar space={librarySpace} onClose={() => {}} />
-      );
+      const { container } = render(<EditorialSubSidebar spaceKey="library" onClose={() => {}} />);
       const aside = container.querySelector("aside");
       expect(aside?.getAttribute("data-space")).toBe("library");
     });
   });
 
-  describe("active link indicator", () => {
-    it("marks the link matching the current pathname as active", () => {
-      mockUsePathname.mockReturnValue("/collections");
-      render(<EditorialSubSidebar space={librarySpace} onClose={() => {}} />);
-
-      const collections = screen.getByTestId("link-/collections");
-      expect(collections.className).toContain("is-active");
-      expect(collections.getAttribute("aria-current")).toBe("page");
-
-      const library = screen.getByTestId("link-/library");
-      expect(library.className).not.toContain("is-active");
-      expect(library.getAttribute("aria-current")).toBeNull();
+  describe("membership links", () => {
+    it("lists the member's groups under the groups space", () => {
+      render(<EditorialSubSidebar spaceKey="groups" onClose={() => {}} />, {
+        isAuthenticated: true,
+        memberships: {
+          groups: {
+            isLoading: false,
+            items: [{ id: "g1", name: "Speedrunners", slug: "speedrunners", imageUrl: null }],
+          },
+        },
+      });
+      expect(screen.getByTestId("link-/groups/speedrunners").textContent).toContain("Speedrunners");
     });
 
-    it("does not mark any link active when pathname is unrelated", () => {
-      mockUsePathname.mockReturnValue("/somewhere/else");
-      render(<EditorialSubSidebar space={librarySpace} onClose={() => {}} />);
-      librarySpace.links.forEach((link) => {
-        const node = screen.getByTestId(`link-${link.href}`);
-        expect(node.className).not.toContain("is-active");
+    it("shows a loading line while memberships load", () => {
+      render(<EditorialSubSidebar spaceKey="groups" onClose={() => {}} />, {
+        isAuthenticated: true,
+        memberships: { groups: { isLoading: true, items: [] } },
       });
+      expect(screen.getByText("Loading…")).toBeDefined();
     });
   });
-
   describe("close button", () => {
     it("calls onClose when the X button is clicked (label via i18n)", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
+      render(<EditorialSubSidebar spaceKey="library" onClose={onClose} />);
       fireEvent.click(screen.getByLabelText("Close sub-sidebar"));
       expect(onClose).toHaveBeenCalledTimes(1);
     });
@@ -181,21 +147,21 @@ describe("EditorialSubSidebar", () => {
   describe("Escape key", () => {
     it("calls onClose on Escape when open", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
+      render(<EditorialSubSidebar spaceKey="library" onClose={onClose} />);
       fireEvent.keyDown(window, { key: "Escape" });
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it("does not call onClose on Escape when closed", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={null} onClose={onClose} />);
+      render(<EditorialSubSidebar spaceKey={null} onClose={onClose} />);
       fireEvent.keyDown(window, { key: "Escape" });
       expect(onClose).not.toHaveBeenCalled();
     });
 
     it("ignores other keys", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
+      render(<EditorialSubSidebar spaceKey="library" onClose={onClose} />);
       fireEvent.keyDown(window, { key: "Enter" });
       fireEvent.keyDown(window, { key: "a" });
       expect(onClose).not.toHaveBeenCalled();
@@ -203,9 +169,7 @@ describe("EditorialSubSidebar", () => {
 
     it("stops closing on Escape once unmounted", () => {
       const onClose = vi.fn();
-      const { unmount } = render(
-        <EditorialSubSidebar space={librarySpace} onClose={onClose} />
-      );
+      const { unmount } = render(<EditorialSubSidebar spaceKey="library" onClose={onClose} />);
       unmount();
       fireEvent.keyDown(window, { key: "Escape" });
       expect(onClose).not.toHaveBeenCalled();
@@ -218,7 +182,7 @@ describe("EditorialSubSidebar", () => {
       render(
         <div>
           <div data-testid="outside" style={{ width: 100, height: 100 }} />
-          <EditorialSubSidebar space={librarySpace} onClose={onClose} />
+          <EditorialSubSidebar spaceKey="library" onClose={onClose} />
         </div>
       );
       const outside = screen.getByTestId("outside");
@@ -228,7 +192,7 @@ describe("EditorialSubSidebar", () => {
 
     it("does NOT call onClose when clicking inside the sub-sidebar", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
+      render(<EditorialSubSidebar spaceKey="library" onClose={onClose} />);
       const heading = screen.getByRole("heading", { level: 2 });
       fireEvent.pointerDown(heading);
       expect(onClose).not.toHaveBeenCalled();
@@ -241,9 +205,11 @@ describe("EditorialSubSidebar", () => {
         return (
           <div>
             <div ref={railRef}>
-              <button data-testid="rail-button" type="button">Rail</button>
+              <button data-testid="rail-button" type="button">
+                Rail
+              </button>
             </div>
-            <EditorialSubSidebar space={librarySpace} onClose={onClose} insideRefs={[railRef]} />
+            <EditorialSubSidebar spaceKey="library" onClose={onClose} insideRefs={[railRef]} />
           </div>
         );
       }
@@ -257,7 +223,7 @@ describe("EditorialSubSidebar", () => {
       render(
         <div>
           <div data-testid="outside" />
-          <EditorialSubSidebar space={null} onClose={onClose} />
+          <EditorialSubSidebar spaceKey={null} onClose={onClose} />
         </div>
       );
       fireEvent.pointerDown(screen.getByTestId("outside"));
@@ -268,20 +234,14 @@ describe("EditorialSubSidebar", () => {
   describe("link click behaviour", () => {
     it("closes when clicking a link by default (closeOnNavigate=true)", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
+      render(<EditorialSubSidebar spaceKey="library" onClose={onClose} />);
       fireEvent.click(screen.getByText("My collections"));
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it("does NOT close when closeOnNavigate=false", () => {
       const onClose = vi.fn();
-      render(
-        <EditorialSubSidebar
-          space={librarySpace}
-          onClose={onClose}
-          closeOnNavigate={false}
-        />
-      );
+      render(<EditorialSubSidebar spaceKey="library" onClose={onClose} closeOnNavigate={false} />);
       fireEvent.click(screen.getByText("My collections"));
       expect(onClose).not.toHaveBeenCalled();
     });

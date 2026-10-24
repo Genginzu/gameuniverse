@@ -80,10 +80,7 @@
       "dropdownAriaLabel": "Menu utilisateur",
       "avatarAlt": "Avatar de {username}",
       "signIn": "Se connecter",
-      "signOut": "Se déconnecter",
-      "profile": "Profil",
-      "library": "Bibliothèque",
-      "settings": "Paramètres"
+      "signOut": "Se déconnecter"
     }
   },
   "navigation": {
@@ -468,8 +465,6 @@
       "navAriaLabel": "Liens {space}",
       "myGroups": "Mes groupes",
       "myCommunities": "Mes communautés",
-      "noMyGroups": "Vous n'avez rejoint aucun groupe",
-      "noMyCommunities": "Vous n'avez rejoint aucune communauté",
       "loading": "Chargement…",
       "unreadBadge": "{count} notifications non lues",
       "pendingFriendsBadge": "{count, plural, one {# demande d'ami en attente} other {# demandes d'amis en attente}}"
@@ -485,10 +480,7 @@
       "account": {
         "title": "Compte",
         "signIn": "Se connecter",
-        "signOut": "Se déconnecter",
-        "profile": "Profil",
-        "library": "Bibliothèque",
-        "settings": "Paramètres"
+        "signOut": "Se déconnecter"
       }
     },
     "languageSwitcher": {
@@ -591,7 +583,10 @@
         "friends": "Mes amis",
         "discussions": "Discussions",
         "coins": "Mes coins",
-        "notifications": "Notifications"
+        "notifications": "Notifications",
+        "profile": "Profil",
+        "library": "Bibliothèque",
+        "settings": "Paramètres"
       }
     }
   },

@@ -3,211 +3,53 @@
 /**
  * EditorialRail : barre verticale 56px persistante (Discord-style) avec :
  *
- *   - Le logo Gamers Universe en haut (cliquable, retourne à `/`)
- *   - 5 icônes des grands espaces du site (Games, Esport, Library, Community,
- *     Coaching), chacune cliquable pour ouvrir une sub-sidebar
- *   - Un indicateur visuel sur l'espace actif (déterminé par l'URL courante,
- *     ou par la prop `openSpace` si la sub-sidebar est ouverte)
+ *   - Un bouton burger qui élargit le rail pour afficher les libellés
+ *   - Une icône par Space du Navigation Model, chacune cliquable pour ouvrir
+ *     une sub-sidebar
+ *   - Un indicateur visuel sur l'espace actif (Active Space du modèle, ou la
+ *     prop `openSpace` si la sub-sidebar est ouverte)
  *
- * Ce composant est volontairement **isolé** : il ne gère pas la persistance
- * localStorage (c'est le rôle du parent / de la sub-sidebar, voir F0-09) et
- * ne contient pas de mega-menu (voir F0-07). Il expose un callback
- * `onToggleSpace` pour que le parent décide quoi faire.
- *
- * Tous les libellés visibles passent par next-intl (`useTranslations`).
+ * Pure mise en page : espaces, libellés et état actif viennent de
+ * `useEditorialNavigation()` (voir `src/lib/navigation`). La persistance de
+ * la sub-sidebar ouverte est gérée par le parent (`useEditorialRailState`).
  *
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
-import { usePathname } from "@/i18n/navigation";
-
-// ============================================================================
-// Spaces — exporté pour réutilisation par la sub-sidebar (F0-09)
-// ============================================================================
-
-export type EditorialSpaceKey =
-  | "library"
-  | "esport"
-  | "coaching"
-  | "social"
-  | "groups"
-  | "communities"
-  | "account";
-
-/**
- * Lien d'un espace, identifié par une `labelKey` qui pointe vers une clé
- * i18n sous `editorial.links.{spaceKey}.{labelKey}`.
- */
-export interface EditorialSpaceLink {
-  href: string;
-  /** Sous-clé i18n dans `editorial.links.{spaceKey}`. */
-  labelKey: string;
-  /** Icône Iconify affichée devant le label. */
-  icon: string;
-}
-
-/**
- * Espace de navigation. Toutes les chaînes visibles sont des clés i18n
- * résolues côté composant. La structure est purement déclarative.
- */
-export interface EditorialSpace {
-  /** Identifiant stable du space (clé de routage interne). */
-  key: EditorialSpaceKey;
-  /** Icône Iconify (préfixe `fa:`, `mdi:`, `lucide:`…). */
-  icon: string;
-  /**
-   * Préfixes de pathname qui appartiennent à ce space, **sans** locale.
-   * Le premier est aussi utilisé comme cible de fallback si on clique sur
-   * l'icône sans sub-sidebar (ex pour la nav mobile).
-   */
-  pathPrefixes: string[];
-  /**
-   * Liens affichés dans la sub-sidebar (F0-09). Les labels sont résolus
-   * via `editorial.links.{key}.{labelKey}`.
-   */
-  links: EditorialSpaceLink[];
-}
-
-/**
- * Sidebar = **contenu propre à l'utilisateur connecté** uniquement. Le
- * contenu public (jeux, personnages, joueurs, e-sport) vit dans la top bar
- * (voir `EDITORIAL_MEGA_MENU_ENTRIES`).
- */
-export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
-  {
-    key: "social",
-    icon: "fa:hashtag",
-    pathPrefixes: ["/posts", "/feed"],
-    links: [
-      { href: "/feed", labelKey: "feed", icon: "lucide:newspaper" },
-      { href: "/posts/tags", labelKey: "tags", icon: "lucide:hash" },
-    ],
-  },
-  {
-    key: "groups",
-    icon: "lucide:users",
-    pathPrefixes: ["/groups"],
-    links: [
-      { href: "/groups", labelKey: "all", icon: "lucide:users" },
-      { href: "/groups?create=1", labelKey: "create", icon: "lucide:plus-circle" },
-    ],
-  },
-  {
-    key: "communities",
-    icon: "fa:globe",
-    pathPrefixes: ["/communities"],
-    links: [
-      { href: "/communities", labelKey: "all", icon: "lucide:globe-2" },
-      { href: "/communities?create=1", labelKey: "create", icon: "lucide:plus-circle" },
-    ],
-  },
-  {
-    key: "library",
-    icon: "fa:gamepad",
-    pathPrefixes: ["/library", "/collections", "/favorites/characters"],
-    links: [
-      { href: "/library", labelKey: "myLibrary", icon: "lucide:library" },
-      { href: "/library/backlog", labelKey: "backlog", icon: "lucide:list-checks" },
-      { href: "/collections", labelKey: "collections", icon: "lucide:folder-heart" },
-      { href: "/favorites/characters", labelKey: "favoriteCharacters", icon: "lucide:heart" },
-      { href: "/library/connections", labelKey: "connections", icon: "lucide:plug-zap" },
-    ],
-  },
-  {
-    key: "esport",
-    icon: "fa:bolt",
-    pathPrefixes: ["/esport/predictions", "/esport/fantasy"],
-    links: [
-      { href: "/esport/predictions", labelKey: "predictions", icon: "lucide:target" },
-      { href: "/esport/fantasy", labelKey: "fantasy", icon: "lucide:sparkles" },
-    ],
-  },
-  {
-    key: "coaching",
-    icon: "fa:graduation-cap",
-    pathPrefixes: ["/coaching"],
-    links: [
-      { href: "/coaching", labelKey: "hub", icon: "lucide:layout-dashboard" },
-      { href: "/coaching/sessions", labelKey: "sessions", icon: "lucide:calendar-clock" },
-      { href: "/coaching/settings", labelKey: "settings", icon: "lucide:settings" },
-    ],
-  },
-  {
-    key: "account",
-    icon: "fa:user",
-    pathPrefixes: ["/friends", "/discussions", "/coins", "/notifications"],
-    links: [
-      { href: "/notifications", labelKey: "notifications", icon: "lucide:bell" },
-      { href: "/friends", labelKey: "friends", icon: "lucide:users" },
-      { href: "/discussions", labelKey: "discussions", icon: "lucide:messages-square" },
-      { href: "/coins", labelKey: "coins", icon: "lucide:coins" },
-    ],
-  },
-];
-
-/**
- * Retourne le space dont l'un des `pathPrefixes` matche le pathname courant.
- * `null` si aucun ne matche (ex: `/`, `/auth/...`, `/admin/...`).
- *
- * Exposé pour les tests et pour la sub-sidebar.
- */
-export function spaceFromPathname(pathname: string | null): EditorialSpaceKey | null {
-  if (!pathname) return null;
-  for (const space of EDITORIAL_SPACES) {
-    for (const prefix of space.pathPrefixes) {
-      if (pathname === prefix || pathname.startsWith(`${prefix}/`)) {
-        return space.key;
-      }
-    }
-  }
-  return null;
-}
-
-// ============================================================================
-// Composant EditorialRail
-// ============================================================================
+import { useEditorialNavigation } from "@/hooks/useEditorialNavigation";
+import type { NavSpaceKey } from "@/types/navigation";
 
 interface EditorialRailProps {
   /**
    * Space dont la sub-sidebar est ouverte (géré par le parent). Si fourni,
-   * l'indicateur visuel s'aligne sur ce space plutôt que sur le pathname.
+   * l'indicateur visuel s'aligne sur ce space plutôt que sur la location.
    */
-  openSpace?: EditorialSpaceKey | null;
+  openSpace?: NavSpaceKey | null;
   /** Appelé au clic sur une icône. Le parent décide d'ouvrir/fermer/changer. */
-  onToggleSpace?: (key: EditorialSpaceKey) => void;
+  onToggleSpace?: (key: NavSpaceKey) => void;
   /** Classe additionnelle pour le `<aside>` racine. */
   className?: string;
 }
 
-export function EditorialRail({
-  openSpace,
-  onToggleSpace,
-  className = "",
-}: EditorialRailProps) {
-  const pathname = usePathname();
+export function EditorialRail({ openSpace, onToggleSpace, className = "" }: EditorialRailProps) {
   const t = useTranslations("editorial");
+  const { spaces, activeSpaceKey } = useEditorialNavigation();
 
   // Rail replié (icônes seules) par défaut ; le bouton burger l'élargit pour
   // afficher les libellés à côté des icônes.
   const [expanded, setExpanded] = useState(false);
 
-  // L'indicateur visuel suit la sub-sidebar ouverte si elle l'est, sinon le
-  // space dérivé de l'URL courante.
-  const activeSpace = useMemo<EditorialSpaceKey | null>(() => {
-    if (openSpace !== undefined && openSpace !== null) return openSpace;
-    return spaceFromPathname(pathname);
-  }, [openSpace, pathname]);
+  const highlightedSpace = openSpace ?? activeSpaceKey;
 
   return (
     <aside
       aria-label={t("rail.ariaLabel")}
       className={`editorial-rail ${expanded ? "is-expanded" : ""} ${className}`.trim()}
     >
-      {/* Burger : bascule l'élargissement du rail */}
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
@@ -218,30 +60,25 @@ export function EditorialRail({
         <Icon icon="lucide:menu" className="size-5" />
       </button>
 
-      {/* Séparateur fin */}
       <span aria-hidden className="editorial-rail-divider" />
 
-      {/* Espaces utilisateur */}
       <nav aria-label={t("rail.spacesAriaLabel")} className="editorial-rail-nav">
-        {EDITORIAL_SPACES.map((space) => {
-          const isActive = activeSpace === space.key;
-          const label = t(`spaces.${space.key}`);
+        {spaces.map((space) => {
+          const isActive = highlightedSpace === space.key;
           return (
             <button
               key={space.key}
               type="button"
               onClick={() => onToggleSpace?.(space.key)}
               className={`editorial-rail-button ${isActive ? "is-active" : ""}`.trim()}
-              aria-label={label}
+              aria-label={space.label}
               aria-pressed={isActive}
               data-space={space.key}
-              title={label}
+              title={space.label}
             >
-              <Icon icon={space.icon} className="size-4 editorial-rail-button-icon" />
-              <span className="editorial-rail-button-label">{label}</span>
-              {isActive && (
-                <span aria-hidden className="editorial-rail-active-pill" />
-              )}
+              <Icon icon={space.icon} className="editorial-rail-button-icon size-4" />
+              <span className="editorial-rail-button-label">{space.label}</span>
+              {isActive && <span aria-hidden className="editorial-rail-active-pill" />}
             </button>
           );
         })}

@@ -68,9 +68,9 @@ const editorialTranslations: Record<string, string> = {
   "mobileNav.account.title": "Account",
   "mobileNav.account.signIn": "Sign in",
   "mobileNav.account.signOut": "Sign out",
-  "mobileNav.account.profile": "Profile",
-  "mobileNav.account.library": "Library",
-  "mobileNav.account.settings": "Settings",
+  "links.account.profile": "Profile",
+  "links.account.library": "Library",
+  "links.account.settings": "Settings",
   "spaces.library": "Library",
   "spaces.esport": "Predictions",
   "spaces.coaching": "Coaching",
@@ -84,8 +84,7 @@ const editorialTranslations: Record<string, string> = {
 
 vi.mock("next-intl", () => ({
   useTranslations: (namespace?: string) => (key: string, params?: Record<string, string>) => {
-    const fullKey =
-      namespace === "editorial.mobileNav.account" ? `mobileNav.account.${key}` : key;
+    const fullKey = namespace === "editorial.mobileNav.account" ? `mobileNav.account.${key}` : key;
     let value = editorialTranslations[fullKey] ?? fullKey;
     if (params) {
       for (const [paramKey, paramValue] of Object.entries(params)) {
@@ -114,7 +113,9 @@ describe("EditorialLayout", () => {
         </EditorialLayout>
       );
       expect(screen.getByTestId("page-content").textContent).toBe("Hello");
-      expect(screen.getByTestId("editorial-layout-main").contains(screen.getByTestId("page-content"))).toBe(true);
+      expect(
+        screen.getByTestId("editorial-layout-main").contains(screen.getByTestId("page-content"))
+      ).toBe(true);
     });
 
     it("does not render a header when none is provided", () => {
@@ -237,17 +238,6 @@ describe("EditorialLayout", () => {
   });
 
   describe("rail-pathname active sync", () => {
-    it("marks the rail icon active based on the current pathname when sub-sidebar is closed", () => {
-      mockUsePathname.mockReturnValue("/esport/predictions");
-      render(
-        <EditorialLayout>
-          <p>x</p>
-        </EditorialLayout>
-      );
-      const esport = screen.getByRole("button", { name: "Predictions" });
-      expect(esport.getAttribute("aria-pressed")).toBe("true");
-    });
-
     it("the open sub-sidebar takes precedence over the pathname for the rail indicator", () => {
       mockUsePathname.mockReturnValue("/library");
       render(
@@ -255,26 +245,23 @@ describe("EditorialLayout", () => {
           <p>x</p>
         </EditorialLayout>
       );
-      expect(
-        screen.getByRole("button", { name: "Library" }).getAttribute("aria-pressed")
-      ).toBe("true");
+      expect(screen.getByRole("button", { name: "Library" }).getAttribute("aria-pressed")).toBe(
+        "true"
+      );
 
       fireEvent.click(screen.getByRole("button", { name: "Coaching" }));
-      expect(
-        screen.getByRole("button", { name: "Coaching" }).getAttribute("aria-pressed")
-      ).toBe("true");
-      expect(
-        screen.getByRole("button", { name: "Library" }).getAttribute("aria-pressed")
-      ).toBe("false");
+      expect(screen.getByRole("button", { name: "Coaching" }).getAttribute("aria-pressed")).toBe(
+        "true"
+      );
+      expect(screen.getByRole("button", { name: "Library" }).getAttribute("aria-pressed")).toBe(
+        "false"
+      );
     });
   });
 
   describe("persistence between mounts", () => {
     it("restores the previously open space from localStorage", () => {
-      window.localStorage.setItem(
-        "gu.editorial.openSpace.v1",
-        JSON.stringify("library")
-      );
+      window.localStorage.setItem("gu.editorial.openSpace.v1", JSON.stringify("library"));
 
       render(
         <EditorialLayout>

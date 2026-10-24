@@ -16,16 +16,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import {
-  EDITORIAL_SPACES,
-  type EditorialSpaceKey,
-} from "@/components/layout/editorial/EditorialRail";
+import { EDITORIAL_SPACE_KEYS } from "@/lib/navigation";
+import type { NavSpaceKey as EditorialSpaceKey } from "@/types/navigation";
 
 const STORAGE_KEY = "gu.editorial.openSpace.v1";
 
-const VALID_SPACE_KEYS: ReadonlySet<EditorialSpaceKey> = new Set(
-  EDITORIAL_SPACES.map((s) => s.key)
-);
+const VALID_SPACE_KEYS: ReadonlySet<EditorialSpaceKey> = new Set(EDITORIAL_SPACE_KEYS);
 
 interface UseEditorialRailStateResult {
   /** Space dont la sub-sidebar est ouverte. `null` = fermée. */
