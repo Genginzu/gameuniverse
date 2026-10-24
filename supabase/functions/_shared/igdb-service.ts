@@ -11,6 +11,7 @@
  */
 
 import { logger } from "./logger.ts";
+import { IGDB_TAXONOMY_FIELDS } from "./igdb-taxonomies.ts";
 import type {
   IGDBAgeRating,
   IGDBAuthToken,
@@ -144,7 +145,8 @@ export const IGDBService = {
              age_ratings.rating_content_descriptions,
              platforms.id, platforms.name,
              videos.video_id, videos.name,
-             dlcs, expansions, bundles, similar_games, themes;
+             ${IGDB_TAXONOMY_FIELDS},
+             dlcs, expansions, bundles, similar_games;
       where id = ${igdbId};
     `;
 

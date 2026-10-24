@@ -61,7 +61,14 @@ export function createSupabaseQueryMock() {
     calls.length = 0;
   }
 
-  const client = { from: (table: string) => buildChain(table) };
+  // RPCs resolve like tables, queued under `rpc:<name>` (default: empty success).
+  const client = {
+    from: (table: string) => buildChain(table),
+    rpc: (fn: string, args?: unknown) => {
+      calls.push({ table: `rpc:${fn}`, method: "rpc", args: [args] });
+      return buildChain(`rpc:${fn}`);
+    },
+  };
 
   return { client, enqueue, calls, callsFor, reset };
 }

@@ -14,7 +14,7 @@ import { FIELD_SYNC_MAP } from "@/lib/services/igdb-fields/sync-map";
 import fr from "@/messages/fr.json";
 import en from "@/messages/en.json";
 
-const NOT_ADMIN_FORM_EDITABLE = ["popularity", "similar_games"];
+const NOT_ADMIN_FORM_EDITABLE = ["popularity", "similar_games", "taxonomies"];
 const WEBHOOK_ONLY_PAYLOAD_KEYS = ["slug"];
 
 function formLabels(messages: unknown): Record<string, unknown> {
