@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.5.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.4.2...gameuniverse-v0.5.0) (2026-10-24)
+
+
+### Features
+
+* [#19](https://github.com/Genginzu/gameuniverse/issues/19) marketing landing page for visitors ([#426](https://github.com/Genginzu/gameuniverse/issues/426)) ([147ccde](https://github.com/Genginzu/gameuniverse/commit/147ccde75c0e2d00d8e9f77339d1d06096aa70b3))
+* [#336](https://github.com/Genginzu/gameuniverse/issues/336) centralize publisher info and translate legal pages ([#424](https://github.com/Genginzu/gameuniverse/issues/424)) ([87d41cf](https://github.com/Genginzu/gameuniverse/commit/87d41cf7d2416dae0812a57396414eb4c5bcdd7c))
+* [#378](https://github.com/Genginzu/gameuniverse/issues/378) account deletion with 30-day grace period (GDPR) ([#425](https://github.com/Genginzu/gameuniverse/issues/425)) ([269ee02](https://github.com/Genginzu/gameuniverse/commit/269ee024111473b210ef2c6080213fc02dce2718))
+* terracotta palette with palette-only colours ([#414](https://github.com/Genginzu/gameuniverse/issues/414)) ([22d11aa](https://github.com/Genginzu/gameuniverse/commit/22d11aa9dad9893502c347267c998a0ef5ca01c6))
+
+
+### Bug Fixes
+
+* **deps:** regenerate bun.lock for react 19.3.1 ([#415](https://github.com/Genginzu/gameuniverse/issues/415)) ([09b2800](https://github.com/Genginzu/gameuniverse/commit/09b2800c6bc166928e166c7244ad8fc20a2c2f7f))
+* keep the pandascore incremental cursor on incident fetch failures ([#423](https://github.com/Genginzu/gameuniverse/issues/423)) ([962c388](https://github.com/Genginzu/gameuniverse/commit/962c3884ae5735ac5b6c681e5a7fdc2d00235f76))
+* make every GU coin movement a single atomic ledger entry ([#429](https://github.com/Genginzu/gameuniverse/issues/429)) ([4e28aff](https://github.com/Genginzu/gameuniverse/commit/4e28affbe9f82083e3fb8eae2e4729fa68c70876))
+* production readiness (domain, robots, [#307](https://github.com/Genginzu/gameuniverse/issues/307), cron migration) ([#418](https://github.com/Genginzu/gameuniverse/issues/418)) ([6f0522d](https://github.com/Genginzu/gameuniverse/commit/6f0522df9d22386fa9602371cd9be5b5780c50ad))
+* rotate linked accounts in the sync-libraries cron ([#422](https://github.com/Genginzu/gameuniverse/issues/422)) ([c037bc7](https://github.com/Genginzu/gameuniverse/commit/c037bc792cb960c2bb1e1632f4a66954f0202ad8))
+* second security audit (social graph, RPCs, coins, auth links) ([#401](https://github.com/Genginzu/gameuniverse/issues/401)) ([0ebbf15](https://github.com/Genginzu/gameuniverse/commit/0ebbf1522495d800c4409194879e28f2d6899f8f))
+
+
+### Refactoring
+
+* coaching session lifecycle module owns status and payment transitions ([#440](https://github.com/Genginzu/gameuniverse/issues/440)) ([c7e9b5b](https://github.com/Genginzu/gameuniverse/commit/c7e9b5b795dd1dd32494d83f8f1c72eba562a072))
+* declarative route pipeline for API routes ([#442](https://github.com/Genginzu/gameuniverse/issues/442)) ([f265198](https://github.com/Genginzu/gameuniverse/commit/f265198dbd7fcd0b8dc0bf761fe1b7aa74a156e9))
+* deep optimistic mutation module for SWR toggles and mutations ([#431](https://github.com/Genginzu/gameuniverse/issues/431)) ([9c91fdc](https://github.com/Genginzu/gameuniverse/commit/9c91fdcaa02bdcfadf01187809094f7b34470c7f))
+* deepen dismissable layer for menus and overlays ([#430](https://github.com/Genginzu/gameuniverse/issues/430)) ([06e6f3f](https://github.com/Genginzu/gameuniverse/commit/06e6f3f8e2c844257c00427c5d0ef72851651cd8))
+* deepen modules from architecture review ([#413](https://github.com/Genginzu/gameuniverse/issues/413)) ([c44bb38](https://github.com/Genginzu/gameuniverse/commit/c44bb38f200b153bc024901750124e7ca8026641))
+
+
+### Documentation
+
+* replace VERCEL_CALLBACK_SECRET with EDGE_CALLBACK_SECRET ([#421](https://github.com/Genginzu/gameuniverse/issues/421)) ([33ddf65](https://github.com/Genginzu/gameuniverse/commit/33ddf6542c9feecaae86124ac3107759e8331d4e))
+
 ## [0.4.2](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.4.1...gameuniverse-v0.4.2) (2026-10-19)
 
 
