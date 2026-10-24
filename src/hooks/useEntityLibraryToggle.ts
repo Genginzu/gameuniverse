@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useCallback } from "react";
 import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
-import { useLibraryStatus } from "@/components/providers/LibraryStatusProvider";
 
 interface EntityLibraryToggleReturn {
   inLibrary: boolean;
@@ -12,86 +10,28 @@ interface EntityLibraryToggleReturn {
   handleToggle: (e: React.MouseEvent) => Promise<void>;
 }
 
-/**
- * Unifie la logique batch (LibraryStatusProvider) et individuelle
- * (useGameLibraryStatus) pour le bouton bibliothèque d'une EntityCard.
- */
+/** Library button of an EntityCard; batch statuses arrive through the shared SWR cache. */
 export function useEntityLibraryToggle(
   entityId: string,
   enabled: boolean,
   onRemovedFromLibrary?: (id: string) => void
 ): EntityLibraryToggleReturn {
-  const { user } = useAuth();
-
-  // Batch context (fourni par LibraryStatusProvider sur la page games)
-  const batchCtx = useLibraryStatus();
-  const batchStatus = batchCtx.getStatus(entityId);
-  const useBatch = enabled && batchStatus !== undefined;
-
-  // Hook individuel — désactivé quand le batch fournit déjà le statut
-  const individual = useGameLibraryStatus(enabled && !useBatch ? entityId : "");
-
-  const inLibrary = useBatch ? batchStatus : individual.inLibrary;
-  const loading = useBatch ? batchCtx.loading : individual.loading;
-  const [batchAdding, setBatchAdding] = useState(false);
-  const adding = useBatch ? batchAdding : individual.adding;
-
-  const addToLibrary = useCallback(async () => {
-    if (!user || !entityId || adding) return false;
-    if (useBatch) {
-      setBatchAdding(true);
-      try {
-        const res = await fetch("/api/library", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gameId: entityId }),
-        });
-        if (res.ok) {
-          batchCtx.setStatus(entityId, true);
-          return true;
-        }
-        return false;
-      } catch {
-        return false;
-      } finally {
-        setBatchAdding(false);
-      }
-    }
-    return individual.addToLibrary();
-  }, [user, entityId, adding, useBatch, batchCtx, individual]);
-
-  const removeFromLibrary = useCallback(async () => {
-    if (!user || !entityId) return false;
-    if (useBatch) {
-      setBatchAdding(true);
-      try {
-        const res = await fetch(`/api/library/${entityId}`, { method: "DELETE" });
-        if (res.ok) {
-          batchCtx.setStatus(entityId, false);
-          return true;
-        }
-        return false;
-      } catch {
-        return false;
-      } finally {
-        setBatchAdding(false);
-      }
-    }
-    return individual.removeFromLibrary();
-  }, [user, entityId, useBatch, batchCtx, individual]);
+  const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(
+    enabled ? entityId : ""
+  );
 
   const handleToggle = useCallback(
     async (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      if (inLibrary) {
-        const success = await removeFromLibrary();
-        if (success && onRemovedFromLibrary) onRemovedFromLibrary(entityId);
-      } else {
+      if (!inLibrary) {
         await addToLibrary();
+        return;
       }
+      const removed = await removeFromLibrary();
+      if (removed) onRemovedFromLibrary?.(entityId);
     },
-    [inLibrary, removeFromLibrary, addToLibrary, onRemovedFromLibrary, entityId]
+    [inLibrary, addToLibrary, removeFromLibrary, onRemovedFromLibrary, entityId]
   );
 
   return { inLibrary, loading, adding, handleToggle };

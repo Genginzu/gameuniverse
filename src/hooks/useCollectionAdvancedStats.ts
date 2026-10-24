@@ -3,6 +3,7 @@
 import useSWR from "swr";
 import { useLocale } from "next-intl";
 import type { CollectionAdvancedStats } from "@/types/playerCollection";
+import { collectionStatsKey } from "@/lib/swr/keys";
 
 interface CollectionAdvancedStatsResponse {
   stats: CollectionAdvancedStats;
@@ -22,7 +23,7 @@ export function useCollectionAdvancedStats(playerId: string): UseCollectionAdvan
   const locale = useLocale();
 
   const { data, error, isLoading } = useSWR<CollectionAdvancedStatsResponse>(
-    playerId ? `/api/players/${playerId}/collections/stats?locale=${locale}` : null
+    playerId ? collectionStatsKey(playerId, locale) : null
   );
 
   return {

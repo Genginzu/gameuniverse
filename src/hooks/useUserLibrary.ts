@@ -3,6 +3,8 @@
 import { useCallback } from "react";
 import useSWR from "swr";
 import { useAuth } from "./useAuth";
+import { useLibraryToggle, type LibraryToggleArgs } from "./useLibraryToggle";
+import { LIBRARY_LIST_KEY, LIBRARY_STATS_KEY } from "@/lib/swr/keys";
 
 interface LibraryGame {
   id: string;
@@ -53,13 +55,13 @@ export function useUserLibrary() {
     error: libraryError,
     isLoading: libraryLoading,
     mutate: mutateLibrary,
-  } = useSWR<LibraryResponse>(user ? "/api/library" : null, {
+  } = useSWR<LibraryResponse>(user ? LIBRARY_LIST_KEY : null, {
     onError: () => {},
   });
 
   // SWR pour les stats — endpoint séparé, cache indépendant
   const { data: statsData, mutate: mutateStats } = useSWR<LibraryStats>(
-    user ? "/api/library/stats" : null,
+    user ? LIBRARY_STATS_KEY : null,
     {
       onError: () => {},
     }
@@ -67,48 +69,28 @@ export function useUserLibrary() {
 
   const games = libraryData?.games ?? [];
   const stats = statsData ?? DEFAULT_STATS;
+  const { trigger: toggleLibrary } = useLibraryToggle();
 
-  const addToLibrary = useCallback(
-    async (gameId: string, status = "owned") => {
+  const setInLibrary = useCallback(
+    async (args: LibraryToggleArgs) => {
       if (!user) return false;
-
       try {
-        const response = await fetch("/api/library", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gameId, status }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to add game to library");
-        }
-
-        // Revalider les deux caches
-        await Promise.all([mutateLibrary(), mutateStats()]);
-        return true;
+        return (await toggleLibrary(args)) !== undefined;
       } catch {
         return false;
       }
     },
-    [user, mutateLibrary, mutateStats]
+    [user, toggleLibrary]
+  );
+
+  const addToLibrary = useCallback(
+    (gameId: string, status = "owned") => setInLibrary({ gameId, inLibrary: true, status }),
+    [setInLibrary]
   );
 
   const removeFromLibrary = useCallback(
-    async (gameId: string) => {
-      if (!user) return false;
-
-      try {
-        const response = await fetch(`/api/library/${gameId}`, { method: "DELETE" });
-        if (!response.ok) throw new Error("Failed to remove game from library");
-
-        await Promise.all([mutateLibrary(), mutateStats()]);
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    [user, mutateLibrary, mutateStats]
+    (gameId: string) => setInLibrary({ gameId, inLibrary: false }),
+    [setInLibrary]
   );
 
   const isInLibrary = useCallback(

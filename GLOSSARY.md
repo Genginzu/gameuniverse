@@ -138,3 +138,30 @@ The coach's rules mapping how early a session is cancelled to the share of the p
 
 **External refund**:
 A refund issued outside the platform's own cancellation flow, typically from the Stripe dashboard.
+
+## Client-side mutations
+
+**Optimistic mutation**:
+A user-initiated change whose expected result is shown immediately, before the
+server confirms it, and undone if the server refuses it.
+_Avoid_: optimistic update, instant update
+
+**Affected key**:
+A cached resource whose new value the optimistic mutation predicts and shows
+before confirmation (e.g. a game's "in my library" status).
+_Avoid_: modified key, target cache
+
+**Related key**:
+A cached resource the optimistic mutation does not predict but that becomes
+stale once the server confirms (e.g. library stats after adding a game).
+_Avoid_: dependent key, linked cache
+
+**Rollback**:
+Returning every affected key to its last confirmed value when the server
+refuses the mutation or cannot be reached.
+_Avoid_: revert, cancellation
+
+**In-flight toggle**:
+A toggle whose request has not finished yet; any new toggle of the same target
+is ignored until it settles.
+_Avoid_: pending toggle, double click

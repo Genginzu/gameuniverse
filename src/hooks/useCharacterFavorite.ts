@@ -3,14 +3,13 @@
 import { useState, useCallback } from "react";
 import useSWR from "swr";
 import { useAuth } from "./useAuth";
-
-interface FavoriteCountResponse {
-  count: number;
-}
-
-interface FavoriteStatusResponse {
-  isFavorite: boolean;
-}
+import { useOptimisticMutation } from "./useOptimisticMutation";
+import { useCharacterFavoriteStatus } from "@/components/providers/CharacterFavoriteStatusProvider";
+import { jsonRequest } from "@/lib/utils/json-request";
+import { affect } from "@/lib/swr/optimistic";
+import { FAVORITE_RELATED_KEYS, favoriteCountKey, favoriteStatusKey } from "@/lib/swr/keys";
+import { favoriteCountUpdater, favoriteStatusUpdater } from "@/lib/swr/updaters/favorite";
+import type { FavoriteCountResponse, FavoriteStatusResponse } from "@/types/character";
 
 export interface UseCharacterFavoriteReturn {
   isFavorite: boolean;
@@ -21,64 +20,66 @@ export interface UseCharacterFavoriteReturn {
   toggleFavorite: () => Promise<void>;
 }
 
-/**
- * Hook pour gérer le favori d'un personnage.
- * SWR gère la lecture (count public + status auth), toggle reste manuel avec optimistic update.
- */
-export function useCharacterFavorite(characterSlug: string): UseCharacterFavoriteReturn {
+interface UseCharacterFavoriteOptions {
+  /** Fetch the public favorite count (off for cards, which only show the status). */
+  withCount?: boolean;
+}
+
+interface FavoriteToggleArgs {
+  slug: string;
+  isFavorite: boolean;
+}
+
+// Seeded by CharacterFavoriteStatusProvider and revalidated after each toggle.
+const STATUS_OPTIONS = { revalidateIfStale: false, revalidateOnFocus: false };
+
+/** Favorite status and count of one character, with an optimistic toggle. */
+export function useCharacterFavorite(
+  characterSlug: string,
+  { withCount = true }: UseCharacterFavoriteOptions = {}
+): UseCharacterFavoriteReturn {
   const { user } = useAuth();
-  const [isToggling, setIsToggling] = useState(false);
+  const { isSeeding } = useCharacterFavoriteStatus();
+  const seeding = !!characterSlug && isSeeding(characterSlug);
   const [error, setError] = useState<string | null>(null);
 
-  // Count public — pas besoin d'auth
-  const { data: countData, mutate: mutateCount } = useSWR<FavoriteCountResponse>(
-    characterSlug ? `/api/characters/${characterSlug}/favorite/count` : null
+  const { data: countData } = useSWR<FavoriteCountResponse>(
+    characterSlug && withCount ? favoriteCountKey(characterSlug) : null
+  );
+  const { data: statusData, isLoading: statusLoading } = useSWR<FavoriteStatusResponse>(
+    characterSlug && user && !seeding ? favoriteStatusKey(characterSlug) : null,
+    STATUS_OPTIONS
   );
 
-  // Status utilisateur — seulement si authentifié
-  const {
-    data: statusData,
-    isLoading: statusLoading,
-    mutate: mutateStatus,
-  } = useSWR<FavoriteStatusResponse>(
-    characterSlug && user ? `/api/characters/${characterSlug}/favorite` : null
-  );
+  const { trigger, isPending } = useOptimisticMutation<FavoriteToggleArgs>({
+    request: ({ slug, isFavorite }) =>
+      jsonRequest(favoriteStatusKey(slug), isFavorite ? "POST" : "DELETE"),
+    affects: ({ slug, isFavorite }) => [
+      affect<FavoriteStatusResponse>(favoriteStatusKey(slug), favoriteStatusUpdater(isFavorite)),
+      affect<FavoriteCountResponse>(favoriteCountKey(slug), favoriteCountUpdater(isFavorite)),
+    ],
+    related: () => FAVORITE_RELATED_KEYS,
+    dedupeId: ({ slug }) => `favorite:${slug}`,
+  });
 
   const isFavorite = statusData?.isFavorite ?? false;
-  const favoriteCount = countData?.count ?? 0;
-
-  // Le loading est terminé quand le count est chargé ET (pas d'user OU status chargé)
-  const isLoading = !countData || (!!user && statusLoading);
 
   const toggleFavorite = useCallback(async () => {
-    if (!user || !characterSlug || isToggling) return;
-
-    const prevIsFavorite = isFavorite;
-    const prevCount = favoriteCount;
-
-    // Optimistic update
-    mutateStatus({ isFavorite: !prevIsFavorite }, false);
-    mutateCount({ count: prevIsFavorite ? prevCount - 1 : prevCount + 1 }, false);
-    setIsToggling(true);
+    if (!user || !characterSlug) return;
     setError(null);
-
     try {
-      const method = prevIsFavorite ? "DELETE" : "POST";
-      const res = await fetch(`/api/characters/${characterSlug}/favorite`, { method });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "An error occurred");
-      }
+      await trigger({ slug: characterSlug, isFavorite: !isFavorite });
     } catch (err) {
-      // Rollback on error
-      mutateStatus({ isFavorite: prevIsFavorite }, false);
-      mutateCount({ count: prevCount }, false);
       setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setIsToggling(false);
     }
-  }, [user, characterSlug, isToggling, isFavorite, favoriteCount, mutateStatus, mutateCount]);
+  }, [user, characterSlug, isFavorite, trigger]);
 
-  return { isFavorite, favoriteCount, isLoading, isToggling, error, toggleFavorite };
+  return {
+    isFavorite,
+    favoriteCount: countData?.count ?? 0,
+    isLoading: (withCount && !countData) || seeding || (!!user && statusLoading),
+    isToggling: isPending,
+    error,
+    toggleFavorite,
+  };
 }

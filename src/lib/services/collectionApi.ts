@@ -3,6 +3,7 @@ import type {
   UpdateCollectionInput,
   AddCollectionItemInput,
 } from "@/types/collection";
+import { jsonRequest } from "@/lib/utils/json-request";
 
 const BASE = "/api/players";
 
@@ -16,24 +17,6 @@ function collectionUrl(playerId: string, slug: string) {
 
 function itemsUrl(playerId: string, slug: string) {
   return `${collectionUrl(playerId, slug)}/items`;
-}
-
-async function handleResponse(res: Response): Promise<unknown> {
-  if (res.status === 204) return null;
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error((data as { error?: string }).error || "An error occurred");
-  return data;
-}
-
-async function jsonRequest(url: string, method: string, body?: unknown): Promise<unknown> {
-  const res = await fetch(url, {
-    method,
-    ...(body !== undefined && {
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }),
-  });
-  return handleResponse(res);
 }
 
 export async function apiCreateCollection(playerId: string, input: CreateCollectionInput) {
@@ -71,12 +54,4 @@ export async function apiUpdateItemNote(
   note: string | null
 ) {
   return jsonRequest(`${itemsUrl(playerId, slug)}/${gameId}`, "PATCH", { note });
-}
-
-export async function apiReorderItems(
-  playerId: string,
-  slug: string,
-  items: Array<{ gameId: string; position: number }>
-) {
-  return jsonRequest(`${itemsUrl(playerId, slug)}/reorder`, "PATCH", { items });
 }

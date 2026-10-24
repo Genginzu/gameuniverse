@@ -2,11 +2,8 @@
 
 import useSWR from "swr";
 import { useLocale } from "next-intl";
-import type { CollectionSummary } from "@/types/collection";
-
-interface CollectionsResponse {
-  collections: CollectionSummary[];
-}
+import type { CollectionSummary, CollectionsResponse } from "@/types/collection";
+import { collectionsListKey } from "@/lib/swr/keys";
 
 interface UseCollectionsReturn {
   collections: CollectionSummary[];
@@ -23,7 +20,7 @@ export function useCollections(playerId: string): UseCollectionsReturn {
   const locale = useLocale();
 
   const { data, error, isLoading, mutate } = useSWR<CollectionsResponse>(
-    playerId ? `/api/players/${playerId}/collections?locale=${locale}` : null
+    playerId ? collectionsListKey(playerId, locale) : null
   );
 
   return {

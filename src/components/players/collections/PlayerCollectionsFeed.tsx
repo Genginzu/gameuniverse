@@ -25,13 +25,9 @@ export function PlayerCollectionsFeed({ playerId, locale, isOwner }: PlayerColle
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
-  // Legacy hook for simple list (used by list view + refetch after mutations)
-  const { collections, isLoading, error, refetch } = useCollections(playerId);
+  const { collections, isLoading, error } = useCollections(playerId);
   const { stats: advancedStats, isLoading: isStatsLoading } = useCollectionAdvancedStats(playerId);
-  const { createCollection } = useCollectionMutations({
-    playerId,
-    refetchCollections: refetch,
-  });
+  const { createCollection } = useCollectionMutations({ playerId });
 
   const handleCreate = async (data: Record<string, unknown>) => {
     setIsCreating(true);
@@ -45,11 +41,6 @@ export function PlayerCollectionsFeed({ playerId, locale, isOwner }: PlayerColle
 
   const handleBack = () => setSelectedSlug(null);
 
-  const handleDeleted = () => {
-    setSelectedSlug(null);
-    refetch();
-  };
-
   // Detail view
   if (selectedSlug) {
     return (
@@ -59,8 +50,7 @@ export function PlayerCollectionsFeed({ playerId, locale, isOwner }: PlayerColle
         locale={locale}
         isOwner={isOwner}
         onBack={handleBack}
-        onDeleted={handleDeleted}
-        refetchList={refetch}
+        onDeleted={handleBack}
       />
     );
   }

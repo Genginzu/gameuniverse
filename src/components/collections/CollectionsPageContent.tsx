@@ -39,10 +39,7 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
   const isOwner = user?.id === playerId;
 
   const { collections, isLoading, error, refetch } = useCollections(playerId);
-  const { isOpen, setIsOpen, isCreating, handleCreate } = useCreateCollectionDialog(
-    playerId,
-    refetch
-  );
+  const { isOpen, setIsOpen, isCreating, handleCreate } = useCreateCollectionDialog(playerId);
   const suggestions = useCollectionSuggestions(isOwner);
 
   if (error) {

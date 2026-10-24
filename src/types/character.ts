@@ -117,3 +117,13 @@ export interface CharacterFavoriteSummary {
   primaryGame: string;
   favoritedAt: string;
 }
+
+/** Statut favori d'un personnage pour l'utilisateur courant (clé SWR statut) */
+export interface FavoriteStatusResponse {
+  isFavorite: boolean;
+}
+
+/** Nombre public de favoris d'un personnage (clé SWR compteur) */
+export interface FavoriteCountResponse {
+  count: number;
+}

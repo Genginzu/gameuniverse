@@ -48,16 +48,10 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
   const { user, loading: authLoading } = useAuth();
   const playerId = user?.id ?? "";
 
-  const { collection, stats, isLoading, error, notFound, refetch } = useCollectionDetail(
-    playerId,
-    slug
-  );
+  const { collection, stats, isLoading, error, notFound } = useCollectionDetail(playerId, slug);
 
   const { updateCollection, deleteCollection, toggleVisibility, addItem, removeItem, updateItemNote } =
-    useCollectionMutations({
-      playerId,
-      refetchDetail: refetch,
-    });
+    useCollectionMutations({ playerId });
 
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAddGameDialog, setShowAddGameDialog] = useState(false);
