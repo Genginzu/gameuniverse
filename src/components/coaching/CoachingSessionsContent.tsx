@@ -7,6 +7,8 @@ import { fetcher } from "@/lib/swr/fetcher";
 import { useAuth } from "@/hooks/useAuth";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
+import { EditorialSelectMenu } from "@/components/shared/EditorialSelectMenu";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 
 const STATUS_ICONS: Record<string, string> = {
   requested: "lucide:clock",
@@ -115,13 +117,21 @@ export function CoachingSessionsContent() {
       </div>
     );
   }
+
+  const header = (
+    <EditorialPageHeader
+      kicker={t("kicker")}
+      title={t("titlePrefix")}
+      titleAccent={t("titleAccent")}
+      subtitle={t("subtitle")}
+    />
+  );
+
   if (!user) {
     return (
       <div className="space-y-6 p-4 md:p-6 lg:p-8">
-        <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
-          {t("title")}
-        </h1>
-        <div className="border border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-3 rounded-xl p-8 text-center">
+        {header}
+        <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-3 rounded-xl border p-8 text-center">
           <Icon icon="lucide:lock" className="size-10 text-gray-400" />
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("loginRequired")}</p>
           <Link
@@ -137,9 +147,7 @@ export function CoachingSessionsContent() {
 
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
-      <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
-        {t("title")}
-      </h1>
+      {header}
 
       {paymentMessage && (
         <div
@@ -156,17 +164,16 @@ export function CoachingSessionsContent() {
         </div>
       )}
 
-      <div className="flex gap-2">
-        {(["student", "coach"] as const).map((r) => (
-          <button
-            key={r}
-            onClick={() => setRole(r)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${role === r ? "from-cta-from to-cta-to bg-linear-to-r text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}
-          >
-            {t(`role.${r}`)}
-          </button>
-        ))}
-      </div>
+      <EditorialSelectMenu
+        value={role}
+        onChange={setRole}
+        label={t("roleLabel")}
+        ariaLabel={t("roleLabel")}
+        options={[
+          { value: "student", label: t("role.student"), icon: "lucide:graduation-cap" },
+          { value: "coach", label: t("role.coach"), icon: "lucide:user-check" },
+        ]}
+      />
 
       {isLoading ? (
         <div className="space-y-3">
@@ -175,7 +182,7 @@ export function CoachingSessionsContent() {
           ))}
         </div>
       ) : data?.sessions.length === 0 ? (
-        <div className="border border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-xl p-8 text-center">
+        <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-xl border p-8 text-center">
           <Icon icon="lucide:calendar" className="mb-3 size-10 text-gray-400" />
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("empty")}</p>
         </div>
@@ -184,7 +191,7 @@ export function CoachingSessionsContent() {
           {data?.sessions.map((s) => (
             <div
               key={s.id}
-              className="border border-editorial-line bg-editorial-2 flex flex-col gap-4 rounded-xl p-4 sm:flex-row sm:items-center"
+              className="border-editorial-line bg-editorial-2 flex flex-col gap-4 rounded-xl border p-4 sm:flex-row sm:items-center"
             >
               <div className="flex items-center gap-3">
                 {s.gameCoverImage && (
@@ -234,7 +241,7 @@ export function CoachingSessionsContent() {
                   {role === "coach" && s.status === "confirmed" && s.paymentStatus === "paid" && (
                     <button
                       onClick={() => handleAction(s.id, "start")}
-                      className="rounded-lg bg-palette-primary-500/10 px-3 py-1.5 text-xs font-medium text-palette-primary-500 hover:bg-palette-primary-500/20"
+                      className="bg-palette-primary-500/10 text-palette-primary-500 hover:bg-palette-primary-500/20 rounded-lg px-3 py-1.5 text-xs font-medium"
                     >
                       {t("actions.start")}
                     </button>

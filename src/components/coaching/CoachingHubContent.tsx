@@ -6,6 +6,8 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
 import { Icon } from "@iconify/react";
 import { Pagination } from "@/components/shared/Pagination";
+import { EditorialSelectMenu } from "@/components/shared/EditorialSelectMenu";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { CoachCard } from "./CoachCard";
 import { FeaturedCoaches } from "./FeaturedCoaches";
 
@@ -50,12 +52,12 @@ export function CoachingHubContent() {
 
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
-      <div>
-        <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
-          {t("title")}
-        </h1>
-        <p className="text-editorial-muted mt-1 text-sm">{t("subtitle")}</p>
-      </div>
+      <EditorialPageHeader
+        kicker={t("kicker")}
+        title={t("titlePrefix")}
+        titleAccent={t("titleAccent")}
+        subtitle={t("subtitle")}
+      />
 
       {/* Featured sections (page 1 only) */}
       {page === 1 && data?.featured && <FeaturedCoaches featured={data.featured} />}
@@ -70,22 +72,24 @@ export function CoachingHubContent() {
           <input
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            className="border-editorial-line bg-editorial-3 w-full rounded-lg border py-2.5 pr-3 pl-10 text-base text-white placeholder:text-editorial-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+            className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted w-full rounded-lg border py-2.5 pr-3 pl-10 text-base text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
             placeholder={t("searchPlaceholder")}
           />
         </div>
-        <select
+        <EditorialSelectMenu
           value={sort}
-          onChange={(e) => {
-            setSort(e.target.value);
+          options={[
+            { value: "rating", label: t("sortRating"), icon: "mdi:trophy" },
+            { value: "sessions", label: t("sortSessions"), icon: "mdi:account-group" },
+            { value: "price", label: t("sortPrice"), icon: "mdi:tag-outline" },
+          ]}
+          onChange={(nextSort) => {
+            setSort(nextSort);
             setPage(1);
           }}
-          className="border-editorial-line bg-editorial-3 rounded-lg border px-3 py-2.5 text-sm text-white"
-        >
-          <option value="rating">{t("sortRating")}</option>
-          <option value="sessions">{t("sortSessions")}</option>
-          <option value="price">{t("sortPrice")}</option>
-        </select>
+          label={t("sortLabel")}
+          ariaLabel={t("sortLabel")}
+        />
       </div>
 
       {/* Results */}

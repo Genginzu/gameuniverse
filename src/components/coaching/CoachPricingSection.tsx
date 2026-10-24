@@ -1,74 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
-import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import { Icon } from "@iconify/react";
-import {
-  SESSION_TYPES,
-  type CoachPricing,
-  type CoachGame,
-  type SessionType,
-} from "@/types/coaching";
-
-function CustomSelect({
-  value,
-  onChange,
-  placeholder,
-  options,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
-  options: Array<{ value: string; label: string }>;
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const selected = options.find((o) => o.value === value);
-
-  useDismissableLayer(ref, { open, onDismiss: () => setOpen(false) });
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="border border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted flex w-full items-center justify-between rounded-lg p-3 text-left text-base"
-      >
-        <span className={selected ? "text-gray-900 dark:text-white" : "text-gray-400"}>
-          {selected?.label || placeholder}
-        </span>
-        <Icon
-          icon="lucide:chevron-down"
-          className={`size-4 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-      {open && (
-        <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-xl border border-white/20 bg-white/80 shadow-lg backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-800/90">
-          {options.map((o) => (
-            <button
-              key={o.value}
-              type="button"
-              onClick={() => {
-                onChange(o.value);
-                setOpen(false);
-              }}
-              className={`flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors ${
-                o.value === value
-                  ? "bg-editorial-accent/15 text-editorial-accent font-medium"
-                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700"
-              }`}
-            >
-              {o.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
+import { EditorialSelectMenu } from "@/components/shared/EditorialSelectMenu";
+import { SESSION_TYPES, type CoachPricing, type CoachGame } from "@/types/coaching";
 
 export function CoachPricingSection() {
   const t = useTranslations("coaching.settings.pricing");
@@ -127,23 +65,27 @@ export function CoachPricingSection() {
       </div>
 
       {games.length === 0 && (
-        <div className="border border-editorial-line bg-editorial-2 rounded-xl p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        <div className="border-editorial-line bg-editorial-2 rounded-xl border p-4 text-center text-sm text-gray-500 dark:text-gray-400">
           {t("noGamesYet")}
         </div>
       )}
 
       {adding && (
-        <div className="border border-editorial-line bg-editorial-2 space-y-3 rounded-xl p-4">
-          <CustomSelect
+        <div className="border-editorial-line bg-editorial-2 space-y-3 rounded-xl border p-4">
+          <EditorialSelectMenu
+            fullWidth
             value={form.coachGameId}
             onChange={(v) => setForm({ ...form, coachGameId: v })}
             placeholder={t("selectGame")}
+            ariaLabel={t("selectGame")}
             options={games.map((g) => ({ value: g.id, label: g.game?.title ?? g.gameId }))}
           />
-          <CustomSelect
+          <EditorialSelectMenu
+            fullWidth
             value={form.sessionType}
-            onChange={(v) => setForm({ ...form, sessionType: v as SessionType })}
+            onChange={(v) => setForm({ ...form, sessionType: v })}
             placeholder={t("selectType")}
+            ariaLabel={t("selectType")}
             options={SESSION_TYPES.map((st) => ({ value: st, label: t(`types.${st}`) }))}
           />
           <div className="grid grid-cols-2 gap-3">
@@ -151,7 +93,7 @@ export function CoachPricingSection() {
               type="number"
               value={form.priceAmount}
               onChange={(e) => setForm({ ...form, priceAmount: e.target.value })}
-              className="border border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted rounded-lg p-3 text-base"
+              className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted rounded-lg border p-3 text-base text-white"
               placeholder={t("pricePlaceholder")}
               min="0"
               step="0.01"
@@ -161,7 +103,7 @@ export function CoachPricingSection() {
               type="number"
               value={form.durationMinutes}
               onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })}
-              className="border border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted rounded-lg p-3 text-base"
+              className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted rounded-lg border p-3 text-base text-white"
               placeholder={t("durationPlaceholder")}
               min="15"
               step="15"
@@ -178,7 +120,7 @@ export function CoachPricingSection() {
       )}
 
       {(pricingData?.pricing.length ?? 0) === 0 && games.length > 0 && !adding && (
-        <div className="border border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-xl p-8 text-center">
+        <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-xl border p-8 text-center">
           <Icon icon="lucide:credit-card" className="mb-3 size-10 text-gray-400" />
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("empty")}</p>
         </div>
@@ -186,7 +128,10 @@ export function CoachPricingSection() {
 
       <div className="space-y-2">
         {pricingData?.pricing.map((p) => (
-          <div key={p.id} className="border border-editorial-line bg-editorial-2 flex items-center justify-between rounded-xl p-4">
+          <div
+            key={p.id}
+            className="border-editorial-line bg-editorial-2 flex items-center justify-between rounded-xl border p-4"
+          >
             <div className="flex items-center gap-3">
               {p.gameCoverImage && (
                 <img

@@ -5053,6 +5053,9 @@
   "coaching": {
     "settings": {
       "title": "Coach Settings",
+      "kicker": "Coaching",
+      "titlePrefix": "Coach",
+      "titleAccent": "settings",
       "subtitle": "Manage your coach profile, games and pricing",
       "loginRequired": "Log in to access your coach settings.",
       "login": "Log in",
@@ -5173,8 +5176,12 @@
     },
     "hub": {
       "title": "Coaching",
+      "kicker": "Coaching",
+      "titlePrefix": "Find your",
+      "titleAccent": "coach",
       "subtitle": "Find the perfect coach to level up in your favorite games",
       "searchPlaceholder": "Search for a coach...",
+      "sortLabel": "Sort by",
       "sortRating": "Best rated",
       "sortSessions": "Most sessions",
       "sortPrice": "Lowest price",
@@ -5188,6 +5195,11 @@
     },
     "sessions": {
       "title": "My Sessions",
+      "kicker": "Coaching",
+      "titlePrefix": "My",
+      "titleAccent": "sessions",
+      "subtitle": "Track your coaching sessions, as a student or as a coach: confirmations, payments and conversations.",
+      "roleLabel": "View",
       "role": {
         "student": "As student",
         "coach": "As coach"

@@ -5056,6 +5056,9 @@
   "coaching": {
     "settings": {
       "title": "Espace Coach",
+      "kicker": "Coaching",
+      "titlePrefix": "Espace",
+      "titleAccent": "coach",
       "subtitle": "Gérez votre profil coach, vos jeux et vos tarifs",
       "loginRequired": "Connectez-vous pour accéder à votre espace coach.",
       "login": "Se connecter",
@@ -5176,8 +5179,12 @@
     },
     "hub": {
       "title": "Coaching",
+      "kicker": "Coaching",
+      "titlePrefix": "Trouvez votre",
+      "titleAccent": "coach",
       "subtitle": "Trouvez le coach idéal pour progresser dans vos jeux préférés",
       "searchPlaceholder": "Rechercher un coach...",
+      "sortLabel": "Trier par",
       "sortRating": "Meilleure note",
       "sortSessions": "Plus de sessions",
       "sortPrice": "Prix croissant",
@@ -5191,6 +5198,11 @@
     },
     "sessions": {
       "title": "Mes sessions",
+      "kicker": "Coaching",
+      "titlePrefix": "Mes",
+      "titleAccent": "sessions",
+      "subtitle": "Suivez vos sessions de coaching, en tant qu'élève ou en tant que coach : confirmations, paiements et échanges.",
+      "roleLabel": "Affichage",
       "role": {
         "student": "En tant qu'élève",
         "coach": "En tant que coach"
