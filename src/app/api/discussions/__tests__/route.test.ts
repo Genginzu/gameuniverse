@@ -38,8 +38,8 @@ vi.mock("@/lib/services/notifications", () => ({
   discussionMessageSent: (...args: unknown[]) => mockDiscussionMessageSent(...args),
 }));
 
-vi.mock("@/lib/services/coinService", () => ({
-  CoinService: { rewardActivity: vi.fn(() => Promise.resolve()) },
+vi.mock("@/lib/services/activityRewards", () => ({
+  rewardActivity: vi.fn(() => Promise.resolve()),
 }));
 
 import { GET, POST } from "@/app/api/discussions/route";

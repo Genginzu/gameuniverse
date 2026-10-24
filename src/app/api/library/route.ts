@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { conflict, defineRoute, notFound, validationError } from "@/lib/api/route";
-import { AchievementEngine } from "@/lib/services/achievementEngine";
-import { CoinService } from "@/lib/services/coinService";
+import { rewardActivity } from "@/lib/services/activityRewards";
 import { logger } from "@/lib/logger";
 
 // Type definitions for Supabase query results
@@ -315,17 +314,7 @@ export const POST = defineRoute(
       return NextResponse.json({ error: "Failed to add game to library" }, { status: 500 });
     }
 
-    // Evaluate achievements (non-blocking)
-    try {
-      await AchievementEngine.evaluate(user.id, "library");
-    } catch (error) {
-      console.error("Achievement evaluation failed:", error);
-    }
-
-    // Reward GU Coins (non-blocking)
-    CoinService.rewardActivity(user.id, "library_add", gameId).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
+    await rewardActivity({ kind: "library_game_added", userId: user.id, gameId });
 
     return NextResponse.json({ success: true, data });
   }

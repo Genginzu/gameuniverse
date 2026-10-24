@@ -43,6 +43,7 @@ const ACTIVITY_ICONS: Record<CoinActivityType, string> = {
   character_vote: "mdi:thumb-up",
   post_create: "mdi:pencil-plus",
   post_comment: "mdi:comment-plus",
+  character_comment: "mdi:comment-account",
   discussion_message: "mdi:message-text",
   friend_add: "mdi:account-plus",
 };
