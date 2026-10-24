@@ -12,7 +12,7 @@
  *   - Plateformes en haut à gauche (toujours visibles)
  *   - Métascore en haut à droite (visible au hover uniquement)
  *   - Gradient sombre localisé sur la moitié basse (lisibilité du footer)
- *   - Footer : titre + studio + année (visible au repos)
+ *   - Footer : titre + studio + mois/année de sortie (visible au repos)
  *   - Au hover : description tronquée + bouton "Découvrir" qui slide
  *     depuis le bas par-dessus le footer
  *
@@ -31,6 +31,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getDistinctPlatformIcons } from "@/lib/utils/platform-icons";
 import { toHiResCover } from "@/lib/utils/igdbImage";
+import { formatReleaseMonthYear } from "@/lib/utils/releaseMonthYear";
 import type { GameSummary } from "@/types/game";
 
 /**
@@ -238,21 +239,21 @@ function CardByline({ game, overlay }: { game: GameSummary; overlay?: GameCardOv
     );
   }
 
-  // Default : studio · année
-  const releaseYear = game.releaseYear ?? null;
+  // Default : studio · MM/YYYY
+  const releaseLabel = formatReleaseMonthYear(game.releaseDate, game.releaseYear);
   const studio = game.developer || game.publisher || null;
 
-  if (!studio && !releaseYear) return null;
+  if (!studio && !releaseLabel) return null;
 
   return (
     <div className="editorial-card-byline">
       {studio && <span>{studio}</span>}
-      {studio && releaseYear && (
+      {studio && releaseLabel && (
         <span aria-hidden className="editorial-card-byline-sep">
           ·
         </span>
       )}
-      {releaseYear && <span>{releaseYear}</span>}
+      {releaseLabel && <span>{releaseLabel}</span>}
     </div>
   );
 }
