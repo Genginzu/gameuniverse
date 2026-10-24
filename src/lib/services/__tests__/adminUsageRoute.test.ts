@@ -1,12 +1,14 @@
-﻿import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { NextRequest } from "next/server";
+import { useTestRouteEnvironment } from "@/test-helpers/route-environment";
+
+const routeEnv = useTestRouteEnvironment({ signedInAs: "admin" });
 
 type Row = Record<string, unknown>;
 
 let tables: Record<string, Row[]>;
 let failingTable: string | null;
 let mutations: string[];
-let requireAdminImpl: () => Promise<unknown>;
 
 function queryFor(table: string) {
   const filters: [string, unknown][] = [];
@@ -38,7 +40,6 @@ function queryFor(table: string) {
   return builder;
 }
 
-vi.mock("@/lib/auth-admin", () => ({ requireAdmin: () => requireAdminImpl() }));
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () => Promise.resolve({ from: (table: string) => queryFor(table) }),
 }));
@@ -46,7 +47,7 @@ vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn() } }));
 
 const { createAdminUsageRoute } = await import("@/lib/services/adminUsageRoute");
 
-const request = {} as NextRequest;
+const request = new Request("http://localhost/api/admin/usage") as unknown as NextRequest;
 const params = (values: Record<string, string>) => ({ params: Promise.resolve(values) });
 
 const genreUsage = createAdminUsageRoute({
@@ -58,7 +59,6 @@ const genreUsage = createAdminUsageRoute({
 
 describe("createAdminUsageRoute", () => {
   beforeEach(() => {
-    requireAdminImpl = () => Promise.resolve(true);
     failingTable = null;
     mutations = [];
     tables = {
@@ -87,7 +87,7 @@ describe("createAdminUsageRoute", () => {
   });
 
   it("returns 403 when the caller is not an admin", async () => {
-    requireAdminImpl = () => Promise.reject(new Error("Admin access required"));
+    routeEnv.signIn("user");
     const res = await genreUsage(request, params({ slug: "rpg" }));
     expect(res.status).toBe(403);
   });
@@ -221,7 +221,6 @@ const routeCases: RouteCase[] = [
 
 describe("admin usage routes", () => {
   beforeEach(() => {
-    requireAdminImpl = () => Promise.resolve(true);
     failingTable = null;
     mutations = [];
   });
