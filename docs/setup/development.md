@@ -42,6 +42,18 @@ bun run check-all    # Run all quality checks (Windows)
 bun run check-all:unix # Run all quality checks (Unix/Linux/macOS)
 ```
 
+### Dev server: "Failed to load external module <pkg>-<hash>"
+
+Under `bun --bun next dev`, Turbopack links server externals (`resend`,
+`postcss` via `sanitize-html`…) under hashed names in `.next/dev/node_modules`
+after the server has started. Bun caches that directory, so the new links stay
+invisible and the routes using them return 500 (vercel/next.js#86866).
+
+`bun run dev` first runs `scripts/dev/link-turbopack-externals.ts`, which
+mirrors those links into `.next/node_modules`, where Bun finds them. On a fresh
+`.next` (new worktree, `bun run clean`), restart the dev server once after the
+first compilation.
+
 ## Configuration Files
 
 ### bunfig.toml
