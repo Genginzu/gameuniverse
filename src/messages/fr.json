@@ -1172,7 +1172,6 @@
     },
     "backlog": {
       "openManager": "Gérer mon backlog",
-      "backToLibrary": "Retour à la bibliothèque",
       "kicker": "Backlog",
       "titlePrefix": "Quelle est ta prochaine",
       "titleAccent": "partie ?",
@@ -4058,7 +4057,7 @@
       "kicker": "Communauté",
       "titlePrefix": "Vos",
       "titleAccent": "groupes",
-      "subtitle": "Les groupes sont invite-only : rejoignez-les uniquement sur invitation d'un membre, ou créez le vôtre et invitez qui vous voulez (jusqu'à 50 membres).",
+      "subtitle": "Des espaces privés, accessibles sur invitation uniquement. Rejoignez un groupe lorsqu'un membre vous y invite, ou créez le vôtre et invitez jusqu'à 50 membres.",
       "createButton": "Créer un groupe",
       "myGroupsKicker": "Mes groupes",
       "errorLoading": "Impossible de charger les groupes. Veuillez réessayer.",

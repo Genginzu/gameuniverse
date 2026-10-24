@@ -7,6 +7,7 @@ import { EntityCard, type EntityCardConfig } from "@/components/shared/EntityCar
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
@@ -63,23 +64,22 @@ export function FavoriteCharactersContent() {
     <section className="w-full">
       <EditorialContainer>
         {/* Hero */}
-        <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
-          <div>
-            <KickerLabel>{t("editorial.kicker")}</KickerLabel>
-            <h1 className="mt-2 font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
-              {t("editorial.titlePrefix")}{" "}
-              <span className="text-editorial-accent">{t("editorial.titleAccent")}</span>
-            </h1>
-            <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">
-              {t("editorial.subtitle")}
-            </p>
-          </div>
-
-          <div className="border-editorial-line grid grid-cols-2 gap-6 border-y py-6">
-            <Stat label={t("editorial.stats.characters")} value={String(characters.length)} accent />
-            <Stat label={t("editorial.stats.games")} value={String(uniqueGames)} />
-          </div>
-        </header>
+        <EditorialPageHeader
+          kicker={t("editorial.kicker")}
+          title={t("editorial.titlePrefix")}
+          titleAccent={t("editorial.titleAccent")}
+          subtitle={t("editorial.subtitle")}
+          aside={
+            <div className="border-editorial-line grid grid-cols-2 gap-6 border-y py-6">
+              <Stat
+                label={t("editorial.stats.characters")}
+                value={String(characters.length)}
+                accent
+              />
+              <Stat label={t("editorial.stats.games")} value={String(uniqueGames)} />
+            </div>
+          }
+        />
 
         {/* Content */}
         {!authLoading && !user ? (

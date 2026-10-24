@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { LinkedPlatformsSection } from "@/components/settings/LinkedPlatformsSection";
 
@@ -18,13 +18,13 @@ export function ConnectionsContent() {
 
   return (
     <EditorialContainer as="section">
-      <header className="border-editorial-line mb-10 border-b pb-8">
-        <KickerLabel>{t("kicker")}</KickerLabel>
-        <h1 className="font-display mt-2 text-[clamp(1.5rem,2.5vw+0.5rem,2.25rem)] leading-tight font-bold tracking-tight text-white">
-          {t("titlePrefix")} <span className="text-editorial-accent">{t("titleAccent")}</span>
-        </h1>
-        <p className="text-editorial-muted mt-3 max-w-[60ch] text-[0.95rem]">{t("subtitle")}</p>
-      </header>
+      <EditorialPageHeader
+        variant="compact"
+        kicker={t("kicker")}
+        title={t("titlePrefix")}
+        titleAccent={t("titleAccent")}
+        subtitle={t("subtitle")}
+      />
 
       <LinkedPlatformsSection />
     </EditorialContainer>

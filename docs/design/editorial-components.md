@@ -17,6 +17,7 @@ global, la direction artistique et les choix de design.
   - [`SpotlightCard`](#spotlightcard)
   - [`Marquee`](#marquee)
   - [`KickerLabel`](#kickerlabel)
+  - [`EditorialPageHeader`](#editorialpageheader)
   - [`StatXL`](#statxl)
 - [Composants de layout (`src/components/layout/editorial/`)](#composants-de-layout)
   - [`EditorialRail`](#editorialrail)
@@ -320,6 +321,46 @@ Applique automatiquement la classe `.editorial-kicker`.
 - ✅ Au-dessus des titres de section (h1, h2).
 - ✅ Tags / labels courts (statut, catégorie).
 - ❌ Texte de paragraphe ou contenu long.
+
+---
+
+### `EditorialPageHeader`
+
+**Fichier :** `src/components/shared/EditorialPageHeader.tsx`
+**Rôle :** En-tête standard des pages éditoriales : kicker + titre display
+(avec mot accentué) + sous-titre muted. Toute nouvelle page éditoriale
+l'utilise au lieu de recopier le markup.
+
+#### API
+
+| Prop          | Type                     | Défaut      | Description                                                     |
+| ------------- | ------------------------ | ----------- | --------------------------------------------------------------- |
+| `kicker`      | `ReactNode`              | requis      | Label au-dessus du titre.                                       |
+| `title`       | `ReactNode`              | requis      | Début du titre (ou titre complet, ex `t.rich(...)`).            |
+| `titleAccent` | `ReactNode`              | —           | Fin du titre en couleur d'accent.                               |
+| `subtitle`    | `ReactNode`              | —           | Sous-titre, pleine largeur (pas de `max-w`).                    |
+| `children`    | `ReactNode`              | —           | Contenu sous le sous-titre (lien, badge…).                      |
+| `aside`       | `ReactNode`              | —           | Bloc droit desktop (stats) : active la grille `5fr / 7fr`.      |
+| `actions`     | `ReactNode`              | —           | Boutons alignés à droite du titre.                              |
+| `variant`     | `"default" \| "compact"` | `"default"` | `compact` : titre réduit + filet bas (paramètres, sous-pages).  |
+| `className`   | `string`                 | —           | Classes additionnelles (ex override de marge `mb-8`).           |
+
+#### Exemple
+
+```tsx
+<EditorialPageHeader
+  kicker={t("kicker")}
+  title={t("titlePrefix")}
+  titleAccent={t("titleAccent")}
+  subtitle={t("subtitle")}
+  aside={<StatsRow />}
+/>
+```
+
+#### Quand l'utiliser
+
+- ✅ En-tête (h1) de toute page éditoriale.
+- ❌ Grand hero avec image de fond : utiliser `EditorialHero`.
 
 ---
 

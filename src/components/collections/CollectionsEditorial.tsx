@@ -17,6 +17,7 @@ import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -62,32 +63,30 @@ export function CollectionsEditorial() {
     <section className="w-full">
       <EditorialContainer>
         {/* Hero */}
-        <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
-          <div>
-            <KickerLabel>{t("kicker")}</KickerLabel>
-            <h1 className="mt-2 font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
-              {t("titlePrefix")} <span className="text-editorial-accent">{t("titleAccent")}</span>
-            </h1>
-            <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">{t("subtitle")}</p>
-          </div>
-
-          <div className="border-editorial-line grid grid-cols-2 gap-6 border-y py-6 md:grid-cols-3">
-            <Stat label={t("stats.collections")} value={String(stats.totalCollections)} accent />
-            <Stat label={t("stats.games")} value={String(stats.totalGames)} />
-            <Stat
-              label={t("stats.largest")}
-              value={
-                stats.largest ? (
-                  <span className="font-display text-xl leading-tight font-bold text-white line-clamp-2">
-                    {stats.largest.name}
-                  </span>
-                ) : (
-                  "—"
-                )
-              }
-            />
-          </div>
-        </header>
+        <EditorialPageHeader
+          kicker={t("kicker")}
+          title={t("titlePrefix")}
+          titleAccent={t("titleAccent")}
+          subtitle={t("subtitle")}
+          aside={
+            <div className="border-editorial-line grid grid-cols-2 gap-6 border-y py-6 md:grid-cols-3">
+              <Stat label={t("stats.collections")} value={String(stats.totalCollections)} accent />
+              <Stat label={t("stats.games")} value={String(stats.totalGames)} />
+              <Stat
+                label={t("stats.largest")}
+                value={
+                  stats.largest ? (
+                    <span className="font-display line-clamp-2 text-xl leading-tight font-bold text-white">
+                      {stats.largest.name}
+                    </span>
+                  ) : (
+                    "—"
+                  )
+                }
+              />
+            </div>
+          }
+        />
 
         {/* Controls */}
         {!user ? (

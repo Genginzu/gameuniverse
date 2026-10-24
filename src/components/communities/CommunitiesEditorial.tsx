@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { useSearchParams } from "next/navigation";
 
-import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -29,7 +29,9 @@ export function CommunitiesEditorial() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
-  const { communities, isLoading, error, refetch } = useCommunities({ search: search || undefined });
+  const { communities, isLoading, error, refetch } = useCommunities({
+    search: search || undefined,
+  });
 
   // Ouvre automatiquement le dialog de création via ?create=1 (ex: lien sidebar).
   useEffect(() => {
@@ -53,15 +55,12 @@ export function CommunitiesEditorial() {
   return (
     <section className="w-full">
       <EditorialContainer>
-        <header className="mb-10 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
-          <div>
-            <KickerLabel>{t("kicker")}</KickerLabel>
-            <h1 className="mt-2 font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
-              {t("titlePrefix")} <span className="text-editorial-accent">{t("titleAccent")}</span>
-            </h1>
-            <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">{t("subtitle")}</p>
-          </div>
-        </header>
+        <EditorialPageHeader
+          kicker={t("kicker")}
+          title={t("titlePrefix")}
+          titleAccent={t("titleAccent")}
+          subtitle={t("subtitle")}
+        />
 
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative w-full sm:max-w-sm">
@@ -76,7 +75,7 @@ export function CommunitiesEditorial() {
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchPlaceholder")}
               aria-label={t("searchPlaceholder")}
-              className="border-editorial-line bg-editorial-3 text-base text-white placeholder:text-editorial-muted focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] h-12 w-full rounded-[14px] border pl-10 pr-4 outline-none"
+              className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted h-12 w-full rounded-[14px] border pr-4 pl-10 text-base text-white outline-none focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)]"
             />
           </div>
 

@@ -24,6 +24,7 @@ import type { AddCollectionItemInput } from "@/types/collection";
 import { GameSearchBar } from "@/components/games/GameSearchBar";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 
 import { useLibraryGames } from "@/hooks/useLibraryGames";
 import { useAuth } from "@/hooks/useAuth";
@@ -104,62 +105,57 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
     <section className="w-full">
       <EditorialContainer>
         {/* Hero */}
-        <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
-          <div>
-            <KickerLabel>{t("editorial.kicker")}</KickerLabel>
-            <h1 className="mt-2 font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
-              {t("editorial.titlePrefix")}{" "}
-              <span className="text-editorial-accent">{t("editorial.titleAccent")}</span>
-            </h1>
-            <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">
-              {t("editorial.subtitle")}
-            </p>
-            <Link
-              href="/library/backlog"
-              className="border-editorial-line text-editorial-muted hover:text-white mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm"
-            >
-              <Icon icon="lucide:list-checks" className="h-4 w-4" />
-              {t("backlog.openManager")}
-            </Link>
-          </div>
-
-          {/* Stats inline */}
-          <div className="border-editorial-line grid grid-cols-2 gap-6 border-y py-6 md:grid-cols-4">
-            <Stat label={t("editorial.stats.games")} value={String(stats.totalGames)} />
-            <Stat
-              label={t("editorial.stats.completed")}
-              value={
-                <>
-                  {stats.completedGames}
-                  <Suffix> · {completedPercent}%</Suffix>
-                </>
-              }
-            />
-            <Stat
-              label={t("editorial.stats.playtime")}
-              value={
-                <>
-                  {stats.totalPlayTime}
-                  <Suffix className="ml-0.5">h</Suffix>
-                </>
-              }
-            />
-            <Stat
-              label={t("editorial.stats.rating")}
-              value={
-                stats.averageRating !== undefined && stats.averageRating !== null ? (
+        <EditorialPageHeader
+          kicker={t("editorial.kicker")}
+          title={t("editorial.titlePrefix")}
+          titleAccent={t("editorial.titleAccent")}
+          subtitle={t("editorial.subtitle")}
+          aside={
+            <div className="border-editorial-line grid grid-cols-2 gap-6 border-y py-6 md:grid-cols-4">
+              <Stat label={t("editorial.stats.games")} value={String(stats.totalGames)} />
+              <Stat
+                label={t("editorial.stats.completed")}
+                value={
                   <>
-                    {stats.averageRating.toFixed(1)}
-                    <Suffix>/5</Suffix>
+                    {stats.completedGames}
+                    <Suffix> · {completedPercent}%</Suffix>
                   </>
-                ) : (
-                  "—"
-                )
-              }
-              accent
-            />
-          </div>
-        </header>
+                }
+              />
+              <Stat
+                label={t("editorial.stats.playtime")}
+                value={
+                  <>
+                    {stats.totalPlayTime}
+                    <Suffix className="ml-0.5">h</Suffix>
+                  </>
+                }
+              />
+              <Stat
+                label={t("editorial.stats.rating")}
+                value={
+                  stats.averageRating !== undefined && stats.averageRating !== null ? (
+                    <>
+                      {stats.averageRating.toFixed(1)}
+                      <Suffix>/5</Suffix>
+                    </>
+                  ) : (
+                    "—"
+                  )
+                }
+                accent
+              />
+            </div>
+          }
+        >
+          <Link
+            href="/library/backlog"
+            className="border-editorial-line text-editorial-muted mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 py-2 text-sm hover:text-white"
+          >
+            <Icon icon="lucide:list-checks" className="h-4 w-4" />
+            {t("backlog.openManager")}
+          </Link>
+        </EditorialPageHeader>
 
         {/* Controls */}
         {!authLoading && !user ? (

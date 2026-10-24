@@ -1172,7 +1172,6 @@
     },
     "backlog": {
       "openManager": "Manage my backlog",
-      "backToLibrary": "Back to library",
       "kicker": "Backlog",
       "titlePrefix": "What's your next",
       "titleAccent": "game?",
@@ -4055,7 +4054,7 @@
       "kicker": "Community",
       "titlePrefix": "Your",
       "titleAccent": "groups",
-      "subtitle": "Groups are invite-only: join one when a member invites you, or create your own and invite whoever you want (up to 50 members).",
+      "subtitle": "Private spaces, by invitation only. Join a group when a member invites you, or create your own and invite up to 50 members.",
       "createButton": "Create a group",
       "myGroupsKicker": "My groups",
       "errorLoading": "Unable to load groups. Please try again.",

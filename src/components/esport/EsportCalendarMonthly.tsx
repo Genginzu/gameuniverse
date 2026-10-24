@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
-import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { EmptyState } from "@/components/shared/EmptyState";
 
 interface CalendarMatch {
@@ -14,8 +14,18 @@ interface CalendarMatch {
   status: string;
   beginAt: string;
   game: string;
-  opponent1: { name: string; acronym: string | null; image_url: string | null; pandascoreId: number | null } | null;
-  opponent2: { name: string; acronym: string | null; image_url: string | null; pandascoreId: number | null } | null;
+  opponent1: {
+    name: string;
+    acronym: string | null;
+    image_url: string | null;
+    pandascoreId: number | null;
+  } | null;
+  opponent2: {
+    name: string;
+    acronym: string | null;
+    image_url: string | null;
+    pandascoreId: number | null;
+  } | null;
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -91,15 +101,12 @@ export function EsportCalendarMonthly() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
       {/* Editorial hero */}
-      <header className="mb-8">
-        <KickerLabel>{t("kicker")}</KickerLabel>
-        <h1 className="mt-2 font-display text-[clamp(1.75rem,3vw+1rem,3rem)] leading-[1.05] font-bold tracking-tight text-white">
-          {t("title")}
-        </h1>
-        <p className="text-editorial-muted mt-3 max-w-[60ch] text-base leading-relaxed">
-          {t("subtitle")}
-        </p>
-      </header>
+      <EditorialPageHeader
+        kicker={t("kicker")}
+        title={t("title")}
+        subtitle={t("subtitle")}
+        className="mb-8"
+      />
 
       {/* Month navigation */}
       <div className="mb-6 flex items-center justify-between">
@@ -108,7 +115,7 @@ export function EsportCalendarMonthly() {
         </button>
 
         <div className="flex items-center gap-3">
-          <h2 className="font-display text-lg font-bold capitalize text-white sm:text-xl">
+          <h2 className="font-display text-lg font-bold text-white capitalize sm:text-xl">
             {monthLabel}
           </h2>
           <button
@@ -135,7 +142,7 @@ export function EsportCalendarMonthly() {
             {weekDays.map((day) => (
               <div
                 key={day}
-                className="text-editorial-muted border-editorial-line border-r px-1 py-2 text-center text-xs font-semibold uppercase tracking-wide last:border-r-0 sm:px-3 sm:py-3 sm:text-sm"
+                className="text-editorial-muted border-editorial-line border-r px-1 py-2 text-center text-xs font-semibold tracking-wide uppercase last:border-r-0 sm:px-3 sm:py-3 sm:text-sm"
               >
                 {day}
               </div>
@@ -149,7 +156,7 @@ export function EsportCalendarMonthly() {
                 key={idx}
                 day={day}
                 isToday={isCurrentMonth && day === todayDate.getDate()}
-                matches={day ? matchesByDay[day] ?? [] : []}
+                matches={day ? (matchesByDay[day] ?? []) : []}
                 year={currentDate.getFullYear()}
                 month={currentDate.getMonth()}
               />
@@ -185,7 +192,7 @@ function CalendarCell({
   month: number;
 }) {
   if (day === null) {
-    return <div className="border-editorial-line h-full border-b border-r bg-white/[0.02]" />;
+    return <div className="border-editorial-line h-full border-r border-b bg-white/[0.02]" />;
   }
 
   const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -193,7 +200,7 @@ function CalendarCell({
 
   const content = (
     <div
-      className={`border-editorial-line flex h-full flex-col overflow-hidden border-b border-r p-1 transition-all sm:p-2 ${
+      className={`border-editorial-line flex h-full flex-col overflow-hidden border-r border-b p-1 transition-all sm:p-2 ${
         hasMatches
           ? "bg-editorial-3 hover:border-editorial-accent/40 cursor-pointer"
           : "bg-transparent"
@@ -254,7 +261,7 @@ function CalendarGridSkeleton() {
       </div>
       <div className="grid auto-rows-[120px] grid-cols-7 sm:auto-rows-[140px]">
         {Array.from({ length: 35 }).map((_, i) => (
-          <div key={i} className="border-editorial-line border-b border-r p-2">
+          <div key={i} className="border-editorial-line border-r border-b p-2">
             <div className="size-6 animate-pulse rounded-full bg-white/[0.06]" />
           </div>
         ))}
