@@ -11,7 +11,7 @@ import { useLocale, useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -26,13 +26,7 @@ export function FriendsPageContent() {
     <section className="w-full">
       <EditorialContainer>
         {/* Hero */}
-        <header className="mb-10">
-          <KickerLabel>{t("title")}</KickerLabel>
-          <h1 className="mt-2 font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
-            {t("title")}
-          </h1>
-          <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">{t("subtitle")}</p>
-        </header>
+        <EditorialPageHeader kicker={t("title")} title={t("title")} subtitle={t("subtitle")} />
 
         {/* Content */}
         {authLoading ? null : !user ? (

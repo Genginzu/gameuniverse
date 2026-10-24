@@ -8,6 +8,7 @@ import { useWallet } from "@/hooks/useWallet";
 import { useAuth } from "@/hooks/useAuth";
 import { Pagination } from "@/components/shared/Pagination";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -83,32 +84,27 @@ export function CoinHistoryContent() {
     <section className="w-full">
       <EditorialContainer>
         {/* Hero */}
-        <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
-          <div>
-            <KickerLabel>{t("editorial.kicker")}</KickerLabel>
-            <h1 className="mt-2 font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
-              {t("editorial.titlePrefix")}{" "}
-              <span className="text-editorial-accent">{t("editorial.titleAccent")}</span>
-            </h1>
-            <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">
-              {t("editorial.subtitle")}
-            </p>
-          </div>
-
-          {wallet && (
-            <div className="border-editorial-line grid grid-cols-3 gap-6 border-y py-6">
-              <Stat label={t("balance")} value={wallet.balance.toLocaleString()} accent />
-              <Stat
-                label={t("earnedLast7Days")}
-                value={`+${(statsData?.earned ?? 0).toLocaleString()}`}
-              />
-              <Stat
-                label={t("spentLast7Days")}
-                value={`-${(statsData?.spent ?? 0).toLocaleString()}`}
-              />
-            </div>
-          )}
-        </header>
+        <EditorialPageHeader
+          kicker={t("editorial.kicker")}
+          title={t("editorial.titlePrefix")}
+          titleAccent={t("editorial.titleAccent")}
+          subtitle={t("editorial.subtitle")}
+          aside={
+            wallet && (
+              <div className="border-editorial-line grid grid-cols-3 gap-6 border-y py-6">
+                <Stat label={t("balance")} value={wallet.balance.toLocaleString()} accent />
+                <Stat
+                  label={t("earnedLast7Days")}
+                  value={`+${(statsData?.earned ?? 0).toLocaleString()}`}
+                />
+                <Stat
+                  label={t("spentLast7Days")}
+                  value={`-${(statsData?.spent ?? 0).toLocaleString()}`}
+                />
+              </div>
+            )
+          }
+        />
 
         {/* Content */}
         {!authLoading && !user ? (
@@ -217,7 +213,7 @@ function EarnSection({ rewards, t }: { rewards: RewardItem[]; t: (key: string) =
         <Icon icon="mdi:target" className="text-editorial-accent size-5" />
         <h2 className="font-display text-lg font-bold text-white">{t("earnTitle")}</h2>
       </div>
-      <div className="grid grid-cols-1 gap-2 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="xs:grid-cols-2 grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-4">
         {rewards.map((reward) => (
           <div
             key={reward.activityType}
@@ -278,9 +274,7 @@ function TransactionRow({
         </p>
       </div>
       <div className="text-right">
-        <p
-          className={`text-sm font-bold ${isPositive ? "text-emerald-400" : "text-red-400"}`}
-        >
+        <p className={`text-sm font-bold ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
           {isPositive ? "+" : ""}
           {tx.amount.toLocaleString()}
         </p>

@@ -17,6 +17,7 @@ import { Icon } from "@iconify/react";
 
 import { Link } from "@/i18n/navigation";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { useUserLibrary } from "@/hooks/useUserLibrary";
 
@@ -46,39 +47,48 @@ export function DashboardEditorial({ user }: DashboardEditorialProps) {
   return (
     <EditorialContainer as="section">
       {/* Hero */}
-      <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
-        <div>
-          <KickerLabel>{t("editorial.kicker")}</KickerLabel>
-          <h1 className="mt-2 font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
-            {t.rich("welcome", {
-              name: () => <span className="text-editorial-accent">{user.username}</span>,
-            })}
-          </h1>
-          <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">{t("subtitle")}</p>
-        </div>
-
-        <div className="border-editorial-line grid grid-cols-3 gap-6 border-t border-b py-6">
-          <Stat label={t("editorial.statGames")} value={loading ? "—" : String(stats.totalGames)} />
-          <Stat
-            label={t("editorial.statCompleted")}
-            value={
-              loading ? (
-                "—"
-              ) : (
-                <>
-                  {stats.completedGames}
-                  <Suffix> · {completedPercent}%</Suffix>
-                </>
-              )
-            }
-          />
-          <Stat
-            label={t("editorial.statPlaytime")}
-            value={loading ? "—" : <>{stats.totalPlayTime}<Suffix>h</Suffix></>}
-            accent
-          />
-        </div>
-      </header>
+      <EditorialPageHeader
+        kicker={t("editorial.kicker")}
+        title={t.rich("welcome", {
+          name: () => <span className="text-editorial-accent">{user.username}</span>,
+        })}
+        subtitle={t("subtitle")}
+        aside={
+          <div className="border-editorial-line grid grid-cols-3 gap-6 border-t border-b py-6">
+            <Stat
+              label={t("editorial.statGames")}
+              value={loading ? "—" : String(stats.totalGames)}
+            />
+            <Stat
+              label={t("editorial.statCompleted")}
+              value={
+                loading ? (
+                  "—"
+                ) : (
+                  <>
+                    {stats.completedGames}
+                    <Suffix> · {completedPercent}%</Suffix>
+                  </>
+                )
+              }
+            />
+            <Stat
+              label={t("editorial.statPlaytime")}
+              value={
+                loading ? (
+                  "—"
+                ) : (
+                  <>
+                    {stats.totalPlayTime}
+                    <Suffix>h</Suffix>
+                  </>
+                )
+              }
+              accent
+            />
+          </div>
+        }
+      />
 
       {/* Accès rapides */}
       <section className="mt-10">
@@ -94,11 +104,7 @@ export function DashboardEditorial({ user }: DashboardEditorialProps) {
               label={t(action.labelKey)}
             />
           ))}
-          <QuickAction
-            href={`/players/${user.id}`}
-            icon="lucide:user-round"
-            label={t("profile")}
-          />
+          <QuickAction href={`/players/${user.id}`} icon="lucide:user-round" label={t("profile")} />
         </div>
       </section>
 
@@ -159,7 +165,9 @@ function AccountRow({ label, value, accent }: { label: string; value: string; ac
   return (
     <div className="border-editorial-line flex flex-wrap items-center justify-between gap-2 px-5 py-4 not-first:border-t">
       <span className="text-editorial-muted text-sm">{label}</span>
-      <span className={`font-semibold break-all ${accent ? "text-editorial-accent" : "text-white"}`}>
+      <span
+        className={`font-semibold break-all ${accent ? "text-editorial-accent" : "text-white"}`}
+      >
         {value}
       </span>
     </div>

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { useBacklog } from "@/hooks/useBacklog";
 import type { BacklogFilters as Filters } from "@/types/backlog";
@@ -58,22 +58,12 @@ export function BacklogManager({ locale }: BacklogManagerProps) {
   return (
     <section className="w-full">
       <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
-        <header className="mb-10">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/library"
-              className="text-editorial-muted hover:text-white inline-flex items-center gap-1 text-sm"
-            >
-              <Icon icon="lucide:arrow-left" className="h-4 w-4" />
-              {t("backToLibrary")}
-            </Link>
-          </div>
-          <KickerLabel className="mt-4">{t("kicker")}</KickerLabel>
-          <h1 className="mt-2 font-display text-[clamp(1.75rem,3vw+1rem,3rem)] leading-[1.05] font-bold tracking-tight text-white">
-            {t("titlePrefix")} <span className="text-editorial-accent">{t("titleAccent")}</span>
-          </h1>
-          <p className="text-editorial-muted mt-3 max-w-[60ch] text-base">{t("subtitle")}</p>
-        </header>
+        <EditorialPageHeader
+          kicker={t("kicker")}
+          title={t("titlePrefix")}
+          titleAccent={t("titleAccent")}
+          subtitle={t("subtitle")}
+        />
 
         {authLoading ? (
           <BacklogSkeleton />
@@ -109,11 +99,7 @@ export function BacklogManager({ locale }: BacklogManagerProps) {
                   <Icon icon="lucide:move-vertical" className="h-4 w-4" />
                   {t("reorderHint")}
                 </p>
-                <BacklogList
-                  games={filteredGames}
-                  locale={locale}
-                  onReorder={reorder}
-                />
+                <BacklogList games={filteredGames} locale={locale} onReorder={reorder} />
               </div>
             ) : (
               <NoResults onClear={handleClear} />

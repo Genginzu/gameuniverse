@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase";
 
-import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 
 import { SettingsSkeleton } from "./SettingsSkeleton";
@@ -136,16 +136,13 @@ export function SettingsContent() {
 
   return (
     <EditorialContainer as="section">
-      <header className="border-editorial-line mb-10 border-b pb-8">
-        <KickerLabel>{tEditorial("kicker")}</KickerLabel>
-        <h1 className="font-display mt-2 text-[clamp(1.5rem,2.5vw+0.5rem,2.25rem)] leading-tight font-bold tracking-tight text-white">
-          {tEditorial("titlePrefix")}{" "}
-          <span className="text-editorial-accent">{tEditorial("titleAccent")}</span>
-        </h1>
-        <p className="text-editorial-muted mt-3 max-w-[60ch] text-[0.95rem]">
-          {tEditorial("subtitle")}
-        </p>
-      </header>
+      <EditorialPageHeader
+        variant="compact"
+        kicker={tEditorial("kicker")}
+        title={tEditorial("titlePrefix")}
+        titleAccent={tEditorial("titleAccent")}
+        subtitle={tEditorial("subtitle")}
+      />
 
       <div className="flex flex-col gap-6">
         <SettingsSection

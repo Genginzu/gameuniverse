@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useNotificationCenter } from "@/hooks/useNotificationCenter";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
-import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialPageHeader } from "@/components/shared/EditorialPageHeader";
 import { Pagination } from "@/components/shared/Pagination";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -46,21 +46,21 @@ export function NotificationCenterContent() {
     <section className="w-full">
       <EditorialContainer>
         {/* Hero */}
-        <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <KickerLabel>{t("kicker")}</KickerLabel>
-            <h1 className="mt-2 font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
-              {t("titlePrefix")} <span className="text-editorial-accent">{t("titleAccent")}</span>
-            </h1>
-            <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">{t("subtitle")}</p>
-          </div>
-          {user && unreadCount > 0 && (
-            <Button variant="outline" onClick={handleMarkAll} className="shrink-0">
-              <Icon icon="mdi:email-open-multiple-outline" className="mr-2 size-4" />
-              {t("markAllAsRead")}
-            </Button>
-          )}
-        </header>
+        <EditorialPageHeader
+          kicker={t("kicker")}
+          title={t("titlePrefix")}
+          titleAccent={t("titleAccent")}
+          subtitle={t("subtitle")}
+          actions={
+            user &&
+            unreadCount > 0 && (
+              <Button variant="outline" onClick={handleMarkAll} className="shrink-0">
+                <Icon icon="mdi:email-open-multiple-outline" className="mr-2 size-4" />
+                {t("markAllAsRead")}
+              </Button>
+            )
+          }
+        />
 
         {!authLoading && !user ? (
           <AuthRequired />
