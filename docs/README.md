@@ -25,6 +25,7 @@
 | [reviews.md](features/games/reviews.md)                             | Système d'avis                 |
 | [ratings-system.md](features/games/ratings-system.md)               | Système de notes               |
 | [recommendations.md](features/games/recommendations.md)             | Recommandations                |
+| [game-metadata.md](features/games/game-metadata.md)                 | Métadonnées IGDB & franchises  |
 | [platforms.md](features/games/platforms.md)                         | Plateformes                    |
 | [dlc-extensions.md](features/games/dlc-extensions.md)               | DLC & extensions               |
 | [deletion-system.md](features/games/deletion-system.md)             | Suppression de jeux            |

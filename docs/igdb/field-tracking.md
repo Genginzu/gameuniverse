@@ -64,23 +64,36 @@ en base. Les champs modifiés sont enregistrés dans `game_field_overrides`.
 
 ### Champs suivis
 
-Les 13 catégories de champs synchronisables :
+Les catégories de champs synchronisables (liste complète dans
+`src/lib/services/igdb-fields/registry.ts`) :
 
-| Catégorie          | Description                           |
-| ------------------ | ------------------------------------- |
-| `translations`     | Titre et description (toutes langues) |
-| `cover_image`      | Image de couverture                   |
-| `background_image` | Image de fond                         |
-| `release_date`     | Date de sortie                        |
-| `metascore`        | Note agrégée                          |
-| `genres`           | Genres liés                           |
-| `companies`        | Développeurs et éditeurs              |
-| `screenshots`      | Captures d'écran                      |
-| `artworks`         | Artworks                              |
-| `age_ratings`      | Classifications d'âge                 |
-| `versions`         | Éditions du jeu                       |
-| `languages`        | Langues supportées                    |
-| `playtime`         | Temps de jeu                          |
+| Catégorie             | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| `translations`        | Titre et description (toutes langues)          |
+| `cover_image`         | Image de couverture                            |
+| `background_image`    | Image de fond                                  |
+| `release_date`        | Date de sortie                                 |
+| `metascore`           | Note agrégée                                   |
+| `genres`              | Genres liés                                    |
+| `companies`           | Développeurs et éditeurs                       |
+| `screenshots`         | Captures d'écran                               |
+| `artworks`            | Artworks                                       |
+| `age_ratings`         | Classifications d'âge                          |
+| `versions`            | Éditions du jeu                                |
+| `languages`           | Langues supportées                             |
+| `playtime`            | Temps de jeu                                   |
+| `themes`              | Thèmes IGDB                                    |
+| `game_modes`          | Modes de jeu                                   |
+| `player_perspectives` | Perspectives                                   |
+| `multiplayer_modes`   | Modes multijoueur (par plateforme)             |
+| `franchises`          | Franchises et collections IGDB (séries)        |
+| `keywords`            | Mots-clés (recherche)                          |
+| `game_engines`        | Moteurs de jeu                                 |
+| `websites`            | Liens officiels                                |
+| `igdb_rating`         | `total_rating` + `total_rating_count` IGDB     |
+
+Les champs de métadonnées sont décrits dans
+[game-metadata.md](../features/games/game-metadata.md).
 
 ### Import IGDB
 
