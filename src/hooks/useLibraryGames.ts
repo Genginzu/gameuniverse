@@ -89,6 +89,14 @@ export function useLibraryGames(locale: string = "fr") {
     }
   }, [gamesData, hasLoadedOnce]);
 
+  // Key of the last settled listing: a revalidation of the same key (after a
+  // status change, a focus…) is a background refresh, not a new query.
+  const [settledKey, setSettledKey] = useState<string | null>(null);
+  useEffect(() => {
+    if (!gamesValidating) setSettledKey(gamesKey);
+  }, [gamesValidating, gamesKey]);
+  const queryChanging = gamesValidating && settledKey !== gamesKey;
+
   // SWR — stats
   const { data: statsData, mutate: mutateStats } = useSWR<LibraryStats>(
     user ? "/api/library/stats" : null
@@ -181,6 +189,8 @@ export function useLibraryGames(locale: string = "fr") {
     // Loading states
     initialLoading: gamesLoading && !hasLoadedOnce,
     loading: gamesValidating,
+    /** Fetching another page / search / filter (not a background refresh). */
+    queryChanging,
     // Filter state
     searchQuery,
     selectedGenres,

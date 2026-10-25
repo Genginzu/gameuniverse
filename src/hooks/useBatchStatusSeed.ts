@@ -13,7 +13,8 @@ interface BatchStatusSeedOptions<Data> {
   bodyField: string;
   /** SWR key of one entity's status. */
   keyFor: (id: string) => string;
-  toData: (status: boolean) => Data;
+  /** Builds one entity's cached data; `body` is the full batch response (extra per-id maps). */
+  toData: (status: boolean, id: string, body: Record<string, unknown>) => Data;
 }
 
 /**
@@ -47,12 +48,13 @@ export function useBatchStatusSeed<Data>({
           body: JSON.stringify({ [bodyField]: requestedIds }),
         });
         if (!response.ok || cancelled) return;
-        const { statuses = {} } = (await response.json()) as {
+        const body = (await response.json()) as Record<string, unknown> & {
           statuses?: Record<string, boolean>;
         };
+        const statuses = body.statuses ?? {};
         await Promise.all(
           Object.entries(statuses).map(([id, status]) =>
-            mutate(keyFor(id), toData(status), { revalidate: false })
+            mutate(keyFor(id), toData(status, id, body), { revalidate: false })
           )
         );
       } catch {

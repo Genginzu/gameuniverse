@@ -8,6 +8,9 @@ type UntypedFrom = any;
 
 const PAGE_SIZE = 20;
 
+/** Library statuses switched to "playing" when the player logs a session. */
+const PROMOTED_TO_PLAYING = new Set(["owned", "wishlist", "backlog"]);
+
 /** Raw row shape returned by Supabase when joining games + game_translations. */
 interface SessionRow {
   id: string;
@@ -169,19 +172,37 @@ export class GameSessionsServerService {
     return { id: row.id, userId: row.user_id };
   }
 
-  /** Best-effort: insert into user_library with status 'playing' if not already present. */
+  /**
+   * Best-effort: puts the game in the player's library as "playing" — inserted
+   * if absent, promoted if it was only owned / wished / backlogged. A
+   * completed game keeps its status (a replay does not undo the completion).
+   */
   private static async ensureInLibrary(playerId: string, gameId: string): Promise<void> {
     try {
       const supabase = await createRouteHandlerClient();
 
       const { data: existing } = await supabase
         .from("user_library")
-        .select("id")
+        .select("id, status")
         .eq("user_id", playerId)
         .eq("game_id", gameId)
         .maybeSingle();
 
-      if (existing) return;
+      if (existing) {
+        if (!PROMOTED_TO_PLAYING.has(existing.status ?? "")) return;
+        const { error: updateError } = await supabase
+          .from("user_library")
+          .update({ status: "playing" })
+          .eq("id", existing.id);
+        if (updateError) {
+          logger.error("Failed to mark library game as playing after session", {
+            error: updateError.message,
+            playerId,
+            gameId,
+          });
+        }
+        return;
+      }
 
       const { error: insertError } = await supabase.from("user_library").insert({
         user_id: playerId,

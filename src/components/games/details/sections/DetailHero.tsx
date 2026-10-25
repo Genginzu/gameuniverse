@@ -10,13 +10,12 @@
  */
 
 import Image from "next/image";
-import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
-import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails } from "@/types/game";
+import { HeroLibraryControl } from "./HeroLibraryControl";
 
 interface DetailHeroProps {
   game: GameDetails;
@@ -27,16 +26,6 @@ interface DetailHeroProps {
 export function DetailHero({ game, formatPrice }: DetailHeroProps) {
   const t = useTranslations();
   const tEd = useTranslations("gameDetails.editorial");
-  const [libraryHovered, setLibraryHovered] = useState(false);
-  const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(
-    game.id
-  );
-
-  const handleLibraryToggle = async () => {
-    if (inLibrary) await removeFromLibrary();
-    else await addToLibrary();
-  };
-  const isProcessing = loading || adding;
 
   const releaseYear = game.releaseDate ? new Date(game.releaseDate).getFullYear() : null;
   const cheapest =
@@ -123,32 +112,7 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
             {/* CTAs + stats */}
             <div className="editorial-game-detail-hero-actions">
               <div className="editorial-game-detail-cta-row">
-                <button
-                  type="button"
-                  onClick={handleLibraryToggle}
-                  onMouseEnter={() => setLibraryHovered(true)}
-                  onMouseLeave={() => setLibraryHovered(false)}
-                  onFocus={() => setLibraryHovered(true)}
-                  onBlur={() => setLibraryHovered(false)}
-                  disabled={isProcessing}
-                  className={`editorial-game-detail-cta-ghost min-w-[16rem] justify-center whitespace-nowrap${
-                    inLibrary ? (libraryHovered ? " is-remove" : " is-active") : ""
-                  }`}
-                  aria-pressed={inLibrary}
-                >
-                  {isProcessing ? (
-                    <Icon icon="svg-spinners:ring-resize" className="h-4 w-4" />
-                  ) : inLibrary && libraryHovered ? (
-                    <Icon icon="lucide:x" className="h-4 w-4" />
-                  ) : (
-                    <Icon icon="mdi:heart" className="h-4 w-4" />
-                  )}
-                  {inLibrary
-                    ? libraryHovered
-                      ? tEd("libraryRemove")
-                      : tEd("libraryIn")
-                    : tEd("libraryAdd")}
-                </button>
+                <HeroLibraryControl gameId={game.id} />
 
                 <button type="button" className="editorial-game-detail-cta-ghost">
                   <Icon icon="lucide:share-2" className="h-4 w-4" />

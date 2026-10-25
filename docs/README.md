@@ -63,6 +63,8 @@
 | ----------------------------------------------- | ---------------------------- |
 | [setup.md](features/library/setup.md)           | Setup de la bibliothèque     |
 | [comparison.md](features/library/comparison.md) | Comparaison de bibliothèques |
+| [quick-add.md](features/library/quick-add.md)   | Ajout rapide depuis une carte |
+| [status.md](features/library/status.md)         | Statut des jeux (en cours…)   |
 
 ## 🏆 Features — Esport
 

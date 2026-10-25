@@ -13,7 +13,7 @@ import { GameSessionsServerService } from "@/lib/services/gameSessionsServerServ
 
 function chain(result: { data?: unknown; error?: unknown; count?: number | null }) {
   const c: Record<string, unknown> = {};
-  for (const m of ["select", "eq", "order", "range", "insert", "delete"]) {
+  for (const m of ["select", "eq", "order", "range", "insert", "update", "delete"]) {
     c[m] = vi.fn().mockReturnValue(c);
   }
   c.single = vi.fn().mockResolvedValue(result);
@@ -113,6 +113,40 @@ describe("GameSessionsServerService.createSession", () => {
     );
 
     expect(libInsertChain.insert).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["owned", true],
+    ["wishlist", true],
+    ["backlog", true],
+    ["playing", false],
+    ["completed", false],
+  ])("marks an existing %s game as playing: %s", async (status, promoted) => {
+    const insertSessionChain = chain({ data: ROW, error: null });
+    const libCheckChain = chain({ data: { id: "lib-1", status }, error: null });
+    const libUpdateChain = chain({ data: null, error: null });
+
+    let callIndex = 0;
+    mockFrom.mockImplementation(() => {
+      callIndex++;
+      if (callIndex === 1) return insertSessionChain;
+      if (callIndex === 2) return libCheckChain;
+      return libUpdateChain;
+    });
+
+    await GameSessionsServerService.createSession(
+      "u1",
+      { gameId: "g1", date: "2026-04-20", durationMinutes: 60 },
+      "fr"
+    );
+
+    if (promoted) {
+      expect(libUpdateChain.update).toHaveBeenCalledWith({ status: "playing" });
+      expect(libUpdateChain.eq).toHaveBeenCalledWith("id", "lib-1");
+    } else {
+      expect(libUpdateChain.update).not.toHaveBeenCalled();
+    }
+    expect(libUpdateChain.insert).not.toHaveBeenCalled();
   });
 });
 

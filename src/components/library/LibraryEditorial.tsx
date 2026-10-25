@@ -5,7 +5,7 @@
  *
  * Conserve toute la logique métier intacte :
  *   - Hook `useLibraryGames` (search, filtres, pagination, mutations)
- *   - `LibraryStatusProvider` pour les indicateurs bibliothèque
+ *   - `LibraryGamesGrid` : cartes avec menu de statut (en cours, terminé…)
  *
  * Style : Tailwind inline + tokens éditoriaux. Le loader (`LibraryLoadingState`)
  * garde ses animations keyframes en CSS (scan/breath) — voir library.css.
@@ -16,23 +16,22 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
-import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Link } from "@/i18n/navigation";
 import { AddGameToCollection } from "@/components/collections/AddGameToCollection";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import type { AddCollectionItemInput } from "@/types/collection";
 import { GameSearchBar } from "@/components/games/GameSearchBar";
-import { GameCard } from "@/components/games/GameCard";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
-import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 
 import { useLibraryGames } from "@/hooks/useLibraryGames";
 import { useAuth } from "@/hooks/useAuth";
 
 import { LibraryPageSkeleton } from "./LibraryPageSkeleton";
 import { LibraryLoadingState } from "./LibraryLoadingState";
+import { LibraryGamesGrid } from "./LibraryGamesGrid";
+import { LibraryAuthRequired, LibraryEmptyState } from "./LibraryEmptyStates";
 
 const GameFilters = dynamic(() =>
   import("@/components/games/GameFilters").then((m) => m.GameFilters)
@@ -44,9 +43,6 @@ const Pagination = dynamic(() =>
 interface LibraryEditorialProps {
   locale?: string;
 }
-
-const GRID =
-  "grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5 min-[1536px]:grid-cols-6 min-[1536px]:gap-5";
 
 export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
   const [showFilters, setShowFilters] = useState(false);
@@ -62,6 +58,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
     pagination,
     initialLoading,
     loading,
+    queryChanging,
     searchQuery,
     selectedGenres,
     selectedPublishers,
@@ -216,7 +213,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
             {/* Content */}
             <div
               className="transition-opacity duration-200 data-[revalidating=true]:opacity-50"
-              data-revalidating={loading && games.length > 0 ? "true" : "false"}
+              data-revalidating={queryChanging && games.length > 0 ? "true" : "false"}
             >
               {loading && games.length === 0 ? (
                 <LibraryLoadingState />
@@ -227,13 +224,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
                   onAddGame={() => setShowAddGameDialog(true)}
                 />
               ) : (
-                <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
-                  <div className={GRID} data-testid="editorial-library-grid">
-                    {games.map((game, index) => (
-                      <GameCard key={game.id} game={game} priority={index < 5} />
-                    ))}
-                  </div>
-                </LibraryStatusProvider>
+                <LibraryGamesGrid games={games} />
               )}
 
               {pagination && pagination.totalPages > 1 && (
@@ -287,62 +278,6 @@ function Stat({ label, value, accent }: { label: string; value: ReactNode; accen
         {value}
       </p>
       <KickerLabel className="mt-2">{label}</KickerLabel>
-    </div>
-  );
-}
-
-/** Bloc affiché à la place de la recherche et du contenu quand l'utilisateur n'est pas connecté. */
-function LibraryAuthRequired() {
-  const t = useTranslations("userLibrary");
-
-  return (
-    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-3xl border px-8 py-16 text-center">
-      <div className="bg-editorial-accent/15 text-editorial-accent grid size-16 place-items-center rounded-full">
-        <Icon icon="lucide:lock" className="h-7 w-7" />
-      </div>
-      <h3 className="font-display text-2xl font-bold text-white">{t("authRequired.title")}</h3>
-      <p className="text-editorial-muted max-w-[50ch]">{t("authRequired.description")}</p>
-      <Button asChild>
-        <Link href="/auth">
-          <Icon icon="lucide:log-in" className="mr-2 h-4 w-4" />
-          {t("authRequired.signIn")}
-        </Link>
-      </Button>
-    </div>
-  );
-}
-
-/** État vide — bibliothèque vide ou aucun résultat de recherche. */
-function LibraryEmptyState({
-  hasFilters,
-  onClearFilters,
-  onAddGame,
-}: {
-  hasFilters: boolean;
-  onClearFilters: () => void;
-  onAddGame: () => void;
-}) {
-  const t = useTranslations("userLibrary");
-
-  return (
-    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-3xl border px-8 py-16 text-center">
-      <div className="bg-editorial-accent/15 text-editorial-accent grid size-16 place-items-center rounded-full">
-        <Icon icon="lucide:gamepad-2" className="h-7 w-7" />
-      </div>
-      <h3 className="font-display text-2xl font-bold text-white">
-        {hasFilters ? t("empty.noGamesFound") : t("empty.title")}
-      </h3>
-      <p className="text-editorial-muted max-w-[50ch]">
-        {hasFilters ? t("empty.modifySearch") : t("empty.description")}
-      </p>
-      {hasFilters ? (
-        <Button onClick={onClearFilters}>{t("empty.clearFilters")}</Button>
-      ) : (
-        <Button onClick={onAddGame}>
-          <Icon icon="lucide:plus" className="mr-2 h-4 w-4" />
-          {t("addGame.trigger")}
-        </Button>
-      )}
     </div>
   );
 }

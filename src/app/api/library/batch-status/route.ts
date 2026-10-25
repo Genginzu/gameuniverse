@@ -3,6 +3,8 @@ import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { defineRoute, validationError } from "@/lib/api/route";
+import { toLibraryStatus } from "@/lib/validations/library";
+import type { LibraryStatus } from "@/types/library";
 
 // The array check stays in the handler so the dedicated 400 message is unchanged.
 const batchStatusSchema = z.object({ gameIds: z.any().optional() });
@@ -23,7 +25,7 @@ export const POST = defineRoute(
 
     const { data, error } = await supabase
       .from("user_library")
-      .select("game_id")
+      .select("game_id, status")
       .eq("user_id", user.id)
       .in("game_id", limitedIds);
 
@@ -36,13 +38,18 @@ export const POST = defineRoute(
       return NextResponse.json({ error: "Failed to check library status" }, { status: 500 });
     }
 
-    // Construire un map gameId → inLibrary
+    // gameId → inLibrary, plus the library status of owned games.
     const inLibrarySet = new Set(data?.map((row) => row.game_id) ?? []);
     const statuses: Record<string, boolean> = {};
     for (const id of limitedIds) {
       statuses[id] = inLibrarySet.has(id);
     }
+    const libraryStatuses: Record<string, LibraryStatus> = {};
+    for (const row of data ?? []) {
+      const status = toLibraryStatus(row.status);
+      if (status) libraryStatuses[row.game_id] = status;
+    }
 
-    return NextResponse.json({ statuses });
+    return NextResponse.json({ statuses, libraryStatuses });
   }
 );
