@@ -56,6 +56,10 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   const [decided, setDecided] = useState(false);
   const [categories, setCategories] = useState<ConsentCategories>(DENIED);
   const [managerOpen, setManagerOpen] = useState(false);
+  // The consent cookie is only readable on the client: until it has been read,
+  // render no banner, so visitors who already chose never see it flash in the
+  // server HTML (visible for a while on slow connections) before hydration.
+  const [consentRead, setConsentRead] = useState(false);
 
   // Hydrate from the stored cookie on mount. Absence => banner shown.
   useEffect(() => {
@@ -64,6 +68,7 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
       setCategories(stored);
       setDecided(true);
     }
+    setConsentRead(true);
   }, []);
 
   const persist = useCallback((next: ConsentCategories) => {
@@ -95,7 +100,12 @@ export function CookieConsentProvider({ children }: { children: ReactNode }) {
   return (
     <CookieConsentContext.Provider value={value}>
       {children}
-      <CookieConsentBanner managerOpen={managerOpen} onCloseManager={() => setManagerOpen(false)} />
+      {consentRead && (
+        <CookieConsentBanner
+          managerOpen={managerOpen}
+          onCloseManager={() => setManagerOpen(false)}
+        />
+      )}
     </CookieConsentContext.Provider>
   );
 }
