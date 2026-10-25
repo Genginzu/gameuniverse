@@ -18,7 +18,7 @@ import {
   syncVideos,
   syncSimilarGames,
 } from "../igdb-sync-fields";
-import { syncTaxonomies } from "../igdbTaxonomies";
+import { metadataSyncer } from "../igdbMetadata";
 
 export type FieldSyncer =
   | {
@@ -72,5 +72,13 @@ export const FIELD_SYNC_MAP: Readonly<Record<TrackableField, FieldSyncer>> = {
   popularity: fromIgdbId(syncPopularity),
   videos: fromGame(syncVideos),
   similar_games: fromGame(syncSimilarGames),
-  taxonomies: fromGame(syncTaxonomies),
+  themes: fromGame(metadataSyncer("themes")),
+  game_modes: fromGame(metadataSyncer("game_modes")),
+  player_perspectives: fromGame(metadataSyncer("player_perspectives")),
+  multiplayer_modes: fromGame(metadataSyncer("multiplayer_modes")),
+  franchises: fromGame(metadataSyncer("franchises")),
+  keywords: fromGame(metadataSyncer("keywords")),
+  game_engines: fromGame(metadataSyncer("game_engines")),
+  websites: fromGame(metadataSyncer("websites")),
+  igdb_rating: fromGame(metadataSyncer("igdb_rating")),
 };

@@ -2,16 +2,12 @@ import { useState, useCallback, useRef } from "react";
 import useSWR from "swr";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
+import type { BulkFieldAlias } from "@/types/admin-games";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export type BulkImportField =
-  | "cover"
-  | "background"
-  | "playtime"
-  | "metascore"
-  | "releaseDate"
-  | "popularity";
+/** Bulk-importable fields: the aliases of the IGDB field registry. */
+export type BulkImportField = BulkFieldAlias;
 
 export interface BulkGame {
   id: string;

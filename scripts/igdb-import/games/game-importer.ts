@@ -12,7 +12,7 @@ import {
 } from "../../../src/lib/utils/dlcExtensionUtils";
 import { toGameVersionRows } from "../../../src/lib/utils/gameVersionRows";
 import { isAdultIgdbGame } from "../../../src/lib/utils/igdbAdult";
-import { syncTaxonomies } from "../../../src/lib/services/igdbTaxonomies";
+import { syncAllMetadata } from "../../../src/lib/services/igdbMetadata";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
 import { extractColorsFromCover } from "../shared/color-extractor";
 import { syncExistingGame } from "./game-sync";
@@ -138,8 +138,8 @@ export async function importGameFromIGDB(
     );
 
     writeOps.push(
-      syncTaxonomies(supabase, newGame.id, igdbGame).catch((error) =>
-        console.warn(`[Importer] Taxonomies not saved for ${newGame.slug}:`, error)
+      syncAllMetadata(supabase, newGame.id, igdbGame).catch((error) =>
+        console.warn(`[Importer] IGDB metadata not saved for ${newGame.slug}:`, error)
       )
     );
 

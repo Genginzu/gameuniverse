@@ -132,8 +132,41 @@ export interface IGDBGame {
   player_perspectives?: Array<number | IGDBNamedEntity>;
   franchise?: number | IGDBNamedEntity;
   franchises?: Array<number | IGDBNamedEntity>;
+  /** IGDB collections (game series), stored in `series`. */
+  collections?: Array<number | IGDBNamedEntity>;
+  keywords?: Array<number | IGDBNamedEntity>;
+  game_engines?: Array<number | IGDBNamedEntity>;
+  websites?: Array<number | IGDBWebsite>;
+  multiplayer_modes?: Array<number | IGDBMultiplayerMode>;
+  total_rating?: number;
+  total_rating_count?: number;
   platforms?: Array<{ id: number; name: string }>;
   videos?: Array<{ video_id: string; name?: string }>;
+}
+
+/** `/websites` entry; `type` references `/website_types`. */
+export interface IGDBWebsite {
+  id?: number;
+  url?: string;
+  type?: number;
+  trusted?: boolean;
+}
+
+/** `/multiplayer_modes` entry; `platform` is an IGDB platform id. */
+export interface IGDBMultiplayerMode {
+  id?: number;
+  platform?: number | { id: number };
+  campaigncoop?: boolean;
+  dropin?: boolean;
+  lancoop?: boolean;
+  offlinecoop?: boolean;
+  offlinecoopmax?: number;
+  offlinemax?: number;
+  onlinecoop?: boolean;
+  onlinecoopmax?: number;
+  onlinemax?: number;
+  splitscreen?: boolean;
+  splitscreenonline?: boolean;
 }
 
 export interface IGDBTimeToBeat {

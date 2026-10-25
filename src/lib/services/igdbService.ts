@@ -10,7 +10,7 @@ import {
   IGDBCharacter,
 } from "@/types/igdb";
 import { logger } from "@/lib/logger";
-import { IGDB_TAXONOMY_FIELDS } from "./igdbTaxonomies";
+import { IGDB_METADATA_FIELDS } from "./igdbMetadata";
 
 /**
  * Service for interacting with the IGDB (Internet Game Database) API
@@ -218,7 +218,7 @@ export class IGDBService {
              age_ratings.rating_content_descriptions,
              platforms.id, platforms.name,
              videos.video_id, videos.name,
-             ${IGDB_TAXONOMY_FIELDS},
+             ${IGDB_METADATA_FIELDS},
              dlcs, expansions, bundles, similar_games;
       where id = ${igdbId};
     `;
@@ -414,13 +414,13 @@ export class IGDBService {
    * Themes, modes, perspectives and franchises of up to 500 games.
    * Throws on IGDB errors: callers must not mistake a failed call for "no data".
    */
-  static async getTaxonomiesBatch(igdbIds: number[]): Promise<Map<number, IGDBGame>> {
+  static async getMetadataBatch(igdbIds: number[]): Promise<Map<number, IGDBGame>> {
     const map = new Map<number, IGDBGame>();
     if (igdbIds.length === 0) return map;
-    const body = `fields id, ${IGDB_TAXONOMY_FIELDS}; where id = (${igdbIds.join(",")}); limit ${igdbIds.length};`;
+    const body = `fields id, ${IGDB_METADATA_FIELDS}; where id = (${igdbIds.join(",")}); limit ${igdbIds.length};`;
     const response = await this.igdbFetch("games", body);
     if (!response.ok) {
-      throw new Error(`IGDB taxonomies batch failed: ${response.status} ${await response.text()}`);
+      throw new Error(`IGDB metadata batch failed: ${response.status} ${await response.text()}`);
     }
     const games: IGDBGame[] = await response.json();
     for (const game of games) map.set(game.id, game);

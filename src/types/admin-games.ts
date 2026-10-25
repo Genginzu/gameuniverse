@@ -62,6 +62,8 @@ export type TabId =
   | "images"
   | "translations"
   | "genres"
+  | "classification"
+  | "links"
   | "companies"
   | "game_platforms"
   | "age_ratings"
@@ -98,10 +100,32 @@ export type TrackableField =
   | "popularity"
   | "videos"
   | "similar_games"
-  | "taxonomies";
+  | "themes"
+  | "game_modes"
+  | "player_perspectives"
+  | "multiplayer_modes"
+  | "franchises"
+  | "keywords"
+  | "game_engines"
+  | "websites"
+  | "igdb_rating";
 
 export type BulkFieldAlias =
-  "cover" | "background" | "playtime" | "metascore" | "releaseDate" | "popularity";
+  | "cover"
+  | "background"
+  | "playtime"
+  | "metascore"
+  | "releaseDate"
+  | "popularity"
+  | "themes"
+  | "gameModes"
+  | "playerPerspectives"
+  | "multiplayerModes"
+  | "franchises"
+  | "keywords"
+  | "gameEngines"
+  | "websites"
+  | "igdbRating";
 
 export interface CurrentGameData {
   cover_image_url?: string | null;
@@ -126,6 +150,17 @@ export interface CurrentGameData {
   }>;
   game_platforms?: Array<{ platform_id: string }>;
   videos?: Array<{ url: string; title?: string | null }>;
+  themes?: Array<{ theme_id: string }>;
+  game_modes?: Array<{ game_mode_id: string }>;
+  player_perspectives?: Array<{ player_perspective_id: string }>;
+  franchises?: Array<{ franchise_id: string }>;
+  series?: Array<{ series_id: string }>;
+  game_engines?: Array<{ game_engine_id: string }>;
+  keywords?: Array<{ keyword_id: string }>;
+  websites?: Array<{ url: string; type_id: number | null }>;
+  multiplayer_modes?: Array<Record<string, unknown>>;
+  igdb_total_rating?: number | null;
+  igdb_total_rating_count?: number | null;
 }
 
 export type TrackedFieldChangeDetector = (

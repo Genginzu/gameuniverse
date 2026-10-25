@@ -9,7 +9,7 @@
  */
 
 import { getSupabaseAdmin } from "./supabase-admin.ts";
-import { saveGameTaxonomies } from "./igdb-taxonomies.ts";
+import { saveGameMetadata } from "./igdb-metadata.ts";
 import { IGDBService } from "./igdb-service.ts";
 import { logger } from "./logger.ts";
 import { fetchMetacriticScore } from "./metacritic-service.ts";
@@ -212,15 +212,15 @@ export const GameImportService = {
 
     await fetchAndSavePlaytime(gameId, igdbGame.id);
     await fetchAndSavePopularity(gameId, igdbGame.id);
-    await this.saveTaxonomies(gameId, igdbGame);
+    await this.saveMetadata(gameId, igdbGame);
   },
 
   /** Recommendation features; a failure must not abort the import. */
-  async saveTaxonomies(gameId: string, igdbGame: IGDBGame): Promise<void> {
+  async saveMetadata(gameId: string, igdbGame: IGDBGame): Promise<void> {
     try {
-      await saveGameTaxonomies(getSupabaseAdmin(), gameId, igdbGame);
+      await saveGameMetadata(getSupabaseAdmin(), gameId, igdbGame);
     } catch (error) {
-      logger.warn("Failed to save game taxonomies", { gameId, error: String(error) });
+      logger.warn("Failed to save game IGDB metadata", { gameId, error: String(error) });
     }
   },
 
@@ -235,6 +235,6 @@ export const GameImportService = {
     await syncPlatforms(gameId, igdbGame);
     await fetchAndSavePlaytime(gameId, igdbGame.id);
     await fetchAndSavePopularity(gameId, igdbGame.id);
-    await this.saveTaxonomies(gameId, igdbGame);
+    await this.saveMetadata(gameId, igdbGame);
   },
 };

@@ -6,10 +6,28 @@
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import type { Company } from "@/types/admin-games";
 
+/** IGDB metadata fields of the admin form (themes, franchises, websites…). */
+export type AdminGameMetadataFormData = Pick<
+  AdminGameFormData,
+  | "themes"
+  | "game_modes"
+  | "player_perspectives"
+  | "franchises"
+  | "series"
+  | "game_engines"
+  | "keywords"
+  | "websites"
+  | "multiplayer_modes"
+  | "igdb_total_rating"
+  | "igdb_total_rating_count"
+>;
+
 export interface GameApiResponse {
   id: string;
   slug: string;
   igdb_id: number | null;
+  /** IGDB metadata, already in the form shape (admin GET). */
+  metadata?: Partial<AdminGameMetadataFormData>;
   cover_image_url: string | null;
   background_image_url: string | null;
   background_color: string | null;
@@ -189,6 +207,33 @@ export function toFormData(game: GameApiResponse): AdminGameFormData {
     music_spotify_embed_url: game.music?.spotify_embed_url ?? "",
     music_youtube_video_url: game.music?.youtube_video_url ?? "",
     is_esport: game.is_esport ?? false,
+    ...metadataFormData(game.metadata),
+  };
+}
+
+export const METADATA_DEFAULTS: AdminGameMetadataFormData = {
+  themes: [],
+  game_modes: [],
+  player_perspectives: [],
+  franchises: [],
+  series: [],
+  game_engines: [],
+  keywords: [],
+  websites: [],
+  multiplayer_modes: [],
+  igdb_total_rating: "",
+  igdb_total_rating_count: "",
+};
+
+/** The admin GET already returns the metadata in the form shape; nulls become "". */
+function metadataFormData(
+  metadata: Partial<AdminGameMetadataFormData> | undefined
+): AdminGameMetadataFormData {
+  const merged = { ...METADATA_DEFAULTS, ...metadata };
+  return {
+    ...merged,
+    igdb_total_rating: merged.igdb_total_rating ?? "",
+    igdb_total_rating_count: merged.igdb_total_rating_count ?? "",
   };
 }
 

@@ -3,7 +3,7 @@ import { IGDBGame } from "@/types/igdb";
 import { IGDBService } from "./igdbService";
 import { extractColorsFromCover } from "@/lib/utils/color-extraction";
 import { logger } from "@/lib/logger";
-import { syncTaxonomies } from "./igdbTaxonomies";
+import { syncAllMetadata } from "./igdbMetadata";
 
 // Split modules
 import type { ImportResult } from "./game-import/types";
@@ -254,15 +254,15 @@ export class GameImportService {
 
     await fetchAndSavePlaytime(gameId, igdbGame.id);
     await fetchAndSavePopularity(gameId, igdbGame.id);
-    await this.saveTaxonomies(gameId, igdbGame);
+    await this.saveMetadata(gameId, igdbGame);
   }
 
   /** Recommendation features; a failure must not abort the import. */
-  private static async saveTaxonomies(gameId: string, igdbGame: IGDBGame): Promise<void> {
+  private static async saveMetadata(gameId: string, igdbGame: IGDBGame): Promise<void> {
     try {
-      await syncTaxonomies(getSupabaseAdmin(), gameId, igdbGame);
+      await syncAllMetadata(getSupabaseAdmin(), gameId, igdbGame);
     } catch (error) {
-      logger.warn("Failed to save game taxonomies", { gameId, error });
+      logger.warn("Failed to save game IGDB metadata", { gameId, error });
     }
   }
 
@@ -280,6 +280,6 @@ export class GameImportService {
     await syncPlatforms(gameId, igdbGame);
     await fetchAndSavePlaytime(gameId, igdbGame.id);
     await fetchAndSavePopularity(gameId, igdbGame.id);
-    await this.saveTaxonomies(gameId, igdbGame);
+    await this.saveMetadata(gameId, igdbGame);
   }
 }

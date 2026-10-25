@@ -22,6 +22,17 @@ import {
   detectVersionsChange,
   detectVideosChange,
 } from "./change-detectors";
+import {
+  detectFranchisesChange,
+  detectGameEnginesChange,
+  detectGameModesChange,
+  detectIgdbRatingChange,
+  detectKeywordsChange,
+  detectMultiplayerModesChange,
+  detectPlayerPerspectivesChange,
+  detectThemesChange,
+  detectWebsitesChange,
+} from "./metadata-change-detectors";
 
 export const TRACKED_FIELD_REGISTRY: Readonly<Record<TrackableField, TrackedFieldDescriptor>> = {
   translations: {
@@ -126,13 +137,61 @@ export const TRACKED_FIELD_REGISTRY: Readonly<Record<TrackableField, TrackedFiel
     bulkImport: null,
     detect: null,
   },
-  // Themes, game modes, player perspectives, franchises (recommendation
-  // features). Not editable in the admin form.
-  taxonomies: {
-    labelKey: "taxonomies",
-    webhookPayloadKeys: ["themes", "game_modes", "player_perspectives", "franchise", "franchises"],
-    bulkImport: null,
-    detect: null,
+  themes: {
+    labelKey: "themes",
+    webhookPayloadKeys: ["themes"],
+    bulkImport: { alias: "themes", missingColumn: "igdb_themes_synced_at" },
+    detect: detectThemesChange,
+  },
+  game_modes: {
+    labelKey: "gameModes",
+    webhookPayloadKeys: ["game_modes"],
+    bulkImport: { alias: "gameModes", missingColumn: "igdb_game_modes_synced_at" },
+    detect: detectGameModesChange,
+  },
+  player_perspectives: {
+    labelKey: "playerPerspectives",
+    webhookPayloadKeys: ["player_perspectives"],
+    bulkImport: { alias: "playerPerspectives", missingColumn: "igdb_player_perspectives_synced_at" },
+    detect: detectPlayerPerspectivesChange,
+  },
+  multiplayer_modes: {
+    labelKey: "multiplayerModes",
+    webhookPayloadKeys: ["multiplayer_modes"],
+    bulkImport: { alias: "multiplayerModes", missingColumn: "igdb_multiplayer_modes_synced_at" },
+    detect: detectMultiplayerModesChange,
+  },
+  // Franchises and IGDB collections (series).
+  franchises: {
+    labelKey: "franchises",
+    webhookPayloadKeys: ["franchise", "franchises", "collections"],
+    bulkImport: { alias: "franchises", missingColumn: "igdb_franchises_synced_at" },
+    detect: detectFranchisesChange,
+  },
+  keywords: {
+    labelKey: "keywords",
+    webhookPayloadKeys: ["keywords"],
+    bulkImport: { alias: "keywords", missingColumn: "igdb_keywords_synced_at" },
+    detect: detectKeywordsChange,
+  },
+  game_engines: {
+    labelKey: "gameEngines",
+    webhookPayloadKeys: ["game_engines"],
+    bulkImport: { alias: "gameEngines", missingColumn: "igdb_game_engines_synced_at" },
+    detect: detectGameEnginesChange,
+  },
+  websites: {
+    labelKey: "websites",
+    webhookPayloadKeys: ["websites"],
+    bulkImport: { alias: "websites", missingColumn: "igdb_websites_synced_at" },
+    detect: detectWebsitesChange,
+  },
+  // Stored only (not displayed yet).
+  igdb_rating: {
+    labelKey: "igdbRating",
+    webhookPayloadKeys: ["total_rating", "total_rating_count"],
+    bulkImport: { alias: "igdbRating", missingColumn: "igdb_rating_synced_at" },
+    detect: detectIgdbRatingChange,
   },
 };
 

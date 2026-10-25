@@ -1,3 +1,5 @@
+import type { GameDetailMetadata, RelatedGameCard } from "./game-metadata";
+export type * from "./game-metadata";
 import type { GamePlatform, GameSummaryPlatform } from "@/types/platform";
 import type { Pagination } from "@/types/pagination";
 
@@ -171,15 +173,7 @@ export interface GameDlcExtension {
 export interface SimilarGame {
   igdbId: number;
   /** Données du jeu local si importé, null sinon */
-  game: {
-    id: string;
-    slug: string;
-    title: string;
-    coverImage: string | null;
-    genres: Array<{ name: string }>;
-    developer: string;
-    metascore: number | null;
-  } | null;
+  game: RelatedGameCard | null;
 }
 
 export interface GameDetails {
@@ -216,6 +210,8 @@ export interface GameDetails {
   similarGames?: SimilarGame[];
   platforms: GamePlatform[];
   isEsport?: boolean;
+  /** IGDB metadata (themes, franchises, websites…); absent on older cached payloads. */
+  metadata?: GameDetailMetadata;
 }
 
 export interface GameSummary {
