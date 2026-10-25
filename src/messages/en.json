@@ -1474,6 +1474,7 @@
         "errorPositive": "Playtime must be a positive number",
         "errorMax": "Playtime cannot exceed 50,000 hours",
         "errorPrecision": "Playtime must be rounded to one decimal place (0.1h)",
+        "errorNumber": "enter a number of hours (e.g. 250.5)",
         "errorAtLeastOne": "At least one playtime field is required"
       }
     },
@@ -4812,6 +4813,10 @@
     "completed": "Completed",
     "wishlist": "Wishlist",
     "menuTitle": "Status in my library",
+    "legendTitle": "Status legend",
+    "completedPlaytimeTitle": "Well done, {title} completed!",
+    "completedPlaytimeDescription": "How long did it take? Fill in at least one playtime, or skip this step.",
+    "playtimeButtonLabel": "Log my playtime for {title}",
     "triggerLabel": "Status in my library: {status}. Change",
     "cardTriggerLabel": "{title} — status: {status}. Change",
     "remove": "Remove from my library",
@@ -4872,7 +4877,7 @@
       "title": "Friends activity",
       "seeAll": "Full feed",
       "empty": "No recent activity. Add friends to follow what they play.",
-      "emptyAction": "Find friends",
+      "emptyAction": "Browse Gamers Universe players",
       "error": "Friends activity is unavailable right now."
     },
     "trending": "Trending Games",

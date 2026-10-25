@@ -226,9 +226,11 @@ export const POST = defineRoute(
     const mergedHastily =
       playTimeHastily ?? (existing ? parsePlaytime(existing.play_time_hastily) : null);
 
-    // Sync play_time_hours with the highest available value (represents actual time spent)
+    // Sync play_time_hours (INTEGER column) with the highest available value
+    // (represents actual time spent), rounded: the three fields keep 1 decimal.
     updateFields.play_time_hours =
-      Math.max(mergedCompletely ?? 0, mergedNormally ?? 0, mergedHastily ?? 0) || null;
+      Math.round(Math.max(mergedCompletely ?? 0, mergedNormally ?? 0, mergedHastily ?? 0)) ||
+      null;
 
     if (existing) {
       const { error: updateError } = await supabase

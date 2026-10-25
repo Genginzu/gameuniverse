@@ -12,6 +12,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import type { PlayerPlaytimeEntry } from "@/types/game";
+import { parsePlaytimeInput } from "@/lib/utils/playtimeInput";
 
 interface PlayerPlaytimeFormProps {
   open: boolean;
@@ -20,6 +21,9 @@ interface PlayerPlaytimeFormProps {
   submitting: boolean;
   error: string | null;
   onSubmit: (entry: Partial<PlayerPlaytimeEntry>) => Promise<boolean>;
+  /** Overrides the default dialog title / description (e.g. after completing a game). */
+  title?: string;
+  description?: string;
 }
 
 function toInputValue(val: number | null | undefined): string {
@@ -37,6 +41,8 @@ export function PlayerPlaytimeForm({
   submitting,
   error,
   onSubmit,
+  title,
+  description,
 }: PlayerPlaytimeFormProps) {
   const t = useTranslations("gameDetails.playtime.players");
 
@@ -45,14 +51,9 @@ export function PlayerPlaytimeForm({
   const [completely, setCompletely] = useState(toInputValue(currentPlaytime?.completely));
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  const parseField = (val: string): number | null => {
-    if (!val.trim()) return null;
-    const num = parseFloat(val);
-    return isNaN(num) ? null : num;
-  };
-
   const validateField = (val: number | null, label: string): string | null => {
     if (val === null) return null;
+    if (Number.isNaN(val)) return `${label}: ${t("errorNumber")}`;
     if (val <= 0) return `${label}: ${t("errorPositive")}`;
     if (val > 50000) return `${label}: ${t("errorMax")}`;
     if (Math.round(val * 10) / 10 !== val) return `${label}: ${t("errorPrecision")}`;
@@ -63,9 +64,9 @@ export function PlayerPlaytimeForm({
     e.preventDefault();
     setValidationError(null);
 
-    const h = parseField(hastily);
-    const n = parseField(normally);
-    const c = parseField(completely);
+    const h = parsePlaytimeInput(hastily);
+    const n = parsePlaytimeInput(normally);
+    const c = parsePlaytimeInput(completely);
 
     if (h === null && n === null && c === null) {
       setValidationError(t("errorAtLeastOne"));
@@ -114,8 +115,8 @@ export function PlayerPlaytimeForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border-slate-700 bg-slate-900 sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-white">{t("dialogTitle")}</DialogTitle>
-          <DialogDescription>{t("dialogDescription")}</DialogDescription>
+          <DialogTitle className="text-white">{title ?? t("dialogTitle")}</DialogTitle>
+          <DialogDescription>{description ?? t("dialogDescription")}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -125,18 +126,18 @@ export function PlayerPlaytimeForm({
                 <Icon icon={iconName} className="h-4 w-4 text-slate-400" />
                 {label}
               </label>
+              {/* Text + decimal keypad: a number input rejects "." or "," depending on the locale. */}
               <input
-                type="number"
-                step="0.1"
-                min="0.1"
-                max="50000"
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
                 value={value}
                 onChange={(e) => {
                   onChange(e.target.value);
                   setValidationError(null);
                 }}
                 placeholder={t("fieldPlaceholder")}
-                className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-hidden"
+                className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-base text-white placeholder-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-hidden"
                 disabled={submitting}
                 aria-label={label}
               />
