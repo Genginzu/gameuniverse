@@ -191,14 +191,16 @@ describe("getDateRangeForPeriod", () => {
 
   it("returns approximately 3 months range for '3m'", () => {
     const { startDate, endDate } = getDateRangeForPeriod("3m");
-    const diffDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+    // Math.round absorbs ±1 h DST shifts that make the raw diff fractional
+    const diffDays = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
     expect(diffDays).toBeGreaterThanOrEqual(89);
     expect(diffDays).toBeLessThanOrEqual(92);
   });
 
   it("returns approximately 6 months range for '6m'", () => {
     const { startDate, endDate } = getDateRangeForPeriod("6m");
-    const diffDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+    // Math.round absorbs ±1 h DST shifts that make the raw diff fractional
+    const diffDays = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
     expect(diffDays).toBeGreaterThanOrEqual(180);
     expect(diffDays).toBeLessThanOrEqual(185);
   });
