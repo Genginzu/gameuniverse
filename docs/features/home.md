@@ -93,8 +93,17 @@ bout, puis la page reprend (`useHorizontalWheelScroll`).
 Recommandations : le moteur SQL note tout le catalogue en une passe (≈ 1 s,
 voir [Recommandations](games/recommendations.md)), sans cache serveur. Pendant
 le chargement, `HomeLoadingNotice` affiche un message (plus un second après
-6 s). « Recalculer » relance le calcul. Chaque carte indique le jeu source le
-plus proche (« Proche de … ») et propose « Pas intéressé » (avec « Annuler »).
+6 s). « Recalculer » relance le calcul. Chaque carte propose « Pas intéressé »
+(avec « Annuler ») et « + » pour l'ajouter directement à la bibliothèque.
+
+Reprendre : tant que le rail a moins de 5 jeux « En cours », il est complété
+jusqu'à 5 par les derniers jeux « Possédé » (`usePlayingSuggestions`,
+`/api/library?status=owned&limit=5`, chargé seulement s'il manque des cartes).
+Un séparateur vertical « Suggestions » les sépare des jeux en cours, et chaque
+suggestion porte un bouton « J'y joue » (pointillés accent) qui la passe en
+cours (`PATCH /api/library/[gameId]`, voir [Statut](library/status.md)). Sans
+jeu en cours, seules les suggestions s'affichent, précédées d'une question ;
+sans jeu possédé, un texte explique comment faire et renvoie vers `/library`.
 
 ## Tendances (`hybrid_popularity_score`)
 
