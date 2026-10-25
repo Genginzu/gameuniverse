@@ -17,6 +17,24 @@ export const LIBRARY_RELATED_KEYS: KeyFilter[] = [
   keyEquals(LIBRARY_STATS_KEY),
   keyEquals(BACKLOG_KEY),
   (key) => typeof key === "string" && key.startsWith("/api/games?") && key.includes("inLibrary=true"),
+  // Library games are excluded from recommendations and weight the profile.
+  keyStartsWith("/api/recommendations/personal"),
+];
+
+// Recommendations -----------------------------------------------------------
+
+export function personalRecommendationsKey(locale: string): string {
+  return `/api/recommendations/personal?locale=${locale}`;
+}
+
+export function gameRecommendationsKey(slug: string, locale: string): string {
+  return `/api/games/${slug}/recommendations?locale=${locale}`;
+}
+
+/** Keys made stale when a recommendation is dismissed or restored. */
+export const RECOMMENDATION_RELATED_KEYS: KeyFilter[] = [
+  keyStartsWith("/api/recommendations/personal"),
+  (key) => typeof key === "string" && key.startsWith("/api/games/") && key.includes("/recommendations"),
 ];
 
 // Character favorites -----------------------------------------------------

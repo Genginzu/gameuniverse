@@ -5,6 +5,7 @@
 
 import { IGDBService } from "../../../src/lib/services/igdbService";
 import type { IGDBGame } from "../../../src/types/igdb";
+import { IGDB_TAXONOMY_FIELDS } from "../../../src/lib/services/igdbTaxonomies";
 import type { CLIOptions } from "../shared/types";
 import { RateLimiter } from "../shared/rate-limiter";
 import { withRetry } from "../shared/retry";
@@ -132,7 +133,8 @@ export async function fetchGamesBatch(
            age_ratings.rating_content_descriptions,
            platforms.id, platforms.name,
            videos.video_id, videos.name,
-           dlcs, expansions, bundles, themes;
+           ${IGDB_TAXONOMY_FIELDS},
+           dlcs, expansions, bundles;
     where ${buildWhereClause(options)};
     sort first_release_date desc;
     limit ${Math.min(limit, BATCH_SIZE)};

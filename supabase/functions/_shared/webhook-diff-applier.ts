@@ -20,6 +20,7 @@ import { logger } from "./logger.ts";
 import { IGDBService } from "./igdb-service.ts";
 import { fetchMetacriticScore } from "./metacritic-service.ts";
 import { untypedTable } from "./untyped-table.ts";
+import { hasTaxonomyPayload, saveGameTaxonomies } from "./igdb-taxonomies.ts";
 
 export interface ApplyPayloadOptions {
   gameId: string;
@@ -56,6 +57,11 @@ const TRACKABLE_PAYLOAD_KEYS = [
   "involved_companies",
   "age_ratings",
   "similar_games",
+  "themes",
+  "game_modes",
+  "player_perspectives",
+  "franchise",
+  "franchises",
 ] as const;
 
 function hasTrackableFields(payload: Record<string, unknown>): boolean {
@@ -603,6 +609,24 @@ export async function applyWebhookPayload(
       }
     } else {
       skipped.push("similar_games");
+    }
+  }
+
+  // Taxonomies (themes, modes, perspectives, franchises): payloads carry ids
+  // only, so the full game is fetched to keep the reference names.
+  if (hasTaxonomyPayload(payload)) {
+    if (can("taxonomies", ov, f)) {
+      const igdbGame = await getIgdbGame();
+      if (igdbGame) {
+        try {
+          await saveGameTaxonomies(supabase, gameId, igdbGame);
+          applied.push("taxonomies");
+        } catch (error) {
+          logger.error("Failed to apply webhook taxonomies", { gameId, error: String(error) });
+        }
+      }
+    } else {
+      skipped.push("taxonomies");
     }
   }
 

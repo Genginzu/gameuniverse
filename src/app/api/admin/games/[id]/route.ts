@@ -13,7 +13,6 @@ import { detectChangedFields } from "@/lib/services/igdb-fields/registry";
 import type { CurrentGameData } from "@/types/admin-games";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { logger } from "@/lib/logger";
-import { invalidateForDeletedGame } from "@/lib/services/recommendation/cache";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
 // Types for Supabase query results
@@ -900,9 +899,6 @@ export const DELETE = defineRoute({ auth: "admin" }, async ({ params }) => {
   // Send real-time notification for successful deletion
   await notifyGameDeleted(gameId, existingGame.slug);
   await invalidateGameCache(gameId);
-
-  // Purge deleted game from recommendation cache
-  invalidateForDeletedGame(gameId);
 
   // Enhanced response with deletion summary
   return NextResponse.json({

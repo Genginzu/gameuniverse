@@ -8,6 +8,7 @@ import { GameCard } from "@/components/games/GameCard";
 import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
+import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { useListingQuery } from "@/hooks/useListingQuery";
 import { upcomingListing } from "@/lib/listing/resources/games";
 import type { UpcomingGamesResponse } from "@/types/game";
@@ -76,11 +77,13 @@ export function UpcomingContent({ initialData }: UpcomingContentProps) {
           </div>
         ) : (
           <>
-            <div className={GRID}>
-              {data?.games.filter(Boolean).map((game, i) => (
-                <GameCard key={game.id} game={game} priority={i < 6} />
-              ))}
-            </div>
+            <LibraryStatusProvider gameIds={(data?.games ?? []).filter(Boolean).map((g) => g.id)}>
+              <div className={GRID}>
+                {data?.games.filter(Boolean).map((game, i) => (
+                  <GameCard key={game.id} game={game} priority={i < 6} />
+                ))}
+              </div>
+            </LibraryStatusProvider>
             {data && data.pagination.totalPages > 1 && (
               <div className="mt-12">
                 <Pagination

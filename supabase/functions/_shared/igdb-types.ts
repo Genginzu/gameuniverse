@@ -95,6 +95,13 @@ export const IGDB_ALL_RATINGS: Record<
   39: { code: "RC", name: "ACB RC", age: null, system: "ACB" },
 };
 
+/** Reference entity expanded with `field.id, field.name, field.slug`. */
+export interface IGDBNamedEntity {
+  id: number;
+  name?: string;
+  slug?: string;
+}
+
 export interface IGDBGame {
   id: number;
   name: string;
@@ -119,7 +126,12 @@ export interface IGDBGame {
   expansions?: number[];
   bundles?: number[];
   similar_games?: number[];
-  themes?: number[];
+  /** Expanded `{ id, name, slug }` by getGameDetails; ids only in raw webhook payloads. */
+  themes?: Array<number | IGDBNamedEntity>;
+  game_modes?: Array<number | IGDBNamedEntity>;
+  player_perspectives?: Array<number | IGDBNamedEntity>;
+  franchise?: number | IGDBNamedEntity;
+  franchises?: Array<number | IGDBNamedEntity>;
   platforms?: Array<{ id: number; name: string }>;
   videos?: Array<{ video_id: string; name?: string }>;
 }

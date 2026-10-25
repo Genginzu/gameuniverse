@@ -5,6 +5,7 @@ import { jsonRequest } from "@/lib/utils/json-request";
 import { affect } from "@/lib/swr/optimistic";
 import { LIBRARY_RELATED_KEYS, libraryStatusKey } from "@/lib/swr/keys";
 import { libraryStatusUpdater } from "@/lib/swr/updaters/library";
+import { toLibraryStatus } from "@/lib/validations/library";
 import type { LibraryStatusResponse } from "@/types/library";
 
 export interface LibraryToggleArgs {
@@ -23,8 +24,11 @@ function requestLibraryToggle({ gameId, inLibrary, status }: LibraryToggleArgs) 
 export function useLibraryToggle() {
   return useOptimisticMutation<LibraryToggleArgs>({
     request: requestLibraryToggle,
-    affects: ({ gameId, inLibrary }) => [
-      affect<LibraryStatusResponse>(libraryStatusKey(gameId), libraryStatusUpdater(inLibrary)),
+    affects: ({ gameId, inLibrary, status }) => [
+      affect<LibraryStatusResponse>(
+        libraryStatusKey(gameId),
+        libraryStatusUpdater(inLibrary, toLibraryStatus(status))
+      ),
     ],
     related: () => LIBRARY_RELATED_KEYS,
     dedupeId: ({ gameId }) => `library:${gameId}`,

@@ -1,24 +1,59 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { ContinuePlayingSection } from "@/components/home/dashboard/ContinuePlayingSection";
 import type { GameCardOverlay } from "@/components/games/GameCard";
+import { PLAYING_SUGGESTIONS_URL } from "@/hooks/usePlayingSuggestions";
 import type { GameSummary } from "@/types/game";
 import type { LibraryGame } from "@/types/library";
 
-const swr = vi.hoisted(() => ({ state: { data: undefined as unknown, error: undefined as unknown } }));
+type SwrState = { data?: unknown; error?: unknown };
+const swr = vi.hoisted(() => ({
+  playing: {} as SwrState,
+  suggestions: {} as SwrState,
+  keys: [] as unknown[],
+}));
+vi.mock("swr", () => ({
+  default: (key: string | null) => {
+    swr.keys.push(key);
+    if (key === null) return { data: undefined, error: undefined };
+    return key.includes("status=owned") ? swr.suggestions : swr.playing;
+  },
+}));
 
-vi.mock("swr", () => ({ default: () => swr.state }));
-vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string, values?: { title?: string }) =>
+    values?.title ? `${key}:${values.title}` : key,
+}));
+
+const toastMock = vi.hoisted(() => vi.fn());
+vi.mock("@/hooks/use-toast", () => ({ toast: toastMock }));
+
+const statusChange = vi.hoisted(() => ({ trigger: vi.fn() }));
+vi.mock("@/hooks/useLibraryStatusChange", () => ({
+  useLibraryStatusChange: () => ({ trigger: statusChange.trigger, isPending: false }),
+}));
 
 vi.mock("@/components/games/GameCard", () => ({
-  GameCard: ({ game, overlay }: { game: GameSummary; overlay?: GameCardOverlay }) =>
-    React.createElement("div", {
-      "data-testid": "game-card",
-      "data-status": overlay?.type === "library" ? overlay.status : "",
-      children: game.title,
-    }),
+  GameCard: ({
+    game,
+    overlay,
+    actions,
+  }: {
+    game: GameSummary;
+    overlay?: GameCardOverlay;
+    actions?: React.ReactNode;
+  }) =>
+    React.createElement(
+      "div",
+      {
+        "data-testid": "game-card",
+        "data-status": overlay?.type === "library" ? overlay.status : "",
+      },
+      React.createElement("span", null, game.title),
+      actions
+    ),
 }));
 
 vi.mock("@/components/games/GameCardSkeleton", () => ({
@@ -39,8 +74,16 @@ function makeLibraryGame(id: string, libraryStatus: string): LibraryGame {
   };
 }
 
+const playing = (...ids: string[]) => ({ games: ids.map((id) => makeLibraryGame(id, "playing")) });
+const owned = (...ids: string[]) => ({ games: ids.map((id) => makeLibraryGame(id, "owned")) });
+const titles = () => screen.getAllByTestId("game-card").map((n) => n.firstChild?.textContent);
+
 beforeEach(() => {
-  swr.state = { data: undefined, error: undefined };
+  swr.playing = {};
+  swr.suggestions = {};
+  swr.keys = [];
+  toastMock.mockReset();
+  statusChange.trigger = vi.fn().mockResolvedValue({});
 });
 
 describe("ContinuePlayingSection", () => {
@@ -50,34 +93,85 @@ describe("ContinuePlayingSection", () => {
   });
 
   it("only lists games with the playing status", () => {
-    swr.state = {
-      data: {
-        games: [
-          makeLibraryGame("a", "playing"),
-          makeLibraryGame("b", "completed"),
-          makeLibraryGame("c", "playing"),
-        ],
-      },
-      error: undefined,
+    swr.playing = {
+      data: { games: [makeLibraryGame("a", "playing"), makeLibraryGame("b", "completed")] },
     };
+    swr.suggestions = { data: owned() };
     render(<ContinuePlayingSection />);
 
-    const cards = screen.getAllByTestId("game-card");
-    expect(cards.map((n) => n.textContent)).toEqual(["Game a", "Game c"]);
-    expect(cards.every((n) => n.dataset.status === "playing")).toBe(true);
+    expect(titles()).toEqual(["Game a"]);
+    expect(screen.getByTestId("game-card").dataset.status).toBe("playing");
   });
 
-  it("shows the empty state with a call to action when nothing is in progress", () => {
-    swr.state = { data: { games: [makeLibraryGame("b", "owned")] }, error: undefined };
+  it("fills the rail up to 5 cards with owned games after a separator", () => {
+    swr.playing = { data: playing("p1", "p2") };
+    swr.suggestions = { data: owned("o1", "o2", "o3", "o4", "o5") };
     render(<ContinuePlayingSection />);
+
+    expect(titles()).toEqual(["Game p1", "Game p2", "Game o1", "Game o2", "Game o3"]);
+    expect(screen.getByTestId("rail-suggestions-separator")).toHaveTextContent(
+      "suggestionsSeparator"
+    );
+    expect(screen.getAllByRole("button", { name: /^markPlayingLabel:/ })).toHaveLength(3);
+    expect(swr.keys).toContain(PLAYING_SUGGESTIONS_URL);
+  });
+
+  it("does not fetch suggestions once 5 games are in progress", () => {
+    swr.playing = { data: playing("1", "2", "3", "4", "5") };
+    render(<ContinuePlayingSection />);
+
+    expect(swr.keys).not.toContain(PLAYING_SUGGESTIONS_URL);
+    expect(screen.queryByTestId("rail-suggestions-separator")).not.toBeInTheDocument();
+  });
+
+  it("shows only suggestions, with a prompt and no separator, when nothing is in progress", () => {
+    swr.playing = { data: playing() };
+    swr.suggestions = { data: owned("o1") };
+    render(<ContinuePlayingSection />);
+
+    expect(screen.getByText("suggestionsTitle")).toBeInTheDocument();
+    expect(titles()).toEqual(["Game o1"]);
+    expect(screen.queryByTestId("rail-suggestions-separator")).not.toBeInTheDocument();
+  });
+
+  it("switches a suggested game to playing in one click", () => {
+    swr.playing = { data: playing("p1") };
+    swr.suggestions = { data: owned("o1") };
+    render(<ContinuePlayingSection />);
+
+    fireEvent.click(screen.getByRole("button", { name: "markPlayingLabel:Game o1" }));
+
+    expect(statusChange.trigger).toHaveBeenCalledWith({ gameId: "o1", status: "playing" });
+  });
+
+  it("reports a failed switch", async () => {
+    swr.playing = { data: playing() };
+    swr.suggestions = { data: owned("o1") };
+    statusChange.trigger = vi.fn().mockRejectedValue(new Error("boom"));
+    render(<ContinuePlayingSection />);
+
+    fireEvent.click(screen.getByRole("button", { name: "markPlayingLabel:Game o1" }));
+
+    await waitFor(() =>
+      expect(toastMock).toHaveBeenCalledWith({ title: "markPlayingError", variant: "destructive" })
+    );
+  });
+
+  it("explains how to start a game when nothing is in progress nor owned", () => {
+    swr.playing = { data: playing() };
+    swr.suggestions = { data: owned() };
+    render(<ContinuePlayingSection />);
+
     expect(screen.getByText("empty")).toBeInTheDocument();
-    expect(screen.getByText("emptyAction")).toBeInTheDocument();
+    expect(screen.getByText("emptyAction").closest("a")).toHaveAttribute("href", "/library");
   });
 
-  it("falls back to the empty state when the library request fails", () => {
-    swr.state = { data: undefined, error: new Error("boom") };
+  it("still suggests owned games when the playing request fails", () => {
+    swr.playing = { error: new Error("boom") };
+    swr.suggestions = { data: owned("o1") };
     render(<ContinuePlayingSection />);
+
     expect(screen.queryByTestId("card-skeleton")).not.toBeInTheDocument();
-    expect(screen.getByText("empty")).toBeInTheDocument();
+    expect(titles()).toEqual(["Game o1"]);
   });
 });

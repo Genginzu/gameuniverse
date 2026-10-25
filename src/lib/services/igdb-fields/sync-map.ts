@@ -18,6 +18,7 @@ import {
   syncVideos,
   syncSimilarGames,
 } from "../igdb-sync-fields";
+import { syncTaxonomies } from "../igdbTaxonomies";
 
 export type FieldSyncer =
   | {
@@ -71,4 +72,5 @@ export const FIELD_SYNC_MAP: Readonly<Record<TrackableField, FieldSyncer>> = {
   popularity: fromIgdbId(syncPopularity),
   videos: fromGame(syncVideos),
   similar_games: fromGame(syncSimilarGames),
+  taxonomies: fromGame(syncTaxonomies),
 };

@@ -19,6 +19,9 @@ function jsonResponse(body: unknown, status = 200) {
 function routeFetch(initialInLibrary: boolean, mutationStatus = 200) {
   let inLibrary = initialInLibrary;
   return vi.fn((_url: string, init?: RequestInit) => {
+    if (init?.method === "PATCH") {
+      return Promise.resolve(jsonResponse({}, mutationStatus));
+    }
     if (init?.method === "POST" || init?.method === "DELETE") {
       if (mutationStatus < 400) inLibrary = init.method === "POST";
       return Promise.resolve(jsonResponse({}, mutationStatus));
@@ -104,6 +107,25 @@ describe("useGameLibraryStatus", () => {
 
     expect(removed).toBe(true);
     expect(mockFetch).toHaveBeenCalledWith("/api/library/game-456", { method: "DELETE" });
+  });
+
+  it("changes the status through PATCH /api/library/:id", async () => {
+    mockFetch = routeFetch(true);
+    globalThis.fetch = mockFetch as unknown as typeof fetch;
+    const { result } = renderStatus("game-456");
+    await waitFor(() => expect(result.current.inLibrary).toBe(true));
+
+    let changed: boolean | undefined;
+    await act(async () => {
+      changed = await result.current.setStatus("playing");
+    });
+
+    expect(changed).toBe(true);
+    expect(mockFetch).toHaveBeenCalledWith("/api/library/game-456", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "playing" }),
+    });
   });
 
   it("reports failure and keeps the previous status when the server refuses", async () => {

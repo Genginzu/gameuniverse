@@ -44,6 +44,7 @@ export function DiscoverSections({ initialData }: DiscoverSectionsProps) {
           label={t("trending")}
           items={toItems(data?.trending)}
           isLoading={isLoading}
+          quickAdd
           empty={<HomeEmptyState icon="lucide:flame" message={t("noTrending")} />}
         />
       </HomeSection>
@@ -58,6 +59,7 @@ export function DiscoverSections({ initialData }: DiscoverSectionsProps) {
           label={t("upcoming")}
           items={toItems(data?.upcoming)}
           isLoading={isLoading}
+          quickAdd
           empty={<HomeEmptyState icon="lucide:calendar-clock" message={t("noUpcoming")} />}
         />
       </HomeSection>

@@ -10,9 +10,11 @@ interface PlayerLibraryTabProps {
   locale: string;
   t: (key: string) => string;
   tCommon: (key: string) => string;
+  /** Own profile: every game is already owned, so cards offer no quick add. */
+  isOwner: boolean;
 }
 
-export function PlayerLibraryTab({ player, locale, t, tCommon }: PlayerLibraryTabProps) {
+export function PlayerLibraryTab({ player, locale, t, tCommon, isOwner }: PlayerLibraryTabProps) {
   const [games, setGames] = useState<PlayerLibraryGame[]>(player.library);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const totalCount = player.libraryTotalCount;
@@ -50,7 +52,7 @@ export function PlayerLibraryTab({ player, locale, t, tCommon }: PlayerLibraryTa
           {totalCount} {tCommon("games")} {t("details.inLibrary")}
         </span>
       </div>
-      <PlayerLibraryGrid games={games} locale={locale} />
+      <PlayerLibraryGrid games={games} locale={locale} quickAdd={!isOwner} />
       {hasMore && (
         <div className="mt-6 flex justify-center">
           <button

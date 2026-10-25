@@ -52,4 +52,21 @@ describe("GET /api/home", () => {
 
     expect(body.stats).toBeNull();
   });
+
+  it("orders the releases of the month by trend, then by release date", async () => {
+    mock.enqueue("games", { data: [] }, { data: [] }, { count: 1 });
+    mock.enqueue("characters", { data: [] }, { count: 1 });
+    mock.enqueue("game_reviews", { data: [] }, { count: 1 });
+    mock.enqueue("profiles", { count: 1 });
+
+    await GET(request());
+
+    const orders = mock.callsFor("games", "order");
+    const byTrend = orders.findIndex(
+      ([column, options]) =>
+        column === "trending_score" && (options as { nullsFirst?: boolean }).nullsFirst === false
+    );
+    expect(byTrend).toBeGreaterThanOrEqual(0);
+    expect(orders[byTrend + 1]).toEqual(["release_date", { ascending: true }]);
+  });
 });

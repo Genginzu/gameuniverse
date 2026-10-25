@@ -15,6 +15,8 @@
  *   - Footer : titre + studio + mois/année de sortie (visible au repos)
  *   - Au hover : description tronquée + bouton "Découvrir" qui slide
  *     depuis le bas par-dessus le footer
+ *   - Bouton « + » (ajout rapide à la bibliothèque) en haut à gauche, sous
+ *     les badges, pour un joueur connecté dans un `LibraryStatusProvider`
  *
  * Variantes via le prop `overlay` :
  *   - `library` : badge status + rating étoile + playtime dans le footer
@@ -24,15 +26,19 @@
  * Toutes les classes CSS utilisent le préfixe `editorial-card-*`.
  */
 
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
 import { getDistinctPlatformIcons } from "@/lib/utils/platform-icons";
+import { hasTopLeftBadges } from "@/lib/utils/gameCardBadges";
 import { toHiResCover } from "@/lib/utils/igdbImage";
 import { formatReleaseMonthYear } from "@/lib/utils/releaseMonthYear";
 import type { GameSummary } from "@/types/game";
+import { GameCardQuickAdd } from "./GameCardQuickAdd";
+import { MetascoreBadge } from "./MetascoreBadge";
 
 /**
  * Overlay contextuel optionnel. Permet à `GameCard` de rester un composant
@@ -61,15 +67,49 @@ interface GameCardProps {
   className?: string;
   /** Overlay contextuel optionnel (bibliothèque, comparaison, etc.). */
   overlay?: GameCardOverlay;
+  /**
+   * Quick "add to library" button. Only shown inside a LibraryStatusProvider
+   * for a signed-in player; disable it where every game is already owned.
+   */
+  quickAdd?: boolean;
+  /** Extra controls layered over the card (positioned by the caller); replaces the quick add. */
+  actions?: ReactNode;
 }
 
-function getMetascoreColor(score: number): string {
-  if (score >= 75) return "rgb(74, 222, 128)";
-  if (score >= 50) return "rgb(250, 204, 21)";
-  return "rgb(248, 113, 113)";
+
+
+export function GameCard({
+  game,
+  priority = false,
+  className = "",
+  overlay,
+  quickAdd = true,
+  actions,
+}: GameCardProps) {
+  return (
+    // Controls are siblings of the card link: no button nested in <a>.
+    <div className="editorial-card-shell group/card relative">
+      <GameCardLink game={game} priority={priority} className={className} overlay={overlay} />
+      {actions ??
+        (quickAdd && (
+          <GameCardQuickAdd
+            gameId={game.id}
+            title={game.title}
+            belowBadges={hasTopLeftBadges(game, overlay)}
+          />
+        ))}
+    </div>
+  );
 }
 
-export function GameCard({ game, priority = false, className = "", overlay }: GameCardProps) {
+function GameCardLink({
+  game,
+  priority,
+  className,
+  overlay,
+}: Required<Pick<GameCardProps, "game" | "priority" | "className">> & {
+  overlay?: GameCardOverlay;
+}) {
   const t = useTranslations("games");
   const description = game.description?.trim() ?? "";
 
@@ -183,26 +223,6 @@ function CardTopRight({ game, overlay }: { game: GameSummary; overlay?: GameCard
   }
 
   return <MetascoreBadge metascore={game.metascore ?? null} />;
-}
-
-function MetascoreBadge({
-  metascore,
-  alwaysVisible = false,
-}: {
-  metascore: number | null;
-  alwaysVisible?: boolean;
-}) {
-  if (metascore === null) return null;
-
-  return (
-    <span
-      className={`editorial-card-score ${alwaysVisible ? "is-visible is-compact" : ""}`.trim()}
-      style={{ color: getMetascoreColor(metascore) }}
-      title={`Metascore ${metascore}`}
-    >
-      {metascore}
-    </span>
-  );
 }
 
 /** Footer : titre + sous-ligne adaptée au contexte. */

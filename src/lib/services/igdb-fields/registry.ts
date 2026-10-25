@@ -126,6 +126,14 @@ export const TRACKED_FIELD_REGISTRY: Readonly<Record<TrackableField, TrackedFiel
     bulkImport: null,
     detect: null,
   },
+  // Themes, game modes, player perspectives, franchises (recommendation
+  // features). Not editable in the admin form.
+  taxonomies: {
+    labelKey: "taxonomies",
+    webhookPayloadKeys: ["themes", "game_modes", "player_perspectives", "franchise", "franchises"],
+    bulkImport: null,
+    detect: null,
+  },
 };
 
 export const TRACKABLE_FIELDS = Object.keys(TRACKED_FIELD_REGISTRY) as readonly TrackableField[];

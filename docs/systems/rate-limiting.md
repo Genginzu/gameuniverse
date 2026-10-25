@@ -76,7 +76,8 @@ journalise l'erreur.
 | `platformLink`    | 20     | 1 h     | `PUT /api/profile/linked-platforms`                             |
 | `fantasyTeam`     | 10     | 1 h     | `POST /api/esport/fantasy`                                      |
 | `goal`            | 30     | 1 h     | `POST /api/players/[id]/stats/dashboard/goals`                  |
-| `recommendationRefresh` | 5 | 10 min | `GET /api/recommendations/personal?refresh=1`                  |
+| `recommendation`  | 60     | 10 min  | `GET /api/recommendations/personal` (calcul complet du catalogue) |
+| `recommendationFeedback` | 60 | 10 min | `POST` / `DELETE /api/recommendations/dismissals`             |
 
 Les coachs utilisent aussi `review` (avis), `comment` (réponse à un avis) et
 `coachingBooking` (sessions, checkout, vérification de paiement) ;

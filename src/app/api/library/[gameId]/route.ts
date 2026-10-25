@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import { defineRoute, validationError } from "@/lib/api/route";
+import { defineRoute, notFound, validationError } from "@/lib/api/route";
+import {
+  libraryGameParamsSchema,
+  toLibraryStatus,
+  updateLibraryStatusSchema,
+} from "@/lib/validations/library";
 
 // DELETE /api/library/[gameId] - Remove game from user's library
 export const DELETE = defineRoute(
@@ -69,7 +74,37 @@ export const GET = defineRoute({ auth: "required" }, async ({ user, params }) =>
 
   return NextResponse.json({
     inLibrary: !!data,
-    status: data?.status,
+    status: data ? toLibraryStatus(data.status) : undefined,
     addedAt: data?.added_at,
   });
 });
+
+// PATCH /api/library/[gameId] - Change the status of a game of the user's library
+export const PATCH = defineRoute(
+  {
+    auth: "required",
+    rateLimit: "library",
+    params: libraryGameParamsSchema,
+    body: updateLibraryStatusSchema,
+  },
+  async ({ user, params, body }) => {
+    const supabase = await createRouteHandlerClient();
+    const { data, error } = await supabase
+      .from("user_library")
+      .update({ status: body.status })
+      .eq("user_id", user.id)
+      .eq("game_id", params.gameId)
+      .select("id");
+
+    if (error) {
+      logger.error("Error updating library status", { error, gameId: params.gameId });
+      return NextResponse.json({ error: "Failed to update library status" }, { status: 500 });
+    }
+    // Status changes only apply to games already in the library.
+    if (!data || data.length === 0) {
+      throw notFound("Game not in library");
+    }
+
+    return NextResponse.json({ inLibrary: true, status: body.status });
+  }
+);

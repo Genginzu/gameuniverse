@@ -131,9 +131,21 @@ export interface IGDBGame {
   expansions?: number[]; // IDs des expansions associées
   bundles?: number[]; // IDs des bundles associés
   similar_games?: number[]; // IDs des jeux similaires
-  themes?: number[]; // IDs des thèmes IGDB (42 = Erotic)
+  /** Expanded `{ id, name, slug }` by getGameDetails; ids only in raw webhook payloads. */
+  themes?: Array<number | IGDBNamedEntity>; // 42 = Erotic
+  game_modes?: Array<number | IGDBNamedEntity>;
+  player_perspectives?: Array<number | IGDBNamedEntity>;
+  franchise?: number | IGDBNamedEntity;
+  franchises?: Array<number | IGDBNamedEntity>;
   platforms?: Array<{ id: number; name: string }>;
   videos?: Array<{ video_id: string; name?: string }>;
+}
+
+/** Reference entity expanded with `field.id, field.name, field.slug`. */
+export interface IGDBNamedEntity {
+  id: number;
+  name?: string;
+  slug?: string;
 }
 
 /**

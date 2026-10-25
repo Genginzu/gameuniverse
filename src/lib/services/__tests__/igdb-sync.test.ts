@@ -43,6 +43,7 @@ function createMockSupabase(): { client: SyncSupabaseClient; lastSyncedAt: strin
         in: () => Promise.resolve({ data: [], error: null }),
       }),
     }),
+    rpc: () => Promise.resolve({ error: null }),
   };
 
   return {

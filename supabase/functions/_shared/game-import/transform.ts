@@ -9,6 +9,7 @@
 
 import { IGDBService } from "../igdb-service.ts";
 import type { IGDBGame } from "../igdb-types.ts";
+import { isAdultThemes } from "../igdb-taxonomies.ts";
 
 export interface GameInsertData {
   slug: string;
@@ -29,8 +30,6 @@ export interface GameInsertData {
   is_adult: boolean;
 }
 
-/** IGDB theme id of "Erotic" (mirror of src/lib/utils/igdbAdult.ts). */
-const IGDB_EROTIC_THEME_ID = 42;
 
 export function transformIGDBToSupabase(igdbGame: IGDBGame): GameInsertData {
   const coverUrl = igdbGame.cover?.image_id
@@ -64,7 +63,7 @@ export function transformIGDBToSupabase(igdbGame: IGDBGame): GameInsertData {
     playtime_normally: null,
     playtime_completely: null,
     playtime_updated_at: null,
-    is_adult: (igdbGame.themes ?? []).includes(IGDB_EROTIC_THEME_ID),
+    is_adult: isAdultThemes(igdbGame.themes),
   };
 }
 

@@ -69,16 +69,20 @@
 }
 
 /* ===== HERO ===== */
+/* Clip horizontally only: the library status menu may open below the hero. */
 .editorial-game-detail-hero {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  overflow-x: clip;
+  /* Above the following sections so an open menu is not covered. */
+  z-index: 1;
 }
 
 .editorial-game-detail-hero-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
 }
 
 .editorial-game-detail-hero-bg img {

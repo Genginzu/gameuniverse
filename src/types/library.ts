@@ -1,6 +1,11 @@
+/** Status a player can give a game of their library. */
+export type LibraryStatus = "owned" | "playing" | "completed" | "wishlist";
+
 /** Statut « dans ma bibliothèque » d'un jeu (clé SWR `/api/library/{gameId}`) */
 export interface LibraryStatusResponse {
   inLibrary: boolean;
+  /** Library status; absent when the game is not in the library. */
+  status?: LibraryStatus;
 }
 
 /** Game entry returned by `GET /api/library` for the current user. */

@@ -1,15 +1,11 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useLocale } from "next-intl";
 import useSWR from "swr";
 
-import { fetcher } from "@/lib/swr/fetcher";
-import type { GameRecommendation } from "@/types/recommendation";
-
-interface PersonalRecommendationsResponse {
-  recommendations: GameRecommendation[];
-  basedOnGameCount: number;
-}
+import { personalRecommendationsKey } from "@/lib/swr/keys";
+import type { GameRecommendation, PersonalRecommendationsResponse } from "@/types/recommendation";
 
 interface UsePersonalRecommendationsReturn {
   recommendations: GameRecommendation[];
@@ -19,33 +15,27 @@ interface UsePersonalRecommendationsReturn {
   recomputing: boolean;
   error: string | null;
   refetch: () => Promise<void>;
-  /** Recomputes server-side, bypassing the cached aggregate. */
+  /** Recomputes server-side (scoring is never cached: one fresh pass). */
   recompute: () => Promise<void>;
 }
-
-const ENDPOINT = "/api/recommendations/personal";
 
 function toErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : "Failed to fetch personal recommendations";
 }
 
-/**
- * Hook pour fetch les recommandations personnalisées via SWR.
- * Agrège les recommandations de tous les jeux de la bibliothèque du joueur.
- */
+/** Personal recommendations of the signed-in user, localised to the current locale. */
 export function usePersonalRecommendations(): UsePersonalRecommendationsReturn {
-  const { data, error, isLoading, mutate } = useSWR<PersonalRecommendationsResponse>(ENDPOINT);
+  const locale = useLocale();
+  const { data, error, isLoading, mutate } = useSWR<PersonalRecommendationsResponse>(
+    personalRecommendationsKey(locale),
+    { revalidateOnFocus: false }
+  );
   const [recomputing, setRecomputing] = useState(false);
-  const [recomputeError, setRecomputeError] = useState<string | null>(null);
 
   const recompute = useCallback(async () => {
     setRecomputing(true);
-    setRecomputeError(null);
     try {
-      const fresh = await fetcher<PersonalRecommendationsResponse>(`${ENDPOINT}?refresh=1`);
-      await mutate(fresh, { revalidate: false });
-    } catch (recomputeFailure) {
-      setRecomputeError(toErrorMessage(recomputeFailure));
+      await mutate();
     } finally {
       setRecomputing(false);
     }
@@ -56,7 +46,7 @@ export function usePersonalRecommendations(): UsePersonalRecommendationsReturn {
     basedOnGameCount: data?.basedOnGameCount ?? 0,
     loading: isLoading,
     recomputing,
-    error: recomputeError ?? (error ? toErrorMessage(error) : null),
+    error: error ? toErrorMessage(error) : null,
     refetch: async () => {
       await mutate();
     },

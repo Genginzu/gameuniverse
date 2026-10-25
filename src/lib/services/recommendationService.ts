@@ -1,242 +1,87 @@
 /**
- * Recommendation service — orchestrates scoring and data fetching
- * to produce game recommendations.
+ * Recommendation service: thin layer over the SQL scoring RPCs
+ * (`recommend_games_for_me`, `recommend_similar_games`, migration
+ * 20261024000002) plus the card metadata of the picks.
  *
- * Two main entry points:
- * - getRecommendationsForGame: recommendations based on a single game
- * - getPersonalRecommendations: aggregated recommendations for a user's library
- *
- * Results are cached in-memory with a configurable TTL (default: 1 hour).
+ * The whole catalogue is scored in one database pass (~1 s for a
+ * 1 000-game library), so nothing is cached server-side: each call reflects
+ * the current library and dismissals.
  */
 
-import type { GameRecommendation, ScoringWeights } from "@/types/recommendation";
-import {
-  computeGenreScore,
-  computeCollaborativeScore,
-  computeReviewScore,
-  computeMetacriticScore,
-  computeCombinedScore,
-  DEFAULT_WEIGHTS,
-} from "@/lib/services/recommendation";
-import { cacheGet, cacheSet } from "@/lib/services/recommendation/cache";
-import {
-  fetchGameGenreIds,
-  fetchAllGameGenres,
-  fetchCoOccurrences,
-  fetchReviewStats,
-  fetchMetascores,
-  fetchGameMetadata,
-  fetchUserLibraryGameIds,
-} from "@/lib/services/recommendation/dataFetchers";
+import type { GameRecommendation } from "@/types/recommendation";
+import type { RecommendationClient, RecommendationRow } from "./recommendation/client";
+import { fetchGameMetadata } from "./recommendation/gameMetadata";
 
 export interface RecommendationOptions {
   limit?: number;
-  excludeGameIds?: string[];
-  weights?: Partial<ScoringWeights>;
-  /** Skip the cached personal aggregate (user-triggered refresh). */
-  bypassCache?: boolean;
+  locale?: string;
 }
 
-const DEFAULT_LIMIT = 10;
-const MIN_REVIEWS_FOR_FULL_CONFIDENCE = 3;
+export const DEFAULT_RECOMMENDATION_LIMIT = 10;
+export const MAX_RECOMMENDATION_LIMIT = 50;
 
-/** Build the full weights object, merging user overrides with defaults */
-function resolveWeights(partial?: Partial<ScoringWeights>): ScoringWeights {
-  return { ...DEFAULT_WEIGHTS, ...partial };
+function clampLimit(limit: number | undefined): number {
+  const value = limit ?? DEFAULT_RECOMMENDATION_LIMIT;
+  return Math.min(Math.max(Math.trunc(value), 1), MAX_RECOMMENDATION_LIMIT);
 }
 
-/**
- * Get recommendations for a specific game.
- *
- * Fetches genres, co-occurrences, and review stats, then scores
- * every candidate game and returns the top N results.
- */
-export async function getRecommendationsForGame(
-  gameId: string,
-  options?: RecommendationOptions
+async function hydrate(
+  supabase: RecommendationClient,
+  rows: RecommendationRow[],
+  locale: string
 ): Promise<GameRecommendation[]> {
-  const limit = options?.limit ?? DEFAULT_LIMIT;
-  const excludeIds = new Set(options?.excludeGameIds ?? []);
-  const weights = resolveWeights(options?.weights);
-
-  // Check cache first
-  const cacheKey = `game:${gameId}`;
-  const cached = cacheGet<GameRecommendation[]>(cacheKey);
-  if (cached) {
-    // Apply exclusion and limit on cached results (library may have changed)
-    return cached.filter((r) => !excludeIds.has(r.id)).slice(0, limit);
-  }
-
-  // Fetch all data in parallel
-  const [sourceGenreIds, allGameGenres, coOccurrenceData, reviewStatsMap, metascoreMap] =
-    await Promise.all([
-      fetchGameGenreIds(gameId),
-      fetchAllGameGenres(),
-      fetchCoOccurrences(gameId),
-      fetchReviewStats(),
-      fetchMetascores(),
-    ]);
-
-  // Score every candidate game
-  const scoredCandidates = scoreCandidates(
-    gameId,
-    sourceGenreIds,
-    allGameGenres,
-    coOccurrenceData,
-    reviewStatsMap,
-    metascoreMap,
-    weights
+  const metadata = await fetchGameMetadata(
+    supabase,
+    rows.map((row) => row.game_id),
+    locale
   );
 
-  // Sort by combined score descending
-  scoredCandidates.sort((a, b) => b.score - a.score);
-
-  // Take top results (generous limit for caching, actual limit applied after)
-  const topCandidateIds = scoredCandidates.slice(0, Math.max(limit * 3, 30)).map((c) => c.gameId);
-
-  // Fetch metadata for top candidates
-  const metadataMap = await fetchGameMetadata(topCandidateIds);
-
-  // Build final recommendations
-  const allRecommendations = buildRecommendations(scoredCandidates, metadataMap);
-
-  // Cache the full (unfiltered) results
-  cacheSet(cacheKey, allRecommendations);
-
-  // Apply exclusion and limit
-  return allRecommendations.filter((r) => !excludeIds.has(r.id)).slice(0, limit);
+  return rows.flatMap((row) => {
+    const game = metadata.get(row.game_id);
+    return game ? [{ ...game, combinedScore: row.score }] : [];
+  });
 }
 
-/**
- * Get personalized recommendations for a user.
- *
- * Aggregates recommendations from all games in the user's library,
- * deduplicates by keeping the max combinedScore per candidate.
- */
+async function callRpc(
+  supabase: RecommendationClient,
+  fn: string,
+  args: Record<string, unknown>
+): Promise<RecommendationRow[]> {
+  const { data, error } = await supabase.rpc(fn, args);
+  if (error) throw new Error(`${fn} failed: ${error.message}`);
+  return (data ?? []) as RecommendationRow[];
+}
+
+/** Personal recommendations of the signed-in caller of `supabase`. */
 export async function getPersonalRecommendations(
-  userId: string,
-  options?: RecommendationOptions
+  supabase: RecommendationClient,
+  options: RecommendationOptions = {}
 ): Promise<GameRecommendation[]> {
-  const limit = options?.limit ?? DEFAULT_LIMIT;
-  const weights = resolveWeights(options?.weights);
-
-  // Check cache first
-  const cacheKey = `personal:${userId}`;
-  const cached = options?.bypassCache ? null : cacheGet<GameRecommendation[]>(cacheKey);
-  if (cached) return cached.slice(0, limit);
-
-  const libraryGameIds = await fetchUserLibraryGameIds(userId);
-  if (libraryGameIds.length === 0) return [];
-
-  // Get recommendations for each library game, excluding all library games
-  const librarySet = new Set(libraryGameIds);
-  const scoreByCandidate = new Map<string, GameRecommendation>();
-
-  for (const libraryGameId of libraryGameIds) {
-    const recs = await getRecommendationsForGame(libraryGameId, {
-      // Use a generous limit per source game to get good candidates
-      limit: Math.max(limit * 2, 20),
-      excludeGameIds: libraryGameIds,
-      weights,
-    });
-
-    // Deduplicate: keep the max combinedScore for each candidate
-    for (const rec of recs) {
-      const existing = scoreByCandidate.get(rec.id);
-      if (!existing || rec.combinedScore > existing.combinedScore) {
-        scoreByCandidate.set(rec.id, rec);
-      }
-    }
-  }
-
-  // Sort by combinedScore descending and limit
-  const aggregated = Array.from(scoreByCandidate.values())
-    .filter((r) => !librarySet.has(r.id))
-    .sort((a, b) => b.combinedScore - a.combinedScore)
-    .slice(0, limit);
-
-  cacheSet(cacheKey, aggregated);
-  return aggregated;
+  const rows = await callRpc(supabase, "recommend_games_for_me", {
+    p_limit: clampLimit(options.limit),
+  });
+  return hydrate(supabase, rows, options.locale ?? "en");
 }
 
-// --- Internal helpers ---
-
-interface ScoredCandidate {
-  gameId: string;
-  score: number;
+/** Games like `gameId`; signed-in callers do not get library or dismissed games. */
+export async function getRecommendationsForGame(
+  supabase: RecommendationClient,
+  gameId: string,
+  options: RecommendationOptions = {}
+): Promise<GameRecommendation[]> {
+  const rows = await callRpc(supabase, "recommend_similar_games", {
+    p_game_id: gameId,
+    p_limit: clampLimit(options.limit),
+  });
+  return hydrate(supabase, rows, options.locale ?? "en");
 }
 
-/** Score all candidate games against the source game */
-function scoreCandidates(
-  sourceGameId: string,
-  sourceGenreIds: string[],
-  allGameGenres: Map<string, string[]>,
-  coOccurrenceData: Awaited<ReturnType<typeof fetchCoOccurrences>>,
-  reviewStatsMap: Map<string, { averageRating: number; reviewCount: number }>,
-  metascoreMap: Map<string, number>,
-  weights: ScoringWeights
-): ScoredCandidate[] {
-  const coOccurrenceMap = new Map<string, number>();
-  for (const row of coOccurrenceData.coOccurrences) {
-    coOccurrenceMap.set(row.candidateGameId, row.coOccurrenceCount);
-  }
-
-  const candidates: ScoredCandidate[] = [];
-
-  for (const [candidateId, candidateGenreIds] of allGameGenres) {
-    // Exclude the source game itself (Requirement 1.3)
-    if (candidateId === sourceGameId) continue;
-
-    const genreScore = computeGenreScore({
-      sourceGenreIds,
-      candidateGenreIds,
-    });
-
-    const collaborativeScore = computeCollaborativeScore({
-      sourceGameId,
-      candidateGameId: candidateId,
-      coOccurrenceCount: coOccurrenceMap.get(candidateId) ?? 0,
-      sourceGameLibraryCount: coOccurrenceData.sourceLibraryCount,
-    });
-
-    const reviewStats = reviewStatsMap.get(candidateId);
-    const reviewScore = computeReviewScore({
-      averageRating: reviewStats?.averageRating ?? null,
-      reviewCount: reviewStats?.reviewCount ?? 0,
-      minReviewsForFullConfidence: MIN_REVIEWS_FOR_FULL_CONFIDENCE,
-    });
-
-    const metacriticScore = computeMetacriticScore({
-      metascore: metascoreMap.get(candidateId) ?? null,
-    });
-
-    const score = computeCombinedScore(
-      { genreScore, collaborativeScore, reviewScore, metacriticScore },
-      weights
-    );
-
-    candidates.push({ gameId: candidateId, score });
-  }
-
-  return candidates;
-}
-
-/** Map scored candidates to full GameRecommendation objects */
-function buildRecommendations(
-  scoredCandidates: ScoredCandidate[],
-  metadataMap: Map<string, GameRecommendation>
-): GameRecommendation[] {
-  const recommendations: GameRecommendation[] = [];
-
-  for (const candidate of scoredCandidates) {
-    const metadata = metadataMap.get(candidate.gameId);
-    if (!metadata) continue;
-
-    recommendations.push({
-      ...metadata,
-      combinedScore: candidate.score,
-    });
-  }
-
-  return recommendations;
+/** Number of games in the user's library (shown as "based on N games"). */
+export async function countLibraryGames(supabase: RecommendationClient, userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from("user_library")
+    .select("game_id", { count: "exact", head: true })
+    .eq("user_id", userId);
+  if (error) throw new Error(`Failed to count library games: ${error.message}`);
+  return count ?? 0;
 }

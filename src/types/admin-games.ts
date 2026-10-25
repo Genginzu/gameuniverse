@@ -97,7 +97,8 @@ export type TrackableField =
   | "playtime"
   | "popularity"
   | "videos"
-  | "similar_games";
+  | "similar_games"
+  | "taxonomies";
 
 export type BulkFieldAlias =
   "cover" | "background" | "playtime" | "metascore" | "releaseDate" | "popularity";

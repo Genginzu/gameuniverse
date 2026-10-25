@@ -1,84 +1,102 @@
-# Game Recommendations
+# Recommandations de jeux
 
 ## Description
 
-Système de recommandations de jeux « Si vous aimez ce jeu, vous aimerez aussi…
-». Le moteur combine quatre signaux pour calculer un score de pertinence :
+Deux usages, un seul moteur SQL (migration
+`20261024000002_recommendation_engine.sql`) :
 
-1. **Similarité par genres** — coefficient de Jaccard sur les genres partagés
-2. **Filtrage collaboratif** — co-occurrence dans les bibliothèques des joueurs
-3. **Qualité des reviews** — note moyenne pondérée par un discount de confiance
-4. **Note Metacritic** — metascore normalisé (0-100 → 0-1), signal optionnel
+- **Pour toi** : recommandations personnelles (accueil connecté, profil).
+- **Jeux similaires** : jeux proches d'un jeu donné (page détail, quand IGDB ne
+  fournit pas de jeux similaires utilisables).
 
-Les scores sont combinés en un `Combined_Score` avec des poids configurables
-(genre 0.35, collaboratif 0.35, review 0.15, metacritic 0.15). Quand un jeu n'a
-pas de metascore, ce signal est exclu et les poids restants sont re-normalisés
-automatiquement. Les résultats sont servis via une API REST avec cache in-memory
-(TTL 1h).
+Tout le catalogue est noté en une seule requête (`recommend_games`), environ
+1 s pour une bibliothèque de 1 000 jeux. Rien n'est mis en cache côté serveur :
+chaque appel reflète la bibliothèque et les choix « pas intéressé » actuels.
+
+### Score
+
+`recommend_games(sources, poids, exclus, limite)` combine, pour chaque jeu du
+catalogue :
+
+| Signal        | Poids | Calcul                                                                   |
+| ------------- | ----- | ------------------------------------------------------------------------ |
+| Contenu       | 50 %  | Cosinus TF-IDF sur genres, thèmes, perspectives, modes, franchises, studios |
+| Similaires    | 35 %  | `game_similar_games` d'IGDB, dans les deux sens, résolus par `igdb_id`  |
+| Collaboratif  | 15 %  | Co-occurrence dans les bibliothèques, actif à partir de 20 joueurs (≥ 5 jeux) |
+| Qualité       | ×0,7 → ×1 | Metascore, avis du site, popularité : multiplie la pertinence       |
+
+- **TF-IDF** : une caractéristique rare (franchise, studio, thème de niche) pèse
+  plus qu'une caractéristique courante (« Indie », « Single player »). Poids par
+  type : franchise 2, studio 1,5, genre et thème 1, perspective 0,6, mode 0,4.
+  En dessous de 5 caractéristiques, la correspondance est atténuée.
+- **Sans assez de joueurs**, le signal collaboratif est désactivé et les autres
+  sont re-normalisés.
+- **Exclus** : jeux de la bibliothèque, jeux « pas intéressé », jeux adultes,
+  jeux sans pochette, DLC / bundles / packs importés comme jeux.
+- **Diversité** : au plus deux jeux par franchise.
+
+### Poids des jeux de la bibliothèque (personnel)
+
+`library_engagement_weight` : 0,15 + 1,5 × ln(1 + heures de jeu) + statut (en
+cours 2, terminé 1,5, liste de souhaits 0,6) + note (5★ +2, 4★ +1, 2★ −0,5,
+1★ −1,5), ×1,25 si ajouté il y a moins de 60 jours. Les 80 jeux les plus
+engageants servent de sources : un jeu importé mais jamais lancé pèse peu.
+
+### Taxonomies IGDB
+
+Thèmes, modes de jeu, perspectives et franchises sont stockés dans `themes`,
+`game_modes`, `player_perspectives`, `franchises` (+ tables de liaison
+`game_*`), par `igdb_id`. Ils sont écrits par la RPC `set_games_taxonomies` à
+l'import, à la synchro (champ suivi `taxonomies`) et par les webhooks IGDB ; la
+RPC garde aussi `games.is_adult` aligné sur le thème 42.
 
 ## Accès
 
-### API Routes
+| Route                                                  | Méthode | Auth        | Limite                          |
+| ------------------------------------------------------ | ------- | ----------- | ------------------------------- |
+| `/api/recommendations/personal?limit=&locale=`         | GET     | Requise     | `recommendation` (60 / 10 min)  |
+| `/api/games/[slug]/recommendations?limit=&locale=`     | GET     | Optionnelle | —                               |
+| `/api/recommendations/dismissals` `{ gameId }`         | POST    | Requise     | `recommendationFeedback`        |
+| `/api/recommendations/dismissals/[gameId]`             | DELETE  | Requise     | `recommendationFeedback`        |
 
-| Route                                       | Méthode | Auth        | Description                              |
-| ------------------------------------------- | ------- | ----------- | ---------------------------------------- |
-| `/api/games/[slug]/recommendations?limit=N` | GET     | Optionnelle | Recommandations pour un jeu donné        |
-| `/api/recommendations/personal?limit=N`     | GET     | Requise     | Recommandations personnalisées du joueur |
-
-### Pages
-
-- **Page de détail d'un jeu** (`/[locale]/games/[slug]`) — section « Si vous
-  aimez ce jeu… » en bas de page
-- **Profil du joueur** (`/[locale]/players/[id]`) — section « Recommandations
-  pour vous » visible uniquement par le propriétaire du profil
+Pages : accueil connecté (section Recommandations), profil du joueur (onglet
+recommandations), page détail d'un jeu (repli de « Jeux similaires »).
 
 ## Prérequis
 
-Aucune migration SQL nécessaire. Le système exploite les tables existantes :
+1. Appliquer les migrations `20261024000002_recommendation_engine.sql` puis
+   `20261025000001_drop_recommendation_reason.sql` (retire `reason_game_id`).
+2. Remplir les taxonomies du catalogue existant (une fois, reprenable) :
 
-- `game_genres` — pour le Genre_Score
-- `user_library` — pour le Collaborative_Score (statuts `owned`, `completed`,
-  `playing`)
-- `game_reviews` — pour le Review_Score
-- `games` — pour le Metacritic_Score (colonne `metascore`)
-- `games`, `game_translations`, `game_companies` — métadonnées des candidats
+   ```bash
+   bun --env-file=.env scripts/igdb-import/games/backfill-taxonomies.ts [--dry-run] [--limit=N]
+   ```
+
+   500 jeux par requête IGDB, environ 50 requêtes pour 25 000 jeux. Sans
+   backfill, le moteur fonctionne avec genres, studios et jeux similaires.
 
 ## Utilisation
 
-### Recommandations par jeu
-
-La section apparaît automatiquement sur chaque page de détail de jeu. Si
-l'utilisateur est authentifié, les jeux déjà dans sa bibliothèque sont exclus
-des résultats.
-
-### Recommandations personnalisées
-
-Visible sur le profil du joueur connecté. Le moteur agrège les recommandations
-de tous les jeux de la bibliothèque, déduplique les candidats en gardant le
-score maximum, et exclut les jeux déjà possédés.
-
-Si la bibliothèque est vide, un message invite le joueur à ajouter des jeux.
+- **Pas intéressé** : bouton (œil barré) en haut à gauche d'une carte de la
+  section Recommandations. Le jeu disparaît aussitôt et n'est plus proposé ;
+  « Annuler » le rétablit.
+- **Ajouter à la bibliothèque** : bouton « + » sous le précédent. Le jeu est
+  ajouté en « possédé » (`POST /api/library`), quitte le rail et un message
+  avec un lien vers sa fiche confirme l'ajout.
+- **Recalculer** : relance le calcul (pas de cache serveur, donc toujours à
+  jour).
 
 ## Architecture
 
 ```
-src/lib/services/recommendation/
-├── genreScorer.ts          # Coefficient de Jaccard
-├── collaborativeScorer.ts  # Co-occurrence normalisée
-├── reviewScorer.ts         # Note moyenne + discount confiance
-├── metacriticScorer.ts     # Metascore normalisé (signal optionnel)
-├── scoreCombiner.ts        # Somme pondérée normalisée (signaux optionnels)
-├── cache.ts                # Cache in-memory avec TTL
-├── dataFetchers.ts         # Requêtes Supabase
-└── index.ts                # Barrel export
-
-src/lib/services/recommendationService.ts  # Orchestration
-
-src/hooks/
-├── useRecommendations.ts          # Hook pour un jeu
-└── usePersonalRecommendations.ts  # Hook pour le profil
-
-src/components/games/
-├── RecommendationSection.tsx          # Section page jeu
-└── PersonalRecommendationSection.tsx  # Section profil joueur
+supabase/migrations/20261024000002_recommendation_engine.sql
+supabase/migrations/20261025000001_drop_recommendation_reason.sql
+  recommend_games / recommend_games_for_me / recommend_similar_games
+  library_engagement_weight / set_games_taxonomies
+src/lib/services/recommendationService.ts   # RPC + métadonnées des cartes
+src/lib/services/recommendation/            # client, métadonnées localisées
+src/lib/services/igdbTaxonomies.ts          # champs IGDB, écriture des taxonomies
+src/hooks/usePersonalRecommendations.ts, useRecommendations.ts
+src/hooks/useRecommendationDismissal.ts, useDismissWithUndo.ts
+src/components/home/dashboard/RecommendationsSection.tsx
 ```

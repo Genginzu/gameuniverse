@@ -9,6 +9,7 @@
  */
 
 import { getSupabaseAdmin } from "./supabase-admin.ts";
+import { saveGameTaxonomies } from "./igdb-taxonomies.ts";
 import { IGDBService } from "./igdb-service.ts";
 import { logger } from "./logger.ts";
 import { fetchMetacriticScore } from "./metacritic-service.ts";
@@ -211,6 +212,16 @@ export const GameImportService = {
 
     await fetchAndSavePlaytime(gameId, igdbGame.id);
     await fetchAndSavePopularity(gameId, igdbGame.id);
+    await this.saveTaxonomies(gameId, igdbGame);
+  },
+
+  /** Recommendation features; a failure must not abort the import. */
+  async saveTaxonomies(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    try {
+      await saveGameTaxonomies(getSupabaseAdmin(), gameId, igdbGame);
+    } catch (error) {
+      logger.warn("Failed to save game taxonomies", { gameId, error: String(error) });
+    }
   },
 
   async updateAllRelatedData(gameId: string, igdbGame: IGDBGame): Promise<void> {
@@ -224,5 +235,6 @@ export const GameImportService = {
     await syncPlatforms(gameId, igdbGame);
     await fetchAndSavePlaytime(gameId, igdbGame.id);
     await fetchAndSavePopularity(gameId, igdbGame.id);
+    await this.saveTaxonomies(gameId, igdbGame);
   },
 };

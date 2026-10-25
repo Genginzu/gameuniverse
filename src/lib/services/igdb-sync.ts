@@ -56,6 +56,11 @@ export interface SyncSupabaseClient {
       }>;
     };
   };
+  /** Used by the taxonomies field (`set_games_taxonomies`). */
+  rpc: (
+    fn: string,
+    args: Record<string, unknown>
+  ) => PromiseLike<{ error: { message: string } | null }>;
 }
 
 export interface SyncResult {

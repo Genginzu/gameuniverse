@@ -20,11 +20,46 @@ const recs = vi.hoisted(() => ({
 vi.mock("@/hooks/usePersonalRecommendations", () => ({
   usePersonalRecommendations: () => recs.state,
 }));
-vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
+
+const dismissal = vi.hoisted(() => ({
+  state: {
+    dismiss: (() => Promise.resolve()) as (rec: unknown) => Promise<void>,
+    undo: (() => Promise.resolve()) as () => Promise<void>,
+    lastDismissed: null as { id: string; slug: string; title: string } | null,
+    failed: false,
+    isPending: false,
+  },
+}));
+
+vi.mock("@/hooks/useDismissWithUndo", () => ({
+  useDismissWithUndo: () => dismissal.state,
+}));
+const addition = vi.hoisted(() => ({
+  state: {
+    add: (() => Promise.resolve()) as (rec: unknown) => Promise<void>,
+    lastAdded: null as { id: string; slug: string; title: string } | null,
+    failed: false,
+    isPending: false,
+  },
+}));
+
+vi.mock("@/hooks/useAddRecommendationToLibrary", () => ({
+  useAddRecommendationToLibrary: () => addition.state,
+}));
+
+vi.mock("next-intl", () => {
+  const t = Object.assign((key: string) => key, {
+    rich: (key: string, values: Record<string, unknown>) => {
+      const game = values.game as ((chunks: string) => React.ReactNode) | undefined;
+      return React.createElement("span", null, key, " ", game?.(String(values.title)));
+    },
+  });
+  return { useTranslations: () => t };
+});
 
 vi.mock("@/components/games/GameCard", () => ({
-  GameCard: ({ game }: { game: GameSummary }) =>
-    React.createElement("div", { "data-testid": "game-card", children: game.title }),
+  GameCard: ({ game, actions }: { game: GameSummary; actions?: React.ReactNode }) =>
+    React.createElement("div", { "data-testid": "game-card" }, game.title, actions),
 }));
 
 vi.mock("@/components/games/GameCardSkeleton", () => ({
@@ -51,6 +86,92 @@ beforeEach(() => {
     error: null,
     recompute: vi.fn().mockResolvedValue(undefined),
   };
+  dismissal.state = {
+    dismiss: vi.fn().mockResolvedValue(undefined),
+    undo: vi.fn().mockResolvedValue(undefined),
+    lastDismissed: null,
+    failed: false,
+    isPending: false,
+  };
+  addition.state = {
+    add: vi.fn().mockResolvedValue(undefined),
+    lastAdded: null,
+    failed: false,
+    isPending: false,
+  };
+});
+
+describe("RecommendationsSection feedback", () => {
+  it("dismisses a pick from its card", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
+    render(<RecommendationsSection />);
+
+    fireEvent.click(screen.getByRole("button", { name: "dismiss" }));
+
+    expect(dismissal.state.dismiss).toHaveBeenCalledWith(REC);
+  });
+
+  it("offers an undo after a dismissal, with a link to the dismissed game", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
+    dismissal.state = {
+      ...dismissal.state,
+      lastDismissed: { id: "x", slug: "gone-slug", title: "Gone" },
+    };
+    render(<RecommendationsSection />);
+
+    expect(screen.getByRole("status")).toHaveTextContent("dismissed");
+    expect(screen.getByRole("link", { name: "Gone" })).toHaveAttribute("href", "/games/gone-slug");
+    fireEvent.click(screen.getByRole("button", { name: "undo" }));
+    expect(dismissal.state.undo).toHaveBeenCalled();
+  });
+
+  it("reports a failed dismissal", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
+    dismissal.state = { ...dismissal.state, failed: true };
+    render(<RecommendationsSection />);
+
+    expect(screen.getByRole("alert")).toHaveTextContent("dismissError");
+  });
+
+  it("adds a pick to the library from its card", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
+    render(<RecommendationsSection />);
+
+    fireEvent.click(screen.getByRole("button", { name: "addToLibrary" }));
+
+    expect(addition.state.add).toHaveBeenCalledWith(REC);
+  });
+
+  it("confirms an addition with a link to the added game, without undo", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 5 };
+    addition.state = {
+      ...addition.state,
+      lastAdded: { id: "a", slug: "added-slug", title: "Added" },
+    };
+    render(<RecommendationsSection />);
+
+    expect(screen.getByRole("status")).toHaveTextContent("added");
+    expect(screen.getByRole("link", { name: "Added" })).toHaveAttribute("href", "/games/added-slug");
+    expect(screen.queryByRole("button", { name: "undo" })).not.toBeInTheDocument();
+    expect(screen.queryByText("basedOn")).not.toBeInTheDocument();
+  });
+
+  it("disables both card actions while an action is pending", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
+    addition.state = { ...addition.state, isPending: true };
+    render(<RecommendationsSection />);
+
+    expect(screen.getByRole("button", { name: "addToLibrary" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "dismiss" })).toBeDisabled();
+  });
+
+  it("reports a failed addition", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
+    addition.state = { ...addition.state, failed: true };
+    render(<RecommendationsSection />);
+
+    expect(screen.getByRole("alert")).toHaveTextContent("addError");
+  });
 });
 
 describe("RecommendationsSection", () => {

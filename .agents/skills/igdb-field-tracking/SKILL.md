@@ -15,7 +15,7 @@ Full procedure: `.agents/steering/igdb-field-tracking.md`.
 
 ## Where things live
 
-- `TrackableField` union (17 members): `src/types/admin-games.ts`
+- `TrackableField` union (18 members): `src/types/admin-games.ts`
 - `src/lib/services/igdb-fields/registry.ts` (client-safe):
   `TRACKED_FIELD_REGISTRY` with one entry per field (`labelKey`,
   `webhookPayloadKeys`, `bulkImport`, `detect`). Derives `TRACKABLE_FIELDS`,
@@ -33,7 +33,7 @@ Full procedure: `.agents/steering/igdb-field-tracking.md`.
 1. Add the member to `TrackableField`; the compiler then flags
    `TRACKED_FIELD_REGISTRY` and `FIELD_SYNC_MAP`.
 2. Add the registry entry. Use `detect: null` only for fields the admin form
-   cannot edit (today: `popularity`, `similar_games`); otherwise add a detector
+   cannot edit (today: `popularity`, `similar_games`, `taxonomies`); otherwise add a detector
    and the matching `CurrentGameData` property + PUT current-data loading.
 3. Add the sync function in `igdb-sync-fields*.ts` and register it in
    `FIELD_SYNC_MAP`.

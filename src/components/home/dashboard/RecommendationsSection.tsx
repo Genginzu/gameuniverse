@@ -1,32 +1,51 @@
 "use client";
 
 /**
- * RecommendationsSection : personal recommendations computed from the library,
- * with a "recompute" button that bypasses the server cache.
+ * RecommendationsSection : personal recommendations scored from the library
+ * (SQL, one pass), each with "not interested" (undoable) and "add to library".
  */
 
 import { useTranslations } from "next-intl";
 
+import { useAddRecommendationToLibrary } from "@/hooks/useAddRecommendationToLibrary";
+import { useDismissWithUndo } from "@/hooks/useDismissWithUndo";
 import { usePersonalRecommendations } from "@/hooks/usePersonalRecommendations";
 import { recommendationToGameSummary } from "@/lib/utils/recommendationToGameSummary";
+import type { GameRecommendation } from "@/types/recommendation";
 import { HomeEmptyState } from "./HomeEmptyState";
-import { HomeGameRail } from "./HomeGameRail";
+import { HomeGameRail, type HomeRailItem } from "./HomeGameRail";
 import { HomeLoadingNotice } from "./HomeLoadingNotice";
 import { HomeSection } from "./HomeSection";
+import { RecommendationCardActions } from "./RecommendationCardActions";
+import { RecommendationFeedback } from "./RecommendationFeedback";
 import { RecomputeButton } from "./RecomputeButton";
 
 export function RecommendationsSection() {
   const t = useTranslations("homeDashboard.recommendations");
   const { recommendations, basedOnGameCount, loading, recomputing, error, recompute } =
     usePersonalRecommendations();
+  const dismissal = useDismissWithUndo();
+  const addition = useAddRecommendationToLibrary();
 
   const isBusy = loading || recomputing;
+  const actionPending = dismissal.isPending || addition.isPending;
+  const toItem = (rec: GameRecommendation): HomeRailItem => ({
+    game: recommendationToGameSummary(rec),
+    action: (
+      <RecommendationCardActions
+        dismissLabel={t("dismiss", { title: rec.title })}
+        addLabel={t("addToLibrary", { title: rec.title })}
+        disabled={actionPending}
+        onDismiss={() => dismissal.dismiss(rec)}
+        onAdd={() => addition.add(rec)}
+      />
+    ),
+  });
   // Hide stale cards while recomputing so the rail shows skeletons.
-  const items = recomputing
-    ? []
-    : recommendations.map((rec) => ({ game: recommendationToGameSummary(rec) }));
+  const items = recomputing ? [] : recommendations.map(toItem);
   const emptyMessage = error ? t("error") : basedOnGameCount === 0 ? t("emptyLibrary") : t("empty");
   const canRecompute = basedOnGameCount > 0 || Boolean(error);
+  const hasNotice = Boolean(dismissal.lastDismissed || addition.lastAdded);
 
   return (
     <HomeSection
@@ -45,7 +64,14 @@ export function RecommendationsSection() {
           {t("recomputeError")}
         </p>
       )}
-      {basedOnGameCount > 0 && !isBusy && !error && (
+      <RecommendationFeedback
+        dismissed={dismissal.lastDismissed}
+        added={addition.lastAdded}
+        dismissFailed={dismissal.failed}
+        addFailed={addition.failed}
+        onUndo={dismissal.undo}
+      />
+      {basedOnGameCount > 0 && !isBusy && !error && !hasNotice && (
         <p className="text-editorial-muted -mt-2 text-sm">
           {t("basedOn", { count: basedOnGameCount })}
         </p>

@@ -1,58 +1,36 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+
+import { defineRoute, notFound } from "@/lib/api/route";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { asRecommendationClient } from "@/lib/services/recommendation/client";
 import { getRecommendationsForGame } from "@/lib/services/recommendationService";
-import { fetchUserLibraryGameIds } from "@/lib/services/recommendation/dataFetchers";
-import { logger } from "@/lib/logger";
+import { recommendationQuerySchema } from "@/lib/validations/recommendation";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
-  try {
-    const { slug } = await params;
-    const supabase = await createRouteHandlerClient();
+// GET /api/games/[slug]/recommendations?limit=&locale= — games like this one.
+// Signed-in callers do not get games from their library or dismissed ones
+// (filtered by recommend_similar_games through auth.uid()).
+export const GET = defineRoute(
+  { auth: "optional", query: recommendationQuerySchema },
+  async ({ params, query }) => {
+    const supabase = asRecommendationClient(await createRouteHandlerClient());
 
-    // Resolve slug to game ID
-    const { data: game, error: gameError } = await supabase
+    const { data: game, error } = await supabase
       .from("games")
       .select("id")
-      .eq("slug", slug)
+      .eq("slug", params.slug)
       .single();
+    if (error || !game) throw notFound("Game not found");
 
-    if (gameError || !game) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
-    }
-
-    // Optional authentication for library exclusion
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    let excludeGameIds: string[] = [];
-    if (user) {
-      excludeGameIds = await fetchUserLibraryGameIds(user.id);
-    }
-
-    // Parse optional limit query param (default 10, fallback to 10 if invalid)
-    const { searchParams } = new URL(request.url);
-    const limitParam = searchParams.get("limit");
-    let limit = 10;
-    if (limitParam) {
-      const parsed = parseInt(limitParam, 10);
-      if (!isNaN(parsed) && parsed > 0) {
-        limit = parsed;
-      }
-    }
-
-    const recommendations = await getRecommendationsForGame(game.id, {
-      limit,
-      excludeGameIds,
+    const gameId = (game as { id: string }).id;
+    const recommendations = await getRecommendationsForGame(supabase, gameId, {
+      limit: query.limit,
+      locale: query.locale,
     });
 
     return NextResponse.json({
       recommendations,
-      sourceGameId: game.id,
+      sourceGameId: gameId,
       generatedAt: new Date().toISOString(),
     });
-  } catch (error) {
-    logger.error("Error computing recommendations", { error });
-    return NextResponse.json({ error: "Failed to compute recommendations" }, { status: 500 });
   }
-}
+);

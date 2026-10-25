@@ -1268,6 +1268,11 @@
     "listingDescription": "Explorez la bibliothèque complète de Gamers Universe.",
     "listingCount": "{count} titres",
     "readMore": "Découvrir",
+    "quickAdd": {
+      "add": "Ajouter {title} à ma bibliothèque",
+      "inLibrary": "{title} est dans ta bibliothèque",
+      "error": "Impossible d'ajouter ce jeu à ta bibliothèque, réessaie."
+    },
     "noGamesFound": "Aucun jeu trouvé",
     "modifySearch": "Essayez de modifier vos critères de recherche ou explorez d'autres catégories",
     "noGamesAvailable": "Aucun jeu disponible pour le moment",
@@ -1462,13 +1467,14 @@
         "playerPlural": "joueurs",
         "dialogTitle": "Mon temps de jeu",
         "dialogDescription": "Renseignez vos temps de jeu. Au moins un champ est requis.",
-        "fieldPlaceholder": "Heures (ex: 12.5)",
+        "fieldPlaceholder": "Heures (ex : 12,5)",
         "submit": "Soumettre",
         "submitting": "Envoi en cours...",
         "cancel": "Annuler",
         "errorPositive": "Le temps de jeu doit être un nombre strictement positif",
         "errorMax": "Le temps de jeu ne peut pas dépasser 50 000 heures",
         "errorPrecision": "Le temps de jeu doit être arrondi à une décimale (0.1h)",
+        "errorNumber": "saisis un nombre d'heures (ex : 250,5 ou 250.5)",
         "errorAtLeastOne": "Au moins un temps de jeu doit être renseigné"
       }
     },
@@ -1513,8 +1519,6 @@
       "heroPlatformsCount": "{count} plateformes",
       "heroPlatformsOne": "1 plateforme",
       "libraryAdd": "Ajouter à la bibliothèque",
-      "libraryIn": "Dans ma bibliothèque",
-      "libraryRemove": "Retirer",
       "liveTicker": "{players} en jeu · {streams} streams · {tournaments} tournois cette semaine",
       "score": "Score",
       "from": "À partir de",
@@ -2111,6 +2115,7 @@
         "musicYoutubeUrl": "URL YouTube (vidéo ou embed)",
         "videos": "Vidéos",
         "similarGames": "Jeux similaires",
+        "taxonomies": "Thèmes, modes, perspectives et franchises",
         "similarGamesSearchLabel": "Rechercher un jeu à ajouter",
         "similarGamesSearchPlaceholder": "Tapez le nom d'un jeu...",
         "similarGamesNoResults": "Aucun jeu trouvé",
@@ -4805,6 +4810,21 @@
     "allMonths": "Tous",
     "empty": "Aucune sortie prévue pour cette période."
   },
+  "libraryStatus": {
+    "owned": "Possédé",
+    "playing": "En cours",
+    "completed": "Terminé",
+    "wishlist": "Liste de souhaits",
+    "menuTitle": "Statut dans ma bibliothèque",
+    "legendTitle": "Légende des statuts",
+    "completedPlaytimeTitle": "Bravo, {title} terminé !",
+    "completedPlaytimeDescription": "Combien de temps t'a-t-il fallu ? Renseigne au moins un temps de jeu, ou passe cette étape.",
+    "playtimeButtonLabel": "Renseigner mon temps de jeu sur {title}",
+    "triggerLabel": "Statut dans ma bibliothèque : {status}. Modifier",
+    "cardTriggerLabel": "{title} — statut : {status}. Modifier",
+    "remove": "Retirer de ma bibliothèque",
+    "error": "Impossible de modifier ta bibliothèque, réessaie."
+  },
   "homeDashboard": {
     "hero": {
       "kicker": "TON UNIVERS",
@@ -4827,8 +4847,13 @@
       "kicker": "EN COURS",
       "title": "Reprendre",
       "seeAll": "Ma bibliothèque",
-      "empty": "Aucun jeu en cours. Passe un jeu en « En cours » dans ta bibliothèque pour le retrouver ici.",
-      "emptyAction": "Explorer les jeux"
+      "empty": "Aucun jeu en cours. Dans ta bibliothèque, touche l'icône de statut d'un jeu et choisis « En cours », ou enregistre une session de jeu.",
+      "emptyAction": "Ouvrir ma bibliothèque",
+      "suggestionsTitle": "Aucun jeu en cours. Tu joues à l'un de ceux-là ?",
+      "suggestionsSeparator": "Suggestions",
+      "markPlaying": "J'y joue",
+      "markPlayingLabel": "Passer {title} en cours",
+      "markPlayingError": "Impossible de mettre à jour ce jeu, réessaie."
     },
     "recommendations": {
       "kicker": "POUR TOI",
@@ -4841,14 +4866,21 @@
       "loadingSlow": "Le calcul peut prendre un peu de temps, tes recommandations arrivent.",
       "recompute": "Recalculer",
       "recomputeError": "Impossible de recalculer pour le moment, réessaie dans quelques minutes.",
+      "dismiss": "Pas intéressé par {title}",
+      "dismissed": "<game>{title}</game> ne te sera plus proposé.",
+      "undo": "Annuler",
+      "dismissError": "Impossible d'enregistrer ton choix, réessaie.",
+      "addToLibrary": "Ajouter {title} à ma bibliothèque",
+      "added": "<game>{title}</game> a été ajouté à ta bibliothèque.",
+      "addError": "Impossible d'ajouter ce jeu à ta bibliothèque, réessaie.",
       "error": "Les recommandations sont indisponibles pour le moment."
     },
     "friendsActivity": {
       "kicker": "COMMUNAUTÉ",
       "title": "Activité de tes amis",
       "seeAll": "Tout le fil",
-      "empty": "Aucune activité récente. Ajoute des amis pour suivre ce qu'ils jouent.",
-      "emptyAction": "Trouver des amis",
+      "empty": "Aucune activité récente. Ajoute des amis pour voir à quoi ils jouent.",
+      "emptyAction": "Parcourir les joueurs de Gamers Universe",
       "error": "L'activité de tes amis est indisponible pour le moment."
     },
     "trending": "Jeux tendances",

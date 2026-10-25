@@ -10,6 +10,7 @@
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { GameCard } from "@/components/games/GameCard";
+import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails, GameSummary } from "@/types/game";
 import { accentRich } from "../utils/accent-rich";
@@ -61,11 +62,13 @@ export function SimilarGamesSection({ game, locale }: SimilarGamesSectionProps) 
       </div>
 
       {hasResolved ? (
-        <div className="editorial-game-detail-similar-grid">
-          {resolved.map((g) => (
-            <GameCard key={g.id} game={g} />
-          ))}
-        </div>
+        <LibraryStatusProvider gameIds={resolved.map((g) => g.id)}>
+          <div className="editorial-game-detail-similar-grid">
+            {resolved.map((g) => (
+              <GameCard key={g.id} game={g} />
+            ))}
+          </div>
+        </LibraryStatusProvider>
       ) : (
         <AlgorithmicRecommendations gameSlug={game.slug} locale={locale} />
       )}
