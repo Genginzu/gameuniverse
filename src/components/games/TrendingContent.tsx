@@ -6,9 +6,15 @@ import { GameCard } from "@/components/games/GameCard";
 import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
+import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { useListingQuery } from "@/hooks/useListingQuery";
 import { trendingListing } from "@/lib/listing/resources/games";
 import type { GameSummary, TrendingGamesData } from "@/types/game";
+
+/** A game can appear in several trending sections: seed its status once. */
+function uniqueGameIds(games: GameSummary[]): string[] {
+  return [...new Set(games.filter(Boolean).map((game) => game.id))];
+}
 
 interface TrendingContentProps {
   initialData?: TrendingGamesData;
@@ -89,9 +95,11 @@ export function TrendingContent({ initialData }: TrendingContentProps) {
         {isLoading ? (
           <TrendingSkeleton />
         ) : (
-          SECTION_KEYS.map((key) => (
-            <TrendingSection key={key} titleKey={key} games={data?.[key] ?? []} />
-          ))
+          <LibraryStatusProvider gameIds={uniqueGameIds(SECTION_KEYS.flatMap((key) => data?.[key] ?? []))}>
+            {SECTION_KEYS.map((key) => (
+              <TrendingSection key={key} titleKey={key} games={data?.[key] ?? []} />
+            ))}
+          </LibraryStatusProvider>
         )}
       </EditorialContainer>
     </section>

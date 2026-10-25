@@ -12,12 +12,15 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
 import { GameCard } from "@/components/games/GameCard";
+import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import type { GameSummary } from "@/types/game";
 import type { PlayerLibraryGame } from "@/types/player";
 
 interface PlayerLibraryGridProps {
   games: PlayerLibraryGame[];
   locale: string;
+  /** Quick "add to library" on each card (off on the player's own profile). */
+  quickAdd?: boolean;
 }
 
 /**
@@ -37,7 +40,11 @@ function toGameSummary(game: PlayerLibraryGame): GameSummary {
   };
 }
 
-export function PlayerLibraryGrid({ games, locale: _locale }: PlayerLibraryGridProps) {
+export function PlayerLibraryGrid({
+  games,
+  locale: _locale,
+  quickAdd = true,
+}: PlayerLibraryGridProps) {
   const t = useTranslations("players");
 
   const sortedGames = useMemo(
@@ -58,20 +65,23 @@ export function PlayerLibraryGrid({ games, locale: _locale }: PlayerLibraryGridP
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5 min-[1536px]:grid-cols-6 min-[1536px]:gap-5">
-      {sortedGames.map((game, index) => (
-        <GameCard
-          key={game.id}
-          game={toGameSummary(game)}
-          priority={index < 5}
-          overlay={{
-            type: "library",
-            status: game.status,
-            rating: game.rating,
-            playtimeHours: game.playTimeHours,
-          }}
-        />
-      ))}
-    </div>
+    <LibraryStatusProvider gameIds={quickAdd ? sortedGames.map((game) => game.gameId) : []}>
+      <div className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5 min-[1536px]:grid-cols-6 min-[1536px]:gap-5">
+        {sortedGames.map((game, index) => (
+          <GameCard
+            key={game.id}
+            game={toGameSummary(game)}
+            priority={index < 5}
+            quickAdd={quickAdd}
+            overlay={{
+              type: "library",
+              status: game.status,
+              rating: game.rating,
+              playtimeHours: game.playTimeHours,
+            }}
+          />
+        ))}
+      </div>
+    </LibraryStatusProvider>
   );
 }

@@ -62,6 +62,7 @@ export function CommonGamesList({
             game={toGameSummary(game)}
             priority={index < 5}
             overlay={{ type: "common", genres: game.genres }}
+            quickAdd={false}
           />
         ))}
       </div>

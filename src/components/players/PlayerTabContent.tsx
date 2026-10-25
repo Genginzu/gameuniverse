@@ -74,7 +74,13 @@ export function PlayerTabContent({
       </TabPanel>
 
       <TabPanel visible={activeTab === "library"} mounted={visitedTabs.has("library")}>
-        <PlayerLibraryTab player={player} locale={locale} t={t} tCommon={tCommon} />
+        <PlayerLibraryTab
+          player={player}
+          locale={locale}
+          t={t}
+          tCommon={tCommon}
+          isOwner={isOwner}
+        />
       </TabPanel>
 
       <TabPanel visible={activeTab === "stats"} mounted={visitedTabs.has("stats")}>

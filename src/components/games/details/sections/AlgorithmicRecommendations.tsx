@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 
 import { GameCard } from "@/components/games/GameCard";
 import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
+import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { useRecommendations } from "@/hooks/useRecommendations";
 import { recommendationToGameSummary } from "@/lib/utils/recommendationToGameSummary";
 
@@ -40,11 +41,15 @@ export function AlgorithmicRecommendations({ gameSlug }: AlgorithmicRecommendati
     return <p className="text-zinc-400">{t("empty")}</p>;
   }
 
+  const shown = recommendations.slice(0, MAX_RECS);
+
   return (
-    <div className="editorial-game-detail-similar-grid">
-      {recommendations.slice(0, MAX_RECS).map((rec) => (
-        <GameCard key={rec.id} game={recommendationToGameSummary(rec)} />
-      ))}
-    </div>
+    <LibraryStatusProvider gameIds={shown.map((rec) => rec.id)}>
+      <div className="editorial-game-detail-similar-grid">
+        {shown.map((rec) => (
+          <GameCard key={rec.id} game={recommendationToGameSummary(rec)} />
+        ))}
+      </div>
+    </LibraryStatusProvider>
   );
 }

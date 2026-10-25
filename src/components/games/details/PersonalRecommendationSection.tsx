@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { usePersonalRecommendations } from "@/hooks/usePersonalRecommendations";
 import { GameCard } from "@/components/games/GameCard";
 import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
+import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { Icon } from "@iconify/react";
 import { recommendationToGameSummary } from "@/lib/utils/recommendationToGameSummary";
 
@@ -47,11 +48,13 @@ export function PersonalRecommendationSection() {
       )}
 
       {!loading && hasRecommendations && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-          {recommendations.map((rec) => (
-            <GameCard key={rec.id} game={recommendationToGameSummary(rec)} />
-          ))}
-        </div>
+        <LibraryStatusProvider gameIds={recommendations.map((rec) => rec.id)}>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            {recommendations.map((rec) => (
+              <GameCard key={rec.id} game={recommendationToGameSummary(rec)} />
+            ))}
+          </div>
+        </LibraryStatusProvider>
       )}
     </section>
   );

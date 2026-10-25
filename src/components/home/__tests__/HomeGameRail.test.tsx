@@ -6,12 +6,32 @@ import { HomeGameRail } from "@/components/home/dashboard/HomeGameRail";
 import type { GameSummary } from "@/types/game";
 
 vi.mock("@/components/games/GameCard", () => ({
-  GameCard: ({ game, priority }: { game: GameSummary; priority: boolean }) =>
-    React.createElement("div", {
-      "data-testid": "game-card",
-      "data-priority": String(priority),
-      children: game.title,
-    }),
+  GameCard: ({
+    game,
+    priority,
+    actions,
+    quickAdd,
+  }: {
+    game: GameSummary;
+    priority: boolean;
+    actions?: React.ReactNode;
+    quickAdd?: boolean;
+  }) =>
+    React.createElement(
+      "div",
+      {
+        "data-testid": "game-card",
+        "data-priority": String(priority),
+        "data-quick-add": String(quickAdd),
+      },
+      game.title,
+      actions
+    ),
+}));
+
+vi.mock("@/components/providers/LibraryStatusProvider", () => ({
+  LibraryStatusProvider: ({ gameIds, children }: { gameIds: string[]; children: React.ReactNode }) =>
+    React.createElement("div", { "data-testid": "status-provider", "data-ids": gameIds.join(",") }, children),
 }));
 
 vi.mock("@/components/games/GameCardSkeleton", () => ({
@@ -47,23 +67,29 @@ describe("HomeGameRail", () => {
     expect(priorities).toEqual(["true", "true", "false"]);
   });
 
-  it("renders the per-card action and caption next to the card", () => {
+  it("renders the per-card action next to the card link", () => {
     render(
       <HomeGameRail
         label="rail"
-        items={[
-          {
-            game: makeGame("a"),
-            caption: "Close to Source",
-            action: <button type="button">hide</button>,
-          },
-        ]}
+        items={[{ game: makeGame("a"), action: <button type="button">hide</button> }]}
         isLoading={false}
         empty={EMPTY}
       />
     );
     expect(screen.getByRole("button", { name: "hide" })).toBeInTheDocument();
-    expect(screen.getByText("Close to Source")).toBeInTheDocument();
+  });
+
+  it("offers the quick add with batch-seeded statuses only when asked", () => {
+    const items = ["a", "b"].map((id) => ({ game: makeGame(id) }));
+    const { rerender } = render(
+      <HomeGameRail label="rail" items={items} isLoading={false} empty={EMPTY} />
+    );
+    expect(screen.queryByTestId("status-provider")).not.toBeInTheDocument();
+    expect(screen.getAllByTestId("game-card")[0]).toHaveAttribute("data-quick-add", "false");
+
+    rerender(<HomeGameRail label="rail" items={items} isLoading={false} empty={EMPTY} quickAdd />);
+    expect(screen.getByTestId("status-provider")).toHaveAttribute("data-ids", "a,b");
+    expect(screen.getAllByTestId("game-card")[0]).toHaveAttribute("data-quick-add", "true");
   });
 
   it("keeps showing items during a background revalidation", () => {
