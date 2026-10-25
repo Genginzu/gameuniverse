@@ -17,15 +17,6 @@ export const IGDB_TAXONOMY_FIELDS =
   "franchise.id, franchise.name, franchise.slug, " +
   "franchises.id, franchises.name, franchises.slug";
 
-/** IGDB payload keys that change at least one taxonomy. */
-export const IGDB_TAXONOMY_PAYLOAD_KEYS = [
-  "themes",
-  "game_modes",
-  "player_perspectives",
-  "franchise",
-  "franchises",
-] as const;
-
 type TaxonomyEntry = number | IGDBNamedEntity;
 
 export interface GameTaxonomies {
@@ -64,10 +55,6 @@ export function toGameTaxonomies(game: IGDBGame): GameTaxonomies {
     player_perspectives: game.player_perspectives ?? [],
     franchises: mergeFranchises(game),
   };
-}
-
-export function hasTaxonomyPayload(payload: Record<string, unknown>): boolean {
-  return IGDB_TAXONOMY_PAYLOAD_KEYS.some((key) => key in payload);
 }
 
 /** Minimal client surface: any Supabase client (typed or not) exposes `rpc`. */

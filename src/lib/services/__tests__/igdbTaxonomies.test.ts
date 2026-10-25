@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 
 import {
-  hasTaxonomyPayload,
   saveGameTaxonomies,
   syncTaxonomies,
   toGameTaxonomies,
@@ -39,16 +38,6 @@ describe("toGameTaxonomies", () => {
       player_perspectives: [],
       franchises: [],
     });
-  });
-});
-
-describe("hasTaxonomyPayload", () => {
-  it.each([
-    [{ themes: [1] }, true],
-    [{ franchise: 3 }, true],
-    [{ name: "x", cover: 1 }, false],
-  ])("detects taxonomy keys in %j", (payload, expected) => {
-    expect(hasTaxonomyPayload(payload)).toBe(expected);
   });
 });
 

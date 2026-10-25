@@ -351,6 +351,5 @@ toujours consommé ; destination = page de retour, sinon
 - **Discord connections stale** : snapshot fait au moment de la connexion
   Discord. Si l'utilisateur ajoute un compte Steam côté Discord plus tard, il
   doit refaire le flow OAuth Discord pour que la suggestion apparaisse.
-- **`ownershipOverlap`** : exposé mais pas encore pondéré dans `scoreCombiner`.
 - **Cron limit** : 50 comptes par run. À augmenter ou à paginer quand la base
   grossit.
