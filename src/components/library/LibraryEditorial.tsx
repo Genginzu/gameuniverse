@@ -31,6 +31,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { LibraryPageSkeleton } from "./LibraryPageSkeleton";
 import { LibraryLoadingState } from "./LibraryLoadingState";
 import { LibraryGamesGrid } from "./LibraryGamesGrid";
+import { LibraryStatusLegend } from "./LibraryStatusLegend";
 import { LibraryAuthRequired, LibraryEmptyState } from "./LibraryEmptyStates";
 
 const GameFilters = dynamic(() =>
@@ -165,6 +166,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
           <LibraryAuthRequired />
         ) : (
           <>
+            <LibraryStatusLegend />
             <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
               <div className="min-w-0 flex-1">
                 <GameSearchBar

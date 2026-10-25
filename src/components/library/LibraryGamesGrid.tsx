@@ -27,6 +27,7 @@ export function LibraryGamesGrid({ games }: { games: GameSummary[] }) {
             actions={
               <LibraryCardStatusMenu
                 gameId={game.id}
+                slug={game.slug}
                 title={game.title}
                 belowBadges={hasTopLeftBadges(game)}
               />

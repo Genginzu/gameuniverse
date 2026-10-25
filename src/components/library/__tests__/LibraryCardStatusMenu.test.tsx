@@ -24,7 +24,7 @@ function renderMenu() {
   return render(
     <Wrapper>
       <LibraryStatusProvider gameIds={["g1"]}>
-        <LibraryCardStatusMenu gameId="g1" title="Hades" belowBadges />
+        <LibraryCardStatusMenu gameId="g1" slug="hades" title="Hades" belowBadges />
       </LibraryStatusProvider>
     </Wrapper>
   );
@@ -89,5 +89,78 @@ describe("LibraryCardStatusMenu", () => {
 
     resolvePatch(jsonResponse({ inLibrary: true, status: "completed" }));
     await waitFor(() => expect(trigger).toHaveAttribute("aria-busy", "false"));
+  });
+
+  it("asks for the playtime once a game is set to completed, and saves it", async () => {
+    mockFetch.mockImplementation((url: string, init?: RequestInit) => {
+      if (url === "/api/library/batch-status") {
+        return Promise.resolve(
+          jsonResponse({ statuses: { g1: true }, libraryStatuses: { g1: "playing" } })
+        );
+      }
+      if (url === "/api/games/hades/playtime") {
+        return Promise.resolve(
+          jsonResponse({
+            averages: { hastily: null, normally: null, completely: null },
+            count: 0,
+            userPlaytime: init?.method === "POST" ? { hastily: null, normally: 20, completely: null } : null,
+            contributors: [],
+          })
+        );
+      }
+      return Promise.resolve(jsonResponse({ inLibrary: true, status: "completed" }));
+    });
+    renderMenu();
+
+    fireEvent.click(await screen.findByRole("button", { name: "cardTriggerLabel:playing" }));
+    fireEvent.click(screen.getByRole("menuitemradio", { name: "completed" }));
+
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("completedPlaytimeTitle");
+    fireEvent.change(screen.getByLabelText("normally"), { target: { value: "20" } });
+    fireEvent.click(screen.getByRole("button", { name: "submit" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(mockFetch).toHaveBeenCalledWith("/api/games/hades/playtime", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ playTimeHastily: null, playTimeNormally: 20, playTimeCompletely: null }),
+    });
+  });
+
+  it("does not ask for the playtime for other statuses", async () => {
+    renderMenu();
+
+    fireEvent.click(await screen.findByRole("button", { name: "cardTriggerLabel:owned" }));
+    fireEvent.click(screen.getByRole("menuitemradio", { name: "wishlist" }));
+
+    await screen.findByRole("button", { name: "cardTriggerLabel:wishlist" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "playtimeButtonLabel" })).not.toBeInTheDocument();
+  });
+
+  it("reopens the playtime dialog from the timer button of a completed game", async () => {
+    mockFetch.mockImplementation((url: string) =>
+      Promise.resolve(
+        url === "/api/library/batch-status"
+          ? jsonResponse({ statuses: { g1: true }, libraryStatuses: { g1: "completed" } })
+          : jsonResponse({
+              averages: { hastily: null, normally: null, completely: null },
+              count: 0,
+              userPlaytime: null,
+              contributors: [],
+            })
+      )
+    );
+    renderMenu();
+
+    fireEvent.click(await screen.findByRole("button", { name: "playtimeButtonLabel" }));
+    expect(await screen.findByRole("dialog")).toHaveTextContent("completedPlaytimeTitle");
+
+    fireEvent.click(screen.getByRole("button", { name: "cancel" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+
+    fireEvent.click(screen.getByRole("button", { name: "playtimeButtonLabel" }));
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
   });
 });
