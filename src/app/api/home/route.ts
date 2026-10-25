@@ -39,11 +39,14 @@ export async function GET(request: NextRequest) {
         .gt("trending_score", 0)
         .order("trending_score", { ascending: false })
         .limit(6),
+      // Most anticipated first (trending_score includes the IGDB "want to
+      // play" bonus of upcoming games), then by release date.
       supabase
         .from("games")
         .select(HOME_GAME_SELECT)
         .gte("release_date", monthStart)
         .lte("release_date", monthEnd)
+        .order("trending_score", { ascending: false, nullsFirst: false })
         .order("release_date", { ascending: true })
         .limit(12),
       fetchPopularCharacters(supabase, locale),
