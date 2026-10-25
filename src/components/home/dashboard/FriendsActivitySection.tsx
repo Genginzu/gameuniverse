@@ -40,7 +40,7 @@ export function FriendsActivitySection() {
         <HomeEmptyState
           icon="lucide:users"
           message={error ? t("error") : t("empty")}
-          action={{ href: "/friends", label: t("emptyAction") }}
+          action={{ href: "/players", label: t("emptyAction") }}
         />
       ) : (
         <div className="editorial-activity mb-0!">
