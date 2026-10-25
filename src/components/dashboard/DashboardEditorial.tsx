@@ -18,7 +18,7 @@ import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
-import { useUserLibrary } from "@/hooks/useUserLibrary";
+import { useLibraryStats } from "@/hooks/useLibraryStats";
 
 interface DashboardEditorialProps {
   /** Infos utilisateur résolues server-side (évite le flash de chargement). */
@@ -33,7 +33,9 @@ const QUICK_ACTIONS = [
 
 export function DashboardEditorial({ user }: DashboardEditorialProps) {
   const t = useTranslations("dashboard");
-  const { stats, loading } = useUserLibrary();
+  // Stats only: the full library (`useUserLibrary`) can time out on large libraries.
+  const { stats: loadedStats, isLoading: loading } = useLibraryStats();
+  const stats = loadedStats ?? { totalGames: 0, completedGames: 0, totalPlayTime: 0 };
 
   const completedPercent =
     stats.totalGames > 0 ? Math.round((stats.completedGames / stats.totalGames) * 100) : 0;

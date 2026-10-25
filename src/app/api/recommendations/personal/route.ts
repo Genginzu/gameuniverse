@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getPersonalRecommendations } from "@/lib/services/recommendationService";
 import { fetchUserLibraryGameIds } from "@/lib/services/recommendation/dataFetchers";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 import type { PersonalRecommendationsResponse } from "@/types/recommendation";
 import { logger } from "@/lib/logger";
 
@@ -27,8 +28,16 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Optional user-triggered refresh: recompute without the cached aggregate.
+    // Expensive (one pass per library game), hence rate limited.
+    const bypassCache = searchParams.get("refresh") === "1";
+    if (bypassCache) {
+      const limited = await enforceRateLimit("recommendationRefresh", { userId: user.id });
+      if (limited) return limited;
+    }
+
     const [recommendations, libraryGameIds] = await Promise.all([
-      getPersonalRecommendations(user.id, { limit }),
+      getPersonalRecommendations(user.id, { limit, bypassCache }),
       fetchUserLibraryGameIds(user.id),
     ]);
 

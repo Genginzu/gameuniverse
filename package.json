@@ -7,7 +7,7 @@
   },
   "scripts": {
     "prepare": "node -e \"try{require('child_process').execSync('git config core.hooksPath .githooks',{stdio:'ignore'})}catch(e){}\" && bun scripts/setup-agents.ts",
-    "dev": "bun --bun next dev -H 0.0.0.0",
+    "dev": "bun scripts/dev/link-turbopack-externals.ts && bun --bun next dev -H 0.0.0.0",
     "build": "next build",
     "start": "bun --bun next start",
     "lint": "bun eslint .",

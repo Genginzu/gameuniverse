@@ -4806,9 +4806,51 @@
     "empty": "Aucune sortie prévue pour cette période."
   },
   "homeDashboard": {
-    "kicker": "TABLEAU DE BORD",
-    "title": "Bienvenue",
-    "subtitle": "Votre tableau de bord gaming",
+    "hero": {
+      "kicker": "TON UNIVERS",
+      "greeting": "Bon retour, <name></name>",
+      "level": "Niveau {level}",
+      "xpProgress": "{current} / {next} XP",
+      "levelProgress": "Progression vers le niveau suivant",
+      "statGames": "Jeux",
+      "statCompleted": "Terminés",
+      "statPlaytime": "Temps de jeu"
+    },
+    "shortcuts": {
+      "label": "Raccourcis",
+      "library": "Bibliothèque",
+      "backlog": "Backlog",
+      "feed": "Fil d'actualité",
+      "profile": "Mon profil"
+    },
+    "continuePlaying": {
+      "kicker": "EN COURS",
+      "title": "Reprendre",
+      "seeAll": "Ma bibliothèque",
+      "empty": "Aucun jeu en cours. Passe un jeu en « En cours » dans ta bibliothèque pour le retrouver ici.",
+      "emptyAction": "Explorer les jeux"
+    },
+    "recommendations": {
+      "kicker": "POUR TOI",
+      "title": "Recommandations",
+      "basedOn": "Basées sur {count, plural, one {# jeu} other {# jeux}} de ta bibliothèque",
+      "empty": "Pas encore de recommandation. Reviens après avoir enrichi ta bibliothèque.",
+      "emptyLibrary": "Ajoute des jeux à ta bibliothèque pour recevoir des recommandations personnalisées.",
+      "emptyAction": "Découvrir des jeux",
+      "loading": "Analyse de ta bibliothèque pour trouver tes prochains jeux…",
+      "loadingSlow": "Le calcul peut prendre un peu de temps, tes recommandations arrivent.",
+      "recompute": "Recalculer",
+      "recomputeError": "Impossible de recalculer pour le moment, réessaie dans quelques minutes.",
+      "error": "Les recommandations sont indisponibles pour le moment."
+    },
+    "friendsActivity": {
+      "kicker": "COMMUNAUTÉ",
+      "title": "Activité de tes amis",
+      "seeAll": "Tout le fil",
+      "empty": "Aucune activité récente. Ajoute des amis pour suivre ce qu'ils jouent.",
+      "emptyAction": "Trouver des amis",
+      "error": "L'activité de tes amis est indisponible pour le moment."
+    },
     "trending": "Jeux tendances",
     "trendingKicker": "TENDANCES",
     "seeAllTrending": "Voir toutes les tendances",

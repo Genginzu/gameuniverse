@@ -37,6 +37,7 @@ export const RATE_LIMITS = {
   platformLink: { limit: 20, windowSeconds: 3600 },
   fantasyTeam: { limit: 10, windowSeconds: 3600 },
   goal: { limit: 30, windowSeconds: 3600 },
+  recommendationRefresh: { limit: 5, windowSeconds: 600 },
 } as const;
 
 export type RateLimitAction = keyof typeof RATE_LIMITS;

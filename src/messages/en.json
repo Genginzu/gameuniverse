@@ -4803,9 +4803,51 @@
     "empty": "No releases planned for this period."
   },
   "homeDashboard": {
-    "kicker": "DASHBOARD",
-    "title": "Welcome",
-    "subtitle": "Your gaming dashboard",
+    "hero": {
+      "kicker": "YOUR UNIVERSE",
+      "greeting": "Welcome back, <name></name>",
+      "level": "Level {level}",
+      "xpProgress": "{current} / {next} XP",
+      "levelProgress": "Progress to the next level",
+      "statGames": "Games",
+      "statCompleted": "Completed",
+      "statPlaytime": "Playtime"
+    },
+    "shortcuts": {
+      "label": "Shortcuts",
+      "library": "Library",
+      "backlog": "Backlog",
+      "feed": "News feed",
+      "profile": "My profile"
+    },
+    "continuePlaying": {
+      "kicker": "IN PROGRESS",
+      "title": "Continue playing",
+      "seeAll": "My library",
+      "empty": "No game in progress. Set a game to \"Playing\" in your library to find it here.",
+      "emptyAction": "Browse games"
+    },
+    "recommendations": {
+      "kicker": "FOR YOU",
+      "title": "Recommendations",
+      "basedOn": "Based on {count, plural, one {# game} other {# games}} in your library",
+      "empty": "No recommendation yet. Come back once your library has grown.",
+      "emptyLibrary": "Add games to your library to get personalised recommendations.",
+      "emptyAction": "Discover games",
+      "loading": "Analysing your library to find your next games…",
+      "loadingSlow": "This can take a little while, your recommendations are on their way.",
+      "recompute": "Recompute",
+      "recomputeError": "Unable to recompute right now, try again in a few minutes.",
+      "error": "Recommendations are unavailable right now."
+    },
+    "friendsActivity": {
+      "kicker": "COMMUNITY",
+      "title": "Friends activity",
+      "seeAll": "Full feed",
+      "empty": "No recent activity. Add friends to follow what they play.",
+      "emptyAction": "Find friends",
+      "error": "Friends activity is unavailable right now."
+    },
     "trending": "Trending Games",
     "trendingKicker": "TRENDING",
     "seeAllTrending": "See all trending",

@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { NavigationProgress } from "@/components/shared/NavigationProgress";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/utils/siteUrl";
+import { AUTH_HINT_SCRIPT } from "@/lib/utils/authHint";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,9 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="fr" className={tomorrow.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: AUTH_HINT_SCRIPT }} />
+      </head>
       <body className={inter.className}>
         <ThemeProvider>
           <Suspense fallback={null}>

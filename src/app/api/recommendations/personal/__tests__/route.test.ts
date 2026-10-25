@@ -27,6 +27,14 @@ vi.mock("@/lib/services/recommendation/dataFetchers", () => ({
   fetchUserLibraryGameIds: mockFetchUserLibraryGameIds,
 }));
 
+const { mockEnforceRateLimit } = vi.hoisted(() => ({
+  mockEnforceRateLimit: vi.fn<() => Promise<Response | null>>(() => Promise.resolve(null)),
+}));
+
+vi.mock("@/lib/services/rateLimitService", () => ({
+  enforceRateLimit: mockEnforceRateLimit,
+}));
+
 import { GET } from "@/app/api/recommendations/personal/route";
 
 const USER_ID = "bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb";
@@ -65,6 +73,7 @@ describe("/api/recommendations/personal", () => {
     mockGetUser.mockReset();
     mockGetPersonalRecommendations.mockReset().mockResolvedValue(SAMPLE_RECOMMENDATIONS);
     mockFetchUserLibraryGameIds.mockReset().mockResolvedValue(["lib-1", "lib-2", "lib-3"]);
+    mockEnforceRateLimit.mockReset().mockResolvedValue(null);
     mockUnauthenticated();
   });
 
@@ -108,7 +117,7 @@ describe("/api/recommendations/personal", () => {
     const req = new NextRequest("http://localhost/api/recommendations/personal?limit=5");
     await GET(req);
 
-    expect(mockGetPersonalRecommendations).toHaveBeenCalledWith(USER_ID, { limit: 5 });
+    expect(mockGetPersonalRecommendations).toHaveBeenCalledWith(USER_ID, { limit: 5, bypassCache: false });
   });
 
   it("should default limit to 10 when not provided", async () => {
@@ -116,7 +125,7 @@ describe("/api/recommendations/personal", () => {
     const req = new NextRequest("http://localhost/api/recommendations/personal");
     await GET(req);
 
-    expect(mockGetPersonalRecommendations).toHaveBeenCalledWith(USER_ID, { limit: 10 });
+    expect(mockGetPersonalRecommendations).toHaveBeenCalledWith(USER_ID, { limit: 10, bypassCache: false });
   });
 
   it("should fallback to 10 when limit is invalid", async () => {
@@ -124,7 +133,7 @@ describe("/api/recommendations/personal", () => {
     const req = new NextRequest("http://localhost/api/recommendations/personal?limit=abc");
     await GET(req);
 
-    expect(mockGetPersonalRecommendations).toHaveBeenCalledWith(USER_ID, { limit: 10 });
+    expect(mockGetPersonalRecommendations).toHaveBeenCalledWith(USER_ID, { limit: 10, bypassCache: false });
   });
 
   // 500 on unexpected error
@@ -150,5 +159,38 @@ describe("/api/recommendations/personal", () => {
     expect(body).toHaveProperty("generatedAt");
     expect(body.basedOnGameCount).toBe(3);
     expect(new Date(body.generatedAt).toISOString()).toBe(body.generatedAt);
+  });
+
+  it("should not rate limit a regular cached read", async () => {
+    mockAuthenticated();
+    await GET(new NextRequest("http://localhost/api/recommendations/personal"));
+    expect(mockEnforceRateLimit).not.toHaveBeenCalled();
+  });
+
+  it("should bypass the cache on refresh=1 after a rate limit check", async () => {
+    mockAuthenticated();
+    await GET(new NextRequest("http://localhost/api/recommendations/personal?refresh=1"));
+
+    expect(mockEnforceRateLimit).toHaveBeenCalledWith("recommendationRefresh", {
+      userId: USER_ID,
+    });
+    expect(mockGetPersonalRecommendations).toHaveBeenCalledWith(USER_ID, {
+      limit: 10,
+      bypassCache: true,
+    });
+  });
+
+  it("should return the rate limit response without recomputing", async () => {
+    mockAuthenticated();
+    mockEnforceRateLimit.mockResolvedValue(
+      Response.json({ error: "Too many requests" }, { status: 429 })
+    );
+
+    const res = await GET(
+      new NextRequest("http://localhost/api/recommendations/personal?refresh=1")
+    );
+
+    expect(res.status).toBe(429);
+    expect(mockGetPersonalRecommendations).not.toHaveBeenCalled();
   });
 });

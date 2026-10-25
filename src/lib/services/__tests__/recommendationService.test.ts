@@ -188,6 +188,16 @@ describe("getPersonalRecommendations", () => {
     expect(fetchUserLibraryGameIds).not.toHaveBeenCalled();
   });
 
+  it("ignores the cached personal results when bypassCache is set", async () => {
+    vi.mocked(cacheGet).mockReturnValue([{ ...makeMetadata(CANDIDATE_A), combinedScore: 0.75 }]);
+    vi.mocked(fetchUserLibraryGameIds).mockResolvedValue([]);
+
+    const results = await getPersonalRecommendations(USER_ID, { bypassCache: true });
+
+    expect(fetchUserLibraryGameIds).toHaveBeenCalledWith(USER_ID);
+    expect(results).toEqual([]);
+  });
+
   /**
    * Validates: Requirement 7.3 — deduplication across library games
    * When multiple library games produce overlapping candidates,

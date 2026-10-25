@@ -24,6 +24,7 @@ src/app/
     ├── animations.css       # @keyframes + .animate-*, hover-lift, etc.
     ├── neon.css             # .neon-glow, .neon-border, .neon-text, .neon-btn
     ├── glass-deprecated.css # .glass-* + .topbar + .dashboard-bg + scrollbar (legacy admin)
+    ├── scrollbar.css        # .editorial-scrollbar (rails horizontaux, scrollbar sombre fine)
     └── editorial/
         ├── typography.css   # SpotlightCard, .editorial-display, kicker, scanlines, hero, marquee
         ├── layout.css       # rail, sub-sidebar, mobile nav overlay, EditorialLayout shell

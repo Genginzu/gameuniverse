@@ -5,23 +5,9 @@ import { usePersonalRecommendations } from "@/hooks/usePersonalRecommendations";
 import { GameCard } from "@/components/games/GameCard";
 import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
 import { Icon } from "@iconify/react";
-import type { GameRecommendation } from "@/types/recommendation";
+import { recommendationToGameSummary } from "@/lib/utils/recommendationToGameSummary";
 
 const SKELETON_COUNT = 4;
-
-/** Mappe un GameRecommendation vers les props attendues par GameCard */
-function toGameCardProps(rec: GameRecommendation) {
-  return {
-    id: rec.id,
-    slug: rec.slug,
-    title: rec.title,
-    coverImage: rec.coverImage ?? undefined,
-    genres: rec.genres,
-    developer: rec.developer,
-    publisher: "",
-    metascore: rec.metascore ?? undefined,
-  };
-}
 
 export function PersonalRecommendationSection() {
   const t = useTranslations("recommendations");
@@ -63,7 +49,7 @@ export function PersonalRecommendationSection() {
       {!loading && hasRecommendations && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {recommendations.map((rec) => (
-            <GameCard key={rec.id} game={toGameCardProps(rec)} />
+            <GameCard key={rec.id} game={recommendationToGameSummary(rec)} />
           ))}
         </div>
       )}

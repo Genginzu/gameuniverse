@@ -26,10 +26,45 @@ vi.mock("@/lib/supabase-server", () => ({
 // Import after mocking
 import { GET, POST } from "@/app/api/library/route";
 
+function getRequest(query = "") {
+  return new NextRequest(`http://localhost/api/library${query}`);
+}
+
 describe("/api/library", () => {
   beforeEach(() => {
     mockGetUser.mockReset();
     mockFrom.mockReset();
+  });
+
+  describe("GET filters", () => {
+    function mockLibraryQuery() {
+      mockGetUser.mockResolvedValue({ data: { user: { id: "user-123" } }, error: null });
+      const result = Promise.resolve({ data: [], error: null });
+      const ordered = Object.assign(result, { limit: vi.fn(() => result) });
+      const builder = { eq: vi.fn(() => builder), order: vi.fn(() => ordered) };
+      mockFrom.mockReturnValue({ select: vi.fn(() => builder) });
+      return { builder, ordered };
+    }
+
+    it("filters by status and limits the rows when requested", async () => {
+      const { builder, ordered } = mockLibraryQuery();
+
+      const response = await GET(getRequest("?status=playing&limit=12"));
+
+      expect(response.status).toBe(200);
+      expect(builder.eq).toHaveBeenCalledWith("user_id", "user-123");
+      expect(builder.eq).toHaveBeenCalledWith("status", "playing");
+      expect(ordered.limit).toHaveBeenCalledWith(12);
+    });
+
+    it("ignores unknown statuses and invalid limits", async () => {
+      const { builder, ordered } = mockLibraryQuery();
+
+      await GET(getRequest("?status=deleted&limit=-3"));
+
+      expect(builder.eq).toHaveBeenCalledTimes(1);
+      expect(ordered.limit).not.toHaveBeenCalled();
+    });
   });
 
   describe("GET", () => {
@@ -39,7 +74,7 @@ describe("/api/library", () => {
         error: new Error("Not authenticated"),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(401);
@@ -68,7 +103,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -97,7 +132,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -126,7 +161,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -199,7 +234,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -259,7 +294,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -303,7 +338,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -368,7 +403,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -426,7 +461,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -488,7 +523,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -545,7 +580,7 @@ describe("/api/library", () => {
         select: vi.fn(() => mockSelect),
       });
 
-      const response = await GET();
+      const response = await GET(getRequest());
       const data = await response.json();
 
       expect(response.status).toBe(200);
