@@ -11,7 +11,6 @@ export interface RecommendationRow {
   similar_score: number;
   collaborative_score: number;
   quality_score: number;
-  reason_game_id: string | null;
 }
 
 type QueryResult = PromiseLike<{

@@ -12,7 +12,7 @@ const db = createSupabaseQueryMock();
 const rpc = vi.fn();
 const client = { ...db.client, rpc } as unknown as RecommendationClient;
 
-function row(gameId: string, reasonGameId: string | null = null) {
+function row(gameId: string) {
   return {
     game_id: gameId,
     score: 0.5,
@@ -20,7 +20,6 @@ function row(gameId: string, reasonGameId: string | null = null) {
     similar_score: 0.6,
     collaborative_score: 0,
     quality_score: 0.7,
-    reason_game_id: reasonGameId,
   };
 }
 
@@ -37,14 +36,12 @@ function enqueueMetadata() {
           { role: "developer", is_primary: true, companies: { name: "Studio" } },
         ],
       },
-      { id: "source", slug: "source-slug", cover_image_url: null, metascore: null, game_companies: [] },
     ],
   });
   db.enqueue("game_translations", {
     data: [
       { game_id: "pick", title: "Pick EN", language_code: "en" },
       { game_id: "pick", title: "Pick FR", language_code: "fr" },
-      { game_id: "source", title: "Source EN", language_code: "en" },
     ],
   });
   db.enqueue("game_genres", {
@@ -71,7 +68,7 @@ beforeEach(() => {
 
 describe("getPersonalRecommendations", () => {
   it("scores through recommend_games_for_me and localises the cards with an English fallback", async () => {
-    rpc.mockResolvedValue({ data: [row("pick", "source")], error: null });
+    rpc.mockResolvedValue({ data: [row("pick")], error: null });
     enqueueMetadata();
 
     const recs = await getPersonalRecommendations(client, { limit: 5, locale: "fr" });
@@ -87,7 +84,6 @@ describe("getPersonalRecommendations", () => {
         developer: "Studio",
         metascore: 88,
         combinedScore: 0.5,
-        reason: { id: "source", slug: "source-slug", title: "Source EN" },
       },
     ]);
   });
@@ -123,7 +119,8 @@ describe("getRecommendationsForGame", () => {
     const recs = await getRecommendationsForGame(client, "game-1");
 
     expect(rpc).toHaveBeenCalledWith("recommend_similar_games", { p_game_id: "game-1", p_limit: 10 });
-    expect(recs[0]).toMatchObject({ id: "pick", title: "Pick EN", reason: null });
+    expect(recs).toEqual([expect.objectContaining({ id: "pick", title: "Pick EN" })]);
+    expect(recs[0]).not.toHaveProperty("reason");
   });
 });
 

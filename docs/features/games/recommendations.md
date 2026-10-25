@@ -34,9 +34,6 @@ catalogue :
 - **Exclus** : jeux de la bibliothèque, jeux « pas intéressé », jeux adultes,
   jeux sans pochette, DLC / bundles / packs importés comme jeux.
 - **Diversité** : au plus deux jeux par franchise.
-- **Raison** : le moteur renvoie aussi le jeu source le plus proche
-  (`reason`, un lien IGDB « similaire » étant prioritaire). Il est exposé par
-  l'API mais pas affiché dans l'interface.
 
 ### Poids des jeux de la bibliothèque (personnel)
 
@@ -67,7 +64,8 @@ recommandations), page détail d'un jeu (repli de « Jeux similaires »).
 
 ## Prérequis
 
-1. Appliquer la migration `20261024000002_recommendation_engine.sql`.
+1. Appliquer les migrations `20261024000002_recommendation_engine.sql` puis
+   `20261025000001_drop_recommendation_reason.sql` (retire `reason_game_id`).
 2. Remplir les taxonomies du catalogue existant (une fois, reprenable) :
 
    ```bash
@@ -92,6 +90,7 @@ recommandations), page détail d'un jeu (repli de « Jeux similaires »).
 
 ```
 supabase/migrations/20261024000002_recommendation_engine.sql
+supabase/migrations/20261025000001_drop_recommendation_reason.sql
   recommend_games / recommend_games_for_me / recommend_similar_games
   library_engagement_weight / set_games_taxonomies
 src/lib/services/recommendationService.ts   # RPC + métadonnées des cartes

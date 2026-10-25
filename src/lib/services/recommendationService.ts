@@ -8,9 +8,9 @@
  * the current library and dismissals.
  */
 
-import type { GameRecommendation, RecommendationReason } from "@/types/recommendation";
+import type { GameRecommendation } from "@/types/recommendation";
 import type { RecommendationClient, RecommendationRow } from "./recommendation/client";
-import { fetchGameMetadata, type GameMetadata } from "./recommendation/gameMetadata";
+import { fetchGameMetadata } from "./recommendation/gameMetadata";
 
 export interface RecommendationOptions {
   limit?: number;
@@ -25,27 +25,20 @@ function clampLimit(limit: number | undefined): number {
   return Math.min(Math.max(Math.trunc(value), 1), MAX_RECOMMENDATION_LIMIT);
 }
 
-function toReason(metadata: GameMetadata | undefined): RecommendationReason | null {
-  return metadata ? { id: metadata.id, slug: metadata.slug, title: metadata.title } : null;
-}
-
 async function hydrate(
   supabase: RecommendationClient,
   rows: RecommendationRow[],
   locale: string
 ): Promise<GameRecommendation[]> {
-  const reasonIds = rows.map((row) => row.reason_game_id).filter((id): id is string => Boolean(id));
   const metadata = await fetchGameMetadata(
     supabase,
-    [...rows.map((row) => row.game_id), ...reasonIds],
+    rows.map((row) => row.game_id),
     locale
   );
 
   return rows.flatMap((row) => {
     const game = metadata.get(row.game_id);
-    if (!game) return [];
-    const reason = row.reason_game_id ? toReason(metadata.get(row.reason_game_id)) : null;
-    return [{ ...game, combinedScore: row.score, reason }];
+    return game ? [{ ...game, combinedScore: row.score }] : [];
   });
 }
 

@@ -7,7 +7,7 @@
 import type { GameRecommendation } from "@/types/recommendation";
 import type { RecommendationClient } from "./client";
 
-export type GameMetadata = Omit<GameRecommendation, "combinedScore" | "reason">;
+export type GameMetadata = Omit<GameRecommendation, "combinedScore">;
 
 interface GameRow {
   id: string;

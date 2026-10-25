@@ -1,10 +1,3 @@
-/** Library game that explains a recommendation ("because you play …"). */
-export interface RecommendationReason {
-  id: string;
-  slug: string;
-  title: string;
-}
-
 /** Résultat de recommandation pour un jeu */
 export interface GameRecommendation {
   id: string;
@@ -15,8 +8,6 @@ export interface GameRecommendation {
   developer: string;
   metascore: number | null;
   combinedScore: number;
-  /** Source game closest to this pick; null for game-page recommendations. */
-  reason?: RecommendationReason | null;
 }
 
 /** Réponse de l'API de recommandations */

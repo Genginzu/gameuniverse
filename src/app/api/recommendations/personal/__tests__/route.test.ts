@@ -34,7 +34,6 @@ const SAMPLE: GameRecommendation[] = [
     developer: "FromSoftware",
     metascore: 96,
     combinedScore: 0.85,
-    reason: { id: "lib-1", slug: "dark-souls", title: "Dark Souls" },
   },
 ];
 
