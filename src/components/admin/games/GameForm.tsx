@@ -111,7 +111,9 @@ export function GameForm({
       ["design", !!(errors.background_color || errors.accent_color || errors.label_color || errors.text_color)],
       ["general", !!(errors.release_date || errors.metascore || errors.playtime_hastily || errors.playtime_normally || errors.playtime_completely)],
       ["images", !!(errors.cover_image_url || errors.background_image_url || errors.screenshots || errors.artwork)],
-      ["translations", !!errors.translations], ["genres", !!errors.genres], ["companies", !!errors.companies],
+      ["translations", !!errors.translations], ["genres", !!errors.genres],
+      ["classification", !!(errors.themes || errors.game_modes || errors.player_perspectives || errors.multiplayer_modes || errors.franchises || errors.series || errors.game_engines || errors.keywords || errors.igdb_total_rating || errors.igdb_total_rating_count)],
+      ["links", !!errors.websites], ["companies", !!errors.companies],
       ["versions", !!errors.versions], ["languages", !!errors.languages], ["pricing", !!errors.prices],
       ["music", !!(errors.music_composer || errors.music_spotify_embed_url || errors.music_youtube_video_url)],
     ];

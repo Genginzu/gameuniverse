@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { adminGameFormSchema, type AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { buildGamePayload } from "./useGameFormSubmit";
+import { METADATA_DEFAULTS } from "@/lib/utils/game-api-transform";
 import { submitAdminEntity } from "@/lib/admin-resource/defineAdminForm";
 import type {
   AdminGenre,
@@ -90,6 +91,7 @@ export function useGameForm(
       music_youtube_video_url: "",
       game_platforms: [],
       is_esport: false,
+      ...METADATA_DEFAULTS,
     },
   });
 

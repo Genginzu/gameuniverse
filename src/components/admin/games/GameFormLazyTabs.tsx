@@ -47,3 +47,10 @@ export const GameFormSyncTab = lazy(() =>
 export const GameFormSimilarGamesTab = lazy(() =>
   import("./GameFormSimilarGamesTab").then((m) => ({ default: m.GameFormSimilarGamesTab }))
 );
+
+export const GameFormClassificationTab = lazy(() =>
+  import("./GameFormClassificationTab").then((m) => ({ default: m.GameFormClassificationTab }))
+);
+export const GameFormLinksTab = lazy(() =>
+  import("./GameFormLinksTab").then((m) => ({ default: m.GameFormLinksTab }))
+);

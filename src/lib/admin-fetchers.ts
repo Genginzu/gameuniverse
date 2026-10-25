@@ -179,7 +179,7 @@ export async function getAvailableGamePlatforms(locale: string = "fr") {
     const supabase = await createRouteHandlerClient();
     const { data: platforms, error } = await supabase
       .from("platforms")
-      .select(`id, slug, platform_translations(name, language_code)`)
+      .select(`id, slug, igdb_id, platform_translations(name, language_code)`)
       .order("slug");
     if (error) {
       logger.error("Error fetching game platforms", { error });
@@ -196,6 +196,7 @@ export async function getAvailableGamePlatforms(locale: string = "fr") {
           id: p.id,
           slug: p.slug,
           name: translation?.name || p.slug || "Unknown",
+          igdbId: p.igdb_id ?? null,
         };
       }) || []
     );

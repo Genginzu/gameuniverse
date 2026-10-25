@@ -100,5 +100,24 @@ export function buildGamePayload(data: AdminGameFormData, mode: "create" | "edit
       youtube_video_url: data.music_youtube_video_url || null,
     },
     game_platforms: data.game_platforms,
+    // IGDB metadata is edited on existing games only (the create API ignores it).
+    ...(mode === "edit" ? { metadata: buildMetadataPayload(data) } : {}),
+  };
+}
+
+/** Admin metadata without the chip display names. */
+function buildMetadataPayload(data: AdminGameFormData) {
+  return {
+    themes: data.themes,
+    game_modes: data.game_modes,
+    player_perspectives: data.player_perspectives,
+    franchises: data.franchises.map(({ franchise_id }) => ({ franchise_id })),
+    series: data.series.map(({ series_id }) => ({ series_id })),
+    game_engines: data.game_engines.map(({ game_engine_id }) => ({ game_engine_id })),
+    keywords: data.keywords.map(({ keyword_id }) => ({ keyword_id })),
+    websites: data.websites.filter((site) => site.url.trim().length > 0),
+    multiplayer_modes: data.multiplayer_modes,
+    igdb_total_rating: data.igdb_total_rating,
+    igdb_total_rating_count: data.igdb_total_rating_count,
   };
 }
