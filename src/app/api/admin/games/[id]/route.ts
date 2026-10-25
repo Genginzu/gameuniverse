@@ -14,6 +14,7 @@ import type { CurrentGameData } from "@/types/admin-games";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { logger } from "@/lib/logger";
 import { untypedTable } from "@/lib/utils/untypedTable";
+import { loadAdminGameMetadata, saveAdminGameMetadata } from "@/lib/services/adminGameMetadata";
 
 // Types for Supabase query results
 interface AdminGameGenre {
@@ -358,6 +359,16 @@ export const GET = defineRoute({ auth: "admin" }, async ({ params }) => {
     logger.warn("game_music table not available yet");
   }
 
+  // IGDB metadata (tables of migration 20261026000001), best-effort
+  try {
+    (adminGameData as Record<string, unknown>).metadata = await loadAdminGameMetadata(
+      supabase,
+      gameId
+    );
+  } catch (metadataError) {
+    logger.warn("Game metadata not available", { gameId, error: metadataError });
+  }
+
   return NextResponse.json(adminGameData);
 });
 
@@ -398,9 +409,18 @@ export const PUT = defineRoute({ auth: "admin" }, async ({ request, user, params
     languages,
     music,
     game_platforms,
+    metadata,
   } = validationResult.data;
 
   const supabase = await createRouteHandlerClient();
+
+  // Metadata before the update, for field tracking (null = tables unavailable)
+  const existingMetadata = metadata
+    ? await loadAdminGameMetadata(supabase, gameId).catch((metadataError) => {
+        logger.warn("Game metadata not available", { gameId, error: metadataError });
+        return null;
+      })
+    : null;
 
   // Load current game data before updates (for field tracking comparison)
   const { data: existingGame, error: checkError } = await supabase
@@ -733,6 +753,15 @@ export const PUT = defineRoute({ auth: "admin" }, async ({ request, user, params
     logger.warn("Music operation failed (non-critical)", { error: musicErr });
   }
 
+  if (metadata) {
+    try {
+      await saveAdminGameMetadata(supabase, gameId, metadata);
+    } catch (metadataError) {
+      logger.error("Error updating game metadata", { error: metadataError, gameId });
+      return NextResponse.json({ error: "Failed to update game metadata" }, { status: 500 });
+    }
+  }
+
   // --- Field tracking: detect manual changes and record overrides ---
   try {
     const currentGameData = {
@@ -768,6 +797,7 @@ export const PUT = defineRoute({ auth: "admin" }, async ({ request, user, params
       languages: existingGame.game_languages ?? [],
       game_platforms: existingGame.game_platforms ?? [],
       videos: existingGame.game_videos ?? [],
+      ...(existingMetadata ?? {}),
     };
 
     // Build AdminGameFormData-compatible object from validated PUT data.
@@ -796,6 +826,9 @@ export const PUT = defineRoute({ auth: "admin" }, async ({ request, user, params
       game_platforms: game_platforms ?? currentGameData.game_platforms,
       videos: videos ?? currentGameData.videos,
       prices: prices ?? [],
+      // Untouched metadata compares equal to itself (no override recorded).
+      ...(existingMetadata ?? {}),
+      ...(existingMetadata ? metadata : {}),
     } as AdminGameFormData;
 
     const changedFields = detectChangedFields(

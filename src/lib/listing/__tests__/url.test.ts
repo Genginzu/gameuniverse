@@ -44,13 +44,19 @@ describe("buildListingUrl", () => {
     const url = buildListingUrl(
       gamesListing,
       {
-        filters: { genres: ["RPG", "Action"], platforms: [], sort: "popularity", esport: false },
+        filters: {
+          ...gamesListing.defaultFilters,
+          genres: ["RPG", "Action"],
+          sort: "popularity",
+          esport: false,
+          themes: ["open-world"],
+        },
         page: 3,
       },
       { locale: "en" }
     );
     expect(url).toBe(
-      "/api/games?locale=en&page=3&limit=20&fields=description&genres=RPG%2CAction&sort=popularity&esport=false"
+      "/api/games?locale=en&page=3&limit=20&fields=description&genres=RPG%2CAction&sort=popularity&esport=false&themes=open-world"
     );
   });
 

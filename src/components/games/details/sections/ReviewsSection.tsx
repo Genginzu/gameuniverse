@@ -28,7 +28,7 @@ export function ReviewsSection({ game }: ReviewsSectionProps) {
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="editorial-game-detail-section-header">
         <div>
-          <KickerLabel className="mb-3">12 — {tEd("sections.communityVoice")}</KickerLabel>
+          <KickerLabel className="mb-3">13 — {tEd("sections.communityVoice")}</KickerLabel>
           <h2>{tEd.rich("sections.communityVoiceTitle", accentRich)}</h2>
         </div>
       </div>

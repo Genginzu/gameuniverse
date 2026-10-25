@@ -22,6 +22,16 @@ export const BASE_TABS: Tab[] = [
   },
   { id: "genres", icon: <Icon icon="fa:tag" className="h-3.5 w-3.5" />, labelKey: "genres" },
   {
+    id: "classification",
+    icon: <Icon icon="mdi:shape-outline" className="h-3.5 w-3.5" />,
+    labelKey: "classificationTab",
+  },
+  {
+    id: "links",
+    icon: <Icon icon="mdi:link-variant" className="h-3.5 w-3.5" />,
+    labelKey: "linksTab",
+  },
+  {
     id: "companies",
     icon: <Icon icon="fa:building" className="h-3.5 w-3.5" />,
     labelKey: "companies",

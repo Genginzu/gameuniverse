@@ -56,7 +56,7 @@ export interface SyncSupabaseClient {
       }>;
     };
   };
-  /** Used by the taxonomies field (`set_games_taxonomies`). */
+  /** Used by the IGDB metadata fields (`set_games_metadata`). */
   rpc: (
     fn: string,
     args: Record<string, unknown>

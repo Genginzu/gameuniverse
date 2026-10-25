@@ -42,13 +42,14 @@ cours 2, terminé 1,5, liste de souhaits 0,6) + note (5★ +2, 4★ +1, 2★ −
 1★ −1,5), ×1,25 si ajouté il y a moins de 60 jours. Les 80 jeux les plus
 engageants servent de sources : un jeu importé mais jamais lancé pèse peu.
 
-### Taxonomies IGDB
+### Métadonnées IGDB
 
 Thèmes, modes de jeu, perspectives et franchises sont stockés dans `themes`,
 `game_modes`, `player_perspectives`, `franchises` (+ tables de liaison
-`game_*`), par `igdb_id`. Ils sont écrits par la RPC `set_games_taxonomies` à
-l'import, à la synchro (champ suivi `taxonomies`) et par les webhooks IGDB ; la
-RPC garde aussi `games.is_adult` aligné sur le thème 42.
+`game_*`), par `igdb_id`. Ils sont écrits par la RPC `set_games_metadata` à
+l'import, à la synchro (un champ suivi par type) et par les webhooks IGDB ; la
+RPC garde aussi `games.is_adult` aligné sur le thème 42. Voir
+[game-metadata.md](./game-metadata.md).
 
 ## Accès
 
@@ -66,10 +67,10 @@ recommandations), page détail d'un jeu (repli de « Jeux similaires »).
 
 1. Appliquer les migrations `20261024000002_recommendation_engine.sql` puis
    `20261025000001_drop_recommendation_reason.sql` (retire `reason_game_id`).
-2. Remplir les taxonomies du catalogue existant (une fois, reprenable) :
+2. Remplir les métadonnées IGDB du catalogue existant (une fois, reprenable) :
 
    ```bash
-   bun --env-file=.env scripts/igdb-import/games/backfill-taxonomies.ts [--dry-run] [--limit=N]
+   bun --env-file=.env scripts/igdb-import/games/backfill-metadata.ts [--dry-run] [--limit=N]
    ```
 
    500 jeux par requête IGDB, environ 50 requêtes pour 25 000 jeux. Sans

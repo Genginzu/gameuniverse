@@ -41,7 +41,7 @@ Tout en est dérivé : `TRACKABLE_FIELDS`, `detectChangedFields()`,
      `CurrentGameData` et au chargement des données courantes du PUT
      `src/app/api/admin/games/[id]/route.ts`), ou **`null` explicite** si le
      champ n'est pas éditable via le formulaire admin (ex : `popularity`,
-     `similar_games`, `taxonomies`).
+     `similar_games`).
 3. Ajouter la fonction de sync dans `igdb-sync-fields.ts` /
    `igdb-sync-fields-extended.ts` et l'enregistrer dans `FIELD_SYNC_MAP`
    (`sync-map.ts`) via `fromGame()` (besoin du jeu IGDB complet) ou

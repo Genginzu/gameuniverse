@@ -25,7 +25,7 @@ export function VersionsSection({ game }: VersionsSectionProps) {
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="editorial-game-detail-section-grid">
         <div className="editorial-game-detail-section-heading">
-          <KickerLabel className="mb-3">07 — {tEd("sections.editions")}</KickerLabel>
+          <KickerLabel className="mb-3">08 — {tEd("sections.editions")}</KickerLabel>
           <h2>{tEd.rich("sections.editionsTitle", accentRich)}</h2>
         </div>
         <div className="editorial-game-detail-card-grid editorial-game-detail-card-grid--three">

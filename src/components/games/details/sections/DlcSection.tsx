@@ -32,7 +32,7 @@ export function DlcSection({ game, locale }: DlcSectionProps) {
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="editorial-game-detail-section-grid">
         <div className="editorial-game-detail-section-heading">
-          <KickerLabel className="mb-3">08 — {tEd("sections.expansions")}</KickerLabel>
+          <KickerLabel className="mb-3">09 — {tEd("sections.expansions")}</KickerLabel>
           <h2>{tEd.rich("sections.expansionsTitle", accentRich)}</h2>
         </div>
         <div className="editorial-game-detail-card-grid">

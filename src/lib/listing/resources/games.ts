@@ -10,12 +10,39 @@ export interface GamesListingFilters {
   platforms: string[];
   sort: GameListingSort;
   esport: boolean | null;
+  /** IGDB metadata slugs (deep-linkable from the game page). */
+  themes: string[];
+  gameModes: string[];
+  perspectives: string[];
+  engines: string[];
+  franchises: string[];
 }
+
+/** Filters of the games listing read from (and linkable through) the page URL. */
+export const GAMES_URL_FILTER_KEYS = [
+  "genres",
+  "platforms",
+  "themes",
+  "gameModes",
+  "perspectives",
+  "engines",
+  "franchises",
+] as const satisfies ReadonlyArray<keyof GamesListingFilters>;
 
 export const gamesListing: ListingResource<GamesListingFilters> = {
   path: "/api/games",
   revalidate: 300,
-  defaultFilters: { genres: [], platforms: [], sort: DEFAULT_GAME_LISTING_SORT, esport: null },
+  defaultFilters: {
+    genres: [],
+    platforms: [],
+    sort: DEFAULT_GAME_LISTING_SORT,
+    esport: null,
+    themes: [],
+    gameModes: [],
+    perspectives: [],
+    engines: [],
+    franchises: [],
+  },
   toParams: ({ filters, page }, { locale }) => ({
     locale,
     page,
@@ -25,8 +52,28 @@ export const gamesListing: ListingResource<GamesListingFilters> = {
     platforms: filters.platforms,
     sort: filters.sort === DEFAULT_GAME_LISTING_SORT ? undefined : filters.sort,
     esport: filters.esport,
+    themes: filters.themes,
+    gameModes: filters.gameModes,
+    perspectives: filters.perspectives,
+    engines: filters.engines,
+    franchises: filters.franchises,
   }),
 };
+
+/** Array filters present in a games page URL (`/games?themes=open-world`), or null when none. */
+export function gamesFiltersFromSearchParams(
+  searchParams: URLSearchParams
+): Partial<GamesListingFilters> | null {
+  const patch: Partial<GamesListingFilters> = {};
+  for (const key of GAMES_URL_FILTER_KEYS) {
+    const values = (searchParams.get(key) ?? "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
+    if (values.length > 0) patch[key] = values;
+  }
+  return Object.keys(patch).length > 0 ? patch : null;
+}
 
 export const trendingListing: ListingResource<Record<string, never>> = {
   path: "/api/games/trending",

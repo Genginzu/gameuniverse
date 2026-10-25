@@ -26,7 +26,7 @@ export function LanguagesSection({ game }: LanguagesSectionProps) {
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="editorial-game-detail-section-grid">
         <div className="editorial-game-detail-section-heading">
-          <KickerLabel className="mb-3">04 — {tEd("sections.languages")}</KickerLabel>
+          <KickerLabel className="mb-3">05 — {tEd("sections.languages")}</KickerLabel>
           <h2>{tEd.rich("sections.languagesTitle", accentRich)}</h2>
           <p className="editorial-game-detail-section-heading-meta">
             {tEd("sections.languagesSupported", { count: languages.length })}

@@ -9,7 +9,7 @@
 
 import { IGDBService } from "../igdb-service.ts";
 import type { IGDBGame } from "../igdb-types.ts";
-import { isAdultThemes } from "../igdb-taxonomies.ts";
+import { isAdultThemes } from "../igdb-metadata.ts";
 
 export interface GameInsertData {
   slug: string;

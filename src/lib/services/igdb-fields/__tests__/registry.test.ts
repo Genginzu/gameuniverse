@@ -14,7 +14,7 @@ import { FIELD_SYNC_MAP } from "@/lib/services/igdb-fields/sync-map";
 import fr from "@/messages/fr.json";
 import en from "@/messages/en.json";
 
-const NOT_ADMIN_FORM_EDITABLE = ["popularity", "similar_games", "taxonomies"];
+const NOT_ADMIN_FORM_EDITABLE = ["popularity", "similar_games"];
 const WEBHOOK_ONLY_PAYLOAD_KEYS = ["slug"];
 
 function formLabels(messages: unknown): Record<string, unknown> {
@@ -71,6 +71,15 @@ describe("bulk import aliases", () => {
       metascore: "metascore",
       playtime: "playtime",
       popularity: "popularity",
+      themes: "themes",
+      gameModes: "game_modes",
+      playerPerspectives: "player_perspectives",
+      multiplayerModes: "multiplayer_modes",
+      franchises: "franchises",
+      keywords: "keywords",
+      gameEngines: "game_engines",
+      websites: "websites",
+      igdbRating: "igdb_rating",
     });
     expect(Object.keys(BULK_IMPORTABLE_COLUMNS).sort()).toEqual(
       Object.keys(BULK_FIELD_TO_OVERRIDE).sort()

@@ -22,7 +22,7 @@ export function PriceHistorySection({ game }: PriceHistorySectionProps) {
   return (
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="mb-8">
-        <KickerLabel className="mb-3">11 — {tEd("sections.priceHistory")}</KickerLabel>
+        <KickerLabel className="mb-3">12 — {tEd("sections.priceHistory")}</KickerLabel>
         <h2 className="editorial-game-detail-bento-display editorial-game-detail-bento-display-md">
           {tEd.rich("sections.priceHistoryTitle", accentRich)}
         </h2>

@@ -143,12 +143,78 @@ describe("detectChangedFields", () => {
       ],
       game_platforms: [{ platform_id: "platform-99" }],
       videos: [{ ...baseVideo, url: "https://www.youtube.com/watch?v=xyz" }],
+      themes: [{ theme_id: "theme-1" }],
+      game_modes: [{ game_mode_id: "mode-1" }],
+      player_perspectives: [{ player_perspective_id: "perspective-1" }],
+      multiplayer_modes: [
+        {
+          igdb_platform_id: 6,
+          campaign_coop: false,
+          drop_in: false,
+          lan_coop: false,
+          offline_coop: false,
+          offline_coop_max: null,
+          offline_max: null,
+          online_coop: true,
+          online_coop_max: 4,
+          online_max: null,
+          splitscreen: false,
+          splitscreen_online: false,
+        },
+      ],
+      series: [{ series_id: "series-1" }],
+      keywords: [{ keyword_id: "keyword-1" }],
+      game_engines: [{ game_engine_id: "engine-1" }],
+      websites: [{ url: "https://example.com", type_id: 1, trusted: false }],
+      igdb_total_rating: 80,
     });
 
     const detectableFields = TRACKABLE_FIELDS.filter(
       (field) => TRACKED_FIELD_REGISTRY[field].detect !== null
     );
     expect(detectChangedFields(baseCurrentData, submitted)).toEqual(detectableFields);
+  });
+
+  it("compares the IGDB metadata as sets and normalised rows", () => {
+    const current: CurrentGameData = {
+      ...baseCurrentData,
+      themes: [{ theme_id: "a" }, { theme_id: "b" }],
+      franchises: [{ franchise_id: "f" }],
+      series: [],
+      websites: [{ url: "https://x.dev", type_id: 1 }],
+      multiplayer_modes: [{ igdb_platform_id: 6, online_coop: true, online_coop_max: 4 }],
+      igdb_total_rating: 80.5,
+      igdb_total_rating_count: null,
+    };
+    const unchanged = toSubmitted({
+      themes: [{ theme_id: "b" }, { theme_id: "a" }],
+      franchises: [{ franchise_id: "f", name: "Display only" }],
+      series: [],
+      websites: [{ url: "https://x.dev", type_id: 1, trusted: true }],
+      multiplayer_modes: [
+        {
+          igdb_platform_id: 6,
+          campaign_coop: false,
+          drop_in: false,
+          lan_coop: false,
+          offline_coop: false,
+          offline_coop_max: null,
+          offline_max: null,
+          online_coop: true,
+          online_coop_max: 4,
+          online_max: null,
+          splitscreen: false,
+          splitscreen_online: false,
+        },
+      ],
+      igdb_total_rating: 80.5,
+      igdb_total_rating_count: "",
+    });
+    expect(detectChangedFields(current, unchanged)).toEqual([]);
+
+    expect(
+      detectChangedFields(current, { ...unchanged, series: [{ series_id: "s" }] })
+    ).toEqual(["franchises"]);
   });
 
   it("does not report false positives for null and empty values", () => {

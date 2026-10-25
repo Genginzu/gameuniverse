@@ -15,6 +15,15 @@ const FIELDS: { key: BulkImportField; icon: string }[] = [
   { key: "metascore", icon: "lucide:star" },
   { key: "releaseDate", icon: "lucide:calendar" },
   { key: "popularity", icon: "lucide:flame" },
+  { key: "themes", icon: "lucide:palette" },
+  { key: "gameModes", icon: "lucide:gamepad-2" },
+  { key: "playerPerspectives", icon: "lucide:eye" },
+  { key: "multiplayerModes", icon: "lucide:users" },
+  { key: "franchises", icon: "lucide:library" },
+  { key: "keywords", icon: "lucide:tags" },
+  { key: "gameEngines", icon: "lucide:cpu" },
+  { key: "websites", icon: "lucide:link" },
+  { key: "igdbRating", icon: "lucide:star-half" },
 ];
 
 export default function AdminBulkImportPage() {

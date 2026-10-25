@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { adminGameMetadataUpdateFields } from "./admin-game-metadata";
 
 // Base game validation schema
 export const gameBaseSchema = z.object({
@@ -206,6 +207,8 @@ export const updateGameSchema = z.object({
   languages: z.array(gameLanguageSchema).optional(),
   music: gameMusicSchema.optional(),
   game_platforms: z.array(gamePlatformLinkSchema).optional(),
+  /** IGDB metadata (themes, franchises, websites…): absent fields are untouched. */
+  metadata: z.object(adminGameMetadataUpdateFields).optional(),
 });
 
 // Bulk operations schema

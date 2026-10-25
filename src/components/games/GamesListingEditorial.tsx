@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 
@@ -9,13 +9,17 @@ import { EditorialContainer } from "@/components/layout/editorial/EditorialConta
 import { SearchSkeleton } from "@/components/games/SearchSkeleton";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { useGenres } from "@/hooks/useGenres";
+import { useGameMetadataFilters } from "@/hooks/useGameMetadataFilters";
 import { useListingQuery } from "@/hooks/useListingQuery";
 import { usePlatforms } from "@/hooks/usePlatforms";
 import { gamesListing } from "@/lib/listing/resources/games";
 import type { GamesApiResponse } from "@/types/game";
+import type { MetadataFilterSelection } from "@/types/game-metadata";
 
 import { GameCard } from "./GameCard";
+import { metadataFilterCount } from "./GameMetadataFilters";
 import { GamesListingToolbar } from "./GamesListingToolbar";
+import { GamesUrlFilters } from "./GamesUrlFilters";
 
 const GameFilters = dynamic(() => import("./GameFilters").then((m) => m.GameFilters));
 const Pagination = dynamic(() =>
@@ -37,22 +41,58 @@ export function GamesListingEditorial({ locale = "fr", initialData }: GamesListi
     gamesListing,
     { locale, fallbackData: initialData }
   );
+  const metadataSelection: MetadataFilterSelection = {
+    themes: filters.themes,
+    gameModes: filters.gameModes,
+    perspectives: filters.perspectives,
+    engines: filters.engines,
+    franchises: filters.franchises,
+  };
+  const { options: metadataOptions, loading: metadataLoading } = useGameMetadataFilters({
+    engines: filters.engines,
+    franchises: filters.franchises,
+  });
 
   const games = data?.games ?? [];
   const pagination = data?.pagination ?? null;
   const filterCount =
-    filters.genres.length + filters.platforms.length + (filters.esport !== null ? 1 : 0);
+    filters.genres.length +
+    filters.platforms.length +
+    (filters.esport !== null ? 1 : 0) +
+    metadataFilterCount(metadataSelection);
   const hasFilters = filterCount > 0;
   const transitioning = isValidating && !isLoading;
 
-  const handleClearFilters = () => setFilters({ genres: [], platforms: [], esport: null });
+  const handleClearFilters = () =>
+    setFilters({
+      genres: [],
+      platforms: [],
+      esport: null,
+      themes: [],
+      gameModes: [],
+      perspectives: [],
+      engines: [],
+      franchises: [],
+    });
+
+  const urlFilters = (
+    <Suspense fallback={null}>
+      <GamesUrlFilters onFilters={setFilters} />
+    </Suspense>
+  );
 
   if (isLoading && games.length === 0) {
-    return <SearchSkeleton />;
+    return (
+      <>
+        {urlFilters}
+        <SearchSkeleton />
+      </>
+    );
   }
 
   return (
     <section className="w-full">
+      {urlFilters}
       <EditorialContainer>
         <GamesListingToolbar
           totalCount={pagination?.totalCount ?? games.length}
@@ -76,6 +116,12 @@ export function GamesListingEditorial({ locale = "fr", initialData }: GamesListi
             onClearFilters={handleClearFilters}
             showAllGenres={showFilters}
             variant="editorial"
+            metadataFilters={{
+              selected: metadataSelection,
+              options: metadataOptions,
+              loading: metadataLoading,
+              onChange: setFilters,
+            }}
           />
         </div>
 

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { adminGameMetadataFields } from "./admin-game-metadata";
 /**
  * Simplified Zod schema for the admin game form (create/edit).
  * Reuses base field rules from game.ts but tailored for the form UI.
@@ -157,6 +158,7 @@ export const adminGameFormSchema = z.object({
   music_spotify_embed_url: z.string().url("Invalid URL").optional().or(z.literal("")),
   music_youtube_video_url: z.string().url("Invalid URL").optional().or(z.literal("")),
   is_esport: z.boolean().default(false),
+  ...adminGameMetadataFields,
 });
 
 export type AdminGameFormData = z.infer<typeof adminGameFormSchema>;

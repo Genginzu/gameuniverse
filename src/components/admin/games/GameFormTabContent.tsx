@@ -22,6 +22,8 @@ import {
   GameFormVideosTab,
   GameFormSyncTab,
   GameFormSimilarGamesTab,
+  GameFormClassificationTab,
+  GameFormLinksTab,
 } from "./GameFormLazyTabs";
 
 function TabFallback() {
@@ -41,7 +43,7 @@ interface GameFormTabContentProps {
   stores: AdminStore[];
   currencies: AdminCurrency[];
   platforms: string[];
-  gamePlatforms: Array<{ id: string; slug: string; name: string }>;
+  gamePlatforms: Array<{ id: string; slug: string; name: string; igdbId?: number | null }>;
   toggleGenre: (genreId: string) => void;
   toggleCompany: (companyId: string, role: "developer" | "publisher") => void;
   togglePlatform: (platformId: string) => void;
@@ -86,6 +88,12 @@ export function GameFormTabContent({
             isIgdbField={isIgdbField}
           />
         );
+      case "classification":
+        return (
+          <GameFormClassificationTab form={form} t={t} isIgdbField={isIgdbField} gamePlatforms={gamePlatforms} />
+        );
+      case "links":
+        return <GameFormLinksTab form={form} t={t} isIgdbField={isIgdbField} />;
       case "companies":
         return (
           <GameFormCompaniesTab

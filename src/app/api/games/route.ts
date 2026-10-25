@@ -17,6 +17,13 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || "";
     const genres = parseArrayParam(searchParams.get("genres"));
     const platforms = parseArrayParam(searchParams.get("platforms"));
+    const metadataFilters = {
+      themes: parseArrayParam(searchParams.get("themes")),
+      gameModes: parseArrayParam(searchParams.get("gameModes")),
+      perspectives: parseArrayParam(searchParams.get("perspectives")),
+      engines: parseArrayParam(searchParams.get("engines")),
+      franchises: parseArrayParam(searchParams.get("franchises")),
+    };
     const { page, limit } = parsePaginationParams(searchParams, {
       maxLimit: search.trim() ? 10000 : undefined,
     });
@@ -44,13 +51,14 @@ export async function GET(request: NextRequest) {
     }
 
     const offset = calculateOffset(page, limit);
-    const filters = { search, genres, platforms, locale, inLibrary, sort };
+    const filters = { search, genres, platforms, ...metadataFilters, locale, inLibrary, sort };
 
-    // Resolve search/platform/genre filters into game IDs
+    // Resolve search/platform/genre/metadata filters into game IDs
     const { gameIds: matchingGameIds, error: filterError } = await resolveGameIdFilters(supabase, {
       search,
       genres,
       platforms,
+      ...metadataFilters,
     });
 
     if (filterError) {

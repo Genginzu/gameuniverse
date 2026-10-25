@@ -65,7 +65,7 @@ export function MediaSection({ game }: MediaSectionProps) {
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="editorial-game-detail-section-header">
         <div>
-          <KickerLabel className="mb-3">06 — {tEd("sections.media")}</KickerLabel>
+          <KickerLabel className="mb-3">07 — {tEd("sections.media")}</KickerLabel>
           <h2>{tEd.rich("sections.mediaTitle", accentRich)}</h2>
         </div>
         <p className="editorial-game-detail-section-header-meta">

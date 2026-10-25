@@ -6,22 +6,15 @@ import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { useBulkImport, type BulkImportField } from "@/hooks/useBulkImport";
 import { BulkImportGameList } from "@/components/admin/bulk-import/BulkImportGameList";
+import { isBulkFieldAlias } from "@/lib/services/igdb-fields/registry";
 
-const VALID_FIELDS: BulkImportField[] = [
-  "cover",
-  "background",
-  "playtime",
-  "metascore",
-  "releaseDate",
-  "popularity",
-];
 
 export default function BulkImportFieldPage() {
   const params = useParams();
   const field = params.field as string;
   const t = useTranslations("bulkImport");
 
-  const isValid = VALID_FIELDS.includes(field as BulkImportField);
+  const isValid = isBulkFieldAlias(field);
 
   const {
     batchSize,

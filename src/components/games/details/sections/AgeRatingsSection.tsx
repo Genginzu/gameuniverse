@@ -25,7 +25,7 @@ export function AgeRatingsSection({ game }: AgeRatingsSectionProps) {
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="editorial-game-detail-section-grid">
         <div className="editorial-game-detail-section-heading">
-          <KickerLabel className="mb-3">03 — {tEd("sections.ageRatings")}</KickerLabel>
+          <KickerLabel className="mb-3">04 — {tEd("sections.ageRatings")}</KickerLabel>
           <h2>{tEd.rich("sections.ageRatingsTitle", accentRich)}</h2>
         </div>
         <div className="editorial-game-detail-rating-grid">

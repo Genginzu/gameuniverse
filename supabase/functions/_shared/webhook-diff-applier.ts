@@ -20,7 +20,7 @@ import { logger } from "./logger.ts";
 import { IGDBService } from "./igdb-service.ts";
 import { fetchMetacriticScore } from "./metacritic-service.ts";
 import { untypedTable } from "./untyped-table.ts";
-import { hasTaxonomyPayload, saveGameTaxonomies } from "./igdb-taxonomies.ts";
+import { METADATA_FIELDS, METADATA_PAYLOAD_KEYS, saveGameMetadata } from "./igdb-metadata.ts";
 
 export interface ApplyPayloadOptions {
   gameId: string;
@@ -62,6 +62,13 @@ const TRACKABLE_PAYLOAD_KEYS = [
   "player_perspectives",
   "franchise",
   "franchises",
+  "collections",
+  "multiplayer_modes",
+  "keywords",
+  "game_engines",
+  "websites",
+  "total_rating",
+  "total_rating_count",
 ] as const;
 
 function hasTrackableFields(payload: Record<string, unknown>): boolean {
@@ -612,21 +619,23 @@ export async function applyWebhookPayload(
     }
   }
 
-  // Taxonomies (themes, modes, perspectives, franchises): payloads carry ids
-  // only, so the full game is fetched to keep the reference names.
-  if (hasTaxonomyPayload(payload)) {
-    if (can("taxonomies", ov, f)) {
-      const igdbGame = await getIgdbGame();
-      if (igdbGame) {
-        try {
-          await saveGameTaxonomies(supabase, gameId, igdbGame);
-          applied.push("taxonomies");
-        } catch (error) {
-          logger.error("Failed to apply webhook taxonomies", { gameId, error: String(error) });
-        }
+  // IGDB metadata (themes, modes, perspectives, franchises and series,
+  // keywords, engines, websites, multiplayer modes, rating): payloads carry
+  // ids only, so the full game is fetched once for the touched fields.
+  const touchedMetadata = METADATA_FIELDS.filter((field) =>
+    METADATA_PAYLOAD_KEYS[field].some((key) => key in payload)
+  );
+  const writableMetadata = touchedMetadata.filter((field) => can(field, ov, f));
+  skipped.push(...touchedMetadata.filter((field) => !writableMetadata.includes(field)));
+  if (writableMetadata.length > 0) {
+    const igdbGame = await getIgdbGame();
+    if (igdbGame) {
+      try {
+        await saveGameMetadata(supabase, gameId, igdbGame, writableMetadata);
+        applied.push(...writableMetadata);
+      } catch (error) {
+        logger.error("Failed to apply webhook metadata", { gameId, error: String(error) });
       }
-    } else {
-      skipped.push("taxonomies");
     }
   }
 
