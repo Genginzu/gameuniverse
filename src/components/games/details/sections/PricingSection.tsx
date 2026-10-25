@@ -29,7 +29,7 @@ export function PricingSection({ game, formatPrice }: PricingSectionProps) {
 
   return (
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
-      <KickerLabel className="mb-3">10 — {tEd("sections.whereToBuy")}</KickerLabel>
+      <KickerLabel className="mb-3">11 — {tEd("sections.whereToBuy")}</KickerLabel>
       <h2 className="editorial-game-detail-bento-display editorial-game-detail-bento-display-md mb-10">
         {tEd.rich("sections.whereToBuyTitle", accentRich)}
       </h2>

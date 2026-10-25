@@ -517,7 +517,8 @@
         "games": {
           "all": "All games",
           "trending": "Trending",
-          "upcoming": "Upcoming"
+          "upcoming": "Upcoming",
+          "franchises": "Franchises"
         },
         "characters": {
           "all": "All characters"
@@ -1283,6 +1284,12 @@
     "esportFilter": "Esport",
     "esportSection": "Esport",
     "esportOnly": "Esport games only",
+    "metadataFilters": {
+      "themes": "Themes",
+      "gameModes": "Game modes",
+      "perspectives": "Perspectives",
+      "available": "{count} available"
+    },
     "sort": {
       "label": "Sort by",
       "recommended": "Recommended",
@@ -1563,7 +1570,36 @@
         "reviewsCount": "{count} reviews · avg {avg}/10",
         "youMightAlsoLike": "You might also like",
         "similarTitle": "Similar <accent>games</accent>",
+        "universe": "World & gameplay",
+        "universeTitle": "Technical <accent>sheet</accent>",
+        "franchiseGames": "In the same franchise",
+        "franchiseGamesTitle": "More from the <accent>franchise</accent>",
+        "viewFranchise": "View {name}",
         "viewAll": "View all"
+      },
+      "universe": {
+        "sheet": "Classification",
+        "franchises": "Franchise",
+        "themes": "Themes",
+        "gameModes": "Game modes",
+        "perspectives": "Perspective",
+        "engines": "Engine",
+        "multiplayer": "Multiplayer",
+        "multiplayerPlatforms": "IGDB details for: {platforms}",
+        "upToPlayers": "Up to {count, plural, one {# player} other {# players}}",
+        "websites": "Links",
+        "opensInNewTab": "(opens in a new tab)",
+        "capabilities": {
+          "onlineMax": "Online",
+          "onlineCoop": "Online co-op",
+          "offlineMax": "Local multiplayer",
+          "offlineCoop": "Local co-op",
+          "splitscreen": "Split screen",
+          "splitscreenOnline": "Online split screen",
+          "lanCoop": "LAN co-op",
+          "campaignCoop": "Co-op campaign",
+          "dropIn": "Drop-in / drop-out"
+        }
       },
       "playtime": {
         "officialKicker": "Source: HowLongToBeat",
@@ -1869,6 +1905,7 @@
       "characterRoles": "Roles",
       "characterGenders": "Genders",
       "characterSpecies": "Species",
+      "franchises": "Franchises",
       "companies": "Companies",
       "platforms": "Platforms",
       "ageClassifications": "Age Classifications",
@@ -2112,7 +2149,58 @@
         "musicYoutubeUrl": "YouTube URL (video or embed)",
         "videos": "Videos",
         "similarGames": "Similar Games",
-        "taxonomies": "Themes, modes, perspectives and franchises",
+        "themes": "Themes",
+        "gameModes": "Game modes",
+        "playerPerspectives": "Player perspectives",
+        "multiplayerModes": "Multiplayer modes",
+        "franchises": "Franchises and series",
+        "keywords": "Keywords",
+        "gameEngines": "Game engines",
+        "websites": "Websites",
+        "igdbRating": "IGDB rating",
+        "classificationTab": "Classification",
+        "linksTab": "Links",
+        "metadata": {
+          "franchiseList": "Franchises",
+          "seriesList": "IGDB series",
+          "gameEngines": "Game engines",
+          "keywords": "Keywords",
+          "searchPlaceholder": "Search (2 characters min.)…",
+          "searchLabel": "Search: {field}",
+          "noResults": "No results",
+          "remove": "Remove {name}",
+          "igdbRatingTitle": "IGDB rating",
+          "igdbRatingHint": "IGDB combined rating (players + critics), stored without public display for now.",
+          "igdbRating": "Rating (0-100)",
+          "igdbRatingCount": "Vote count",
+          "websitesTitle": "Official links",
+          "websiteType": "Link type",
+          "websiteTypeOther": "Other",
+          "websiteUrl": "URL",
+          "websiteTrusted": "Verified",
+          "websiteAdd": "Add a link",
+          "websiteRemove": "Remove this link",
+          "multiplayerTitle": "Multiplayer modes",
+          "multiplayerPlatform": "Platform",
+          "multiplayerAllPlatforms": "All platforms",
+          "multiplayerAdd": "Add a multiplayer mode",
+          "multiplayerRemove": "Remove this multiplayer mode",
+          "multiplayerFlags": {
+            "online_coop": "Online co-op",
+            "offline_coop": "Local co-op",
+            "lan_coop": "LAN co-op",
+            "campaign_coop": "Co-op campaign",
+            "splitscreen": "Split screen",
+            "splitscreen_online": "Online split screen",
+            "drop_in": "Drop-in"
+          },
+          "multiplayerMaxes": {
+            "online_max": "Max online players",
+            "online_coop_max": "Max online co-op",
+            "offline_max": "Max local players",
+            "offline_coop_max": "Max local co-op"
+          }
+        },
         "similarGamesSearchLabel": "Search for a game to add",
         "similarGamesSearchPlaceholder": "Type a game name...",
         "similarGamesNoResults": "No games found",
@@ -2564,6 +2652,71 @@
         "deleting": "Deleting...",
         "success": "Gender deleted successfully!",
         "errorGeneric": "An error occurred while deleting the gender."
+      }
+    },
+    "franchises": {
+      "title": "Franchise Management",
+      "newFranchise": "New Franchise",
+      "searchPlaceholder": "Search a franchise by name or slug...",
+      "search": "Search",
+      "totalFranchises": "{count, plural, =0 {No franchises} one {1 franchise} other {# franchises}}",
+      "noFranchises": "No franchises found.",
+      "edit": "Edit",
+      "delete": "Delete",
+      "columns": {
+        "name": "Name",
+        "slug": "Slug",
+        "source": "Source",
+        "gameCount": "Games",
+        "actions": "Actions"
+      },
+      "sourceIgdb": "IGDB",
+      "sourceManual": "Manual",
+      "gameCount": "{count, plural, =0 {No games} one {1 game} other {# games}}",
+      "form": {
+        "name": "Name",
+        "slug": "Slug",
+        "slugDescription": "Used in the /franchises/slug URL. Lowercase letters, digits and hyphens.",
+        "description": "Description",
+        "descriptionPlaceholder": "Franchise overview in this language",
+        "create": "Create franchise",
+        "save": "Save",
+        "backToList": "Back to franchises"
+      },
+      "games": {
+        "title": "Franchise games",
+        "searchPlaceholder": "Search a game to add…",
+        "noResults": "No games found",
+        "importing": "Importing…",
+        "empty": "No games in this franchise.",
+        "noDate": "Unknown date",
+        "added": "\"{title}\" added to the franchise",
+        "removed": "\"{title}\" removed from the franchise",
+        "remove": "Remove \"{title}\" from the franchise",
+        "error": "The operation failed."
+      },
+      "createPage": {
+        "title": "New Franchise",
+        "success": "Franchise created successfully!",
+        "errorDuplicate": "A franchise with this slug already exists.",
+        "errorGeneric": "An error occurred while saving the franchise."
+      },
+      "editPage": {
+        "title": "Edit Franchise",
+        "loading": "Loading franchise...",
+        "success": "Franchise updated successfully!",
+        "errorGeneric": "Unable to load or save the franchise."
+      },
+      "deleteDialog": {
+        "title": "Delete franchise",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action cannot be undone. Games are not deleted, only detached.",
+        "usageWarning": "{count, plural, one {This franchise contains 1 game.} other {This franchise contains # games.}}",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Franchise deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the franchise."
       }
     },
     "species": {
@@ -4553,7 +4706,16 @@
       "playtime": "Playtime",
       "metascore": "Metascore",
       "releaseDate": "Release date",
-      "popularity": "IGDB Popularity"
+      "popularity": "IGDB Popularity",
+      "themes": "Themes",
+      "gameModes": "Game modes",
+      "playerPerspectives": "Perspectives",
+      "multiplayerModes": "Multiplayer modes",
+      "franchises": "Franchises and series",
+      "keywords": "Keywords",
+      "gameEngines": "Game engines",
+      "websites": "Websites",
+      "igdbRating": "IGDB rating"
     },
     "gamesCount": "{count, plural, =0 {No games} one {1 game} other {# games}} missing {field}",
     "batchSize": "Batch size",
@@ -5360,6 +5522,100 @@
       "friendship": "Friends",
       "session": "Sessions",
       "achievement": "Achievements"
+    }
+  },
+  "franchises": {
+    "kicker": "Catalogue",
+    "title": "Franchises & series",
+    "description": "The great video game sagas and all their entries.",
+    "count": "{count, plural, one {# franchise} other {# franchises}}",
+    "gameCount": "{count, plural, one {# game} other {# games}}",
+    "searchPlaceholder": "Search a franchise…",
+    "emptyTitle": "No franchise found",
+    "emptyDescription": "Try another saga name.",
+    "loadError": "Unable to load franchises.",
+    "kindFranchise": "Franchise",
+    "kindSeries": "Series",
+    "detailTitlePrefix": "The saga",
+    "detailSubtitle": "Every {name} game, from the first entry to the latest.",
+    "stats": {
+      "games": "Number of games",
+      "first": "First entry",
+      "latest": "Latest entry"
+    },
+    "metadata": {
+      "title": "Video game franchises & series",
+      "description": "Browse video game franchises and series and find all their entries.",
+      "detailTitle": "{name}: every game of the franchise",
+      "detailDescription": "The {count} games of the {name} franchise, by release date."
+    }
+  },
+  "igdbMetadata": {
+    "themes": {
+      "1": "Action",
+      "17": "Fantasy",
+      "18": "Science fiction",
+      "19": "Horror",
+      "20": "Thriller",
+      "21": "Survival",
+      "22": "Historical",
+      "23": "Stealth",
+      "27": "Comedy",
+      "28": "Business",
+      "31": "Drama",
+      "32": "Non-fiction",
+      "33": "Sandbox",
+      "34": "Educational",
+      "35": "Kids",
+      "38": "Open world",
+      "39": "Warfare",
+      "40": "Party",
+      "41": "4X",
+      "42": "Erotic",
+      "43": "Mystery",
+      "44": "Romance"
+    },
+    "gameModes": {
+      "1": "Single player",
+      "2": "Multiplayer",
+      "3": "Co-operative",
+      "4": "Split screen",
+      "5": "MMO",
+      "6": "Battle royale"
+    },
+    "playerPerspectives": {
+      "1": "First person",
+      "2": "Third person",
+      "3": "Bird view / isometric",
+      "4": "Side view",
+      "5": "Text",
+      "6": "Auditory",
+      "7": "Virtual reality"
+    },
+    "websiteTypes": {
+      "1": "Official website",
+      "2": "Community wiki",
+      "3": "Wikipedia",
+      "4": "Facebook",
+      "5": "X (Twitter)",
+      "6": "Twitch",
+      "8": "Instagram",
+      "9": "YouTube",
+      "10": "App Store (iPhone)",
+      "11": "App Store (iPad)",
+      "12": "Google Play",
+      "13": "Steam",
+      "14": "Reddit",
+      "15": "itch.io",
+      "16": "Epic Games Store",
+      "17": "GOG",
+      "18": "Discord",
+      "19": "Bluesky",
+      "22": "Xbox",
+      "23": "PlayStation",
+      "24": "Nintendo",
+      "25": "Meta",
+      "26": "Game Jolt"
     }
   }
 }

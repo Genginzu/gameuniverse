@@ -56,7 +56,7 @@ export function SimilarGamesSection({ game, locale }: SimilarGamesSectionProps) 
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="editorial-game-detail-section-header">
         <div>
-          <KickerLabel className="mb-3">13 — {tEd("sections.youMightAlsoLike")}</KickerLabel>
+          <KickerLabel className="mb-3">15 — {tEd("sections.youMightAlsoLike")}</KickerLabel>
           <h2>{tEd.rich("sections.similarTitle", accentRich)}</h2>
         </div>
       </div>

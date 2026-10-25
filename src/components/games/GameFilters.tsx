@@ -8,6 +8,12 @@ import { PlatformFilterOption } from "@/types/platform";
 import { FilterSection, type FilterVariant } from "@/components/shared/FilterSection";
 import { FilterChip, ActiveFilterChip } from "@/components/shared/FilterChip";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
+import {
+  MetadataActiveChips,
+  MetadataFilterSections,
+  metadataFilterCount,
+  type MetadataFiltersProps,
+} from "./GameMetadataFilters";
 
 interface GameFiltersProps {
   genres: Genre[];
@@ -30,6 +36,8 @@ interface GameFiltersProps {
   showPlatforms?: boolean;
   /** Variante visuelle. Default: `"default"` (legacy). */
   variant?: FilterVariant;
+  /** IGDB metadata filters (themes, modes, perspectives, engines, franchises). */
+  metadataFilters?: Omit<MetadataFiltersProps, "variant">;
 }
 
 export function GameFilters({
@@ -47,6 +55,7 @@ export function GameFilters({
   showAllGenres,
   variant = "default",
   showPlatforms = true,
+  metadataFilters,
 }: GameFiltersProps) {
   const t = useTranslations("games");
   const tPlatforms = useTranslations("platforms");
@@ -76,7 +85,8 @@ export function GameFilters({
     selectedGenres.length > 0 ||
     _selectedPublishers.length > 0 ||
     selectedPlatforms.length > 0 ||
-    esportFilter !== null;
+    esportFilter !== null ||
+    (metadataFilters ? metadataFilterCount(metadataFilters.selected) > 0 : false);
 
   if (!hasFilters && !showAllGenres) return null;
 
@@ -116,6 +126,7 @@ export function GameFilters({
                 themeVariant={variant}
               />
             ))}
+            {metadataFilters && <MetadataActiveChips {...metadataFilters} variant={variant} />}
           </div>
           <button onClick={onClearFilters} className={clearButtonClass}>
             {tFilters("clearAll")}
@@ -181,6 +192,8 @@ export function GameFilters({
               ))}
             </FilterSection>
           )}
+
+          {metadataFilters && <MetadataFilterSections {...metadataFilters} variant={variant} />}
         </>
       )}
     </div>

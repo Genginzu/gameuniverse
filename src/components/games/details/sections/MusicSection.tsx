@@ -48,7 +48,7 @@ export function MusicSection({ game }: MusicSectionProps) {
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="editorial-game-detail-section-grid">
         <div className="editorial-game-detail-section-heading">
-          <KickerLabel className="mb-3">09 — {tEd("sections.soundtrack")}</KickerLabel>
+          <KickerLabel className="mb-3">10 — {tEd("sections.soundtrack")}</KickerLabel>
           <h2>{tEd.rich("sections.soundtrackTitle", accentRich)}</h2>
         </div>
         <div>

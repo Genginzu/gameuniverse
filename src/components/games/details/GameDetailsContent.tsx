@@ -4,7 +4,7 @@
  * GameDetailsContent — orchestre la page détail jeu en mise en page
  * éditoriale magazine (inspirée du POC supprimé).
  *
- * Layout : scroll vertical, hero plein cadre + sections numérotées 01..13.
+ * Layout : scroll vertical, hero plein cadre + sections numérotées 01..15.
  * Pas d'onglets. L'accent dynamique est injecté par le `<DynamicAccent>`
  * parent (page.tsx) à partir de `game.accentColor`.
  *
@@ -25,6 +25,8 @@ import type { GameDetails } from "@/types/game";
 import { DetailHero } from "./sections/DetailHero";
 import { AboutSection } from "./sections/AboutSection";
 import { StatsBento } from "./sections/StatsBento";
+import { UniverseSection } from "./sections/UniverseSection";
+import { FranchiseGamesSection } from "./sections/FranchiseGamesSection";
 import { AgeRatingsSection } from "./sections/AgeRatingsSection";
 import { LanguagesSection } from "./sections/LanguagesSection";
 import { PlaytimeSection } from "./sections/PlaytimeSection";
@@ -54,6 +56,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsContentProps) {
       <DetailHero game={game} formatPrice={formatPrice} formatReleaseDate={formatReleaseDate} />
       <AboutSection game={game} />
       <StatsBento game={game} formatPrice={formatPrice} />
+      <UniverseSection game={game} />
       <AgeRatingsSection game={game} />
       <LanguagesSection game={game} />
       <PlaytimeSection game={game} />
@@ -64,6 +67,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsContentProps) {
       <PricingSection game={game} formatPrice={formatPrice} />
       <PriceHistorySection game={game} />
       <ReviewsSection game={game} />
+      <FranchiseGamesSection game={game} />
       <SimilarGamesSection game={game} locale={locale} />
     </div>
   );

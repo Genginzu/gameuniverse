@@ -45,7 +45,7 @@ export function PlaytimeSection({ game }: PlaytimeSectionProps) {
 
   return (
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
-      <KickerLabel className="mb-6">05 — {tEd("sections.playtime")}</KickerLabel>
+      <KickerLabel className="mb-6">06 — {tEd("sections.playtime")}</KickerLabel>
 
       <div className="editorial-game-detail-playtime-grid">
         {/* Officiel HowLongToBeat */}

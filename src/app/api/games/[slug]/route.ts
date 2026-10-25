@@ -3,6 +3,8 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { SupabaseError } from "@/types/api";
 import { logger } from "@/lib/logger";
 import { untypedTable } from "@/lib/utils/untypedTable";
+import { fetchGameDetailMetadata, fetchRelatedGameCards } from "@/lib/services/gameDetailMetadata";
+import type { RelatedGameCard } from "@/types/game-metadata";
 
 // Inline types for the deeply-nested Supabase query result
 interface DatabaseGameGenre {
@@ -424,84 +426,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       logger.warn("game_similar_games table not available yet");
     }
 
-    // Resolve similar game details for those that exist locally
-    const similarGameDetailsMap = new Map<
-      string,
-      {
-        id: string;
-        slug: string;
-        title: string;
-        coverImage: string | null;
-        genres: Array<{ name: string }>;
-        developer: string;
-        metascore: number | null;
-      }
-    >();
-
-    try {
-      const resolvedIds = gameSimilarGames
-        .map((sg) => sg.similar_game_id)
-        .filter((id): id is string => id !== null);
-
-      if (resolvedIds.length > 0) {
-        const { data: similarGamesData } = await supabase
-          .from("games")
-          .select(
-            `id, slug, cover_image_url, metascore,
-             game_translations(title, language_code),
-             game_genres(genres(genre_translations(name, language_code))),
-             game_companies(role, is_primary, companies(name))`
-          )
-          .in("id", resolvedIds);
-
-        for (const sg of similarGamesData ?? []) {
-          const translations = (sg.game_translations ?? []) as Array<{
-            title: string;
-            language_code: string;
-          }>;
-          const t =
-            translations.find((tr) => tr.language_code === locale) ||
-            translations.find((tr) => tr.language_code === "en") ||
-            translations[0];
-
-          const genreNames = (
-            (sg.game_genres ?? []) as Array<{
-              genres: {
-                genre_translations: Array<{ name: string; language_code: string }>;
-              };
-            }>
-          ).map((gg) => {
-            const gts = gg.genres?.genre_translations ?? [];
-            const gt =
-              gts.find((tr) => tr.language_code === locale) ||
-              gts.find((tr) => tr.language_code === "en") ||
-              gts[0];
-            return { name: gt?.name || "Unknown" };
-          });
-
-          const companies = (sg.game_companies ?? []) as Array<{
-            role: string;
-            is_primary: boolean;
-            companies: { name: string } | null;
-          }>;
-          const dev =
-            companies.find((c) => c.role === "developer" && c.is_primary) ||
-            companies.find((c) => c.role === "developer");
-
-          similarGameDetailsMap.set(sg.id, {
-            id: sg.id,
-            slug: sg.slug,
-            title: t?.title || sg.slug,
-            coverImage: sg.cover_image_url,
-            genres: genreNames,
-            developer: dev?.companies?.name ?? "",
-            metascore: sg.metascore ?? null,
-          });
-        }
-      }
-    } catch {
-      logger.warn("Failed to resolve similar game details");
-    }
+    // Resolve similar game details for those that exist locally, and load the
+    // IGDB metadata (themes, franchises, websites…) in parallel.
+    const similarIds = gameSimilarGames
+      .map((sg) => sg.similar_game_id)
+      .filter((id): id is string => id !== null);
+    const [similarGameDetailsMap, metadata] = await Promise.all([
+      fetchRelatedGameCards(supabase, similarIds, locale).catch(() => {
+        logger.warn("Failed to resolve similar game details");
+        return new Map<string, RelatedGameCard>();
+      }),
+      fetchGameDetailMetadata(supabase, game.id, locale),
+    ]);
 
     // Fetch platforms for this game
     let gamePlatforms: Array<{
@@ -853,6 +789,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         game: sg.similar_game_id ? (similarGameDetailsMap.get(sg.similar_game_id) ?? null) : null,
       })),
       platforms: gamePlatforms,
+      metadata,
       createdAt: game.created_at,
       updatedAt: game.updated_at,
     };
