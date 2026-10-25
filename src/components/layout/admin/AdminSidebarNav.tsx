@@ -23,6 +23,7 @@ const NAV_CATEGORIES: NavCategory[] = [
     items: [
       { href: "/admin/games", icon: "fa:gamepad", labelKey: "nav.games" },
       { href: "/admin/genres", icon: "fa:list", labelKey: "nav.genres" },
+      { href: "/admin/franchises", icon: "lucide:library-big", labelKey: "nav.franchises" },
       { href: "/admin/companies", icon: "fa:building", labelKey: "nav.companies" },
       { href: "/admin/platforms", icon: "fa:desktop", labelKey: "nav.platforms" },
       { href: "/admin/languages", icon: "fa:globe", labelKey: "nav.languages" },

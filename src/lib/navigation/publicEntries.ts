@@ -8,7 +8,7 @@ export const PUBLIC_ENTRIES: readonly NavPublicEntryDefinition[] = [
   {
     key: "games",
     icon: "fa:dice",
-    pathPrefixes: ["/games", "/trending", "/upcoming"],
+    pathPrefixes: ["/games", "/trending", "/upcoming", "/franchises"],
     sections: [
       {
         titleKey: "explore",
@@ -16,6 +16,7 @@ export const PUBLIC_ENTRIES: readonly NavPublicEntryDefinition[] = [
           { href: "/games", labelKey: "all", icon: "lucide:gamepad-2" },
           { href: "/trending", labelKey: "trending", icon: "lucide:flame" },
           { href: "/upcoming", labelKey: "upcoming", icon: "lucide:calendar-clock" },
+          { href: "/franchises", labelKey: "franchises", icon: "lucide:library-big" },
         ],
       },
     ],
