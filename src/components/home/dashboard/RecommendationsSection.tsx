@@ -2,39 +2,42 @@
 
 /**
  * RecommendationsSection : personal recommendations scored from the library
- * (SQL, one pass), each with its "because of" source game and a
- * "not interested" control with undo.
+ * (SQL, one pass), each with "not interested" (undoable) and "add to library".
  */
 
 import { useTranslations } from "next-intl";
 
+import { useAddRecommendationToLibrary } from "@/hooks/useAddRecommendationToLibrary";
 import { useDismissWithUndo } from "@/hooks/useDismissWithUndo";
 import { usePersonalRecommendations } from "@/hooks/usePersonalRecommendations";
 import { recommendationToGameSummary } from "@/lib/utils/recommendationToGameSummary";
 import type { GameRecommendation } from "@/types/recommendation";
-import { DismissRecommendationButton } from "./DismissRecommendationButton";
-import { DismissedNotice } from "./DismissedNotice";
 import { HomeEmptyState } from "./HomeEmptyState";
 import { HomeGameRail, type HomeRailItem } from "./HomeGameRail";
 import { HomeLoadingNotice } from "./HomeLoadingNotice";
 import { HomeSection } from "./HomeSection";
+import { RecommendationCardActions } from "./RecommendationCardActions";
+import { RecommendationFeedback } from "./RecommendationFeedback";
 import { RecomputeButton } from "./RecomputeButton";
 
 export function RecommendationsSection() {
   const t = useTranslations("homeDashboard.recommendations");
   const { recommendations, basedOnGameCount, loading, recomputing, error, recompute } =
     usePersonalRecommendations();
-  const { dismiss, undo, lastDismissed, failed, isPending } = useDismissWithUndo();
+  const dismissal = useDismissWithUndo();
+  const addition = useAddRecommendationToLibrary();
 
   const isBusy = loading || recomputing;
+  const actionPending = dismissal.isPending || addition.isPending;
   const toItem = (rec: GameRecommendation): HomeRailItem => ({
     game: recommendationToGameSummary(rec),
-    caption: rec.reason ? t("because", { title: rec.reason.title }) : undefined,
     action: (
-      <DismissRecommendationButton
-        label={t("dismiss", { title: rec.title })}
-        disabled={isPending}
-        onDismiss={() => dismiss(rec)}
+      <RecommendationCardActions
+        dismissLabel={t("dismiss", { title: rec.title })}
+        addLabel={t("addToLibrary", { title: rec.title })}
+        disabled={actionPending}
+        onDismiss={() => dismissal.dismiss(rec)}
+        onAdd={() => addition.add(rec)}
       />
     ),
   });
@@ -42,6 +45,7 @@ export function RecommendationsSection() {
   const items = recomputing ? [] : recommendations.map(toItem);
   const emptyMessage = error ? t("error") : basedOnGameCount === 0 ? t("emptyLibrary") : t("empty");
   const canRecompute = basedOnGameCount > 0 || Boolean(error);
+  const hasNotice = Boolean(dismissal.lastDismissed || addition.lastAdded);
 
   return (
     <HomeSection
@@ -60,19 +64,14 @@ export function RecommendationsSection() {
           {t("recomputeError")}
         </p>
       )}
-      {failed && (
-        <p role="alert" className="-mt-2 text-sm text-red-400">
-          {t("dismissError")}
-        </p>
-      )}
-      {lastDismissed && (
-        <DismissedNotice
-          message={t("dismissed", { title: lastDismissed.title })}
-          undoLabel={t("undo")}
-          onUndo={undo}
-        />
-      )}
-      {basedOnGameCount > 0 && !isBusy && !error && !lastDismissed && (
+      <RecommendationFeedback
+        dismissed={dismissal.lastDismissed}
+        added={addition.lastAdded}
+        dismissFailed={dismissal.failed}
+        addFailed={addition.failed}
+        onUndo={dismissal.undo}
+      />
+      {basedOnGameCount > 0 && !isBusy && !error && !hasNotice && (
         <p className="text-editorial-muted -mt-2 text-sm">
           {t("basedOn", { count: basedOnGameCount })}
         </p>

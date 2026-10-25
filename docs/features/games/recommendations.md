@@ -34,8 +34,9 @@ catalogue :
 - **Exclus** : jeux de la bibliothèque, jeux « pas intéressé », jeux adultes,
   jeux sans pochette, DLC / bundles / packs importés comme jeux.
 - **Diversité** : au plus deux jeux par franchise.
-- **Raison** : chaque recommandation indique le jeu source le plus proche
-  (« Proche de … »), un lien IGDB « similaire » étant prioritaire.
+- **Raison** : le moteur renvoie aussi le jeu source le plus proche
+  (`reason`, un lien IGDB « similaire » étant prioritaire). Il est exposé par
+  l'API mais pas affiché dans l'interface.
 
 ### Poids des jeux de la bibliothèque (personnel)
 
@@ -81,6 +82,9 @@ recommandations), page détail d'un jeu (repli de « Jeux similaires »).
 - **Pas intéressé** : bouton (œil barré) en haut à gauche d'une carte de la
   section Recommandations. Le jeu disparaît aussitôt et n'est plus proposé ;
   « Annuler » le rétablit.
+- **Ajouter à la bibliothèque** : bouton « + » sous le précédent. Le jeu est
+  ajouté en « possédé » (`POST /api/library`), quitte le rail et un message
+  avec un lien vers sa fiche confirme l'ajout.
 - **Recalculer** : relance le calcul (pas de cache serveur, donc toujours à
   jour).
 

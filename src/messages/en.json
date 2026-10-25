@@ -1268,6 +1268,11 @@
     "listingDescription": "Explore the complete Gamers Universe library.",
     "listingCount": "{count} titles",
     "readMore": "Discover",
+    "quickAdd": {
+      "add": "Add {title} to my library",
+      "inLibrary": "{title} is in your library",
+      "error": "Unable to add this game to your library, please try again."
+    },
     "noGamesFound": "No games found",
     "modifySearch": "Try modifying your search criteria or explore other categories",
     "noGamesAvailable": "No games available at the moment",
@@ -1513,8 +1518,6 @@
       "heroPlatformsCount": "{count} platforms",
       "heroPlatformsOne": "1 platform",
       "libraryAdd": "Add to library",
-      "libraryIn": "In my library",
-      "libraryRemove": "Remove",
       "liveTicker": "{players} playing now · {streams} streams · {tournaments} tournaments this week",
       "score": "Score",
       "from": "From",
@@ -4803,6 +4806,17 @@
     "allMonths": "All",
     "empty": "No releases planned for this period."
   },
+  "libraryStatus": {
+    "owned": "Owned",
+    "playing": "Playing",
+    "completed": "Completed",
+    "wishlist": "Wishlist",
+    "menuTitle": "Status in my library",
+    "triggerLabel": "Status in my library: {status}. Change",
+    "cardTriggerLabel": "{title} — status: {status}. Change",
+    "remove": "Remove from my library",
+    "error": "Unable to update your library, please try again."
+  },
   "homeDashboard": {
     "hero": {
       "kicker": "YOUR UNIVERSE",
@@ -4825,8 +4839,13 @@
       "kicker": "IN PROGRESS",
       "title": "Continue playing",
       "seeAll": "My library",
-      "empty": "No game in progress. Set a game to \"Playing\" in your library to find it here.",
-      "emptyAction": "Browse games"
+      "empty": "No game in progress. In your library, tap a game's status icon and pick \"Playing\", or log a play session.",
+      "emptyAction": "Open my library",
+      "suggestionsTitle": "No game in progress. Playing one of these?",
+      "suggestionsSeparator": "Suggestions",
+      "markPlaying": "I'm playing it",
+      "markPlayingLabel": "Mark {title} as playing",
+      "markPlayingError": "Unable to update this game, please try again."
     },
     "recommendations": {
       "kicker": "FOR YOU",
@@ -4839,11 +4858,13 @@
       "loadingSlow": "This can take a little while, your recommendations are on their way.",
       "recompute": "Recompute",
       "recomputeError": "Unable to recompute right now, try again in a few minutes.",
-      "because": "Close to {title}",
       "dismiss": "Not interested in {title}",
-      "dismissed": "\"{title}\" won't be suggested again.",
+      "dismissed": "<game>{title}</game> won't be suggested again.",
       "undo": "Undo",
       "dismissError": "Unable to save your choice, please try again.",
+      "addToLibrary": "Add {title} to my library",
+      "added": "<game>{title}</game> was added to your library.",
+      "addError": "Unable to add this game to your library, please try again.",
       "error": "Recommendations are unavailable right now."
     },
     "friendsActivity": {

@@ -1268,6 +1268,11 @@
     "listingDescription": "Explorez la bibliothèque complète de Gamers Universe.",
     "listingCount": "{count} titres",
     "readMore": "Découvrir",
+    "quickAdd": {
+      "add": "Ajouter {title} à ma bibliothèque",
+      "inLibrary": "{title} est dans ta bibliothèque",
+      "error": "Impossible d'ajouter ce jeu à ta bibliothèque, réessaie."
+    },
     "noGamesFound": "Aucun jeu trouvé",
     "modifySearch": "Essayez de modifier vos critères de recherche ou explorez d'autres catégories",
     "noGamesAvailable": "Aucun jeu disponible pour le moment",
@@ -1513,8 +1518,6 @@
       "heroPlatformsCount": "{count} plateformes",
       "heroPlatformsOne": "1 plateforme",
       "libraryAdd": "Ajouter à la bibliothèque",
-      "libraryIn": "Dans ma bibliothèque",
-      "libraryRemove": "Retirer",
       "liveTicker": "{players} en jeu · {streams} streams · {tournaments} tournois cette semaine",
       "score": "Score",
       "from": "À partir de",
@@ -4806,6 +4809,17 @@
     "allMonths": "Tous",
     "empty": "Aucune sortie prévue pour cette période."
   },
+  "libraryStatus": {
+    "owned": "Possédé",
+    "playing": "En cours",
+    "completed": "Terminé",
+    "wishlist": "Liste de souhaits",
+    "menuTitle": "Statut dans ma bibliothèque",
+    "triggerLabel": "Statut dans ma bibliothèque : {status}. Modifier",
+    "cardTriggerLabel": "{title} — statut : {status}. Modifier",
+    "remove": "Retirer de ma bibliothèque",
+    "error": "Impossible de modifier ta bibliothèque, réessaie."
+  },
   "homeDashboard": {
     "hero": {
       "kicker": "TON UNIVERS",
@@ -4828,8 +4842,13 @@
       "kicker": "EN COURS",
       "title": "Reprendre",
       "seeAll": "Ma bibliothèque",
-      "empty": "Aucun jeu en cours. Passe un jeu en « En cours » dans ta bibliothèque pour le retrouver ici.",
-      "emptyAction": "Explorer les jeux"
+      "empty": "Aucun jeu en cours. Dans ta bibliothèque, touche l'icône de statut d'un jeu et choisis « En cours », ou enregistre une session de jeu.",
+      "emptyAction": "Ouvrir ma bibliothèque",
+      "suggestionsTitle": "Aucun jeu en cours. Tu joues à l'un de ceux-là ?",
+      "suggestionsSeparator": "Suggestions",
+      "markPlaying": "J'y joue",
+      "markPlayingLabel": "Passer {title} en cours",
+      "markPlayingError": "Impossible de mettre à jour ce jeu, réessaie."
     },
     "recommendations": {
       "kicker": "POUR TOI",
@@ -4842,11 +4861,13 @@
       "loadingSlow": "Le calcul peut prendre un peu de temps, tes recommandations arrivent.",
       "recompute": "Recalculer",
       "recomputeError": "Impossible de recalculer pour le moment, réessaie dans quelques minutes.",
-      "because": "Proche de {title}",
       "dismiss": "Pas intéressé par {title}",
-      "dismissed": "« {title} » ne te sera plus proposé.",
+      "dismissed": "<game>{title}</game> ne te sera plus proposé.",
       "undo": "Annuler",
       "dismissError": "Impossible d'enregistrer ton choix, réessaie.",
+      "addToLibrary": "Ajouter {title} à ma bibliothèque",
+      "added": "<game>{title}</game> a été ajouté à ta bibliothèque.",
+      "addError": "Impossible d'ajouter ce jeu à ta bibliothèque, réessaie.",
       "error": "Les recommandations sont indisponibles pour le moment."
     },
     "friendsActivity": {
