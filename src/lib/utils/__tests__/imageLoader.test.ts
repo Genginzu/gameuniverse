@@ -9,6 +9,10 @@ describe("getImageStrategy", () => {
     expect(getImageStrategy(`//images.igdb.com/igdb/image/upload/t_thumb/co1.jpg`)).toBe("igdb");
   });
 
+  it("serves IGDB urls without a size preset as-is", () => {
+    expect(getImageStrategy("https://images.igdb.com/cover1.jpg")).toBe("passthrough");
+  });
+
   it("routes Unsplash to its own CDN loader", () => {
     expect(getImageStrategy("https://images.unsplash.com/photo-1?ixid=a")).toBe("unsplash");
   });
@@ -34,43 +38,57 @@ describe("igdbImageLoader", () => {
   const cover = `${IGDB}/t_cover_big/co1.jpg`;
 
   it.each([
-    [64, "cover_small"],
-    [128, "cover_small_2x"],
-    [256, "cover_big"],
-    [384, "cover_big_2x"],
-    [640, "1080p"],
-    [3840, "1080p"],
-  ])("picks the smallest cover preset covering %ipx", (width, preset) => {
-    expect(igdbImageLoader({ src: cover, width })).toBe(`${IGDB}/t_${preset}/co1.jpg`);
+    [64, "cover_small", 90],
+    [128, "cover_small_2x", 180],
+    [256, "cover_big", 264],
+    [384, "cover_big_2x", 528],
+    [640, "1080p", 810],
+    [3840, "1080p", 810],
+  ])("picks the smallest cover preset covering %ipx", (width, preset, presetWidth) => {
+    expect(igdbImageLoader({ src: cover, width })).toBe(
+      `${IGDB}/t_${preset}/co1.jpg?w=${presetWidth}`
+    );
+  });
+
+  it("never returns the source unchanged, so Next.js sees a width-aware loader", () => {
+    const stored = `${IGDB}/t_cover_big_2x/co1.jpg`;
+    expect(igdbImageLoader({ src: stored, width: 400 })).not.toBe(stored);
+  });
+
+  it("returns one url per preset, whatever the requested width inside it", () => {
+    expect(igdbImageLoader({ src: cover, width: 384 })).toBe(
+      igdbImageLoader({ src: cover, width: 400 })
+    );
   });
 
   it("keeps the 16:9 media family for screenshots and artworks", () => {
     const art = `${IGDB}/t_1080p/ar1.jpg`;
-    expect(igdbImageLoader({ src: art, width: 384 })).toBe(`${IGDB}/t_screenshot_med/ar1.jpg`);
-    expect(igdbImageLoader({ src: art, width: 828 })).toBe(`${IGDB}/t_screenshot_big/ar1.jpg`);
-    expect(igdbImageLoader({ src: art, width: 1200 })).toBe(`${IGDB}/t_720p/ar1.jpg`);
-    expect(igdbImageLoader({ src: art, width: 1920 })).toBe(`${IGDB}/t_1080p/ar1.jpg`);
+    expect(igdbImageLoader({ src: art, width: 384 })).toBe(
+      `${IGDB}/t_screenshot_med/ar1.jpg?w=569`
+    );
+    expect(igdbImageLoader({ src: art, width: 828 })).toBe(
+      `${IGDB}/t_screenshot_big/ar1.jpg?w=889`
+    );
+    expect(igdbImageLoader({ src: art, width: 1200 })).toBe(`${IGDB}/t_720p/ar1.jpg?w=1280`);
+    expect(igdbImageLoader({ src: art, width: 1920 })).toBe(`${IGDB}/t_1080p/ar1.jpg?w=1920`);
   });
 
   it("handles retina source presets, logos and thumbs", () => {
     expect(igdbImageLoader({ src: `${IGDB}/t_cover_big_2x/co1.jpg`, width: 96 })).toBe(
-      `${IGDB}/t_cover_small_2x/co1.jpg`
+      `${IGDB}/t_cover_small_2x/co1.jpg?w=180`
     );
     expect(igdbImageLoader({ src: `${IGDB}/t_logo_med/l1.png`, width: 750 })).toBe(
-      `${IGDB}/t_logo_med_2x/l1.png`
+      `${IGDB}/t_logo_med_2x/l1.png?w=568`
     );
     expect(igdbImageLoader({ src: `${IGDB}/t_thumb/c1.jpg`, width: 48 })).toBe(
-      `${IGDB}/t_micro_2x/c1.jpg`
+      `${IGDB}/t_micro_2x/c1.jpg?w=70`
     );
   });
 
-  it("upgrades protocol-relative urls and leaves urls without preset untouched", () => {
+  it("upgrades protocol-relative urls", () => {
     expect(
       igdbImageLoader({ src: `//images.igdb.com/igdb/image/upload/t_thumb/a.jpg`, width: 16 })
-    ).toBe(`${IGDB}/t_micro/a.jpg`);
-    expect(igdbImageLoader({ src: "https://images.igdb.com/cover1.jpg", width: 256 })).toBe(
-      "https://images.igdb.com/cover1.jpg"
-    );
+    ).toBe(`${IGDB}/t_micro/a.jpg?w=35`);
   });
 });
 

@@ -56,7 +56,8 @@ export function getImageStrategy(src: unknown): ImageStrategy {
     return "optimize";
   }
   if (hostname === IGDB_HOST) {
-    return "igdb";
+    // URLs without a size preset cannot be resized: serve them as-is.
+    return IGDB_SIZE_SEGMENT.test(src) ? "igdb" : "passthrough";
   }
   if (hostname === UNSPLASH_HOST) {
     return "unsplash";
@@ -116,15 +117,19 @@ function getIgdbFamily(preset: string): string {
   return "media";
 }
 
-function pickPreset(ladder: IgdbPreset[], width: number): string {
-  const match = ladder.find((preset) => preset.width >= width);
-  return (match ?? ladder[ladder.length - 1]).name;
+function pickPreset(ladder: IgdbPreset[], width: number): IgdbPreset {
+  return ladder.find((preset) => preset.width >= width) ?? ladder[ladder.length - 1];
 }
 
 /**
  * Rewrites the `t_{size}` segment of an IGDB URL to the smallest preset of the
  * same family that covers the requested width. Next.js already multiplies the
  * width by the device pixel ratio when building the srcset.
+ *
+ * The `w` query param (ignored by the IGDB CDN) carries the preset width:
+ * Next.js warns in dev when a loader returns `src` unchanged, which happens
+ * whenever the picked preset is the stored one. Using the preset width rather
+ * than the requested one keeps a single URL, hence a single cache entry, per preset.
  */
 export function igdbImageLoader({ src, width }: ImageLoaderProps): string {
   const absoluteSrc = src.startsWith("//") ? `https:${src}` : src;
@@ -132,8 +137,10 @@ export function igdbImageLoader({ src, width }: ImageLoaderProps): string {
   if (!match) {
     return absoluteSrc;
   }
-  const ladder = IGDB_LADDERS[getIgdbFamily(match[1])];
-  return absoluteSrc.replace(IGDB_SIZE_SEGMENT, `/t_${pickPreset(ladder, width)}/`);
+  const preset = pickPreset(IGDB_LADDERS[getIgdbFamily(match[1])], width);
+  const url = new URL(absoluteSrc.replace(IGDB_SIZE_SEGMENT, `/t_${preset.name}/`));
+  url.searchParams.set("w", String(preset.width));
+  return url.toString();
 }
 
 export function unsplashImageLoader({ src, width, quality }: ImageLoaderProps): string {

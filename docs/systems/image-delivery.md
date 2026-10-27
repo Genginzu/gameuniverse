@@ -29,6 +29,11 @@ le plus petit preset couvrant la largeur demandée (DPR déjà inclus par Next) 
   16:9 centré.
 - Logos (`logo_med*`) et vignettes (`thumb*`, `micro*`).
 
+Le paramètre `?w=` ajouté par le loader est ignoré par le CDN IGDB. Il évite
+l'avertissement Next « loader does not implement width » quand le preset choisi
+est déjà celui stocké, et vaut la largeur du preset (une seule URL par preset,
+donc un seul cache). Une URL IGDB sans preset `t_*` est servie telle quelle.
+
 ## Utilisation
 
 ```tsx
