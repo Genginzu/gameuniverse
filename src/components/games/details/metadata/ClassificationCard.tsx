@@ -2,19 +2,21 @@
 
 import { useTranslations } from "next-intl";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
+import type { GameGenre } from "@/types/game";
 import type { GameDetailMetadata, GameTaxonomyTag } from "@/types/game-metadata";
 import { igdbLabel, type IgdbLabelGroup } from "@/lib/utils/igdbLabels";
 import { MetadataTagRow, type MetadataTag } from "./MetadataTagRow";
 
 interface ClassificationCardProps {
   metadata: GameDetailMetadata;
+  genres?: GameGenre[];
 }
 
 /** Listing filter query param of each taxonomy (see `GamesListingFilters`). */
 type FilterParam = "themes" | "gameModes" | "perspectives" | "engines";
 
-/** Technical sheet: themes, modes, perspectives, engines and franchises, each linking to its listing. */
-export function ClassificationCard({ metadata }: ClassificationCardProps) {
+/** Technical sheet: genres, franchises, themes, modes, perspectives and engines, each linking to its listing. */
+export function ClassificationCard({ metadata, genres = [] }: ClassificationCardProps) {
   const t = useTranslations("gameDetails.editorial.universe");
   const tLabels = useTranslations("igdbMetadata");
 
@@ -25,6 +27,13 @@ export function ClassificationCard({ metadata }: ClassificationCardProps) {
       href: { pathname: "/games", query: { [param]: tag.slug } },
     }));
 
+  // The games listing filters genres by translated name (see `genreGameIds`).
+  const genreTags: MetadataTag[] = genres.map((genre) => ({
+    key: genre.slug,
+    label: genre.name,
+    href: { pathname: "/games", query: { genres: genre.name } },
+  }));
+
   const franchiseTags: MetadataTag[] = metadata.franchises.map((franchise) => ({
     key: `${franchise.kind}-${franchise.slug}`,
     label: franchise.name,
@@ -32,6 +41,7 @@ export function ClassificationCard({ metadata }: ClassificationCardProps) {
   }));
 
   const rows = [
+    { label: t("genres"), tags: genreTags },
     { label: t("franchises"), tags: franchiseTags },
     { label: t("themes"), tags: toTags(metadata.themes, "themes", "themes") },
     { label: t("gameModes"), tags: toTags(metadata.gameModes, "gameModes", "gameModes") },
@@ -56,9 +66,10 @@ export function ClassificationCard({ metadata }: ClassificationCardProps) {
   );
 }
 
-export function hasClassification(metadata: GameDetailMetadata): boolean {
+export function hasClassification(metadata: GameDetailMetadata, genres: GameGenre[] = []): boolean {
   return (
-    metadata.franchises.length +
+    genres.length +
+      metadata.franchises.length +
       metadata.themes.length +
       metadata.gameModes.length +
       metadata.playerPerspectives.length +

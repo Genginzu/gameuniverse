@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Section "Univers & gameplay": IGDB technical sheet (franchises, themes,
+ * Section "Univers & gameplay": technical sheet (genres, franchises, themes,
  * modes, perspectives, engines), multiplayer capabilities and websites.
  */
 
@@ -23,8 +23,11 @@ export function UniverseSection({ game }: UniverseSectionProps) {
   const metadata = game.metadata;
 
   if (!metadata) return null;
+  const genres = game.genres ?? [];
   const hasMultiplayer = summarizeMultiplayer(metadata.multiplayerModes).capabilities.length > 0;
-  if (!hasClassification(metadata) && !hasMultiplayer && metadata.websites.length === 0) return null;
+  if (!hasClassification(metadata, genres) && !hasMultiplayer && metadata.websites.length === 0) {
+    return null;
+  }
 
   return (
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
@@ -34,7 +37,7 @@ export function UniverseSection({ game }: UniverseSectionProps) {
           <h2>{tEd.rich("sections.universeTitle", accentRich)}</h2>
         </div>
         <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-          <ClassificationCard metadata={metadata} />
+          <ClassificationCard metadata={metadata} genres={genres} />
           <MultiplayerCard modes={metadata.multiplayerModes} />
           <WebsitesCard websites={metadata.websites} />
         </div>

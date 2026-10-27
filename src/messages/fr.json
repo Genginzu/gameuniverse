@@ -1578,6 +1578,7 @@
       },
       "universe": {
         "sheet": "Classification",
+        "genres": "Genre",
         "franchises": "Franchise",
         "themes": "Thèmes",
         "gameModes": "Modes de jeu",

@@ -5,7 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 
 import fr from "@/messages/fr.json";
 import { UniverseSection } from "@/components/games/details/sections/UniverseSection";
-import type { GameDetails } from "@/types/game";
+import type { GameDetails, GameGenre } from "@/types/game";
 import type { GameDetailMetadata, GameMultiplayerMode } from "@/types/game-metadata";
 
 vi.mock("next-intl", async () => vi.importActual("next-intl"));
@@ -55,8 +55,8 @@ const emptyMetadata: GameDetailMetadata = {
   franchiseGames: [],
 };
 
-function renderSection(metadata: GameDetailMetadata | undefined) {
-  const game = { slug: "witcher-3", metadata } as unknown as GameDetails;
+function renderSection(metadata: GameDetailMetadata | undefined, genres: GameGenre[] = []) {
+  const game = { slug: "witcher-3", metadata, genres } as unknown as GameDetails;
   return render(
     <NextIntlClientProvider locale="fr" messages={fr}>
       <UniverseSection game={game} />
@@ -91,6 +91,13 @@ describe("UniverseSection", () => {
     expect(screen.getByRole("link", { name: "The Witcher" }).getAttribute("href")).toBe(
       "/franchises/the-witcher"
     );
+  });
+
+  it("lists genres in the technical sheet, linked to the filtered games listing", () => {
+    renderSection(emptyMetadata, [{ id: "g1", slug: "role-playing-rpg", name: "RPG" }]);
+
+    expect(screen.getByText("Genre")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "RPG" }).getAttribute("href")).toContain("genres=RPG");
   });
 
   it("merges multiplayer modes and lists websites official site first", () => {
