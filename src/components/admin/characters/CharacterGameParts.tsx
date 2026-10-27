@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,7 @@ export function AssignedGameRow({
     <div className="border-primary/20 bg-primary/5 dark:bg-primary/10 flex items-center justify-between rounded-xl border px-4 py-3">
       <div className="flex items-center gap-3">
         {game.coverImage && (
-          <Image
+          <AppImage
             src={game.coverImage}
             alt={game.title}
             width={32}
@@ -136,7 +136,7 @@ export function GameSearchPicker({
                 className="hover:bg-primary/10 dark:hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors"
               >
                 {game.coverImage && (
-                  <Image
+                  <AppImage
                     src={game.coverImage}
                     alt=""
                     width={24}

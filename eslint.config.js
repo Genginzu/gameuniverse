@@ -62,6 +62,19 @@ export default [
 
       // Import rules
       "no-duplicate-imports": "error",
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "next/image",
+              importNames: ["default"],
+              message:
+                "Use AppImage from @/components/ui/app-image: it applies the image loader policy (IGDB presets, Vercel quota).",
+            },
+          ],
+        },
+      ],
 
       // Code quality rules
       eqeqeq: ["error", "always"],
@@ -127,6 +140,13 @@ export default [
       // Allow any in config files
       "@typescript-eslint/no-explicit-any": "off",
       "no-console": "off",
+    },
+  },
+  {
+    files: ["src/components/ui/app-image.tsx"],
+    rules: {
+      // The single place allowed to wrap next/image
+      "no-restricted-imports": "off",
     },
   },
   prettier, // Must be last to override other configs

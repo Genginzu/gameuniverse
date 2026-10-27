@@ -11,7 +11,7 @@
  * onglet. Pour rester simple, pas de modal player ici.
  */
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
@@ -80,7 +80,7 @@ export function MediaSection({ game }: MediaSectionProps) {
         <div className="editorial-game-detail-media-grid">
           {featured && (
             <figure className="editorial-game-detail-media-tile editorial-game-detail-media-tile--featured">
-              <Image
+              <AppImage
                 src={featured.url}
                 alt={featured.altText ?? `${game.title} screenshot`}
                 fill
@@ -91,7 +91,7 @@ export function MediaSection({ game }: MediaSectionProps) {
           )}
           {rest.slice(0, 2).map((shot) => (
             <figure key={shot.id} className="editorial-game-detail-media-tile">
-              <Image
+              <AppImage
                 src={shot.url}
                 alt={shot.altText ?? `${game.title} screenshot`}
                 fill
@@ -121,7 +121,7 @@ export function MediaSection({ game }: MediaSectionProps) {
                 className="editorial-game-detail-video-card"
               >
                 {thumb && (
-                  <Image
+                  <AppImage
                     src={thumb}
                     alt={video.title}
                     fill

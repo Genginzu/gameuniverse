@@ -12,7 +12,7 @@
  * masquer la cellule (la grille reste équilibrée).
  */
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
@@ -72,7 +72,7 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
                     aria-label={g.title}
                   >
                     {g.coverImage ? (
-                      <Image src={g.coverImage} alt={g.title} fill sizes="64px" className="object-cover" />
+                      <AppImage src={g.coverImage} alt={g.title} fill sizes="64px" className="object-cover" />
                     ) : (
                       <Icon
                         icon="lucide:gamepad-2"

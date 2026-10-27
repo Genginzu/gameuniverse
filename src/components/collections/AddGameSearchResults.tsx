@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { SearchResultItem } from "@/types/search";
 import type { UIEvent } from "react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 
 interface SelectedGamePreviewProps {
   game: SearchResultItem;
@@ -20,7 +20,7 @@ export function SelectedGamePreview({ game, onClear }: SelectedGamePreviewProps)
   return (
     <div className="border-editorial-line bg-editorial-3 flex items-center gap-3 rounded-xl border p-3">
       {game.coverUrl ? (
-        <Image
+        <AppImage
           src={game.coverUrl}
           alt={game.title}
           width={36}
@@ -124,7 +124,7 @@ export function SearchInput({
                       className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-white/[0.04]"
                     >
                       {game.coverUrl ? (
-                        <Image
+                        <AppImage
                           src={game.coverUrl}
                           alt={game.title}
                           width={28}

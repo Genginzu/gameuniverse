@@ -60,10 +60,10 @@
 
 ## 📖 Features — Bibliothèque
 
-| Document                                        | Description                  |
-| ----------------------------------------------- | ---------------------------- |
-| [setup.md](features/library/setup.md)           | Setup de la bibliothèque     |
-| [comparison.md](features/library/comparison.md) | Comparaison de bibliothèques |
+| Document                                        | Description                   |
+| ----------------------------------------------- | ----------------------------- |
+| [setup.md](features/library/setup.md)           | Setup de la bibliothèque      |
+| [comparison.md](features/library/comparison.md) | Comparaison de bibliothèques  |
 | [quick-add.md](features/library/quick-add.md)   | Ajout rapide depuis une carte |
 | [status.md](features/library/status.md)         | Statut des jeux (en cours…)   |
 
@@ -75,53 +75,54 @@
 
 ## 🎓 Features — Coaching
 
-| Document                                                     | Description                                              |
-| ------------------------------------------------------------ | -------------------------------------------------------- |
+| Document                                                       | Description                                                  |
+| -------------------------------------------------------------- | ------------------------------------------------------------ |
 | [session-lifecycle.md](features/coaching/session-lifecycle.md) | Cycle de vie des sessions : statuts, paiement, remboursement |
 
 ## ⚙️ Features — Admin
 
-| Document                                                                | Description                             |
-| ----------------------------------------------------------------------- | --------------------------------------- |
-| [achievements-management.md](features/admin/achievements-management.md) | Gestion des succès                      |
+| Document                                                                | Description                              |
+| ----------------------------------------------------------------------- | ---------------------------------------- |
+| [achievements-management.md](features/admin/achievements-management.md) | Gestion des succès                       |
 | [admin-entity-resource.md](features/admin/admin-entity-resource.md)     | Listes, suppression et formulaires admin |
-| [age-classification.md](features/admin/age-classification.md)           | Classification d'âge                    |
-| [character-management.md](features/admin/character-management.md)       | Gestion des personnages                 |
-| [company-management.md](features/admin/company-management.md)           | Gestion des entreprises                 |
-| [game-color-preview.md](features/admin/game-color-preview.md)           | Prévisualisation couleurs               |
-| [genre-management.md](features/admin/genre-management.md)               | Gestion des genres                      |
-| [home-showcase.md](features/admin/home-showcase.md)                     | Vitrine de l'accueil (jeux, persos)     |
-| [language-management.md](features/admin/language-management.md)         | Gestion des langues                     |
-| [pandascore-sync.md](features/admin/pandascore-sync.md)                 | Sync esport PandaScore (Edge Functions) |
-| [review-management.md](features/admin/review-management.md)             | Gestion des avis                        |
-| [translation-management.md](features/admin/translation-management.md)   | Gestion des traductions                 |
+| [age-classification.md](features/admin/age-classification.md)           | Classification d'âge                     |
+| [character-management.md](features/admin/character-management.md)       | Gestion des personnages                  |
+| [company-management.md](features/admin/company-management.md)           | Gestion des entreprises                  |
+| [game-color-preview.md](features/admin/game-color-preview.md)           | Prévisualisation couleurs                |
+| [genre-management.md](features/admin/genre-management.md)               | Gestion des genres                       |
+| [home-showcase.md](features/admin/home-showcase.md)                     | Vitrine de l'accueil (jeux, persos)      |
+| [language-management.md](features/admin/language-management.md)         | Gestion des langues                      |
+| [pandascore-sync.md](features/admin/pandascore-sync.md)                 | Sync esport PandaScore (Edge Functions)  |
+| [review-management.md](features/admin/review-management.md)             | Gestion des avis                         |
+| [translation-management.md](features/admin/translation-management.md)   | Gestion des traductions                  |
 
 ## 🔧 Systèmes transversaux
 
-| Document                                                               | Description                    |
-| ---------------------------------------------------------------------- | ------------------------------ |
-| [achievements.md](systems/achievements.md)                             | Système de succès              |
+| Document                                                               | Description                                |
+| ---------------------------------------------------------------------- | ------------------------------------------ |
+| [achievements.md](systems/achievements.md)                             | Système de succès                          |
 | [activity-rewards.md](systems/activity-rewards.md)                     | Récompenses d'activité (succès + GU Coins) |
-| [global-search.md](systems/global-search.md)                           | Recherche globale              |
-| [navigation-sidebar.md](systems/navigation-sidebar.md)                 | Sidebar de navigation          |
-| [navigation-model.md](systems/navigation-model.md)                     | Navigation Model éditorial     |
-| [ui-redesign.md](systems/ui-redesign.md)                               | Refonte UI gaming (thème néon) |
-| [background-customization.md](systems/background-customization.md)     | Personnalisation arrière-plan  |
-| [image-crop-upload.md](systems/image-crop-upload.md)                   | Crop & upload d'images         |
-| [error-handling.md](systems/error-handling.md)                         | Gestion des erreurs            |
-| [optimistic-mutations.md](systems/optimistic-mutations.md)             | Mutations optimistes SWR       |
-| [database-functions.md](systems/database-functions.md)                 | Référence fonctions DB         |
-| [security-fixes.md](systems/security-fixes.md)                         | Correctifs sécurité            |
-| [resend-configuration.md](systems/resend-configuration.md)             | Configuration Resend (email)   |
-| [supabase-storage-migration.md](systems/supabase-storage-migration.md) | Migration storage Supabase     |
-| [isr-hybrid.md](systems/isr-hybrid.md)                                 | ISR hybrid pages publiques     |
-| [database-privileges.md](systems/database-privileges.md)               | Privilèges DB (grants, RLS)    |
-| [rate-limiting.md](systems/rate-limiting.md)                           | Limitation des requêtes        |
-| [route-pipeline.md](systems/route-pipeline.md)                         | Prologue des routes API        |
-| [color-palette.md](systems/color-palette.md)                           | Palette de couleurs (tokens)   |
-| [legal-pages.md](systems/legal-pages.md)                               | Pages légales & infos éditeur  |
-| [coin-ledger.md](systems/coin-ledger.md)                               | Ledger GU Coins (atomique)     |
-| [dismissable-layer.md](systems/dismissable-layer.md)                   | Menus & overlays refermables   |
+| [global-search.md](systems/global-search.md)                           | Recherche globale                          |
+| [navigation-sidebar.md](systems/navigation-sidebar.md)                 | Sidebar de navigation                      |
+| [navigation-model.md](systems/navigation-model.md)                     | Navigation Model éditorial                 |
+| [ui-redesign.md](systems/ui-redesign.md)                               | Refonte UI gaming (thème néon)             |
+| [background-customization.md](systems/background-customization.md)     | Personnalisation arrière-plan              |
+| [image-crop-upload.md](systems/image-crop-upload.md)                   | Crop & upload d'images                     |
+| [error-handling.md](systems/error-handling.md)                         | Gestion des erreurs                        |
+| [optimistic-mutations.md](systems/optimistic-mutations.md)             | Mutations optimistes SWR                   |
+| [database-functions.md](systems/database-functions.md)                 | Référence fonctions DB                     |
+| [security-fixes.md](systems/security-fixes.md)                         | Correctifs sécurité                        |
+| [resend-configuration.md](systems/resend-configuration.md)             | Configuration Resend (email)               |
+| [supabase-storage-migration.md](systems/supabase-storage-migration.md) | Migration storage Supabase                 |
+| [isr-hybrid.md](systems/isr-hybrid.md)                                 | ISR hybrid pages publiques                 |
+| [database-privileges.md](systems/database-privileges.md)               | Privilèges DB (grants, RLS)                |
+| [rate-limiting.md](systems/rate-limiting.md)                           | Limitation des requêtes                    |
+| [route-pipeline.md](systems/route-pipeline.md)                         | Prologue des routes API                    |
+| [color-palette.md](systems/color-palette.md)                           | Palette de couleurs (tokens)               |
+| [legal-pages.md](systems/legal-pages.md)                               | Pages légales & infos éditeur              |
+| [coin-ledger.md](systems/coin-ledger.md)                               | Ledger GU Coins (atomique)                 |
+| [dismissable-layer.md](systems/dismissable-layer.md)                   | Menus & overlays refermables               |
+| [image-delivery.md](systems/image-delivery.md)                         | Images : loaders & quota Vercel            |
 
 ### 💰 Pricing
 

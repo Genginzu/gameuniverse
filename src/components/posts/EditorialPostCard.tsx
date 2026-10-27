@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { PostContentRenderer } from "@/components/players/posts/PostContentRenderer";
 import type { PostWithAuthor } from "@/types/post";
@@ -61,7 +61,7 @@ export function EditorialPostCard({ post, locale }: EditorialPostCardProps) {
       <div className="pl-[52px]">
         {post.imageUrl && !imageError && (
           <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-xl">
-            <Image
+            <AppImage
               src={post.imageUrl}
               alt=""
               fill

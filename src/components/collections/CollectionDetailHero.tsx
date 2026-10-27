@@ -10,7 +10,7 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 
 import { Link } from "@/i18n/navigation";
 import { LazyImage } from "@/components/ui/lazy-image";
@@ -211,7 +211,7 @@ function OwnerBadge({
       locale={locale}
     >
       {owner.avatarUrl ? (
-        <Image
+        <AppImage
           src={owner.avatarUrl}
           alt=""
           width={32}

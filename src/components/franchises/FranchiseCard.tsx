@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
@@ -18,7 +18,7 @@ export function FranchiseCard({ franchise }: { franchise: FranchiseSummary }) {
     >
       <div className="bg-editorial-3 relative aspect-[3/4]">
         {franchise.coverImage ? (
-          <Image
+          <AppImage
             src={franchise.coverImage}
             alt=""
             fill

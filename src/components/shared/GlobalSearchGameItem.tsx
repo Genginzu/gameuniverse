@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import type { GlobalSearchGameItem as GameItem } from "@/types/global-search";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 
 interface GlobalSearchGameItemProps {
   item: GameItem;
@@ -23,7 +23,7 @@ export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSear
       {/* Cover image */}
       <div className="relative aspect-3/4 w-full overflow-hidden rounded-lg bg-white/5">
         {item.coverUrl ? (
-          <Image
+          <AppImage
             src={item.coverUrl}
             alt={item.title}
             fill

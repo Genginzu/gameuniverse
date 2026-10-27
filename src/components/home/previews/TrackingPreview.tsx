@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
@@ -18,7 +18,7 @@ function NowPlayingRow({ game, progress }: { game: GameSummary; progress: number
     <div className="flex items-center gap-3">
       <div className="bg-editorial-3 relative h-14 w-10 shrink-0 overflow-hidden rounded-md">
         {game.coverImage ? (
-          <Image src={game.coverImage} alt="" fill sizes="40px" className="object-cover" />
+          <AppImage src={game.coverImage} alt="" fill sizes="40px" className="object-cover" />
         ) : (
           <Icon icon="lucide:gamepad-2" className="text-editorial-muted m-auto size-5" />
         )}

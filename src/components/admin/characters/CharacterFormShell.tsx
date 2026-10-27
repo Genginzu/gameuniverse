@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { type UseFormReturn } from "react-hook-form";
 
 import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
@@ -33,7 +33,7 @@ export function CharacterHeroBanner({
       }
     >
       {backgroundImageUrl ? (
-        <Image
+        <AppImage
           key={backgroundImageUrl}
           src={backgroundImageUrl}
           alt=""
@@ -50,7 +50,7 @@ export function CharacterHeroBanner({
       <div className="relative z-10 flex flex-col gap-6 p-6 sm:flex-row sm:items-end sm:gap-8">
         <div className="shrink-0">
           {mainImageUrl ? (
-            <Image
+            <AppImage
               key={mainImageUrl}
               src={mainImageUrl}
               alt="Character"

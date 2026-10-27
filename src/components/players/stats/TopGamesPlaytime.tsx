@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { PlaytimeGameEntry } from "@/types/dashboard-stats";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 
 interface TopGamesPlaytimeProps {
@@ -36,7 +36,7 @@ export function TopGamesPlaytime({ games, locale }: TopGamesPlaytimeProps) {
               {/* Cover */}
               <div className="h-10 w-7 shrink-0 overflow-hidden rounded-md">
                 {game.coverImage ? (
-                  <Image
+                  <AppImage
                     src={game.coverImage}
                     alt={game.title}
                     width={28}

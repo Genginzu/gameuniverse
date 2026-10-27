@@ -27,7 +27,7 @@
  */
 
 import type { ReactNode } from "react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
@@ -123,7 +123,7 @@ function GameCardLink({
     >
       <div className="editorial-card-media">
         {game.coverImage ? (
-          <Image
+          <AppImage
             src={toHiResCover(game.coverImage)}
             alt={game.title}
             fill

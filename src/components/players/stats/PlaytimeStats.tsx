@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { PlaytimeData } from "@/types/dashboard-stats";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
@@ -61,7 +61,7 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
             <>
               <div className="h-16 w-12 shrink-0 overflow-hidden rounded-lg">
                 {playtime.topGame.coverImage ? (
-                  <Image
+                  <AppImage
                     src={playtime.topGame.coverImage}
                     alt={playtime.topGame.title}
                     width={48}

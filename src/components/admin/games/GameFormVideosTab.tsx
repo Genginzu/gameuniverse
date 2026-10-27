@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { GameFormTabProps } from "@/types/admin-games";
@@ -120,7 +120,7 @@ function VideoItem({
         {/* Thumbnail preview */}
         {thumbnailUrl && (
           <div className="relative h-20 w-32 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700">
-            <Image
+            <AppImage
               src={thumbnailUrl}
               alt="Video thumbnail"
               fill

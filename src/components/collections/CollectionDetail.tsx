@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import type { CollectionDetail as CollectionDetailType } from "@/types/collection";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { CollectionGameCard } from "./CollectionGameCard";
 
 interface CollectionDetailProps {
@@ -69,7 +69,7 @@ function OwnerBadge({ owner }: { owner: CollectionDetailType["owner"] }) {
   return (
     <div className="flex items-center gap-2">
       {owner.avatarUrl ? (
-        <Image
+        <AppImage
           src={owner.avatarUrl}
           alt={ownerName}
           width={24}

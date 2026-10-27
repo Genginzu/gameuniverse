@@ -8,7 +8,7 @@
  *   bouton "ajouter mon temps de jeu" (utilisateur connecté).
  */
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
@@ -98,7 +98,7 @@ export function PlaytimeSection({ game }: PlaytimeSectionProps) {
                     return (
                       <div key={c.userId} className="editorial-game-detail-playtime-contributor">
                         {c.avatarUrl && (
-                          <Image src={c.avatarUrl} alt={c.username ?? ""} width={28} height={28} />
+                          <AppImage src={c.avatarUrl} alt={c.username ?? ""} width={28} height={28} />
                         )}
                         <span>
                           {c.username ?? tPlayers("anonymous")} · {hours.toFixed(1)}h

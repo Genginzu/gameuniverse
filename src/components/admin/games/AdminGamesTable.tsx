@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
@@ -134,7 +134,7 @@ export function AdminGamesTable({
                 {games.map((game) => (
                   <tr key={game.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50" onClick={() => onEdit(game.id)}>
                     <td className="px-4 py-3">
-                      {game.coverImage ? <Image src={game.coverImage} alt={game.title} width={40} height={40} className="h-10 w-10 rounded-lg object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700"><Icon icon="fa:image" className="h-4 w-4 text-gray-400" /></div>}
+                      {game.coverImage ? <AppImage src={game.coverImage} alt={game.title} width={40} height={40} className="h-10 w-10 rounded-lg object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700"><Icon icon="fa:image" className="h-4 w-4 text-gray-400" /></div>}
                     </td>
                     <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{game.title}</td>
                     <td className="hidden px-4 py-3 text-gray-500 sm:table-cell dark:text-gray-400">{formatDate(game.releaseDate)}</td>

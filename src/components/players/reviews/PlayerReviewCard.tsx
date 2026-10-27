@@ -2,7 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Link } from "@/i18n/navigation";
 
 import { cn } from "@/lib/utils";
@@ -75,13 +75,12 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
         <Link href={`/games/${review.gameSlug}`} className="shrink-0">
           <div className="editorial-review-card-cover">
             {review.gameCoverUrl ? (
-              <Image
+              <AppImage
                 src={review.gameCoverUrl}
                 alt={review.gameName}
                 fill
                 className="object-cover"
                 sizes="56px"
-                unoptimized
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">

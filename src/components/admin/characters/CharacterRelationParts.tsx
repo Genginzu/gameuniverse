@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { RELATIONSHIP_TYPES } from "@/lib/validations/admin-character-form";
@@ -32,7 +32,7 @@ export function RelationRow({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {characterImage && (
-            <Image
+            <AppImage
               src={characterImage}
               alt={characterName}
               width={40}
@@ -165,7 +165,7 @@ export function CharacterSearchPicker({
                 className="hover:bg-primary/10 dark:hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors"
               >
                 {character.mainImage && (
-                  <Image
+                  <AppImage
                     src={character.mainImage}
                     alt=""
                     width={32}

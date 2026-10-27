@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
@@ -46,7 +46,7 @@ export function PlayerSearchResults({
             className="flex w-full items-center gap-3 rounded-lg p-3 text-left transition-all duration-300 hover:bg-white/60 dark:hover:bg-slate-700/60"
           >
             {player.avatarUrl ? (
-              <Image
+              <AppImage
                 src={player.avatarUrl}
                 alt={player.username}
                 width={32}

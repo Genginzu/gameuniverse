@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Icon } from "@iconify/react";
 
 import type { HomeShowcaseKind } from "@/types/home";
@@ -13,7 +13,7 @@ export function ShowcaseThumb({
   return (
     <span className="relative block h-12 w-9 shrink-0 overflow-hidden rounded-md bg-slate-200 dark:bg-slate-700">
       {imageUrl ? (
-        <Image src={imageUrl} alt="" fill sizes="36px" className="object-cover" />
+        <AppImage src={imageUrl} alt="" fill sizes="36px" className="object-cover" />
       ) : (
         <Icon
           icon={kind === "game" ? "lucide:gamepad-2" : "lucide:user-round"}

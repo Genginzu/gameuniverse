@@ -5,7 +5,7 @@
  * Layout magazine (heading rail à gauche, cartes à droite en grille 2 col).
  */
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
@@ -38,7 +38,7 @@ export function AgeRatingsSection({ game }: AgeRatingsSectionProps) {
                 <div className="editorial-game-detail-rating-badge">
                   {rating.iconUrl ? (
                     <div className="relative h-16 w-12">
-                      <Image
+                      <AppImage
                         src={rating.iconUrl}
                         alt={rating.rating}
                         fill

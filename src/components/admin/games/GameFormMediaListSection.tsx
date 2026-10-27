@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { GameFormTabProps } from "@/types/admin-games";
@@ -62,7 +62,7 @@ export function MediaListSection({
               <div className="flex items-start gap-4">
                 {form.watch(`${fieldName}.${idx}.url`) && (
                   <div className="relative h-20 w-32 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <Image
+                    <AppImage
                       src={form.watch(`${fieldName}.${idx}.url`)}
                       alt={form.watch(`${fieldName}.${idx}.alt_text`) || ""}
                       fill

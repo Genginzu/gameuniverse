@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
@@ -117,7 +117,7 @@ export function AdminCharactersTable({ characters, pagination, onPageChange, onS
                 {characters.map((character) => (
                   <tr key={character.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50" onClick={() => onEdit(character.id)}>
                     <td className="px-4 py-3">
-                      {character.mainImage ? <Image src={character.mainImage} alt={character.name} width={40} height={40} className="h-10 w-10 rounded-lg object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700"><Icon icon="fa:image" className="h-4 w-4 text-gray-400" /></div>}
+                      {character.mainImage ? <AppImage src={character.mainImage} alt={character.name} width={40} height={40} className="h-10 w-10 rounded-lg object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700"><Icon icon="fa:image" className="h-4 w-4 text-gray-400" /></div>}
                     </td>
                     <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{character.name}</td>
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{character.role ?? "—"}</td>

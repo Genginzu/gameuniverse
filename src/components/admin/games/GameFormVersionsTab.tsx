@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -85,7 +85,7 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
               <div className="mb-3 flex items-start gap-4">
                 {form.watch(`versions.${idx}.cover_image_url`) && (
                   <div className="relative h-24 w-16 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <Image
+                    <AppImage
                       src={form.watch(`versions.${idx}.cover_image_url`) || ""}
                       alt=""
                       fill

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import type { CollectionSuggestion } from "@/types/smartCollection";
 
 interface SuggestionCardProps {
@@ -20,7 +20,7 @@ function PreviewMosaic({ suggestion }: { suggestion: CollectionSuggestion }) {
       {previews.map((game) => (
         <div key={game.id} className="bg-editorial-1 relative aspect-[3/4]">
           {game.coverImage ? (
-            <Image
+            <AppImage
               src={game.coverImage}
               alt={game.title}
               fill

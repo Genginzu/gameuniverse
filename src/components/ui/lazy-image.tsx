@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface LazyImageProps {
@@ -59,7 +59,7 @@ export function LazyImage({
   return (
     <div className={`${fill ? "relative h-full w-full" : "relative"} ${wrapperClassName}`}>
       {showSkeleton && !imageLoaded && <Skeleton className={`absolute inset-0 ${className}`} />}
-      <Image
+      <AppImage
         src={effectiveSrc}
         alt={alt}
         width={width}

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -116,7 +116,7 @@ function MediaItemCard({
       <div className="flex items-start gap-4">
         {url && !showThumbnail && (
           <div className="relative h-20 w-32 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700">
-            <Image
+            <AppImage
               key={url}
               src={url}
               alt={form.watch(`media.${index}.alt_text`) || ""}

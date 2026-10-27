@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
@@ -117,7 +117,7 @@ export function FranchiseGamesManager({ franchiseId }: { franchiseId: string }) 
 function Cover({ src }: { src: string | null }) {
   return (
     <span className="relative block h-12 w-9 shrink-0 overflow-hidden rounded bg-gray-200 dark:bg-gray-700">
-      {src && <Image src={src} alt="" fill sizes="36px" className="object-cover" />}
+      {src && <AppImage src={src} alt="" fill sizes="36px" className="object-cover" />}
     </span>
   );
 }

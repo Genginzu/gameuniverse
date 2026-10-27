@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
@@ -42,7 +42,7 @@ export function FranchiseGameSearchResults({
             >
               <span className="relative block h-12 w-9 shrink-0 overflow-hidden rounded bg-gray-200 dark:bg-gray-700">
                 {game.coverUrl && (
-                  <Image src={game.coverUrl} alt="" fill sizes="36px" className="object-cover" />
+                  <AppImage src={game.coverUrl} alt="" fill sizes="36px" className="object-cover" />
                 )}
               </span>
               <span className="min-w-0 flex-1">

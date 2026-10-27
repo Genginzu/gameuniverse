@@ -5,7 +5,7 @@
  * Cards 2 cols avec image + meta date + nom + résumé.
  */
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
@@ -40,7 +40,7 @@ export function DlcSection({ game, locale }: DlcSectionProps) {
             <SpotlightCard key={item.id} className="editorial-game-detail-cover-card">
               {item.coverImageUrl && (
                 <div className="editorial-game-detail-cover-card-img">
-                  <Image
+                  <AppImage
                     src={item.coverImageUrl}
                     alt={item.name}
                     fill

@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Icon } from "@iconify/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -112,7 +112,7 @@ function ImageField({
         <div
           className={`relative ${imageHeight} rounded-xl border border-gray-200 dark:border-gray-700`}
         >
-          <Image
+          <AppImage
             key={imageUrl}
             src={imageUrl}
             alt={`${label} preview`}

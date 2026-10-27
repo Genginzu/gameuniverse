@@ -8,7 +8,7 @@
  * affiche juste le prix actuel par store.
  */
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
@@ -48,7 +48,7 @@ export function PricingSection({ game, formatPrice }: PricingSectionProps) {
                   <p className="editorial-game-detail-price-store">
                     {p.store.logoUrl ? (
                       <span className="inline-flex items-center gap-2">
-                        <Image
+                        <AppImage
                           src={p.store.logoUrl}
                           alt={p.store.name}
                           width={20}

@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 
 import { CropEditor } from "@/components/shared/CropEditor";
 import { useImageUpload } from "@/hooks/useImageUpload";
@@ -141,10 +141,11 @@ export function ImageUploader({
           >
             {currentImageUrl ? (
               <>
-                <Image
+                <AppImage
                   src={currentImageUrl}
                   alt={t("preview")}
                   fill
+                  sizes={isAvatar ? "128px" : "(min-width: 768px) 50vw, 100vw"}
                   className="rounded-xl object-cover"
                 />
                 {/* Hover overlay — camera icon to signal clickability */}

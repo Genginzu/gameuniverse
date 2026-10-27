@@ -8,7 +8,7 @@ import { ReviewVoteButtons } from "./ReviewVoteButtons";
 import { ReportButton } from "@/components/shared/ReportButton";
 import type { ReviewWithVotes } from "@/types/review";
 import { useAuthorDisplayName } from "@/hooks/useAuthorDisplayName";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 
 interface ReviewCardProps {
   review: ReviewWithVotes;
@@ -19,7 +19,7 @@ function ReviewAvatar({ name, avatar }: { name: string | null; avatar: string | 
 
   if (avatar) {
     return (
-      <Image
+      <AppImage
         src={avatar}
         alt={name ?? t("anonymousPlayer")}
         width={40}

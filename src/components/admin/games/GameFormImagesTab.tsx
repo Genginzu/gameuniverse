@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import type { GameFormTabProps } from "@/types/admin-games";
@@ -24,7 +24,7 @@ export function GameFormImagesTab({ form, t, isIgdbField }: GameFormTabProps) {
           )} />
           {coverImageUrl && (
             <div className="relative h-96 rounded-xl border border-gray-200 dark:border-gray-700">
-              <Image src={coverImageUrl} alt="Cover preview" fill unoptimized className="rounded-xl object-contain" onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = "none"; }} />
+              <AppImage src={coverImageUrl} alt="Cover preview" fill unoptimized className="rounded-xl object-contain" onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = "none"; }} />
             </div>
           )}
         </div>
@@ -38,7 +38,7 @@ export function GameFormImagesTab({ form, t, isIgdbField }: GameFormTabProps) {
           )} />
           {backgroundImageUrl && (
             <div className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700" style={{ height: "360px" }}>
-              <Image src={backgroundImageUrl} alt="Background preview" fill unoptimized className="object-contain" onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = "none"; }} />
+              <AppImage src={backgroundImageUrl} alt="Background preview" fill unoptimized className="object-contain" onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = "none"; }} />
             </div>
           )}
         </div>

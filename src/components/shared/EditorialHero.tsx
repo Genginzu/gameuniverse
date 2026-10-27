@@ -9,7 +9,7 @@
  * pas de backdrop-blur). Voir docs/design/editorial-refonte-plan.md.
  */
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import type { ReactNode } from "react";
 
 export type EditorialHeroPart =
@@ -45,7 +45,7 @@ export function EditorialHero({
 }: EditorialHeroProps) {
   return (
     <section className="editorial-hero flex">
-      <Image
+      <AppImage
         src={backgroundImage}
         alt={backgroundAlt}
         fill
@@ -93,7 +93,7 @@ export function EditorialHero({
                     className="relative inline-block h-[0.9em] w-[1.6em] overflow-hidden rounded-full ring-2 ring-[rgb(var(--neon-primary))]/40"
                     aria-hidden
                   >
-                    <Image
+                    <AppImage
                       src={part.src}
                       alt={part.alt}
                       fill

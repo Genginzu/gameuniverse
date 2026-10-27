@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
@@ -144,7 +144,7 @@ export function PlatformList({
                       </td>
                       <td className="px-4 py-3">
                         {platform.iconUrl ? (
-                          <Image
+                          <AppImage
                             src={platform.iconUrl}
                             alt={name}
                             width={24}

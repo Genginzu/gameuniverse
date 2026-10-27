@@ -9,7 +9,7 @@
  * inline score/price + live ticker en bas).
  */
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
@@ -54,7 +54,7 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
       {/* Background full-bleed */}
       <div className="editorial-game-detail-hero-bg" aria-hidden="true">
         {hasBackground && (
-          <Image src={bg} alt="" fill priority className="object-cover" sizes="100vw" />
+          <AppImage src={bg} alt="" fill priority className="object-cover" sizes="100vw" />
         )}
         <div className="editorial-scanlines" />
       </div>

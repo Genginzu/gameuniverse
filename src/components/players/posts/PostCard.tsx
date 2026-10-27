@@ -5,7 +5,7 @@ import { useTranslations, useFormatter } from "next-intl";
 import { Icon } from "@iconify/react";
 import { LazyImage } from "@/components/ui/lazy-image";
 import type { Post } from "@/types/post";
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { PostContentRenderer } from "@/components/players/posts/PostContentRenderer";
 import { PostMenu } from "./PostMenu";
 import { ReportButton } from "@/components/shared/ReportButton";
@@ -83,7 +83,7 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
       <div className="pl-[52px]">
         {post.imageUrl && !imageError && (
           <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-xl">
-            <Image src={post.imageUrl} alt="" fill onError={() => setImageError(true)} className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
+            <AppImage src={post.imageUrl} alt="" fill onError={() => setImageError(true)} className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
           </div>
         )}
 

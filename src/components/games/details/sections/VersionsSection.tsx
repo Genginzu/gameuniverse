@@ -5,7 +5,7 @@
  * Layout : heading magazine + grille de cards 3 cols (image + titre + desc).
  */
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
@@ -33,7 +33,7 @@ export function VersionsSection({ game }: VersionsSectionProps) {
             <SpotlightCard key={version.id} className="editorial-game-detail-cover-card">
               {version.coverImageUrl && (
                 <div className="editorial-game-detail-cover-card-img">
-                  <Image
+                  <AppImage
                     src={version.coverImageUrl}
                     alt={version.title}
                     fill

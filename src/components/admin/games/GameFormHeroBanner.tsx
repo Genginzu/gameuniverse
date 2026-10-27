@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { type UseFormReturn } from "react-hook-form";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import type { AdminGenre } from "@/types/admin-games";
@@ -23,7 +23,7 @@ export function HeroBanner({
   return (
     <div className="relative overflow-hidden rounded-2xl border border-gray-200/60 bg-linear-to-br from-gray-900 to-gray-800 shadow-lg dark:border-gray-700/40">
       {backgroundImageUrl ? (
-        <Image
+        <AppImage
           src={backgroundImageUrl}
           alt=""
           fill
@@ -39,7 +39,7 @@ export function HeroBanner({
       <div className="relative z-10 flex flex-col gap-6 p-6 sm:flex-row sm:items-end sm:gap-8">
         <div className="shrink-0">
           {coverImageUrl ? (
-            <Image
+            <AppImage
               src={coverImageUrl}
               alt="Cover"
               width={128}

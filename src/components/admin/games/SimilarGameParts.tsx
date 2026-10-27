@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { AppImage } from "@/components/ui/app-image";
 import { Link } from "@/i18n/navigation";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Icon } from "@iconify/react";
@@ -46,7 +46,7 @@ export function SimilarGameSearchDropdown({
           >
             {game.coverImage ? (
               <div className="relative h-10 w-7 shrink-0 overflow-hidden rounded border border-gray-200 dark:border-gray-600">
-                <Image src={game.coverImage} alt="" fill className="object-cover" />
+                <AppImage src={game.coverImage} alt="" fill sizes="28px" className="object-cover" />
               </div>
             ) : (
               <div className="flex h-10 w-7 shrink-0 items-center justify-center rounded border border-gray-200 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
@@ -97,7 +97,13 @@ export function SimilarGameRow({
         >
           {sg.game.coverImage ? (
             <div className="relative h-12 w-8 shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
-              <Image src={sg.game.coverImage} alt="" fill className="object-cover" />
+              <AppImage
+                src={sg.game.coverImage}
+                alt=""
+                fill
+                sizes="32px"
+                className="object-cover"
+              />
             </div>
           ) : (
             <div className="flex h-12 w-8 shrink-0 items-center justify-center rounded-md border border-gray-200 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
