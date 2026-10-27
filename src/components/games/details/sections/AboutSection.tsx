@@ -2,8 +2,8 @@
 
 /**
  * Section "About" : description + storyline en mise en page magazine.
- * Côté gauche : kicker numéroté + titre display, côté droit : texte en
- * 2 colonnes desktop avec un lead en blanc et le storyline en 2nde colonne.
+ * Côté gauche : kicker numéroté + titre display, côté droit : lead en blanc
+ * puis storyline empilés en une seule colonne.
  */
 
 import { useTranslations } from "next-intl";
@@ -21,7 +21,7 @@ export function AboutSection({ game }: AboutSectionProps) {
   if (!game.description && !game.storyline) return null;
 
   return (
-    <section className="editorial-game-detail-section">
+    <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <div className="editorial-game-detail-section-grid">
         <div className="editorial-game-detail-section-heading">
           <KickerLabel className="mb-3">01 — {tEd("sections.about")}</KickerLabel>

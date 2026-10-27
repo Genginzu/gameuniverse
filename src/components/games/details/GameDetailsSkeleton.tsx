@@ -39,7 +39,7 @@ export function GameDetailsSkeleton() {
       </div>
 
       {/* About section placeholder */}
-      <section className="editorial-game-detail-section">
+      <section className="editorial-game-detail-section editorial-game-detail-section--tight">
         <div className="editorial-game-detail-section-grid">
           <div>
             <SkeletonBlock className="mb-3 h-3 w-32" />

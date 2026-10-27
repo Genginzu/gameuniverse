@@ -417,20 +417,6 @@
   color: rgba(255, 255, 255, 0.78);
 }
 
-@media (min-width: 1024px) {
-  .editorial-game-detail-about-text {
-    columns: 2;
-    column-gap: 3rem;
-    column-fill: balance;
-    display: block;
-  }
-
-  .editorial-game-detail-about-text > * {
-    break-inside: avoid;
-    margin-bottom: 1.5rem;
-  }
-}
-
 .editorial-game-detail-about-lead {
   font-size: 1.5rem;
   line-height: 1.4;
