@@ -21,6 +21,10 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createRouteHandlerClient();
 
+    // Descending orders use NULLS LAST to match the column indexes
+    // (idx_games_hybrid_popularity, idx_games_metascore_desc): otherwise
+    // PostgREST computes the embeds for every matching game before sorting.
+    // Rows are already filtered to non-null values, so results are unchanged.
     const [trendingNow, mostViewed, mostPopular, bestRated, recentlyAdded] = await Promise.all([
       supabase
         .from("games")
@@ -40,14 +44,14 @@ export async function GET(request: NextRequest) {
         .select(GAME_SELECT)
         .not("hybrid_popularity_score", "is", null)
         .gt("hybrid_popularity_score", 0)
-        .order("hybrid_popularity_score", { ascending: false })
+        .order("hybrid_popularity_score", { ascending: false, nullsFirst: false })
         .limit(limit),
       supabase
         .from("games")
         .select(GAME_SELECT)
         .not("metascore", "is", null)
         .gt("metascore", 0)
-        .order("metascore", { ascending: false })
+        .order("metascore", { ascending: false, nullsFirst: false })
         .limit(limit),
       supabase
         .from("games")
