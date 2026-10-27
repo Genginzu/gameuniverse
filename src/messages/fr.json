@@ -1541,6 +1541,19 @@
         "good": "Bon — solides recommandations de la presse.",
         "mixed": "Mitigé — consultez plusieurs avis avant de vous lancer."
       },
+      "mediaViewer": {
+        "label": "Visionneuse de médias",
+        "moreScreenshots": "Autres captures",
+        "moreVideos": "Autres vidéos",
+        "openImage": "Agrandir la capture {index} sur {total}",
+        "playVideo": "Lire la vidéo : {title}",
+        "openVideo": "Ouvrir la vidéo",
+        "counter": "{index} / {total}",
+        "goTo": "Afficher le média {index} sur {total}",
+        "previous": "Média précédent",
+        "next": "Média suivant",
+        "close": "Fermer la visionneuse"
+      },
       "sections": {
         "about": "À propos",
         "aboutTitle": "L''<accent>histoire</accent>",

@@ -751,19 +751,6 @@
   }
 }
 
-.editorial-game-detail-video-grid {
-  margin-top: 1rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-@media (min-width: 640px) {
-  .editorial-game-detail-video-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 .editorial-game-detail-video-card {
   position: relative;
   aspect-ratio: 16 / 9;

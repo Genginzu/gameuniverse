@@ -4,62 +4,74 @@
  * Section "Media" : screenshots + videos en mise en page asymétrique.
  *
  * Layout : 1 grand pavé "featured" (col-span-2 row-span-2) + grille
- * compacte 2x2 pour les autres screenshots. Les vidéos suivent dans une
- * grille 2 cols avec play button accent.
+ * compacte 2x2 pour les autres screenshots. Les captures restantes défilent
+ * dans un rail horizontal (`MediaScreenshotRail`) sous la grille, suivies
+ * du rail de toutes les vidéos (`MediaVideoRail`).
  *
- * Cliquer sur une vidéo ouvre l'URL d'origine (YouTube) dans un nouvel
- * onglet. Pour rester simple, pas de modal player ici.
+ * Cliquer sur une capture ou une vidéo ouvre `MediaLightbox`, qui enchaîne
+ * toutes les captures puis toutes les vidéos sans refermer la vue agrandie.
  */
 
+import { useState } from "react";
 import { AppImage } from "@/components/ui/app-image";
 import { useTranslations } from "next-intl";
-import { Icon } from "@iconify/react";
-import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
-import type { GameDetails } from "@/types/game";
+import { buildYouTubeThumbnail, extractYouTubeVideoId } from "@/lib/utils/youtube";
+import type { GameDetails, GameMediaViewerItem } from "@/types/game";
 import { accentRich } from "../utils/accent-rich";
+import { MediaLightbox } from "./MediaLightbox";
+import { MediaScreenshotRail } from "./MediaScreenshotRail";
+import { MediaVideoRail } from "./MediaVideoRail";
 
 interface MediaSectionProps {
   game: GameDetails;
 }
 
-/** Extract YouTube video_id from a watch URL. */
-function extractYouTubeVideoId(url: string): string | null {
-  try {
-    const parsed = new URL(url);
-    return parsed.searchParams.get("v") ?? parsed.pathname.replace(/^\//, "") ?? null;
-  } catch {
-    return null;
-  }
-}
+/** Screenshots shown next to the featured one; the others go to the rail. */
+const GRID_SIDE_SHOTS = 2;
 
-function buildYouTubeThumbnail(url: string, fallback?: string): string | undefined {
-  const id = extractYouTubeVideoId(url);
-  if (id) return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
-  return fallback;
-}
+type GameVideo = GameDetails["media"]["videos"][number];
 
-function formatDuration(seconds?: number): string | null {
-  if (!seconds) return null;
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
-
-export function MediaSection({ game }: MediaSectionProps) {
-  const tEd = useTranslations("gameDetails.editorial");
-
-  const screenshots = game.media.screenshots ?? [];
-  // Deduplicate videos by YouTube video ID (handles URL variations)
-  const uniqueVideos = (game.media.videos ?? []).filter((video, index, self) => {
+/** Deduplicates videos by YouTube video id (handles URL variations). */
+function dedupeVideos(videos: GameVideo[]): GameVideo[] {
+  return videos.filter((video, index, self) => {
     const videoId = extractYouTubeVideoId(video.url);
     if (!videoId) return true;
     return index === self.findIndex((v) => extractYouTubeVideoId(v.url) === videoId);
   });
+}
+
+function buildViewerItems(game: GameDetails, videos: GameVideo[]): GameMediaViewerItem[] {
+  const images: GameMediaViewerItem[] = (game.media.screenshots ?? []).map((shot) => ({
+    kind: "image",
+    id: shot.id,
+    url: shot.url,
+    alt: shot.altText ?? `${game.title} screenshot`,
+    caption: shot.caption,
+  }));
+  const clips: GameMediaViewerItem[] = videos.map((video) => ({
+    kind: "video",
+    id: video.id,
+    url: video.url,
+    title: video.title,
+    thumbnailUrl: buildYouTubeThumbnail(video.url, video.thumbnailUrl ?? game.media.coverImage),
+  }));
+  return [...images, ...clips];
+}
+
+export function MediaSection({ game }: MediaSectionProps) {
+  const tEd = useTranslations("gameDetails.editorial");
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+
+  const screenshots = game.media.screenshots ?? [];
+  const uniqueVideos = dedupeVideos(game.media.videos ?? []);
 
   if (screenshots.length === 0 && uniqueVideos.length === 0) return null;
 
+  const viewerItems = buildViewerItems(game, uniqueVideos);
   const [featured, ...rest] = screenshots;
+  const visibleShots = featured ? [featured, ...rest.slice(0, GRID_SIDE_SHOTS)] : [];
+  const railShots = rest.slice(GRID_SIDE_SHOTS);
 
   return (
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
@@ -76,76 +88,52 @@ export function MediaSection({ game }: MediaSectionProps) {
         </p>
       </div>
 
-      {screenshots.length > 0 && (
+      {visibleShots.length > 0 && (
         <div className="editorial-game-detail-media-grid">
-          {featured && (
-            <figure className="editorial-game-detail-media-tile editorial-game-detail-media-tile--featured">
-              <AppImage
-                src={featured.url}
-                alt={featured.altText ?? `${game.title} screenshot`}
-                fill
-                sizes="(min-width: 1024px) 66vw, 100vw"
-              />
-              <div className="editorial-scanlines" />
-            </figure>
-          )}
-          {rest.slice(0, 2).map((shot) => (
-            <figure key={shot.id} className="editorial-game-detail-media-tile">
+          {visibleShots.map((shot, index) => (
+            <button
+              key={shot.id}
+              type="button"
+              onClick={() => setViewerIndex(index)}
+              aria-label={tEd("mediaViewer.openImage", { index: index + 1, total: screenshots.length })}
+              className={`editorial-game-detail-media-tile block w-full cursor-zoom-in ${
+                index === 0 ? "editorial-game-detail-media-tile--featured" : ""
+              }`}
+            >
               <AppImage
                 src={shot.url}
                 alt={shot.altText ?? `${game.title} screenshot`}
                 fill
-                sizes="33vw"
+                sizes={index === 0 ? "(min-width: 1024px) 66vw, 100vw" : "33vw"}
               />
               <div className="editorial-scanlines" />
-            </figure>
+            </button>
           ))}
         </div>
       )}
 
-      {uniqueVideos.length > 0 && (
-        <div className="editorial-game-detail-video-grid">
-          {uniqueVideos.slice(0, 4).map((video) => {
-            const thumb = buildYouTubeThumbnail(
-              video.url,
-              video.thumbnailUrl ?? game.media.coverImage
-            );
-            const duration = formatDuration(video.duration);
-            return (
-              <SpotlightCard
-                key={video.id}
-                as="a"
-                href={video.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="editorial-game-detail-video-card"
-              >
-                {thumb && (
-                  <AppImage
-                    src={thumb}
-                    alt={video.title}
-                    fill
-                    sizes="(min-width: 640px) 50vw, 100vw"
-                  />
-                )}
-                <div className="editorial-game-detail-video-overlay" aria-hidden="true" />
-                <div className="editorial-game-detail-video-play" aria-hidden="true">
-                  <span>
-                    <Icon icon="lucide:play" className="h-6 w-6 fill-current" />
-                  </span>
-                </div>
-                <div className="editorial-game-detail-video-meta">
-                  <p className="editorial-game-detail-video-title">{video.title}</p>
-                  {duration && (
-                    <span className="editorial-game-detail-pill border-white/20 bg-black/40 text-white">
-                      {duration}
-                    </span>
-                  )}
-                </div>
-              </SpotlightCard>
-            );
-          })}
-        </div>
+      <MediaScreenshotRail
+        screenshots={railShots}
+        startIndex={visibleShots.length}
+        total={screenshots.length}
+        gameTitle={game.title}
+        onOpen={setViewerIndex}
+      />
+
+      <MediaVideoRail
+        videos={uniqueVideos}
+        startIndex={screenshots.length}
+        fallbackThumbnail={game.media.coverImage}
+        onOpen={setViewerIndex}
+      />
+
+      {viewerIndex !== null && (
+        <MediaLightbox
+          items={viewerItems}
+          index={viewerIndex}
+          onIndexChange={setViewerIndex}
+          onClose={() => setViewerIndex(null)}
+        />
       )}
     </section>
   );

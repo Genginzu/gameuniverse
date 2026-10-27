@@ -33,6 +33,11 @@ export interface GameMedia {
   }>;
 }
 
+/** One entry of the game detail media viewer (screenshot or video). */
+export type GameMediaViewerItem =
+  | { kind: "image"; id: string; url: string; alt: string; caption?: string }
+  | { kind: "video"; id: string; url: string; title: string; thumbnailUrl?: string };
+
 export interface GamePricing {
   price: number;
   currency: string;

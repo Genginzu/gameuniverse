@@ -1541,6 +1541,19 @@
         "good": "Good — solid recommendations from the press.",
         "mixed": "Mixed — read multiple reviews before committing."
       },
+      "mediaViewer": {
+        "label": "Media viewer",
+        "moreScreenshots": "More screenshots",
+        "moreVideos": "More videos",
+        "openImage": "Enlarge screenshot {index} of {total}",
+        "playVideo": "Play video: {title}",
+        "openVideo": "Open video",
+        "counter": "{index} / {total}",
+        "goTo": "Show media {index} of {total}",
+        "previous": "Previous media",
+        "next": "Next media",
+        "close": "Close viewer"
+      },
       "sections": {
         "about": "About",
         "aboutTitle": "The <accent>story</accent>",

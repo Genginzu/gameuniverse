@@ -66,7 +66,7 @@ Toutes sous `src/components/games/details/sections/` :
 | `AgeRatingsSection.tsx`          | Badges PEGI/ESRB + descriptors                        |
 | `LanguagesSection.tsx`           | Table interface/audio/subtitles                       |
 | `PlaytimeSection.tsx`            | Officiel + communauté + form add                      |
-| `MediaSection.tsx`               | Screenshots + videos asymétrique                      |
+| `MediaSection.tsx`               | Screenshots + videos asymétrique, captures restantes et toutes les vidéos dans des rails horizontaux ; clic → `MediaLightbox` (visionneuse plein écran, navigation ←/→, swipe, miniatures, vidéos YouTube intégrées) |
 | `VersionsSection.tsx`            | Cards éditions du jeu                                 |
 | `DlcSection.tsx`                 | Cards DLC + extensions                                |
 | `MusicSection.tsx`               | Compositeur + embeds Spotify/YouTube                  |
