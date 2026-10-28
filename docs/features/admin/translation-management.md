@@ -26,8 +26,9 @@ entre toutes les langues configurées (actuellement fr/en).
   automatiquement une entité
 - **Traduction avec relecture** : bouton "Traduire et relire" pour générer la
   traduction, la relire/modifier dans une modale, puis sauvegarder
-- **Traduction par lot** : sélection multiple + "Traduire la sélection" ou "Tout
-  traduire" avec progression en temps réel (streaming NDJSON)
+- **Traduction par lot** : cocher des fiches puis « Traduire la sélection ».
+  Les fiches partent une par une (requêtes de 5 vers `translate-batch`), avec
+  progression en temps réel (streaming NDJSON)
 - **Annulation** : possibilité d'annuler un traitement par lot en cours (les
   traductions déjà sauvegardées sont conservées)
 - **Onglets « À traduire » / « Traduits »** : en cliquant sur une carte, la liste
@@ -35,7 +36,9 @@ entre toutes les langues configurées (actuellement fr/en).
   incomplète). L'onglet « Traduits » (`?status=complete`) liste les entités
   complètes dans toutes les langues, avec un bouton **Modifier** qui ouvre
   l'éditeur de l'entité pour corriger une traduction existante
-- **Recherche et pagination** : filtrage par titre/nom, 20 éléments par page
+- **Recherche et pagination** : recherche sur l'identifiant (slug, code) et sur
+  le texte de toutes les langues (titre, nom...) ; 20, 40, 60, 80 ou 100
+  éléments par page (`?limit=`)
 - **Protection admin** : toutes les routes protégées par `defineRoute({ auth: "admin" })`
 - **Internationalisation** : namespace `admin.translations` avec clés FR/EN
 
@@ -123,12 +126,15 @@ Clés sous le namespace `admin.translations` dans `src/messages/fr.json` et
 
 ### Traduction par lot
 
-1. Cocher les entités à traduire (ou cliquer sur **Tout traduire**)
-2. Cliquer sur **Traduire la sélection**
-3. Suivre la progression en temps réel (barre de progression, compteur x/total)
-4. Possibilité d'annuler via le bouton **Annuler** (traductions déjà
+1. Choisir le nombre de fiches affichées (**Par page** : 20, 40, 60, 80 ou 100)
+   et, si besoin, filtrer avec la recherche
+2. Cocher les fiches (la case d'en-tête coche toute la page affichée)
+3. Cliquer sur **Traduire la sélection** : les fiches sont traduites une par
+   une, langue par langue, par requêtes de 5 vers `translate-batch`
+4. Suivre la progression en temps réel (barre de progression, compteur x/total)
+5. Possibilité d'annuler via le bouton **Annuler** (traductions déjà
    sauvegardées conservées)
-5. Résumé final : nombre de traductions réussies et échouées
+6. Résumé final : nombre de traductions réussies et échouées
 
 ## Architecture
 

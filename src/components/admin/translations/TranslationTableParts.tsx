@@ -68,40 +68,53 @@ export function TranslationSkeletonRow({ columns = 6 }: { columns?: number }) {
   );
 }
 
-/** Bulk actions of the "to translate" tab: translate the selection or the whole page. */
+/** "To translate" tab actions: page size and translation of the checked rows. */
 export function TranslationBulkActions({
   selectedCount,
+  pageSize,
+  pageSizes,
+  isRunning,
+  onPageSizeChange,
   onTranslateSelection,
-  onTranslateAll,
   t,
 }: {
   selectedCount: number;
+  pageSize: number;
+  pageSizes: readonly number[];
+  isRunning: boolean;
+  onPageSizeChange: (size: number) => void;
   onTranslateSelection: () => void;
-  onTranslateAll: () => void;
   t: ReturnType<typeof import("next-intl").useTranslations>;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      <label className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+        {t("table.pageSize")}
+        <select
+          value={pageSize}
+          onChange={(e) => onPageSizeChange(Number(e.target.value))}
+          disabled={isRunning}
+          className="glass-input min-h-[44px] rounded-lg px-2 py-1.5 text-base disabled:opacity-50 sm:min-h-0 sm:text-sm"
+        >
+          {pageSizes.map((size) => (
+            <option key={size} value={size}>
+              {size}
+            </option>
+          ))}
+        </select>
+      </label>
       {selectedCount > 0 && (
-        <>
-          <span className="mr-1 text-xs text-gray-500 dark:text-gray-400">
-            {t("table.selected", { count: selectedCount })}
-          </span>
-          <button
-            onClick={onTranslateSelection}
-            className="btn-filled inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-all duration-300"
-          >
-            <Icon icon="mdi:translate" className="size-4" />
-            {t("buttons.translateSelection")}
-          </button>
-        </>
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          {t("table.selected", { count: selectedCount })}
+        </span>
       )}
       <button
-        onClick={onTranslateAll}
-        className="border-palette-secondary-500/30 text-palette-secondary-600 hover:bg-palette-secondary-50 dark:text-palette-secondary-400 dark:hover:bg-palette-secondary-900/20 inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-300"
+        onClick={onTranslateSelection}
+        disabled={selectedCount === 0 || isRunning}
+        className="btn-filled inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 disabled:opacity-50 sm:min-h-0"
       >
-        <Icon icon="mdi:translate-variant" className="size-4" />
-        {t("buttons.translateAll")}
+        <Icon icon={isRunning ? "mdi:loading" : "mdi:translate"} className={`size-4 ${isRunning ? "animate-spin" : ""}`} />
+        {t("buttons.translateSelection")}
       </button>
     </div>
   );

@@ -49,6 +49,10 @@ function makeProps(overrides: Record<string, unknown> = {}) {
   return {
     items: [makeItem()],
     pagination: basePagination,
+    pageSize: 20,
+    onPageSizeChange: vi.fn(),
+    isBatchRunning: false,
+    onTranslateSelection: vi.fn(),
     selectedIds: new Set<string>(),
     onToggleSelect: vi.fn(),
     onSelectAll: vi.fn(),
@@ -113,7 +117,7 @@ describe("TranslationTable", () => {
   it("hides selection and bulk translate actions on the complete tab", () => {
     render(<TranslationTable {...makeProps({ status: "complete" })} />);
     expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
-    expect(screen.queryByText("buttons.translateAll")).not.toBeInTheDocument();
+    expect(screen.queryByText("buttons.translateSelection")).not.toBeInTheDocument();
     expect(screen.getByText("table.status")).toBeInTheDocument();
     expect(screen.getByText("buttons.edit")).toBeInTheDocument();
   });
@@ -135,14 +139,38 @@ describe("TranslationTable", () => {
     });
   });
 
-  it("shows 'Translate All' button", () => {
+  it("disables 'Translate selection' until a row is checked", () => {
     render(<TranslationTable {...makeProps()} />);
-    expect(screen.getByText("buttons.translateAll")).toBeInTheDocument();
+    expect(screen.getByText("buttons.translateSelection").closest("button")).toBeDisabled();
   });
 
-  it("shows 'Translate Selection' button when items are selected", () => {
-    render(<TranslationTable {...makeProps({ selectedIds: new Set(["uuid-1"]) })} />);
-    expect(screen.getByText("buttons.translateSelection")).toBeInTheDocument();
+  it("translates the checked rows through onTranslateSelection", () => {
+    const onTranslateSelection = vi.fn();
+    render(
+      <TranslationTable
+        {...makeProps({ selectedIds: new Set(["uuid-1"]), onTranslateSelection })}
+      />
+    );
+    const button = screen.getByText("buttons.translateSelection").closest("button")!;
+    expect(button).toBeEnabled();
+    fireEvent.click(button);
+    expect(onTranslateSelection).toHaveBeenCalledTimes(1);
+  });
+
+  it("locks the selection button while a selection is being translated", () => {
+    render(
+      <TranslationTable {...makeProps({ selectedIds: new Set(["uuid-1"]), isBatchRunning: true })} />
+    );
+    expect(screen.getByText("buttons.translateSelection").closest("button")).toBeDisabled();
+  });
+
+  it("offers 20 to 100 rows per page and reports the chosen size", () => {
+    const onPageSizeChange = vi.fn();
+    render(<TranslationTable {...makeProps({ onPageSizeChange })} />);
+    const select = screen.getByLabelText("table.pageSize") as HTMLSelectElement;
+    expect([...select.options].map((o) => o.value)).toEqual(["20", "40", "60", "80", "100"]);
+    fireEvent.change(select, { target: { value: "60" } });
+    expect(onPageSizeChange).toHaveBeenCalledWith(60);
   });
 
   it("calls onSelectAll when select-all checkbox is checked", () => {

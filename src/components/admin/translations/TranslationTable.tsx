@@ -16,6 +16,7 @@ import {
   TranslationPagination,
   TranslationSkeletonRow,
 } from "./TranslationTableParts";
+import { TRANSLATION_PAGE_SIZES } from "@/lib/utils/translationBatchPlan";
 
 type LinkHref = { pathname: string; query: Record<string, string> };
 
@@ -23,6 +24,10 @@ interface TranslationTableProps {
   status?: TranslationListStatus;
   items: TranslationMissingItem[];
   pagination: PaginationInfo;
+  pageSize: number;
+  onPageSizeChange: (size: number) => void;
+  isBatchRunning: boolean;
+  onTranslateSelection: () => void;
   selectedIds: Set<string>;
   onToggleSelect: (id: string) => void;
   onSelectAll: (ids: string[]) => void;
@@ -38,9 +43,10 @@ interface TranslationTableProps {
 }
 
 export function TranslationTable({
-  status = "missing", items, pagination, selectedIds, onToggleSelect, onSelectAll,
-  onClearSelection, onTranslate, onTranslateAndReview, rowHref, buildPageUrl, buildSearchUrl,
-  currentSearch, isLoading, translatingIds,
+  status = "missing", items, pagination, pageSize, onPageSizeChange, isBatchRunning,
+  onTranslateSelection, selectedIds, onToggleSelect, onSelectAll, onClearSelection, onTranslate,
+  onTranslateAndReview, rowHref, buildPageUrl, buildSearchUrl, currentSearch, isLoading,
+  translatingIds,
 }: TranslationTableProps) {
   const t = useTranslations("admin.translations");
   const router = useRouter();
@@ -71,8 +77,11 @@ export function TranslationTable({
         {isMissing && (
           <TranslationBulkActions
             selectedCount={selectedIds.size}
-            onTranslateSelection={() => items.filter((i) => selectedIds.has(i.entityId)).forEach(onTranslate)}
-            onTranslateAll={() => items.forEach(onTranslate)}
+            pageSize={pageSize}
+            pageSizes={TRANSLATION_PAGE_SIZES}
+            isRunning={isBatchRunning}
+            onPageSizeChange={onPageSizeChange}
+            onTranslateSelection={onTranslateSelection}
             t={t}
           />
         )}
