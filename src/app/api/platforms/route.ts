@@ -1,18 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { fetchGameFilterCounts } from "@/lib/services/gameFilterCounts";
 
-type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
+const FALLBACK_LOCALE = "en";
+
+interface PlatformTranslationRow {
+  name: string;
+  abbreviation?: string | null;
+  language_code: string;
+}
 
 interface PlatformRow {
   id: string;
   slug: string;
   icon_url: string | null;
-  created_at: string | null;
-  platform_translations?: Array<{
-    name: string;
-    abbreviation?: string | null;
-  }>;
+  platform_translations?: PlatformTranslationRow[];
+}
+
+/**
+ * Translation in the requested locale, else English. Importers only write the
+ * English row, so filtering on the locale with `!inner` dropped most platforms.
+ */
+function pickTranslation(platform: PlatformRow, locale: string) {
+  const translations = platform.platform_translations ?? [];
+  return (
+    translations.find((row) => row.language_code === locale) ??
+    translations.find((row) => row.language_code === FALLBACK_LOCALE)
+  );
 }
 
 export async function GET(request: NextRequest) {
@@ -22,117 +37,36 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createRouteHandlerClient();
 
-    // Fetch all platforms with translations for the requested locale
-    const { data: platforms, error: platformsError } = await supabase
-      .from("platforms")
-      .select(
-        `
-        id,
-        slug,
-        icon_url,
-        created_at,
-        platform_translations!inner(
-          name,
-          abbreviation
-        )
-      `
-      )
-      .eq("platform_translations.language_code", locale);
+    const [{ data: platforms, error: platformsError }, counts] = await Promise.all([
+      supabase
+        .from("platforms")
+        .select("id, slug, icon_url, platform_translations(name, abbreviation, language_code)")
+        .in("platform_translations.language_code", [locale, FALLBACK_LOCALE]),
+      fetchGameFilterCounts(supabase),
+    ]);
 
     if (platformsError) {
       logger.error("Error fetching platforms", { error: platformsError });
-
-      // Fallback to English if locale not found
-      if (locale !== "en") {
-        const { data: fallbackPlatforms, error: fallbackError } = await supabase
-          .from("platforms")
-          .select(
-            `
-            id,
-            slug,
-            icon_url,
-            created_at,
-            platform_translations!inner(
-              name,
-              abbreviation
-            )
-          `
-          )
-          .eq("platform_translations.language_code", "en");
-
-        if (fallbackError || !fallbackPlatforms) {
-          return NextResponse.json({ error: "Failed to fetch platforms" }, { status: 500 });
-        }
-
-        return buildResponse(supabase, fallbackPlatforms, locale);
-      }
-
       return NextResponse.json({ error: "Failed to fetch platforms" }, { status: 500 });
     }
 
-    if (!platforms || platforms.length === 0) {
-      // Fallback to English if no translations found for requested locale
-      if (locale !== "en") {
-        const { data: fallbackPlatforms, error: fallbackError } = await supabase
-          .from("platforms")
-          .select(
-            `
-            id,
-            slug,
-            icon_url,
-            created_at,
-            platform_translations!inner(
-              name,
-              abbreviation
-            )
-          `
-          )
-          .eq("platform_translations.language_code", "en");
+    const transformedPlatforms = ((platforms ?? []) as PlatformRow[]).map((platform) => {
+      const translation = pickTranslation(platform, locale);
+      return {
+        id: platform.id,
+        slug: platform.slug,
+        name: translation?.name || platform.slug,
+        abbreviation: translation?.abbreviation || null,
+        iconUrl: platform.icon_url,
+        gameCount: counts.platform.get(platform.id) ?? 0,
+      };
+    });
 
-        if (!fallbackError && fallbackPlatforms && fallbackPlatforms.length > 0) {
-          return buildResponse(supabase, fallbackPlatforms, locale);
-        }
-      }
-      return NextResponse.json({ platforms: [], locale });
-    }
+    transformedPlatforms.sort((a, b) => a.name.localeCompare(b.name));
 
-    return buildResponse(supabase, platforms, locale);
+    return NextResponse.json({ platforms: transformedPlatforms, locale });
   } catch (error) {
     logger.error("Error in platforms API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
-
-async function buildResponse(supabase: SupabaseClient, platforms: PlatformRow[], locale: string) {
-  // Fetch game counts for all platforms
-  const { data: gameCounts, error: countsError } = await supabase
-    .from("game_platforms")
-    .select("platform_id");
-
-  if (countsError) {
-    logger.error("Error fetching platform game counts", { error: countsError });
-  }
-
-  const countsByPlatform: Record<string, number> = {};
-  if (gameCounts) {
-    gameCounts.forEach((item: { platform_id: string }) => {
-      countsByPlatform[item.platform_id] = (countsByPlatform[item.platform_id] || 0) + 1;
-    });
-  }
-
-  const transformedPlatforms = (platforms as PlatformRow[]).map((platform) => {
-    const translation = platform.platform_translations?.[0];
-    return {
-      id: platform.id,
-      slug: platform.slug,
-      name: translation?.name || platform.slug,
-      abbreviation: translation?.abbreviation || null,
-      iconUrl: platform.icon_url,
-      gameCount: countsByPlatform[platform.id] || 0,
-    };
-  });
-
-  transformedPlatforms.sort((a, b) => a.name.localeCompare(b.name));
-
-  return NextResponse.json({ platforms: transformedPlatforms, locale });
 }

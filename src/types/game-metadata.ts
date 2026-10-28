@@ -61,12 +61,13 @@ export interface GameDetailMetadata {
   franchiseGames: RelatedGameCard[];
 }
 
-
 /** Option of an IGDB metadata filter of the games listing. */
 export interface MetadataFilterOption {
   slug: string;
   igdbId: number | null;
   name: string;
+  /** Games tagged with this option (themes, modes and perspectives only). */
+  gameCount?: number;
 }
 
 /**
@@ -82,7 +83,6 @@ export interface GameMetadataFilterOptions {
   franchises: MetadataFilterOption[];
 }
 
-
 /** Selected IGDB metadata filters of the games listing (slugs). */
 export interface MetadataFilterSelection {
   themes: string[];
@@ -91,7 +91,6 @@ export interface MetadataFilterSelection {
   engines: string[];
   franchises: string[];
 }
-
 
 /** Reference row of the admin game form metadata pickers (`/api/admin/game-metadata`). */
 export interface AdminMetadataOption {

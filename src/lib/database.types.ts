@@ -2917,6 +2917,14 @@ export type Database = {
           store_website_url: string;
         }[];
       };
+      get_game_filter_counts: {
+        Args: never;
+        Returns: {
+          facet: string;
+          ref_id: string;
+          game_count: number;
+        }[];
+      };
       get_games_listing: {
         Args: {
           p_game_ids?: string[];

@@ -54,7 +54,12 @@ function toggle(values: string[], slug: string): string[] {
   return values.includes(slug) ? values.filter((value) => value !== slug) : [...values, slug];
 }
 
-export function MetadataActiveChips({ selected, options, onChange, variant }: MetadataFiltersProps) {
+export function MetadataActiveChips({
+  selected,
+  options,
+  onChange,
+  variant,
+}: MetadataFiltersProps) {
   const labelOf = useMetadataLabel(options);
   return KEYS.flatMap((key) =>
     selected[key].map((slug) => (
@@ -86,12 +91,18 @@ export function MetadataFilterSections({
       <FilterSection
         key={key}
         title={t(key)}
-        availableLabel={sectionOptions.length > 0 ? t("available", { count: sectionOptions.length }) : ""}
+        availableLabel={
+          sectionOptions.length > 0 ? t("available", { count: sectionOptions.length }) : ""
+        }
         loading={sectionOptions.length === 0}
         variant={variant}
       >
         {sectionOptions
-          .map((option) => ({ slug: option.slug, label: labelOf(key, option.slug) }))
+          .map((option) => ({
+            slug: option.slug,
+            label: labelOf(key, option.slug),
+            gameCount: option.gameCount,
+          }))
           .sort((a, b) => a.label.localeCompare(b.label))
           .map((option) => (
             <FilterChip
@@ -99,6 +110,7 @@ export function MetadataFilterSections({
               label={option.label}
               selected={selected[key].includes(option.slug)}
               onClick={() => onChange({ [key]: toggle(selected[key], option.slug) })}
+              count={option.gameCount}
               variant={variant}
             />
           ))}

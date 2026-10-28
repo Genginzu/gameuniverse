@@ -8,6 +8,7 @@ import { RoleFilterOption } from "@/types/character";
 import { FilterSection, type FilterVariant } from "@/components/shared/FilterSection";
 import { FilterChip, ActiveFilterChip } from "@/components/shared/FilterChip";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
+import { visibleFilterPlatforms } from "@/lib/utils/visibleFilterPlatforms";
 
 // Chargement dynamique d'Iconify — le panneau filtres n'est pas toujours visible
 const Icon = dynamic(() => import("@iconify/react").then((mod) => mod.Icon), {
@@ -47,6 +48,11 @@ export function CharacterFilters({
     platforms.forEach((p) => map.set(p.slug, p.name));
     return map;
   }, [platforms]);
+
+  const visiblePlatforms = useMemo(
+    () => visibleFilterPlatforms(platforms, selectedPlatforms),
+    [platforms, selectedPlatforms]
+  );
 
   const roleMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -132,11 +138,11 @@ export function CharacterFilters({
       {showAllFilters && (
         <FilterSection
           title={tPlatforms("filter.title")}
-          availableLabel={`${platforms.length} ${tPlatforms("filter.available")}`}
+          availableLabel={`${visiblePlatforms.length} ${tPlatforms("filter.available")}`}
           loading={platforms.length === 0}
           variant={variant}
         >
-          {platforms.map((platform) => (
+          {visiblePlatforms.map((platform) => (
             <FilterChip
               key={platform.id}
               label={platform.name}

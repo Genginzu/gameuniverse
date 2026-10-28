@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { fetchGameFilterCounts } from "@/lib/services/gameFilterCounts";
 
 export async function GET(request: NextRequest) {
   try {
@@ -41,22 +42,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Then get game counts for all genres in one query
-    const { data: gameCounts, error: countsError } = await supabase
-      .from("game_genres")
-      .select("genre_id");
-
-    if (countsError) {
-      logger.error("Error fetching game counts", { error: countsError });
-    }
-
-    // Count games per genre
-    const countsByGenre: Record<string, number> = {};
-    if (gameCounts) {
-      gameCounts.forEach((item: { genre_id: string }) => {
-        countsByGenre[item.genre_id] = (countsByGenre[item.genre_id] || 0) + 1;
-      });
-    }
+    const counts = await fetchGameFilterCounts(supabase);
 
     // Transform the data
     interface GenreRow {
@@ -73,7 +59,7 @@ export async function GET(request: NextRequest) {
         slug: genre.slug,
         name: translation?.name || "Unknown",
         description: translation?.description,
-        gameCount: countsByGenre[genre.id] || 0,
+        gameCount: counts.genre.get(genre.id) ?? 0,
         createdAt: genre.created_at,
       };
     });

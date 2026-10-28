@@ -8,6 +8,7 @@ import { PlatformFilterOption } from "@/types/platform";
 import { FilterSection, type FilterVariant } from "@/components/shared/FilterSection";
 import { FilterChip, ActiveFilterChip } from "@/components/shared/FilterChip";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
+import { visibleFilterPlatforms } from "@/lib/utils/visibleFilterPlatforms";
 import {
   MetadataActiveChips,
   MetadataFilterSections,
@@ -66,6 +67,11 @@ export function GameFilters({
     platforms.forEach((p) => map.set(p.slug, p.name));
     return map;
   }, [platforms]);
+
+  const visiblePlatforms = useMemo(
+    () => visibleFilterPlatforms(platforms, selectedPlatforms),
+    [platforms, selectedPlatforms]
+  );
 
   const handleGenreToggle = (genreName: string) => {
     const updated = selectedGenres.includes(genreName)
@@ -173,11 +179,11 @@ export function GameFilters({
           {showPlatforms && (
             <FilterSection
               title={tPlatforms("filter.title")}
-              availableLabel={`${platforms.length} ${tPlatforms("filter.available")}`}
+              availableLabel={`${visiblePlatforms.length} ${tPlatforms("filter.available")}`}
               loading={platforms.length === 0}
               variant={variant}
             >
-              {platforms.map((platform) => (
+              {visiblePlatforms.map((platform) => (
                 <FilterChip
                   key={platform.id}
                   label={platform.name}
