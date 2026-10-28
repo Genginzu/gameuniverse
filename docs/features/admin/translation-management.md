@@ -12,6 +12,13 @@ entre toutes les langues configurées (actuellement fr/en).
 
 - **Statistiques** : cartes par type d'entité avec total, traduit, non traduit
   et pourcentage de couverture, barre de progression globale
+- **Choix du modèle** : au-dessus de la barre de progression, un sélecteur liste
+  les modèles de langage disponibles sur Vercel AI Gateway (groupés par
+  fournisseur, avec le prix par million de tokens). Le choix est enregistré dans
+  la table serveur `admin_settings` (clé `translation_model`) et s'applique aux
+  traductions suivantes. Défaut : `openai/gpt-5.4-nano`
+- **Crédits AI Gateway** : solde restant et total consommé, avec bouton
+  d'actualisation
 - **Traduction individuelle** : bouton "Traduire" pour traduire et sauvegarder
   automatiquement une entité
 - **Traduction avec relecture** : bouton "Traduire et relire" pour générer la
@@ -20,6 +27,11 @@ entre toutes les langues configurées (actuellement fr/en).
   traduire" avec progression en temps réel (streaming NDJSON)
 - **Annulation** : possibilité d'annuler un traitement par lot en cours (les
   traductions déjà sauvegardées sont conservées)
+- **Onglets « À traduire » / « Traduits »** : en cliquant sur une carte, la liste
+  s'ouvre sur l'onglet « À traduire » (entités avec au moins une langue
+  incomplète). L'onglet « Traduits » (`?status=complete`) liste les entités
+  complètes dans toutes les langues, avec un bouton **Modifier** qui ouvre
+  l'éditeur de l'entité pour corriger une traduction existante
 - **Recherche et pagination** : filtrage par titre/nom, 20 éléments par page
 - **Protection admin** : toutes les routes protégées par `defineRoute({ auth: "admin" })`
 - **Internationalisation** : namespace `admin.translations` avec clés FR/EN
@@ -47,7 +59,9 @@ sélecteur de langue cible.
 | Méthode | Route                                     | Description                                         |
 | ------- | ----------------------------------------- | --------------------------------------------------- |
 | GET     | `/api/admin/translations/stats`           | Statistiques de couverture par type et langue       |
-| GET     | `/api/admin/translations/missing`         | Liste paginée des entités avec traduction manquante |
+| GET     | `/api/admin/translations/ai-settings`     | Modèle courant, modèles disponibles et crédits      |
+| PUT     | `/api/admin/translations/ai-settings`     | Change le modèle de traduction (`{ model }`)        |
+| GET     | `/api/admin/translations/missing`         | Liste paginée par statut (`status=missing` par défaut, ou `complete`) |
 | POST    | `/api/admin/translations/translate`       | Traduction individuelle (option `saveToDb`)         |
 | POST    | `/api/admin/translations/translate-batch` | Traduction par lot en streaming NDJSON              |
 | PUT     | `/api/admin/translations/save`            | Sauvegarde manuelle d'une traduction éditée         |
@@ -58,7 +72,7 @@ sélecteur de langue cible.
 
 | Variable                    | Description                                        |
 | --------------------------- | -------------------------------------------------- |
-| `VERCEL_AI_GATEWAY_API_KEY` | Clé API Vercel AI Gateway (traduction automatique) |
+| `AI_GATEWAY_API_KEY` | Clé API Vercel AI Gateway (traduction, modèles, crédits) |
 
 Si la variable n'est pas définie, le service de traduction retourne une erreur
 explicite `"VERCEL_AI_GATEWAY_API_KEY is not configured"`.
@@ -120,7 +134,7 @@ Clés sous le namespace `admin.translations` dans `src/messages/fr.json` et
 | Fichier                    | Rôle                                     |
 | -------------------------- | ---------------------------------------- |
 | `stats/route.ts`           | GET statistiques par type et langue      |
-| `missing/route.ts`         | GET liste paginée des entités manquantes |
+| `missing/route.ts`         | GET liste paginée par statut (RPC `get_translation_entities`) |
 | `translate/route.ts`       | POST traduction individuelle             |
 | `translate-batch/route.ts` | POST traduction par lot (NDJSON)         |
 | `save/route.ts`            | PUT sauvegarde manuelle                  |
@@ -131,8 +145,10 @@ Clés sous le namespace `admin.translations` dans `src/messages/fr.json` et
 | ------------------------------ | ---------------------------------------- |
 | `TranslationDashboard.tsx`     | Orchestrateur principal du dashboard     |
 | `TranslationProgressBar.tsx`   | Barre de progression globale             |
-| `TranslationTable.tsx`         | Tableau paginé et filtrable              |
-| `TranslationTableRow.tsx`      | Ligne du tableau avec actions            |
+| `TranslationTable.tsx`         | Tableau paginé et filtrable (2 modes)    |
+| `TranslationTableRow.tsx`      | Ligne « À traduire » avec actions        |
+| `TranslationCompleteRow.tsx`   | Ligne « Traduits » avec bouton Modifier  |
+| `TranslationStatusTabs.tsx`    | Onglets À traduire / Traduits            |
 | `TranslationReviewModal.tsx`   | Modale de relecture/édition              |
 | `TranslationBatchProgress.tsx` | Barre de progression du lot              |
 
@@ -146,8 +162,9 @@ Clés sous le namespace `admin.translations` dans `src/messages/fr.json` et
 
 | Fichier                 | Rôle                                       |
 | ----------------------- | ------------------------------------------ |
-| `translationService.ts` | Requêtes Supabase (missing, stats, upsert) |
-| `aiTranslateService.ts` | Appel Vercel AI Gateway via Vercel AI SDK  |
+| `translationService.ts`            | Requêtes Supabase (missing, stats, upsert)        |
+| `aiTranslateService.ts`            | Appel Vercel AI Gateway via Vercel AI SDK         |
+| `translationAiSettingsService.ts`  | Modèle choisi, liste des modèles, crédits gateway |
 
 ### Autres fichiers
 

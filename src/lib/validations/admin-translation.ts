@@ -17,6 +17,7 @@ export const entityTypeSchema = z.enum([
 /** Paramètres de la route GET /api/admin/translations/missing */
 export const missingQuerySchema = z.object({
   type: entityTypeSchema,
+  status: z.enum(["missing", "complete"]).default("missing"),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   search: z.string().optional(),
@@ -43,6 +44,16 @@ export const saveTranslationBodySchema = z.object({
   entityId: z.string().uuid(),
   targetLang: z.string().length(2),
   translations: z.record(z.string(), z.string()),
+});
+
+/** Corps de la route PUT /api/admin/translations/ai-settings */
+export const translationModelBodySchema = z.object({
+  model: z
+    .string()
+    .trim()
+    .min(1)
+    .max(200)
+    .regex(/^[\w.-]+\/[\w.:-]+$/),
 });
 
 // Inferred types

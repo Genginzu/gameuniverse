@@ -2,13 +2,16 @@ import { generateText, Output } from "ai";
 import { z } from "zod";
 
 import { logger } from "@/lib/logger";
-import { EDITABLE_FIELDS, type EntityType } from "@/types/admin-translations";
+import { type EntityType } from "@/types/admin-translations";
 
-/** Builds a dynamic Zod schema from EDITABLE_FIELDS for the given entity type. */
-function buildTranslationSchema(entityType: EntityType) {
-  const fields = EDITABLE_FIELDS[entityType];
+/**
+ * Builds the output schema from the fields actually sent for translation.
+ * A source row often fills only part of EDITABLE_FIELDS (e.g. a platform without
+ * abbreviation): requiring the missing ones makes the model fail validation.
+ */
+function buildTranslationSchema(fieldNames: string[]) {
   const shape: Record<string, z.ZodString> = {};
-  for (const field of fields) {
+  for (const field of fieldNames) {
     shape[field] = z.string();
   }
   return z.object(shape);
@@ -50,18 +53,19 @@ function buildSystemPrompt(sourceLang: string, targetLang: string, entityType: E
 
 /**
  * Translates text fields from a source language to a target language
- * using Vercel AI Gateway with openai/gpt-5.4-nano.
+ * through the Vercel AI Gateway, with the model chosen in the admin.
  *
  * Requires AI_GATEWAY_API_KEY env var (used automatically by the AI SDK).
  */
 export async function translateFields(params: {
+  model: string;
   sourceLang: string;
   targetLang: string;
   entityType: EntityType;
   fields: Record<string, string>;
 }): Promise<Record<string, string>> {
-  const { sourceLang, targetLang, entityType, fields } = params;
-  const schema = buildTranslationSchema(entityType);
+  const { model, sourceLang, targetLang, entityType, fields } = params;
+  const schema = buildTranslationSchema(Object.keys(fields));
 
   const systemPrompt = buildSystemPrompt(sourceLang, targetLang, entityType);
 
@@ -74,7 +78,7 @@ export async function translateFields(params: {
 
   try {
     const { output } = await generateText({
-      model: "openai/gpt-5.4-nano",
+      model,
       output: Output.object({ schema }),
       instructions: systemPrompt,
       prompt: userPrompt,
@@ -88,10 +92,10 @@ export async function translateFields(params: {
     return output as Record<string, string>;
   } catch (error: unknown) {
     if (error instanceof Error && error.name === "AbortError") {
-      logger.error("AI translation timed out", { entityType, sourceLang, targetLang });
+      logger.error("AI translation timed out", { model, entityType, sourceLang, targetLang });
       throw new Error("Translation timed out after 30s", { cause: error });
     }
-    logger.error("AI translation failed", { entityType, sourceLang, targetLang, error });
+    logger.error("AI translation failed", { model, entityType, sourceLang, targetLang, error });
     throw error instanceof Error
       ? new Error(`AI translation failed: ${error.message}`, { cause: error })
       : new Error("AI translation failed", { cause: error });

@@ -3257,14 +3257,32 @@
         "target": "Texte cible",
         "status": "Statut",
         "actions": "Actions",
-        "noResults": "Aucun résultat",
+        "noMissing": "Aucune traduction manquante",
+        "noComplete": "Aucune entité entièrement traduite",
         "searchPlaceholder": "Rechercher par titre/nom...",
         "selectAll": "Tout sélectionner",
         "selected": "{count} sélectionné(s)",
         "page": "Page {current} sur {total}",
         "previous": "Précédent",
         "next": "Suivant",
-        "subtitle": "Entités avec traductions manquantes"
+        "subtitle": "Entités avec traductions manquantes",
+        "subtitleComplete": "Entités traduites dans toutes les langues"
+      },
+      "tabs": {
+        "label": "Filtrer par état de traduction",
+        "missing": "À traduire",
+        "complete": "Traduits"
+      },
+      "ai": {
+        "modelLabel": "Modèle de traduction",
+        "modelHint": "Utilisé pour les prochaines traductions : {model}",
+        "modelsUnavailable": "Liste des modèles indisponible (Vercel AI Gateway injoignable)",
+        "saveError": "Impossible de changer de modèle : {error}",
+        "pricePerMillion": "{input} / {output} par million de tokens",
+        "creditsLabel": "Crédits AI Gateway",
+        "creditsUsed": "{amount} consommés au total",
+        "creditsUnavailable": "Crédits indisponibles",
+        "refreshCredits": "Actualiser les crédits"
       },
       "status": {
         "missing": "Manquant",
@@ -3278,6 +3296,7 @@
         "translateAll": "Tout traduire",
         "cancel": "Annuler",
         "save": "Sauvegarder",
+        "edit": "Modifier",
         "syncStats": "Synchroniser les stats"
       },
       "batch": {

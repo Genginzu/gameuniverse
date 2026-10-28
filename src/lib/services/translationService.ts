@@ -6,6 +6,7 @@ import {
   type EntityTranslationDetail,
   type EntityTranslationLangDetail,
   type TranslationMissingItem,
+  type TranslationListStatus,
   type TranslationStatus,
   TRANSLATION_TABLE_MAP,
   ENTITY_TABLE_MAP,
@@ -34,38 +35,43 @@ export function classifyStatus(
 }
 
 /**
- * Retrieves entities with missing translations using SQL-level filtering and pagination.
- * Uses the `get_missing_translations` RPC to filter at the database level,
- * ensuring only entities with genuinely incomplete translations are returned.
+ * Lists entities of one type by translation status, filtered and paginated in SQL
+ * by the `get_translation_entities` RPC: "missing" = a required field is empty in
+ * at least one language, "complete" = every language is complete.
  */
-export async function getMissingTranslations(params: {
+export async function listTranslationEntities(params: {
   supabase: SupabaseClient;
   entityType: EntityType;
+  status: TranslationListStatus;
   languages: string[];
   page: number;
   limit: number;
   search?: string;
 }): Promise<{ items: TranslationMissingItem[]; totalCount: number }> {
-  const { supabase, entityType, languages, page, limit, search } = params;
+  const { supabase, entityType, status, languages, page, limit, search } = params;
   const client = db(supabase);
   const translationTable = TRANSLATION_TABLE_MAP[entityType];
   const fkColumn = FK_COLUMN_MAP[entityType];
   const requiredFields = REQUIRED_FIELDS[entityType];
   const editableFields = EDITABLE_FIELDS[entityType];
 
-  // 1. Use the SQL function to get only entities with missing translations
-  const { data: rpcRows, error: rpcError } = await client.rpc("get_missing_translations", {
+  const { data: rpcRows, error: rpcError } = await client.rpc("get_translation_entities", {
     p_entity_type: entityType,
     p_languages: languages,
     p_required_fields: requiredFields,
+    p_status: status,
     p_page: page,
     p_limit: limit,
     p_search: search?.trim() || null,
   });
 
   if (rpcError) {
-    logger.error("Error calling get_missing_translations RPC", { error: rpcError, entityType });
-    throw new Error("Failed to fetch missing translations");
+    logger.error("Error calling get_translation_entities RPC", {
+      error: rpcError,
+      entityType,
+      status,
+    });
+    throw new Error("Failed to fetch translation entities");
   }
 
   if (!rpcRows || rpcRows.length === 0) return { items: [], totalCount: 0 };
@@ -94,7 +100,7 @@ export async function getMissingTranslations(params: {
     }
   }
 
-  // 3. Build missing items from the SQL-filtered entities
+  // 3. Build list items from the SQL-filtered entities
   const items: TranslationMissingItem[] = [];
   for (const eid of entityIds) {
     const langMap = translationsByEntity.get(eid);

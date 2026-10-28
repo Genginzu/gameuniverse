@@ -22,6 +22,9 @@ vi.mock("@/i18n/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
+const mockNextPush = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mockNextPush }) }));
+
 function makeItem(overrides: Partial<TranslationMissingItem> = {}): TranslationMissingItem {
   return {
     entityId: "uuid-1",
@@ -97,9 +100,28 @@ describe("TranslationTable", () => {
     expect(screen.queryByText("The Legend of Zelda")).not.toBeInTheDocument();
   });
 
-  it("shows empty state when no items and not loading", () => {
+  it("shows the 'nothing to translate' empty state on the missing tab", () => {
     render(<TranslationTable {...makeProps({ items: [] })} />);
-    expect(screen.getByText("table.noResults")).toBeInTheDocument();
+    expect(screen.getByText("table.noMissing")).toBeInTheDocument();
+  });
+
+  it("shows the 'nothing translated' empty state on the complete tab", () => {
+    render(<TranslationTable {...makeProps({ status: "complete", items: [] })} />);
+    expect(screen.getByText("table.noComplete")).toBeInTheDocument();
+  });
+
+  it("hides selection and bulk translate actions on the complete tab", () => {
+    render(<TranslationTable {...makeProps({ status: "complete" })} />);
+    expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
+    expect(screen.queryByText("buttons.translateAll")).not.toBeInTheDocument();
+    expect(screen.getByText("table.status")).toBeInTheDocument();
+    expect(screen.getByText("buttons.edit")).toBeInTheDocument();
+  });
+
+  it("opens the entity editor from the edit button on the complete tab", () => {
+    render(<TranslationTable {...makeProps({ status: "complete" })} />);
+    fireEvent.click(screen.getByText("buttons.edit"));
+    expect(mockNextPush).toHaveBeenCalledWith("/admin/translations/games/uuid-1");
   });
 
   it("navigates to search URL when Enter is pressed in search input", () => {

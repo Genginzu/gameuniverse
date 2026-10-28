@@ -7,8 +7,13 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { routing } from "@/i18n/routing";
 import { useAdminTranslations } from "@/hooks/useAdminTranslations";
-import type { EntityType, TranslationMissingItem } from "@/types/admin-translations";
+import type {
+  EntityType,
+  TranslationListStatus,
+  TranslationMissingItem,
+} from "@/types/admin-translations";
 import { TranslationTable } from "@/components/admin/translations/TranslationTable";
+import { TranslationStatusTabs } from "@/components/admin/translations/TranslationStatusTabs";
 import { TranslationBatchProgress } from "@/components/admin/translations/TranslationBatchProgress";
 import { TranslationReviewModal } from "@/components/admin/translations/TranslationReviewModal";
 
@@ -27,12 +32,16 @@ const VALID_TYPES = new Set([
 
 export default function TranslationEntityTypePage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const entityType = params.entityType as string;
+  const status: TranslationListStatus =
+    searchParams.get("status") === "complete" ? "complete" : "missing";
   const t = useTranslations("admin.translations");
 
   if (!VALID_TYPES.has(entityType)) return <InvalidEntity />;
 
-  return <EntityTableView entityType={entityType as EntityType} t={t} />;
+  // Keyed by tab: selection and batch state never leak from one tab to the other.
+  return <EntityTableView key={status} entityType={entityType as EntityType} status={status} t={t} />;
 }
 
 function InvalidEntity() {
@@ -67,9 +76,11 @@ function buildHref(
 
 function EntityTableView({
   entityType,
+  status,
   t,
 }: {
   entityType: EntityType;
+  status: TranslationListStatus;
   t: ReturnType<typeof useTranslations>;
 }) {
   const searchParams = useSearchParams();
@@ -102,7 +113,7 @@ function EntityTableView({
     reviewTargetLang: string;
   }>({ isOpen: false, item: null, translatedFields: {}, isSaving: false, reviewTargetLang: "" });
 
-  const swr = useAdminTranslations({ targetLang, entityType, page, search });
+  const swr = useAdminTranslations({ targetLang, entityType, status, page, search });
 
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) => {
@@ -195,7 +206,9 @@ function EntityTableView({
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               {t(`entityTypes.${entityType}`)}
             </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t("table.subtitle")}</p>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {t(status === "missing" ? "table.subtitle" : "table.subtitleComplete")}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -241,7 +254,18 @@ function EntityTableView({
         />
       )}
 
+      <TranslationStatusTabs
+        activeStatus={status}
+        buildTabUrl={(s) =>
+          buildHref(entityType, searchParams, {
+            status: s === "missing" ? null : s,
+            page: null,
+          })
+        }
+      />
+
       <TranslationTable
+        status={status}
         items={swr.items}
         pagination={swr.pagination}
         selectedIds={selectedIds}
@@ -250,7 +274,9 @@ function EntityTableView({
         onClearSelection={() => setSelectedIds(new Set())}
         onTranslate={handleTranslateOne}
         onTranslateAndReview={handleTranslateAndReview}
-        rowHref={(item) => `/admin/translations/${entityType}/${item.entityId}`}
+        rowHref={(item) =>
+          `/admin/translations/${entityType}/${item.entityId}${status === "complete" ? "?status=complete" : ""}`
+        }
         buildPageUrl={(p) => buildHref(entityType, searchParams, { page: String(p) })}
         buildSearchUrl={(q) => buildHref(entityType, searchParams, { search: q, page: null })}
         currentSearch={search}

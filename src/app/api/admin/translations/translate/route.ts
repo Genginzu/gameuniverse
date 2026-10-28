@@ -5,6 +5,7 @@ import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { translateBodySchema } from "@/lib/validations/admin-translation";
 import { getSourceText, upsertTranslation } from "@/lib/services/translationService";
 import { translateFields } from "@/lib/services/aiTranslateService";
+import { getTranslationModel } from "@/lib/services/translationAiSettingsService";
 import { ENTITY_TABLE_MAP } from "@/types/admin-translations";
 import { logger } from "@/lib/logger";
 
@@ -40,6 +41,7 @@ export const POST = defineRoute({ auth: "admin", body: translateBodySchema }, as
 
     // Translate via AI
     const translatedFields = await translateFields({
+      model: await getTranslationModel(),
       sourceLang: source.sourceLang,
       targetLang,
       entityType,

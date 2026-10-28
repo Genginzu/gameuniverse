@@ -56,14 +56,53 @@ export function TranslationPagination({
   );
 }
 
-export function TranslationSkeletonRow() {
+export function TranslationSkeletonRow({ columns = 6 }: { columns?: number }) {
   return (
     <tr className="border-b border-white/10">
-      {Array.from({ length: 6 }).map((_, i) => (
+      {Array.from({ length: columns }).map((_, i) => (
         <td key={i} className="px-3 py-3">
           <div className="h-4 w-20 animate-pulse rounded bg-gray-200 dark:bg-slate-700" />
         </td>
       ))}
     </tr>
+  );
+}
+
+/** Bulk actions of the "to translate" tab: translate the selection or the whole page. */
+export function TranslationBulkActions({
+  selectedCount,
+  onTranslateSelection,
+  onTranslateAll,
+  t,
+}: {
+  selectedCount: number;
+  onTranslateSelection: () => void;
+  onTranslateAll: () => void;
+  t: ReturnType<typeof import("next-intl").useTranslations>;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {selectedCount > 0 && (
+        <>
+          <span className="mr-1 text-xs text-gray-500 dark:text-gray-400">
+            {t("table.selected", { count: selectedCount })}
+          </span>
+          <button
+            onClick={onTranslateSelection}
+            className="btn-filled inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-all duration-300"
+          >
+            <Icon icon="mdi:translate" className="size-4" />
+            {t("buttons.translateSelection")}
+          </button>
+        </>
+      )}
+      <button
+        onClick={onTranslateAll}
+        className="border-palette-secondary-500/30 text-palette-secondary-600 hover:bg-palette-secondary-50 dark:text-palette-secondary-400 dark:hover:bg-palette-secondary-900/20 inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-300"
+      >
+        <Icon icon="mdi:translate-variant" className="size-4" />
+        {t("buttons.translateAll")}
+      </button>
+    </div>
   );
 }

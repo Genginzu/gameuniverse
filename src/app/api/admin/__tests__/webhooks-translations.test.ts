@@ -27,10 +27,13 @@ vi.mock("@/lib/services/igdbService", () => ({
 vi.mock("@/lib/services/aiTranslateService", () => ({
   translateFields: (...args: unknown[]) => mockTranslateFields(...args),
 }));
+vi.mock("@/lib/services/translationAiSettingsService", () => ({
+  getTranslationModel: vi.fn(async () => "anthropic/claude-haiku-4.5"),
+}));
 vi.mock("@/lib/services/translationService", () => ({
   getSourceText: (...args: unknown[]) => mockGetSourceText(...args),
   upsertTranslation: (...args: unknown[]) => mockUpsertTranslation(...args),
-  getMissingTranslations: vi.fn(async () => ({ items: [], totalCount: 0 })),
+  listTranslationEntities: vi.fn(async () => ({ items: [], totalCount: 0 })),
   getEntityTranslationDetail: vi.fn(async () => null),
 }));
 
@@ -206,6 +209,24 @@ describe("admin translation routes", () => {
     );
     expect(res.status).toBe(504);
     expect(await res.json()).toEqual({ error: "Translation timed out after 30s" });
+  });
+
+  it("translates with the model chosen in the admin", async () => {
+    db.enqueue("games", { data: { id: ENTITY_ID } });
+    mockGetSourceText.mockResolvedValue({ sourceLang: "en", fields: { title: "x" } });
+    mockTranslateFields.mockResolvedValue({ title: "y" });
+    const res = await translate(
+      req("/x", "POST", {
+        entityType: "games",
+        entityId: ENTITY_ID,
+        targetLang: "fr",
+        saveToDb: false,
+      })
+    );
+    expect(res.status).toBe(200);
+    expect(mockTranslateFields).toHaveBeenCalledWith(
+      expect.objectContaining({ model: "anthropic/claude-haiku-4.5" })
+    );
   });
 
   it("returns 404 when saving a translation of an unknown entity", async () => {

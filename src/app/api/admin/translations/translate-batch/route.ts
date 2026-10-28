@@ -4,6 +4,7 @@ import { defineRoute } from "@/lib/api/route";
 import { translateBatchBodySchema } from "@/lib/validations/admin-translation";
 import { getSourceText, upsertTranslation } from "@/lib/services/translationService";
 import { translateFields } from "@/lib/services/aiTranslateService";
+import { getTranslationModel } from "@/lib/services/translationAiSettingsService";
 import { ENTITY_TABLE_MAP } from "@/types/admin-translations";
 import { logger } from "@/lib/logger";
 
@@ -17,7 +18,8 @@ export const POST = defineRoute(
   async ({ request, body }) => {
     const { entityType, entityIds, targetLang } = body;
     const supabase = await createRouteHandlerClient();
-
+    // Read once: a model change mid-batch applies to the next batch.
+    const model = await getTranslationModel();
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
@@ -67,6 +69,7 @@ export const POST = defineRoute(
 
             // Translate via AI
             const translatedFields = await translateFields({
+              model,
               sourceLang: source.sourceLang,
               targetLang,
               entityType,

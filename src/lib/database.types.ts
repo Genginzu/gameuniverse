@@ -2929,21 +2929,6 @@ export type Database = {
         };
         Returns: Json;
       };
-      get_missing_translations: {
-        Args: {
-          p_entity_type: string;
-          p_languages: string[];
-          p_limit?: number;
-          p_page?: number;
-          p_required_fields: string[];
-          p_search?: string;
-        };
-        Returns: {
-          entity_id: string;
-          identifier: string;
-          total_count: number;
-        }[];
-      };
       get_player_activity: {
         Args: {
           event_type?: string;
@@ -3004,6 +2989,22 @@ export type Database = {
           store_id: string;
           store_name: string;
           total_games: number;
+        }[];
+      };
+      get_translation_entities: {
+        Args: {
+          p_entity_type: string;
+          p_languages: string[];
+          p_limit?: number;
+          p_page?: number;
+          p_required_fields: string[];
+          p_search?: string;
+          p_status?: string;
+        };
+        Returns: {
+          entity_id: string;
+          identifier: string;
+          total_count: number;
         }[];
       };
       get_user_games_count: { Args: { user_uuid: string }; Returns: number };

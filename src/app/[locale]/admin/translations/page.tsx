@@ -7,6 +7,7 @@ import useSWR from "swr";
 import type { TranslationStats } from "@/types/admin-translations";
 import { TranslationEntityGrid } from "@/components/admin/translations/TranslationEntityGrid";
 import { TranslationProgressBar } from "@/components/admin/translations/TranslationProgressBar";
+import { TranslationAiSettingsPanel } from "@/components/admin/translations/TranslationAiSettingsPanel";
 
 export default function AdminTranslationsPage() {
   const t = useTranslations("admin.translations");
@@ -60,6 +61,8 @@ export default function AdminTranslationsPage() {
           </button>
         </div>
       </div>
+
+      <TranslationAiSettingsPanel />
 
       <TranslationProgressBar translated={globalProgress.translated} total={globalProgress.total} />
 

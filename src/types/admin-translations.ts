@@ -18,6 +18,33 @@ export type EntityType =
 /** Statut de traduction d'une entité */
 export type TranslationStatus = "missing" | "partial" | "complete";
 
+/** Onglet de la liste admin : entités à traduire ou déjà traduites */
+export type TranslationListStatus = "missing" | "complete";
+
+/** Modèle de langage Vercel AI Gateway proposé pour la traduction */
+export interface TranslationModelOption {
+  id: string;
+  name: string;
+  /** Prix en USD par million de tokens d'entrée, null si inconnu */
+  inputPricePerMillion: number | null;
+  /** Prix en USD par million de tokens de sortie, null si inconnu */
+  outputPricePerMillion: number | null;
+}
+
+/** Crédits Vercel AI Gateway en USD */
+export interface GatewayCredits {
+  balance: number;
+  totalUsed: number;
+}
+
+/** Réponse de GET /api/admin/translations/ai-settings */
+export interface TranslationAiSettings {
+  model: string;
+  models: TranslationModelOption[];
+  /** null quand la gateway n'a pas pu être interrogée */
+  credits: GatewayCredits | null;
+}
+
 /** Champs obligatoires par type d'entité */
 export const REQUIRED_FIELDS: Record<EntityType, string[]> = {
   games: ["title", "description"],

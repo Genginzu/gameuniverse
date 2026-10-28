@@ -6,6 +6,7 @@ import type {
   EntityType,
   EntityTranslationDetail,
   TranslationMissingItem,
+  TranslationListStatus,
   TranslationStats,
   TranslateResult,
   BatchProgressEvent,
@@ -18,6 +19,7 @@ import type {
 export interface UseAdminTranslationsParams {
   targetLang: string;
   entityType: EntityType;
+  status?: TranslationListStatus;
   page?: number;
   search?: string;
 }
@@ -64,6 +66,7 @@ const DEFAULT_PAGINATION: PaginationInfo = {
 function buildMissingKey(params: UseAdminTranslationsParams): string {
   const sp = new URLSearchParams({
     type: params.entityType,
+    status: params.status ?? "missing",
     page: String(params.page ?? 1),
   });
   if (params.search?.trim()) sp.set("search", params.search.trim());
