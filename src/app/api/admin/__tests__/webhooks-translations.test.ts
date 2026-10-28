@@ -24,7 +24,8 @@ vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn(), warn: vi.fn(), info: 
 vi.mock("@/lib/services/igdbService", () => ({
   IGDBService: { getAccessToken: vi.fn(async () => "token"), clearTokenCache: vi.fn() },
 }));
-vi.mock("@/lib/services/aiTranslateService", () => ({
+vi.mock("@/lib/services/aiTranslateService", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/services/aiTranslateService")>()),
   translateFields: (...args: unknown[]) => mockTranslateFields(...args),
 }));
 vi.mock("@/lib/services/translationAiSettingsService", () => ({
@@ -208,7 +209,7 @@ describe("admin translation routes", () => {
       req("/x", "POST", { entityType: "games", entityId: ENTITY_ID, targetLang: "fr" })
     );
     expect(res.status).toBe(504);
-    expect(await res.json()).toEqual({ error: "Translation timed out after 30s" });
+    expect(await res.json()).toEqual({ error: "Translation timed out after 60s" });
   });
 
   it("translates with the model chosen in the admin", async () => {

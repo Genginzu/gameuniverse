@@ -4,7 +4,8 @@
 
 Page d'administration permettant de visualiser l'état des traductions pour les
 10 types d'entités du site Game Universe, de déclencher des traductions
-automatiques via Vercel AI Gateway (modèle GPT-5.4 Nano), et de sauvegarder les
+automatiques via Vercel AI Gateway (modèle choisi dans l'admin, DeepSeek V3.1 par
+défaut), et de sauvegarder les
 résultats en base de données. Le système supporte la traduction bidirectionnelle
 entre toutes les langues configurées (actuellement fr/en).
 
@@ -16,7 +17,9 @@ entre toutes les langues configurées (actuellement fr/en).
   les modèles de langage disponibles sur Vercel AI Gateway (groupés par
   fournisseur, avec le prix par million de tokens). Le choix est enregistré dans
   la table serveur `admin_settings` (clé `translation_model`) et s'applique aux
-  traductions suivantes. Défaut : `openai/gpt-5.4-nano`
+  traductions suivantes. Défaut : `deepseek/deepseek-v3.1`, retenu par le
+  [comparatif des modèles](translation-model-benchmark.md). Chaque appel IA est
+  limité à 60 s (`TRANSLATION_TIMEOUT_MS`)
 - **Crédits AI Gateway** : solde restant et total consommé, avec bouton
   d'actualisation
 - **Traduction individuelle** : bouton "Traduire" pour traduire et sauvegarder

@@ -5,6 +5,13 @@ import { logger } from "@/lib/logger";
 import { type EntityType } from "@/types/admin-translations";
 
 /**
+ * Per-call limit. Large models (DeepSeek, Mistral) take 10-25 s on long game
+ * sheets and went past the former 30 s limit in the model benchmark.
+ */
+export const TRANSLATION_TIMEOUT_MS = 60_000;
+export const TRANSLATION_TIMEOUT_MESSAGE = `Translation timed out after ${TRANSLATION_TIMEOUT_MS / 1000}s`;
+
+/**
  * Builds the output schema from the fields actually sent for translation.
  * A source row often fills only part of EDITABLE_FIELDS (e.g. a platform without
  * abbreviation): requiring the missing ones makes the model fail validation.
@@ -51,19 +58,44 @@ function buildSystemPrompt(sourceLang: string, targetLang: string, entityType: E
   return base.join(" ");
 }
 
+/** Translation plus what the call cost, for benchmarks and monitoring. */
+export interface DetailedTranslation {
+  fields: Record<string, string>;
+  inputTokens: number | null;
+  outputTokens: number | null;
+  /** USD charged by the Vercel AI Gateway, null when the gateway does not report it */
+  costUsd: number | null;
+}
+
+/** Reads the gateway-reported cost of a call (providerMetadata.gateway.cost). */
+function gatewayCost(providerMetadata: unknown): number | null {
+  const cost = (providerMetadata as { gateway?: { cost?: unknown } } | undefined)?.gateway?.cost;
+  const value = Number(cost);
+  return cost !== undefined && Number.isFinite(value) ? value : null;
+}
+
 /**
  * Translates text fields from a source language to a target language
  * through the Vercel AI Gateway, with the model chosen in the admin.
  *
  * Requires AI_GATEWAY_API_KEY env var (used automatically by the AI SDK).
  */
-export async function translateFields(params: {
+export async function translateFields(params: TranslateFieldsParams): Promise<Record<string, string>> {
+  return (await translateFieldsDetailed(params)).fields;
+}
+
+interface TranslateFieldsParams {
   model: string;
   sourceLang: string;
   targetLang: string;
   entityType: EntityType;
   fields: Record<string, string>;
-}): Promise<Record<string, string>> {
+}
+
+/** Same as translateFields, with token usage and gateway cost. */
+export async function translateFieldsDetailed(
+  params: TranslateFieldsParams
+): Promise<DetailedTranslation> {
   const { model, sourceLang, targetLang, entityType, fields } = params;
   const schema = buildTranslationSchema(Object.keys(fields));
 
@@ -74,10 +106,10 @@ export async function translateFields(params: {
     .join("\n");
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30_000);
+  const timeout = setTimeout(() => controller.abort(), TRANSLATION_TIMEOUT_MS);
 
   try {
-    const { output } = await generateText({
+    const { output, usage, providerMetadata } = await generateText({
       model,
       output: Output.object({ schema }),
       instructions: systemPrompt,
@@ -89,11 +121,16 @@ export async function translateFields(params: {
       throw new Error("AI returned no structured output");
     }
 
-    return output as Record<string, string>;
+    return {
+      fields: output as Record<string, string>,
+      inputTokens: usage?.inputTokens ?? null,
+      outputTokens: usage?.outputTokens ?? null,
+      costUsd: gatewayCost(providerMetadata),
+    };
   } catch (error: unknown) {
     if (error instanceof Error && error.name === "AbortError") {
       logger.error("AI translation timed out", { model, entityType, sourceLang, targetLang });
-      throw new Error("Translation timed out after 30s", { cause: error });
+      throw new Error(TRANSLATION_TIMEOUT_MESSAGE, { cause: error });
     }
     logger.error("AI translation failed", { model, entityType, sourceLang, targetLang, error });
     throw error instanceof Error

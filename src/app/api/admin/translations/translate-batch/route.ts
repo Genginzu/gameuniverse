@@ -8,6 +8,9 @@ import { getTranslationModel } from "@/lib/services/translationAiSettingsService
 import { ENTITY_TABLE_MAP } from "@/types/admin-translations";
 import { logger } from "@/lib/logger";
 
+/** Entities are translated one after another (~10 s each with DeepSeek). */
+export const maxDuration = 300;
+
 /**
  * POST /api/admin/translations/translate-batch
  * Translates multiple entities sequentially, streaming progress as NDJSON.

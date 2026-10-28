@@ -58,7 +58,7 @@ describe("GET /api/admin/translations/ai-settings", () => {
   it("returns the default model, language models only, and credits", async () => {
     const res = await GET(req());
     const body = await res.json();
-    expect(body.model).toBe("openai/gpt-5.4-nano");
+    expect(body.model).toBe("deepseek/deepseek-v3.1");
     expect(body.models.map((m: { id: string }) => m.id)).toEqual([
       "anthropic/claude-haiku-4.5",
       "openai/gpt-5.4-nano",
@@ -80,7 +80,7 @@ describe("GET /api/admin/translations/ai-settings", () => {
     mockGetCredits.mockRejectedValue(new Error("no key"));
     const res = await GET(req());
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ model: "openai/gpt-5.4-nano", models: [], credits: null });
+    expect(await res.json()).toEqual({ model: "deepseek/deepseek-v3.1", models: [], credits: null });
   });
 });
 

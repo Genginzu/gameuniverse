@@ -5,8 +5,8 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { untypedTable } from "@/lib/utils/untypedTable";
 import type { GatewayCredits, TranslationModelOption } from "@/types/admin-translations";
 
-/** Model used until an admin picks another one. */
-export const DEFAULT_TRANSLATION_MODEL = "openai/gpt-5.4-nano";
+/** Model used until an admin picks another one (best value in the model benchmark). */
+export const DEFAULT_TRANSLATION_MODEL = "deepseek/deepseek-v3.1";
 
 const SETTING_KEY = "translation_model";
 
