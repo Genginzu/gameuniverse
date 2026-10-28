@@ -1,21 +1,15 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
+import { GamesListingSkeleton } from "@/components/games/GamesListingSkeleton";
 
 /**
- * Next.js loading state for the games list page.
+ * Streamed while the games listing page renders server-side. Rendered inside
+ * the editorial shell (dark surfaces, header) so the first paint is not a
+ * blank white page, and laid out like the listing so nothing jumps.
  */
 export default function GamesLoading() {
   return (
-    <div className="space-y-6 p-4 md:p-6 lg:p-8">
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-8 w-48 bg-white/10" />
-        <Skeleton className="h-10 w-36 rounded-md bg-white/10" />
-      </div>
-      <Skeleton className="h-10 w-full rounded-md bg-white/10" />
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton key={i} className="aspect-[3/4] rounded-2xl bg-white/10" />
-        ))}
-      </div>
-    </div>
+    <EditorialShell>
+      <GamesListingSkeleton />
+    </EditorialShell>
   );
 }

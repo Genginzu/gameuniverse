@@ -49,10 +49,6 @@ vi.mock("@/components/games/GameSortMenu", () => ({
     ),
 }));
 
-vi.mock("@/components/games/SearchSkeleton", () => ({
-  SearchSkeleton: () => React.createElement("div", { "data-testid": "search-skeleton" }),
-}));
-
 vi.mock("@/components/shared/FilterButton", () => ({
   FilterButton: ({ hasFilters, filterCount }: { hasFilters: boolean; filterCount: number }) =>
     React.createElement("button", {
@@ -210,10 +206,10 @@ describe("GamesListingEditorial", () => {
     expect(await screen.findByText("2 titles")).toBeDefined();
   });
 
-  it("shows the SearchSkeleton on the initial load", () => {
+  it("shows the listing skeleton on the initial load", () => {
     respond("pending");
     renderListing();
-    expect(screen.getByTestId("search-skeleton")).toBeDefined();
+    expect(screen.getByTestId("games-listing-skeleton")).toBeDefined();
   });
 
   it("renders one GameCard per game inside LibraryStatusProvider", async () => {
@@ -254,13 +250,14 @@ describe("GamesListingEditorial", () => {
     expect(screen.getByText("No games available yet")).toBeDefined();
   });
 
-  it("does not render the EmptyState while the fallback is revalidating", () => {
+  it("renders the EmptyState straight from an empty ISR payload", () => {
     respond("pending");
     renderListing({ initialData: { games: [], pagination: makePagination({ totalCount: 0 }) } });
-    expect(screen.queryByTestId("empty-state")).toBeNull();
+    expect(screen.getByTestId("empty-state")).toBeDefined();
+    expect(gamesUrls()).toHaveLength(0);
   });
 
-  it("serves the ISR payload on the default view keyed on the shared default URL", async () => {
+  it("serves the ISR payload on the default view without refetching it", async () => {
     respond("pending");
     renderListing({
       locale: "en",
@@ -268,9 +265,8 @@ describe("GamesListingEditorial", () => {
     });
 
     expect(screen.getByTestId("editorial-card").getAttribute("data-game-id")).toBe("ssr");
-    await waitFor(() => expect(gamesUrls()).toHaveLength(1));
-    expect(gamesUrls()[0]).toBe(buildDefaultListingUrl(gamesListing, { locale: "en" }));
-    expect(gamesUrls()[0]).toContain("fields=description");
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(gamesUrls()).toHaveLength(0);
   });
 
   it("requests the next page and resets to page 1 when the sort changes", async () => {

@@ -14,6 +14,7 @@ import { upcomingListing } from "@/lib/listing/resources/games";
 import type { UpcomingGamesResponse } from "@/types/game";
 
 import { UpcomingMonthSelector } from "./UpcomingMonthSelector";
+import { UPCOMING_GRID as GRID } from "./upcomingGrid";
 
 const Pagination = dynamic(() =>
   import("@/components/shared/Pagination").then((m) => m.Pagination)
@@ -22,9 +23,6 @@ const Pagination = dynamic(() =>
 interface UpcomingContentProps {
   initialData?: UpcomingGamesResponse;
 }
-
-const GRID =
-  "grid grid-cols-2 gap-4 min-[475px]:grid-cols-3 md:grid-cols-4 md:gap-6 lg:grid-cols-5 min-[1536px]:grid-cols-6";
 
 export function UpcomingContent({ initialData }: UpcomingContentProps) {
   const t = useTranslations("upcoming");

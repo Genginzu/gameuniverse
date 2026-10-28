@@ -95,10 +95,14 @@
   outline-offset: 2px;
 }
 
-/* Loading placeholder (prevents layout shift while useAuth resolves) */
+/* Loading skeleton while useAuth resolves: same footprint as the sign-in CTA
+   so the search trigger does not shift once auth is known. */
 .header-user-placeholder {
-  width: 64px;
+  width: 136px;
   height: 40px;
+  border-radius: 9999px;
+  border: 1px solid var(--editorial-line);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* Dropdown menu */

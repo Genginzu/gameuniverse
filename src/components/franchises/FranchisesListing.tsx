@@ -14,8 +14,11 @@ import { franchisesListing } from "@/lib/listing/resources/franchises";
 import type { FranchisesApiResponse } from "@/types/franchise";
 
 import { FranchiseCard } from "./FranchiseCard";
+import { FRANCHISE_CARD_SKELETON, FRANCHISES_GRID } from "./franchisesGrid";
 
-const Pagination = dynamic(() => import("@/components/shared/Pagination").then((m) => m.Pagination));
+const Pagination = dynamic(() =>
+  import("@/components/shared/Pagination").then((m) => m.Pagination)
+);
 
 interface FranchisesListingProps {
   initialData?: FranchisesApiResponse;
@@ -71,15 +74,19 @@ export function FranchisesListing({ initialData }: FranchisesListingProps) {
         data-revalidating={isValidating && !isLoading ? "true" : "false"}
       >
         {isLoading && franchises.length === 0 ? (
-          <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-6">
+          <div className={FRANCHISES_GRID}>
             {Array.from({ length: 12 }).map((_, index) => (
-              <div key={index} className="bg-editorial-2 aspect-[3/4] animate-pulse rounded-2xl" />
+              <div key={index} className={FRANCHISE_CARD_SKELETON} />
             ))}
           </div>
         ) : franchises.length === 0 ? (
-          <EmptyState icon="lucide:library-big" title={t("emptyTitle")} description={t("emptyDescription")} />
+          <EmptyState
+            icon="lucide:library-big"
+            title={t("emptyTitle")}
+            description={t("emptyDescription")}
+          />
         ) : (
-          <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-6">
+          <div className={FRANCHISES_GRID}>
             {franchises.map((franchise) => (
               <FranchiseCard key={`${franchise.kind}-${franchise.id}`} franchise={franchise} />
             ))}

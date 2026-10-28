@@ -66,7 +66,7 @@ export function HeaderUserDropdown({ className = "" }: HeaderUserDropdownProps) 
   if (loading) {
     return (
       <div
-        className={`header-user-placeholder ${className}`.trim()}
+        className={`header-user-placeholder animate-pulse motion-reduce:animate-none ${className}`.trim()}
         aria-hidden
         data-testid="header-user-placeholder"
       />

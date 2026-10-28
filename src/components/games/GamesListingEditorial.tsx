@@ -6,10 +6,10 @@ import { useTranslations } from "next-intl";
 
 import { EmptyState } from "@/components/shared/EmptyState";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
-import { SearchSkeleton } from "@/components/games/SearchSkeleton";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { useGenres } from "@/hooks/useGenres";
 import { useGameMetadataFilters } from "@/hooks/useGameMetadataFilters";
+import { useHydrated } from "@/hooks/useHydrated";
 import { useListingQuery } from "@/hooks/useListingQuery";
 import { usePlatforms } from "@/hooks/usePlatforms";
 import { gamesListing } from "@/lib/listing/resources/games";
@@ -18,8 +18,10 @@ import type { MetadataFilterSelection } from "@/types/game-metadata";
 
 import { GameCard } from "./GameCard";
 import { metadataFilterCount } from "./GameMetadataFilters";
+import { GamesListingSkeleton } from "./GamesListingSkeleton";
 import { GamesListingToolbar } from "./GamesListingToolbar";
 import { GamesUrlFilters } from "./GamesUrlFilters";
+import { GAMES_LISTING_GRID } from "./gamesListingGrid";
 
 const GameFilters = dynamic(() => import("./GameFilters").then((m) => m.GameFilters));
 const Pagination = dynamic(() =>
@@ -34,6 +36,7 @@ interface GamesListingEditorialProps {
 export function GamesListingEditorial({ locale = "fr", initialData }: GamesListingEditorialProps) {
   const t = useTranslations("games");
   const [showFilters, setShowFilters] = useState(false);
+  const hydrated = useHydrated();
 
   const { genres } = useGenres(locale);
   const { platforms } = usePlatforms(locale);
@@ -81,11 +84,19 @@ export function GamesListingEditorial({ locale = "fr", initialData }: GamesListi
     </Suspense>
   );
 
-  if (isLoading && games.length === 0) {
+  if ((isLoading && games.length === 0) || !hydrated) {
     return (
       <>
         {urlFilters}
-        <SearchSkeleton />
+        <GamesListingSkeleton />
+        {/* Server-rendered listing stays in the HTML for crawlers; shown once React has hydrated. */}
+        {!hydrated && games.length > 0 && (
+          <div hidden>
+            {games.map((game) => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+        )}
       </>
     );
   }
@@ -140,10 +151,7 @@ export function GamesListingEditorial({ locale = "fr", initialData }: GamesListi
             />
           ) : (
             <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
-              <div
-                className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 min-[1536px]:grid-cols-6 min-[1536px]:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5"
-                data-testid="editorial-games-listing-grid"
-              >
+              <div className={GAMES_LISTING_GRID} data-testid="editorial-games-listing-grid">
                 {games.map((game, index) => (
                   <GameCard key={game.id} game={game} priority={index < 5} />
                 ))}

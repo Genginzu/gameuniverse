@@ -3,13 +3,15 @@
 import { useTranslations, useLocale } from "next-intl";
 
 import { GameCard } from "@/components/games/GameCard";
-import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { useListingQuery } from "@/hooks/useListingQuery";
 import { trendingListing } from "@/lib/listing/resources/games";
 import type { GameSummary, TrendingGamesData } from "@/types/game";
+
+import { TRENDING_GRID, TRENDING_SECTION_KEYS } from "./trendingGrid";
+import { TrendingSectionsSkeleton } from "./TrendingSkeleton";
 
 /** A game can appear in several trending sections: seed its status once. */
 function uniqueGameIds(games: GameSummary[]): string[] {
@@ -20,16 +22,8 @@ interface TrendingContentProps {
   initialData?: TrendingGamesData;
 }
 
-const SECTION_KEYS = [
-  "trendingNow",
-  "mostViewed",
-  "mostPopular",
-  "bestRated",
-  "recentlyAdded",
-] as const;
-
-const GRID =
-  "grid grid-cols-2 gap-4 min-[475px]:grid-cols-3 md:grid-cols-4 md:gap-6 lg:grid-cols-5 min-[1536px]:grid-cols-6";
+const SECTION_KEYS = TRENDING_SECTION_KEYS;
+const GRID = TRENDING_GRID;
 
 function TrendingSection({ titleKey, games }: { titleKey: string; games: GameSummary[] }) {
   const t = useTranslations("trending");
@@ -55,23 +49,6 @@ function TrendingSection({ titleKey, games }: { titleKey: string; games: GameSum
   );
 }
 
-function TrendingSkeleton() {
-  return (
-    <>
-      {Array.from({ length: 4 }).map((_, s) => (
-        <section key={s} className="mb-12 md:mb-16">
-          <div className="mb-6 h-7 w-48 animate-pulse rounded bg-white/10" />
-          <div className={GRID}>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <GameCardSkeleton key={i} />
-            ))}
-          </div>
-        </section>
-      ))}
-    </>
-  );
-}
-
 export function TrendingContent({ initialData }: TrendingContentProps) {
   const t = useTranslations("trending");
   const locale = useLocale();
@@ -93,9 +70,11 @@ export function TrendingContent({ initialData }: TrendingContentProps) {
         </header>
 
         {isLoading ? (
-          <TrendingSkeleton />
+          <TrendingSectionsSkeleton />
         ) : (
-          <LibraryStatusProvider gameIds={uniqueGameIds(SECTION_KEYS.flatMap((key) => data?.[key] ?? []))}>
+          <LibraryStatusProvider
+            gameIds={uniqueGameIds(SECTION_KEYS.flatMap((key) => data?.[key] ?? []))}
+          >
             {SECTION_KEYS.map((key) => (
               <TrendingSection key={key} titleKey={key} games={data?.[key] ?? []} />
             ))}
