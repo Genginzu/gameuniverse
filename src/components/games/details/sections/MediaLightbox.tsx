@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { useDismissableLayer } from "@/hooks/useDismissableLayer";
 import { useLightboxNavigation } from "@/hooks/useLightboxNavigation";
+import { useAccentPortalScope } from "@/components/shared/AccentPortalScope";
 import type { GameMediaViewerItem } from "@/types/game";
 import { MediaLightboxStage } from "./MediaLightboxStage";
 import { MediaLightboxThumbnails } from "./MediaLightboxThumbnails";
@@ -29,10 +30,16 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
   const t = useTranslations("gameDetails.editorial.mediaViewer");
   const [mounted, setMounted] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const accentScope = useAccentPortalScope();
 
   useEffect(() => setMounted(true), []);
 
-  useDismissableLayer(overlayRef, { open: mounted, onDismiss: onClose, lockScroll: true, trapFocus: true });
+  useDismissableLayer(overlayRef, {
+    open: mounted,
+    onDismiss: onClose,
+    lockScroll: true,
+    trapFocus: true,
+  });
 
   const { previous, next, swipeHandlers } = useLightboxNavigation({
     open: mounted,
@@ -56,10 +63,11 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
       role="dialog"
       aria-modal="true"
       aria-label={t("label")}
-      className="fixed inset-0 z-[100] flex flex-col bg-black/95 text-white"
+      style={accentScope?.style}
+      className={`fixed inset-0 z-[100] flex flex-col bg-black/95 text-white ${accentScope?.className ?? ""}`}
     >
       <div className="flex items-center gap-3 px-4 py-3">
-        <span className="shrink-0 font-mono text-sm text-editorial-muted" aria-live="polite">
+        <span className="text-editorial-muted shrink-0 font-mono text-sm" aria-live="polite">
           {t("counter", { index: index + 1, total: items.length })}
         </span>
         <p className="min-w-0 flex-1 truncate text-sm sm:text-base">{label}</p>
@@ -81,10 +89,20 @@ export function MediaLightbox({ items, index, onIndexChange, onClose }: MediaLig
         <MediaLightboxStage key={`${item.kind}-${item.id}`} item={item} />
         {hasSiblings && (
           <>
-            <button type="button" onClick={previous} aria-label={t("previous")} className={`${NAV_BUTTON} left-2`}>
+            <button
+              type="button"
+              onClick={previous}
+              aria-label={t("previous")}
+              className={`${NAV_BUTTON} left-2`}
+            >
               <Icon icon="lucide:chevron-left" className="size-6" />
             </button>
-            <button type="button" onClick={next} aria-label={t("next")} className={`${NAV_BUTTON} right-2`}>
+            <button
+              type="button"
+              onClick={next}
+              aria-label={t("next")}
+              className={`${NAV_BUTTON} right-2`}
+            >
               <Icon icon="lucide:chevron-right" className="size-6" />
             </button>
           </>

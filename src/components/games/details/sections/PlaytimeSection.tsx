@@ -114,7 +114,7 @@ export function PlaytimeSection({ game }: PlaytimeSectionProps) {
               <button
                 type="button"
                 onClick={() => setDialogOpen(true)}
-                className="editorial-game-detail-cta-ghost mt-6 inline-flex"
+                className="editorial-game-detail-cta-ghost is-accent-hover mt-6 inline-flex"
               >
                 <Icon icon="lucide:plus" className="h-4 w-4" />
                 {tPlayers("addPlaytime")}

@@ -14,10 +14,13 @@
  *   - useGameLibraryStatus (dans le hero) : add/remove library
  */
 
+import { useMemo } from "react";
 import {
   formatReleaseDate as formatReleaseDateUtil,
   formatPrice as formatPriceUtil,
 } from "@/lib/utils/game-utils";
+import { paletteFromHex } from "@/lib/utils/accent-palette";
+import { AccentPortalScope } from "@/components/shared/AccentPortalScope";
 import { useBackgroundSync } from "@/hooks/useBackgroundSync";
 import { useViewTracker } from "@/hooks/useViewTracker";
 import type { GameDetails } from "@/types/game";
@@ -50,25 +53,32 @@ export function GameDetailsContent({ game, locale }: GameDetailsContentProps) {
 
   const formatReleaseDate = (dateString?: string) => formatReleaseDateUtil(dateString, locale);
   const formatPrice = (price: number, currency: string) => formatPriceUtil(price, currency, locale);
+  // Same palette as the page-level <DynamicAccent>, re-applied to portalled dialogs.
+  const palette = useMemo(
+    () => paletteFromHex(game.accentColor ?? null, game.slug),
+    [game.accentColor, game.slug]
+  );
 
   return (
-    <div className="editorial-game-detail">
-      <DetailHero game={game} formatPrice={formatPrice} formatReleaseDate={formatReleaseDate} />
-      <AboutSection game={game} />
-      <StatsBento game={game} formatPrice={formatPrice} />
-      <UniverseSection game={game} />
-      <AgeRatingsSection game={game} />
-      <LanguagesSection game={game} />
-      <PlaytimeSection game={game} />
-      <MediaSection game={game} />
-      <VersionsSection game={game} />
-      <DlcSection game={game} locale={locale} />
-      <MusicSection game={game} />
-      <PricingSection game={game} formatPrice={formatPrice} />
-      <PriceHistorySection game={game} />
-      <ReviewsSection game={game} />
-      <FranchiseGamesSection game={game} />
-      <SimilarGamesSection game={game} locale={locale} />
-    </div>
+    <AccentPortalScope palette={palette}>
+      <div className="editorial-game-detail">
+        <DetailHero game={game} formatPrice={formatPrice} formatReleaseDate={formatReleaseDate} />
+        <AboutSection game={game} />
+        <StatsBento game={game} formatPrice={formatPrice} />
+        <UniverseSection game={game} />
+        <AgeRatingsSection game={game} />
+        <LanguagesSection game={game} />
+        <PlaytimeSection game={game} />
+        <MediaSection game={game} />
+        <VersionsSection game={game} />
+        <DlcSection game={game} locale={locale} />
+        <MusicSection game={game} />
+        <PricingSection game={game} formatPrice={formatPrice} />
+        <PriceHistorySection game={game} />
+        <ReviewsSection game={game} />
+        <FranchiseGamesSection game={game} />
+        <SimilarGamesSection game={game} locale={locale} />
+      </div>
+    </AccentPortalScope>
   );
 }

@@ -113,7 +113,7 @@ export function PlayerPlaytimeForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-slate-700 bg-slate-900 sm:max-w-md">
+      <DialogContent className="border-slate-700 bg-slate-900 text-white sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-white">{title ?? t("dialogTitle")}</DialogTitle>
           <DialogDescription>{description ?? t("dialogDescription")}</DialogDescription>

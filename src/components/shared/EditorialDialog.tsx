@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { useDismissableLayer } from "@/hooks/useDismissableLayer";
+import { useAccentPortalScope } from "./AccentPortalScope";
 
 interface EditorialDialogProps {
   ariaLabel: string;
@@ -38,6 +39,7 @@ export function EditorialDialog({
 }: EditorialDialogProps) {
   const [mounted, setMounted] = useState(false);
   const surfaceRef = useRef<HTMLDivElement>(null);
+  const accentScope = useAccentPortalScope();
 
   useEffect(() => setMounted(true), []);
 
@@ -59,9 +61,11 @@ export function EditorialDialog({
     >
       <div
         ref={surfaceRef}
+        style={accentScope?.style}
         className={cn(
           "max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border p-6 shadow-2xl",
           SURFACES[variant],
+          accentScope?.className,
           className
         )}
       >

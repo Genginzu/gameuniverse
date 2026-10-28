@@ -36,13 +36,8 @@ interface DynamicAccentProps {
   as?: "div" | "section" | "article" | "main";
 }
 
-export function DynamicAccent({
-  palette,
-  children,
-  className,
-  as: Tag = "div",
-}: DynamicAccentProps) {
-  const style: CSSProperties = {
+export function accentStyle(palette: AccentPalette): CSSProperties {
+  return {
     "--accent-50": palette.scale[50],
     "--accent-100": palette.scale[100],
     "--accent-200": palette.scale[200],
@@ -56,9 +51,16 @@ export function DynamicAccent({
     "--accent-rgb": palette.rgbTriplet,
     "--accent-glow": palette.rgbTriplet,
   } as CSSProperties;
+}
 
+export function DynamicAccent({
+  palette,
+  children,
+  className,
+  as: Tag = "div",
+}: DynamicAccentProps) {
   return (
-    <Tag style={style} className={className} data-accent={palette.name}>
+    <Tag style={accentStyle(palette)} className={className} data-accent={palette.name}>
       {children}
     </Tag>
   );
