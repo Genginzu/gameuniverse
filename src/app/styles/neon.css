@@ -31,17 +31,47 @@
   transition: outline-color 200ms ease;
 }
 
-/* Global neon focus on all interactive elements (Req 8.3) */
+/* Global neon focus on all interactive elements (Req 8.3).
+ * Text fields are excluded: they signal focus through their own border (rule below). */
 button:focus-visible,
 a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
+input:is(
+    [type="checkbox"],
+    [type="radio"],
+    [type="range"],
+    [type="file"],
+    [type="color"]
+  ):focus-visible,
 [role="button"]:focus-visible,
-[tabindex]:focus-visible {
+[tabindex]:not(input, select, textarea):focus-visible {
   outline: 2px solid rgb(var(--neon-primary));
   outline-offset: 3px;
   transition: outline-color 200ms ease;
+}
+
+/* Text fields: the existing border turns accent on focus instead of stacking an outline
+ * or a Tailwind ring around it (double border). Unlayered, so it neutralises the
+ * `focus:ring-*` utilities everywhere; `:where()` keeps specificity at zero so scoped
+ * module overrides (search overlay, glass-input…) still win. */
+:where(
+  input:not(
+    [type="checkbox"],
+    [type="radio"],
+    [type="range"],
+    [type="file"],
+    [type="color"],
+    [type="button"],
+    [type="submit"],
+    [type="reset"],
+    [type="image"]
+  ),
+  select,
+  textarea
+):focus {
+  outline: none;
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-ring-offset-shadow: 0 0 #0000;
 }
 
 /* Neon button — luminous border + glow on hover */
@@ -59,4 +89,3 @@ textarea:focus-visible,
     0 0 15px rgb(var(--neon-primary) / var(--neon-glow-opacity)),
     0 0 30px rgb(var(--neon-secondary) / calc(var(--neon-glow-opacity) * 0.5));
 }
-
