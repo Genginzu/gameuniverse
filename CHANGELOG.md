@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.5.0...gameuniverse-v0.6.0) (2026-10-28)
+
+
+### Features
+
+* translated tab, AI model picker and credits in admin translations ([#459](https://github.com/Genginzu/gameuniverse/issues/459)) ([c6d73e5](https://github.com/Genginzu/gameuniverse/commit/c6d73e5da6c48c90565052dfaa13913e60a9ec4b))
+
+
+### Documentation
+
+* add game-translation skill ([#457](https://github.com/Genginzu/gameuniverse/issues/457)) ([560ac47](https://github.com/Genginzu/gameuniverse/commit/560ac4797bf7b248af4f81bdd71b4be03d6a0171))
+
 ## [0.5.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.4.2...gameuniverse-v0.5.0) (2026-10-25)
 
 
