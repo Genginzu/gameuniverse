@@ -38,7 +38,7 @@ export function WebsitesCard({ websites }: WebsitesCardProps) {
               href={website.url}
               target="_blank"
               rel="noopener noreferrer nofollow"
-              className="flex min-h-11 items-center gap-3 rounded-xl border border-editorial-line bg-white/[0.03] px-4 py-2 transition-colors hover:border-editorial-accent hover:text-editorial-accent"
+              className="flex min-h-11 items-center gap-3 rounded-md border border-editorial-line bg-white/[0.03] px-4 py-2 transition-colors hover:border-editorial-accent hover:text-editorial-accent"
             >
               <Icon icon={websiteIcon(website.typeId)} className="size-5 shrink-0" aria-hidden />
               <span className="min-w-0 flex-1 truncate text-sm">

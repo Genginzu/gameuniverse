@@ -36,7 +36,7 @@ export function MultiplayerCard({ modes }: MultiplayerCardProps) {
         {capabilities.map((capability) => (
           <li
             key={capability.key}
-            className="flex items-center gap-3 rounded-xl border border-editorial-line bg-white/[0.03] px-4 py-3"
+            className="flex items-center gap-3 rounded-md border border-editorial-line bg-white/[0.03] px-4 py-3"
           >
             <Icon
               icon={CAPABILITY_ICONS[capability.key]}

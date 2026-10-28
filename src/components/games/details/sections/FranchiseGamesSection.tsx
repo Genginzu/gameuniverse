@@ -52,7 +52,7 @@ export function FranchiseGamesSection({ game }: FranchiseGamesSectionProps) {
               <li key={`${franchise.kind}-${franchise.slug}`}>
                 <Link
                   href={`/franchises/${franchise.slug}`}
-                  className="inline-flex min-h-11 items-center rounded-full border border-editorial-line px-4 text-sm transition-colors hover:border-editorial-accent hover:text-editorial-accent"
+                  className="inline-flex min-h-11 items-center rounded-md border border-editorial-line px-4 text-sm transition-colors hover:border-editorial-accent hover:text-editorial-accent"
                 >
                   {tEd("sections.viewFranchise", { name: franchise.name })}
                 </Link>

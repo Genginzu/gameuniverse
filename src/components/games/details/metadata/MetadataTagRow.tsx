@@ -29,7 +29,7 @@ export function MetadataTagRow({ label, tags }: MetadataTagRowProps) {
             <li key={tag.key}>
               <Link
                 href={tag.href}
-                className="inline-flex min-h-11 items-center rounded-full border border-editorial-line bg-white/[0.04] px-4 text-sm transition-colors hover:border-editorial-accent hover:text-editorial-accent focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="inline-flex min-h-11 items-center rounded-md border border-editorial-line bg-white/[0.04] px-4 text-sm transition-colors hover:border-editorial-accent hover:text-editorial-accent focus-visible:outline-2 focus-visible:outline-offset-2"
               >
                 {tag.label}
               </Link>
