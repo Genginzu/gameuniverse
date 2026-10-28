@@ -22,7 +22,15 @@ describe("entityTypeSchema", () => {
 describe("missingQuerySchema", () => {
   it("passes with valid type and applies defaults", () => {
     const result = missingQuerySchema.parse({ type: "games" });
-    expect(result).toEqual({ type: "games", page: 1, limit: 20 });
+    expect(result).toEqual({ type: "games", status: "missing", page: 1, limit: 20 });
+  });
+
+  it("accepts the complete status", () => {
+    expect(missingQuerySchema.parse({ type: "games", status: "complete" }).status).toBe("complete");
+  });
+
+  it("rejects an unknown status", () => {
+    expect(() => missingQuerySchema.parse({ type: "games", status: "partial" })).toThrow();
   });
 
   it("rejects invalid type", () => {

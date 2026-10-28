@@ -4,9 +4,16 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { defineRoute, notFound, validationError } from "@/lib/api/route";
 import { translateBodySchema } from "@/lib/validations/admin-translation";
 import { getSourceText, upsertTranslation } from "@/lib/services/translationService";
-import { translateFields } from "@/lib/services/aiTranslateService";
+import {
+  TRANSLATION_TIMEOUT_MESSAGE,
+  translateFields,
+} from "@/lib/services/aiTranslateService";
+import { getTranslationModel } from "@/lib/services/translationAiSettingsService";
 import { ENTITY_TABLE_MAP } from "@/types/admin-translations";
 import { logger } from "@/lib/logger";
+
+/** One AI call (up to TRANSLATION_TIMEOUT_MS) plus the database round trips. */
+export const maxDuration = 90;
 
 /**
  * POST /api/admin/translations/translate - Translate a single entity to a target language
@@ -40,6 +47,7 @@ export const POST = defineRoute({ auth: "admin", body: translateBodySchema }, as
 
     // Translate via AI
     const translatedFields = await translateFields({
+      model: await getTranslationModel(),
       sourceLang: source.sourceLang,
       targetLang,
       entityType,
@@ -76,7 +84,7 @@ export const POST = defineRoute({ auth: "admin", body: translateBodySchema }, as
   } catch (error) {
     if (error instanceof Error && error.message.includes("timed out")) {
       logger.error("Error in admin translations translate POST", { error });
-      return NextResponse.json({ error: "Translation timed out after 30s" }, { status: 504 });
+      return NextResponse.json({ error: TRANSLATION_TIMEOUT_MESSAGE }, { status: 504 });
     }
 
     if (error instanceof Error && error.message.includes("AI Gateway")) {

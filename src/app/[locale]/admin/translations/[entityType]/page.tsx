@@ -1,38 +1,41 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { routing } from "@/i18n/routing";
 import { useAdminTranslations } from "@/hooks/useAdminTranslations";
-import type { EntityType, TranslationMissingItem } from "@/types/admin-translations";
+import { useTranslationSelectionRunner } from "@/hooks/useTranslationSelectionRunner";
+import {
+  DEFAULT_TRANSLATION_PAGE_SIZE,
+  parseTranslationPageSize,
+} from "@/lib/utils/translationBatchPlan";
+import type {
+  EntityType,
+  TranslationListStatus,
+  TranslationMissingItem,
+} from "@/types/admin-translations";
 import { TranslationTable } from "@/components/admin/translations/TranslationTable";
+import { TranslationStatusTabs } from "@/components/admin/translations/TranslationStatusTabs";
 import { TranslationBatchProgress } from "@/components/admin/translations/TranslationBatchProgress";
 import { TranslationReviewModal } from "@/components/admin/translations/TranslationReviewModal";
-
-const VALID_TYPES = new Set([
-  "games",
-  "characters",
-  "genres",
-  "companies",
-  "platforms",
-  "character_roles",
-  "genders",
-  "species",
-  "content_descriptors",
-  "ratings",
-]);
+import { entityTypeSchema } from "@/lib/validations/admin-translation";
+import { buildTranslationsListHref as buildHref } from "@/lib/utils/adminTranslationsHref";
 
 export default function TranslationEntityTypePage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const entityType = params.entityType as string;
+  const status: TranslationListStatus =
+    searchParams.get("status") === "complete" ? "complete" : "missing";
   const t = useTranslations("admin.translations");
 
-  if (!VALID_TYPES.has(entityType)) return <InvalidEntity />;
+  if (!entityTypeSchema.safeParse(entityType).success) return <InvalidEntity />;
 
-  return <EntityTableView entityType={entityType as EntityType} t={t} />;
+  // Keyed by tab: selection and batch state never leak from one tab to the other.
+  return <EntityTableView key={status} entityType={entityType as EntityType} status={status} t={t} />;
 }
 
 function InvalidEntity() {
@@ -44,36 +47,19 @@ function InvalidEntity() {
   );
 }
 
-/** Build a Link-compatible href object with updated search params. */
-function buildHref(
-  entityType: string,
-  currentParams: URLSearchParams,
-  overrides: Record<string, string | null>
-): { pathname: string; query: Record<string, string> } {
-  const sp = new URLSearchParams(currentParams.toString());
-  for (const [key, value] of Object.entries(overrides)) {
-    if (value === null || value === "" || value === "1") {
-      sp.delete(key);
-    } else {
-      sp.set(key, value);
-    }
-  }
-  const query: Record<string, string> = {};
-  sp.forEach((v, k) => {
-    query[k] = v;
-  });
-  return { pathname: `/admin/translations/${entityType}`, query };
-}
-
 function EntityTableView({
   entityType,
+  status,
   t,
 }: {
   entityType: EntityType;
+  status: TranslationListStatus;
   t: ReturnType<typeof useTranslations>;
 }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10) || 1);
+  const pageSize = parseTranslationPageSize(searchParams.get("limit"));
   const search = searchParams.get("search") ?? "";
 
   const defaultLang =
@@ -82,16 +68,6 @@ function EntityTableView({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [translatingIds, setTranslatingIds] = useState<Set<string>>(new Set());
   const [lastError, setLastError] = useState<string | null>(null);
-
-  // Batch state
-  const [batch, _setBatch] = useState({
-    isRunning: false,
-    processed: 0,
-    total: 0,
-    succeeded: 0,
-    failed: 0,
-  });
-  const abortRef = useRef<AbortController | null>(null);
 
   // Review state
   const [review, setReview] = useState<{
@@ -102,7 +78,26 @@ function EntityTableView({
     reviewTargetLang: string;
   }>({ isOpen: false, item: null, translatedFields: {}, isSaving: false, reviewTargetLang: "" });
 
-  const swr = useAdminTranslations({ targetLang, entityType, page, search });
+  const swr = useAdminTranslations({ targetLang, entityType, status, page, limit: pageSize, search });
+  const batch = useTranslationSelectionRunner(swr.translateBatch);
+
+  const handleTranslateSelection = useCallback(async () => {
+    const selection = swr.items.filter((i) => selectedIds.has(i.entityId));
+    setSelectedIds(new Set());
+    await batch.run(selection);
+  }, [batch, selectedIds, swr.items]);
+
+  const handlePageSizeChange = useCallback(
+    (size: number) => {
+      setSelectedIds(new Set());
+      const href = buildHref(entityType, searchParams, {
+        limit: size === DEFAULT_TRANSLATION_PAGE_SIZE ? null : String(size),
+        page: null,
+      });
+      router.push(href as never);
+    },
+    [entityType, router, searchParams]
+  );
 
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) => {
@@ -178,8 +173,6 @@ function EntityTableView({
     [review.item, review.reviewTargetLang, swr]
   );
 
-  const cancelBatch = useCallback(() => abortRef.current?.abort(), []);
-
   return (
     <div className="space-y-6 p-4 lg:p-6">
       {/* Header */}
@@ -195,7 +188,9 @@ function EntityTableView({
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               {t(`entityTypes.${entityType}`)}
             </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t("table.subtitle")}</p>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              {t(status === "missing" ? "table.subtitle" : "table.subtitleComplete")}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -218,9 +213,9 @@ function EntityTableView({
         </div>
       </div>
 
-      {lastError && (
+      {(lastError || batch.lastError) && (
         <div className="flex items-center justify-between rounded-xl border border-red-200 bg-red-50/80 px-4 py-3 backdrop-blur-sm dark:border-red-800/50 dark:bg-red-900/20">
-          <p className="text-sm text-red-700 dark:text-red-400">{lastError}</p>
+          <p className="text-sm text-red-700 dark:text-red-400">{lastError ?? batch.lastError}</p>
           <button
             onClick={() => setLastError(null)}
             className="ml-3 rounded-lg p-1 text-red-500 transition-all hover:bg-red-100 dark:hover:bg-red-800/30"
@@ -237,25 +232,42 @@ function EntityTableView({
           succeeded={batch.succeeded}
           failed={batch.failed}
           isRunning={batch.isRunning}
-          onCancel={cancelBatch}
+          onCancel={batch.cancel}
         />
       )}
 
+      <TranslationStatusTabs
+        activeStatus={status}
+        buildTabUrl={(s) =>
+          buildHref(entityType, searchParams, {
+            status: s === "missing" ? null : s,
+            page: null,
+          })
+        }
+      />
+
       <TranslationTable
+        status={status}
         items={swr.items}
         pagination={swr.pagination}
+        pageSize={pageSize}
+        onPageSizeChange={handlePageSizeChange}
+        isBatchRunning={batch.isRunning}
+        onTranslateSelection={handleTranslateSelection}
         selectedIds={selectedIds}
         onToggleSelect={toggleSelect}
         onSelectAll={(ids) => setSelectedIds(new Set(ids))}
         onClearSelection={() => setSelectedIds(new Set())}
         onTranslate={handleTranslateOne}
         onTranslateAndReview={handleTranslateAndReview}
-        rowHref={(item) => `/admin/translations/${entityType}/${item.entityId}`}
+        rowHref={(item) =>
+          `/admin/translations/${entityType}/${item.entityId}${status === "complete" ? "?status=complete" : ""}`
+        }
         buildPageUrl={(p) => buildHref(entityType, searchParams, { page: String(p) })}
         buildSearchUrl={(q) => buildHref(entityType, searchParams, { search: q, page: null })}
         currentSearch={search}
         isLoading={swr.isLoadingItems}
-        translatingIds={translatingIds}
+        translatingIds={batch.isRunning ? new Set([...translatingIds, ...batch.pendingIds]) : translatingIds}
       />
 
       {review.item && (

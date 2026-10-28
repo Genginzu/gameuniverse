@@ -95,6 +95,7 @@
 | [pandascore-sync.md](features/admin/pandascore-sync.md)                 | Sync esport PandaScore (Edge Functions) |
 | [review-management.md](features/admin/review-management.md)             | Gestion des avis                        |
 | [translation-management.md](features/admin/translation-management.md)   | Gestion des traductions                 |
+| [translation-model-benchmark.md](features/admin/translation-model-benchmark.md) | Comparatif des modèles de traduction IA |
 
 ## 🔧 Systèmes transversaux
 

@@ -6,6 +6,7 @@ import type {
   EntityType,
   EntityTranslationDetail,
   TranslationMissingItem,
+  TranslationListStatus,
   TranslationStats,
   TranslateResult,
   BatchProgressEvent,
@@ -18,7 +19,9 @@ import type {
 export interface UseAdminTranslationsParams {
   targetLang: string;
   entityType: EntityType;
+  status?: TranslationListStatus;
   page?: number;
+  limit?: number;
   search?: string;
 }
 
@@ -38,7 +41,8 @@ export interface UseAdminTranslationsReturn {
   translateBatch: (
     entityIds: string[],
     onProgress: (event: BatchProgressEvent) => void,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    overrideLang?: string
   ) => Promise<BatchSummary>;
   saveTranslation: (
     entityId: string,
@@ -64,7 +68,9 @@ const DEFAULT_PAGINATION: PaginationInfo = {
 function buildMissingKey(params: UseAdminTranslationsParams): string {
   const sp = new URLSearchParams({
     type: params.entityType,
+    status: params.status ?? "missing",
     page: String(params.page ?? 1),
+    limit: String(params.limit ?? 20),
   });
   if (params.search?.trim()) sp.set("search", params.search.trim());
   return `/api/admin/translations/missing?${sp.toString()}`;
@@ -151,12 +157,13 @@ export function useAdminTranslations(
     async (
       entityIds: string[],
       onProgress: (event: BatchProgressEvent) => void,
-      signal?: AbortSignal
+      signal?: AbortSignal,
+      overrideLang?: string
     ): Promise<BatchSummary> => {
       const res = await fetch("/api/admin/translations/translate-batch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entityType, entityIds, targetLang }),
+        body: JSON.stringify({ entityType, entityIds, targetLang: overrideLang ?? targetLang }),
         signal,
       });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Icon } from "@iconify/react";
 import type { EntityType, EntityTranslationDetail } from "@/types/admin-translations";
@@ -38,6 +38,7 @@ export default function TranslationEntityDetailPage() {
 }
 
 function DetailView({ entityType, entityId }: { entityType: EntityType; entityId: string }) {
+  const backToComplete = useSearchParams().get("status") === "complete";
   const [translatingLangs, setTranslatingLangs] = useState<Set<string>>(new Set());
   const [savingLangs, setSavingLangs] = useState<Set<string>>(new Set());
 
@@ -148,7 +149,7 @@ function DetailView({ entityType, entityId }: { entityType: EntityType; entityId
         isLoading={false}
         translatingLangs={translatingLangs}
         savingLangs={savingLangs}
-        backHref={`/admin/translations/${entityType}`}
+        backHref={`/admin/translations/${entityType}${backToComplete ? "?status=complete" : ""}`}
         onTranslateLang={handleTranslateLang}
         onTranslateAll={handleTranslateAll}
         onSaveLang={handleSaveLang}

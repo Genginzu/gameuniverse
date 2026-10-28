@@ -3254,14 +3254,33 @@
         "target": "Target Text",
         "status": "Status",
         "actions": "Actions",
-        "noResults": "No results",
+        "noMissing": "No missing translations",
+        "noComplete": "No fully translated entities",
         "searchPlaceholder": "Search by title/name...",
         "selectAll": "Select all",
         "selected": "{count} selected",
+        "pageSize": "Per page",
         "page": "Page {current} of {total}",
         "previous": "Previous",
         "next": "Next",
-        "subtitle": "Entities with missing translations"
+        "subtitle": "Entities with missing translations",
+        "subtitleComplete": "Entities translated in every language"
+      },
+      "tabs": {
+        "label": "Filter by translation status",
+        "missing": "To translate",
+        "complete": "Translated"
+      },
+      "ai": {
+        "modelLabel": "Translation model",
+        "modelHint": "Used for the next translations: {model}",
+        "modelsUnavailable": "Model list unavailable (Vercel AI Gateway unreachable)",
+        "saveError": "Could not change the model: {error}",
+        "pricePerMillion": "{input} / {output} per million tokens",
+        "creditsLabel": "AI Gateway credits",
+        "creditsUsed": "{amount} used in total",
+        "creditsUnavailable": "Credits unavailable",
+        "refreshCredits": "Refresh credits"
       },
       "status": {
         "missing": "Missing",
@@ -3272,9 +3291,9 @@
         "translate": "Translate",
         "translateAndReview": "Translate & Review",
         "translateSelection": "Translate Selection",
-        "translateAll": "Translate All",
         "cancel": "Cancel",
         "save": "Save",
+        "edit": "Edit",
         "syncStats": "Sync stats"
       },
       "batch": {
