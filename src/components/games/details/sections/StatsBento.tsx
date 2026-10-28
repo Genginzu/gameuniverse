@@ -5,7 +5,7 @@
  *
  * Pavé XL : metascore 7xl/9xl avec phrase d'accompagnement.
  * Cellules normales : prix mini, age, date de sortie.
- * Cellules wide (col-span-2) : plateformes, dev/publisher, genres.
+ * Cellules wide (col-span-2) : plateformes, dev/publisher, modes de jeu + perspectives.
  *
  * Toutes les cards sont des SpotlightCard (halo curseur).
  */
@@ -16,6 +16,8 @@ import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails } from "@/types/game";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
+import { GameplayBentoCell } from "./GameplayBentoCell";
+import { BentoPillLink } from "./BentoPillLink";
 
 interface StatsBentoProps {
   game: GameDetails;
@@ -102,10 +104,13 @@ export function StatsBento({ game, formatPrice }: StatsBentoProps) {
             <KickerLabel className="mb-3">{tEd("platforms")}</KickerLabel>
             <div className="flex flex-wrap gap-2">
               {game.platforms.map((p) => (
-                <span key={p.id} className="editorial-game-detail-pill">
+                <BentoPillLink
+                  key={p.id}
+                  href={{ pathname: "/games", query: { platforms: p.slug } }}
+                >
                   <Icon icon={getPlatformIcon(p.slug)} className="h-3 w-3 shrink-0" />
                   {p.abbreviation || p.name}
-                </span>
+                </BentoPillLink>
               ))}
             </div>
           </SpotlightCard>
@@ -127,27 +132,8 @@ export function StatsBento({ game, formatPrice }: StatsBentoProps) {
           )}
         </SpotlightCard>
 
-        {/* Genres — wide */}
-        {game.genres.length > 0 && (
-          <SpotlightCard className="editorial-game-detail-bento-cell editorial-game-detail-bento-cell--wide">
-            <KickerLabel className="mb-3">Genres</KickerLabel>
-            <div className="flex flex-wrap gap-2">
-              {game.genres.map((g) => (
-                <span
-                  key={g.id}
-                  className="editorial-game-detail-pill"
-                  style={{
-                    borderColor: "rgba(var(--accent-rgb), 0.35)",
-                    background: "rgba(var(--accent-rgb), 0.08)",
-                    color: "rgb(var(--accent-rgb))",
-                  }}
-                >
-                  {g.name}
-                </span>
-              ))}
-            </div>
-          </SpotlightCard>
-        )}
+        {/* Game modes + perspectives — wide */}
+        <GameplayBentoCell metadata={game.metadata} />
       </div>
     </section>
   );

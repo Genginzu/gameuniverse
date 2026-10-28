@@ -20,7 +20,9 @@ vi.mock("@/i18n/navigation", () => ({
     children: React.ReactNode;
   }) => {
     const url =
-      typeof href === "string" ? href : `${href.pathname}?${new URLSearchParams(href.query).toString()}`;
+      typeof href === "string"
+        ? href
+        : `${href.pathname}?${new URLSearchParams(href.query).toString()}`;
     return (
       <a href={url} {...props}>
         {children}
@@ -70,7 +72,7 @@ describe("UniverseSection", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("links translated taxonomies to the filtered games listing", () => {
+  it("links translated taxonomies to the filtered games listing, without modes or perspectives", () => {
     renderSection({
       ...emptyMetadata,
       themes: [{ igdbId: 38, slug: "open-world", name: "Open world" }],
@@ -82,9 +84,7 @@ describe("UniverseSection", () => {
     expect(screen.getByRole("link", { name: "Monde ouvert" }).getAttribute("href")).toContain(
       "themes=open-world"
     );
-    expect(screen.getByRole("link", { name: "New mode" }).getAttribute("href")).toContain(
-      "gameModes=new-mode"
-    );
+    expect(screen.queryByText("New mode")).toBeNull();
     expect(screen.getByRole("link", { name: "REDengine" }).getAttribute("href")).toContain(
       "engines=redengine"
     );
@@ -117,7 +117,9 @@ describe("UniverseSection", () => {
     expect(screen.getByText("Écran partagé")).toBeTruthy();
     expect(screen.getByText("Détails IGDB pour : PC, PS5")).toBeTruthy();
 
-    const links = within(screen.getByRole("heading", { name: "Liens" }).parentElement as HTMLElement)
+    const links = within(
+      screen.getByRole("heading", { name: "Liens" }).parentElement as HTMLElement
+    )
       .getAllByRole("link")
       .map((link) => link.textContent);
     expect(links[0]).toContain("Site officiel");
