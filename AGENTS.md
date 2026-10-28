@@ -255,6 +255,10 @@ keyword match in their `description`:
   `igdb-fields/**`, `GameFormSyncTab*`, `bulkFieldSync*`.
 - **`spec-final-validation`** — mandatory tests+lint+build+README block for spec
   `tasks.md`. Activates when writing `.agents/specs/**/tasks.md`.
+- **`game-translation`** — insert French rows into `game_translations` via
+  PostgREST (creds from `.env`, upsert on `game_id+language_code`). Activates on
+  requests to translate games, fill missing `fr` translations, or batch game
+  localization.
 - **`graphify`** — knowledge graph of the codebase (5867 nodes, 237 communities).
   Use `graphify query "<question>"` for scoped subgraphs instead of reading files.
   Activates on any codebase/architecture question when `graphify-out/graph.json` exists.
