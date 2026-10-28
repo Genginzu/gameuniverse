@@ -28,11 +28,19 @@ export function useListingQuery<TFilters extends object, TData>(
   const context = { locale, pathParams };
   const key = buildListingUrl(resource, state, context);
 
+  const resolvedFallback = resolveListingFallback(resource, state, context, fallbackData);
+  const hasServerData = resolvedFallback !== undefined;
+
   const { data, error, isLoading, isValidating, mutate } = useSWR<TData>(key, fetcher, {
     revalidateOnFocus: false,
     keepPreviousData: true,
+    // Server-rendered (ISR) data is already fresh enough: don't refetch it right after hydration.
+    // revalidateIfStale also covers re-renders after mount (StrictMode re-runs effects with the
+    // latest render, where SWR no longer sees an "initial mount"). Filter/page changes still fetch.
+    revalidateOnMount: !hasServerData,
+    revalidateIfStale: !hasServerData,
     ...resource.swr,
-    fallbackData: resolveListingFallback(resource, state, context, fallbackData),
+    fallbackData: resolvedFallback,
   });
 
   const setFilters = useCallback(

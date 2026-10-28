@@ -57,11 +57,11 @@ describe("EsportPlayersContent", () => {
   const renderContent = (initialData?: EsportPlayersData) =>
     render(<EsportPlayersContent initialData={initialData} />, { wrapper: createSWRWrapper() });
 
-  it("uses the ISR payload on the default view and loads the game chips", async () => {
+  it("uses the ISR payload on the default view without refetching it, and loads the game chips", async () => {
     renderContent(PLAYERS);
     expect(screen.getByText("player:Faker")).toBeInTheDocument();
     expect(await screen.findByText("CS2")).toBeInTheDocument();
-    await waitFor(() => expect(playerUrls()).toEqual(["/api/esport/players"]));
+    expect(playerUrls()).toEqual([]);
   });
 
   it("resets to the first page in a single request when the game filter changes", async () => {

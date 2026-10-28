@@ -70,11 +70,18 @@ describe("AllCharactersContent", () => {
     window.scrollTo = vi.fn();
   });
 
-  it("requests page 1 with no filters and renders the ISR data immediately", async () => {
+  it("renders the ISR data immediately without refetching page 1", async () => {
     respond("pending");
     renderContent({ locale: "en", initialData: { characters: [CHARACTER], pagination: PAGES } });
 
     expect(screen.getByText("card:Link")).toBeInTheDocument();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(requestedUrls()).toEqual([]);
+  });
+
+  it("requests page 1 with no filters when no server data was provided", async () => {
+    renderContent({ locale: "en" });
+
     await waitFor(() =>
       expect(requestedUrls()).toEqual(["/api/characters?locale=en&page=1&limit=20"])
     );

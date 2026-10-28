@@ -53,10 +53,18 @@ describe("useListingQuery", () => {
       wrapper: createSWRWrapper(),
     });
 
-  it("serves the ISR fallback immediately on the default view and keys on the default URL", async () => {
+  it("serves the ISR fallback without refetching it after mount", async () => {
     const { result } = renderListing(FALLBACK);
 
     expect(result.current.data).toEqual(FALLBACK);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(mockFetch).not.toHaveBeenCalled();
+    expect(result.current.isValidating).toBe(false);
+  });
+
+  it("fetches the default URL on mount when no server data was provided", async () => {
+    renderListing();
+
     await waitFor(() => expect(mockFetch).toHaveBeenCalled());
     expect(requestedUrls(mockFetch)[0]).toBe(
       buildDefaultListingUrl(gamesListing, { locale: "fr" })
