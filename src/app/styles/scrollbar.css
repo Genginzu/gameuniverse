@@ -46,3 +46,28 @@
     transition: none;
   }
 }
+
+
+/* Accent variant: the thumb is always painted with the site accent. */
+.editorial-scrollbar-accent {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.7) transparent;
+}
+
+.editorial-scrollbar-accent::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.editorial-scrollbar-accent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.editorial-scrollbar-accent::-webkit-scrollbar-button {
+  display: none;
+}
+
+.editorial-scrollbar-accent::-webkit-scrollbar-thumb {
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.7);
+  border-radius: 9999px;
+}

@@ -5,6 +5,9 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { useToast } from "@/hooks/use-toast";
 import { GameSearchPicker } from "./GameSearchPicker";
+import { DatePickerField } from "@/components/shared/DatePickerField";
+import { toIsoDate } from "@/lib/utils/calendar-grid";
+import { SESSION_INPUT_CLASS, SESSION_LABEL_CLASS } from "./session-field-classes";
 import type { CreateGamingSessionPayload } from "@/types/gaming-session";
 
 interface SessionComposerProps {
@@ -16,11 +19,7 @@ interface SessionComposerProps {
 const MAX_HOURS = 24;
 
 function today(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+  return toIsoDate(new Date());
 }
 
 export function SessionComposer({ locale, isCreating, onSubmit }: SessionComposerProps) {
@@ -55,13 +54,10 @@ export function SessionComposer({ locale, isCreating, onSubmit }: SessionCompose
   };
 
   return (
-    <div className="rounded-2xl bg-white/80 p-4 shadow-md backdrop-blur-xl transition-all duration-300 dark:bg-slate-800/60 dark:shadow-lg dark:shadow-black/20">
+    <div className="border-editorial-line bg-editorial-2 rounded-lg border p-4 md:p-5">
       <div className="space-y-4">
-        {/* Game picker */}
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-600 dark:text-slate-300">
-            {t("gameLabel")}
-          </label>
+          <label className={SESSION_LABEL_CLASS}>{t("gameLabel")}</label>
           <GameSearchPicker
             locale={locale}
             selectedLabel={gameLabel}
@@ -76,29 +72,22 @@ export function SessionComposer({ locale, isCreating, onSubmit }: SessionCompose
           />
         </div>
 
-        {/* Date + duration */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <label
-              htmlFor="session-date"
-              className="mb-1 block text-xs font-medium text-gray-600 dark:text-slate-300"
-            >
+            <label htmlFor="session-date" className={SESSION_LABEL_CLASS}>
               {t("dateLabel")}
             </label>
-            <input
+            <DatePickerField
               id="session-date"
-              type="date"
               value={date}
+              locale={locale}
               max={today()}
-              onChange={(e) => setDate(e.target.value)}
-              className="border-palette-primary-300 focus:border-palette-primary-400 focus:ring-palette-primary-400/20 dark:border-palette-primary-500/50 w-full rounded-xl border-2 bg-white/60 p-3 text-base text-gray-800 focus:ring-2 focus:outline-hidden dark:bg-slate-700/40 dark:text-slate-100"
+              onChange={setDate}
+              className={SESSION_INPUT_CLASS}
             />
           </div>
           <div>
-            <label
-              htmlFor="session-hours"
-              className="mb-1 block text-xs font-medium text-gray-600 dark:text-slate-300"
-            >
+            <label htmlFor="session-hours" className={SESSION_LABEL_CLASS}>
               {t("hoursLabel")}
             </label>
             <input
@@ -112,14 +101,11 @@ export function SessionComposer({ locale, isCreating, onSubmit }: SessionCompose
                 const n = parseInt(e.target.value, 10);
                 setHours(Number.isFinite(n) ? Math.max(0, Math.min(MAX_HOURS, n)) : 0);
               }}
-              className="border-palette-primary-300 focus:border-palette-primary-400 focus:ring-palette-primary-400/20 dark:border-palette-primary-500/50 w-full rounded-xl border-2 bg-white/60 p-3 text-base text-gray-800 focus:ring-2 focus:outline-hidden dark:bg-slate-700/40 dark:text-slate-100"
+              className={SESSION_INPUT_CLASS}
             />
           </div>
           <div>
-            <label
-              htmlFor="session-minutes"
-              className="mb-1 block text-xs font-medium text-gray-600 dark:text-slate-300"
-            >
+            <label htmlFor="session-minutes" className={SESSION_LABEL_CLASS}>
               {t("minutesLabel")}
             </label>
             <input
@@ -134,7 +120,7 @@ export function SessionComposer({ locale, isCreating, onSubmit }: SessionCompose
                 const n = parseInt(e.target.value, 10);
                 setMinutes(Number.isFinite(n) ? Math.max(0, Math.min(59, n)) : 0);
               }}
-              className="border-palette-primary-300 focus:border-palette-primary-400 focus:ring-palette-primary-400/20 dark:border-palette-primary-500/50 w-full rounded-xl border-2 bg-white/60 p-3 text-base text-gray-800 focus:ring-2 focus:outline-hidden dark:bg-slate-700/40 dark:text-slate-100"
+              className={SESSION_INPUT_CLASS}
             />
           </div>
         </div>
@@ -144,7 +130,7 @@ export function SessionComposer({ locale, isCreating, onSubmit }: SessionCompose
             type="button"
             onClick={handleSubmit}
             disabled={isDisabled}
-            className="btn-filled shadow-palette-primary-500/20 inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium text-white shadow-lg transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="btn-filled inline-flex h-11 w-full items-center justify-center gap-2 rounded-md px-5 text-[0.9rem] font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {isCreating ? (
               <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />

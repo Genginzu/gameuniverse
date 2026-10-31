@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { GameSummary } from "@/types/game";
+import { SESSION_INPUT_CLASS } from "./session-field-classes";
 
 interface GameSearchPickerProps {
   locale: string;
@@ -64,19 +65,14 @@ export function GameSearchPicker({
 
   if (selectedLabel) {
     return (
-      <div className="border-palette-primary-300 dark:border-palette-primary-500/50 flex items-center gap-2 rounded-xl border-2 bg-white/60 p-3 dark:bg-slate-700/40">
-        <Icon
-          icon="lucide:gamepad-2"
-          className="text-palette-primary-500 dark:text-palette-primary-300 h-4 w-4"
-        />
-        <span className="flex-1 truncate text-sm text-gray-800 dark:text-slate-100">
-          {selectedLabel}
-        </span>
+      <div className="border-editorial-line bg-editorial-3 flex h-11 items-center gap-2 rounded-md border pr-1 pl-3.5">
+        <Icon icon="lucide:gamepad-2" className="text-editorial-accent size-4" />
+        <span className="flex-1 truncate text-base text-white">{selectedLabel}</span>
         <button
           type="button"
           onClick={onClear}
           aria-label={t("clearGame")}
-          className="rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+          className="text-editorial-muted flex size-9 items-center justify-center rounded-full transition-colors hover:bg-white/[0.06] hover:text-white"
         >
           <Icon icon="lucide:x" className="h-4 w-4" />
         </button>
@@ -86,25 +82,31 @@ export function GameSearchPicker({
 
   return (
     <div className="relative">
-      <div className="border-palette-primary-300 focus-within:border-palette-primary-400 focus-within:ring-palette-primary-400/20 dark:border-palette-primary-500/50 flex items-center gap-2 rounded-xl border-2 bg-white/60 p-3 focus-within:ring-2 dark:bg-slate-700/40">
-        <Icon icon="lucide:search" className="h-4 w-4 text-gray-400 dark:text-slate-500" />
+      <div className="relative">
+        <Icon
+          icon="lucide:search"
+          className="text-editorial-muted pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2"
+        />
         <input
-          type="search"
+          type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("gamePlaceholder")}
           aria-label={t("gamePlaceholder")}
-          className="flex-1 bg-transparent text-base text-gray-800 placeholder-gray-400 focus:outline-hidden dark:text-slate-100 dark:placeholder-slate-500"
+          className={`${SESSION_INPUT_CLASS} pr-10 pl-10`}
         />
         {isLoading && (
-          <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin text-gray-400" />
+          <Icon
+            icon="lucide:loader-2"
+            className="text-editorial-muted absolute top-1/2 right-3.5 size-4 -translate-y-1/2 animate-spin"
+          />
         )}
       </div>
 
       {isOpen && results.length > 0 && (
         <ul
           role="listbox"
-          className="absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800"
+          className="editorial-scrollbar-accent border-editorial-line bg-editorial-2 absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-md border shadow-lg shadow-black/40"
         >
           {results.map((game) => (
             <li key={game.id}>
@@ -115,7 +117,7 @@ export function GameSearchPicker({
                   setQuery("");
                   setIsOpen(false);
                 }}
-                className="hover:bg-palette-primary-50 flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-gray-800 transition-colors dark:text-slate-100 dark:hover:bg-slate-700/60"
+                className="flex min-h-11 w-full items-center gap-3 px-3 py-2 text-left text-sm text-white transition-colors hover:bg-white/[0.06]"
               >
                 {game.coverImage ? (
                   <img
@@ -124,8 +126,8 @@ export function GameSearchPicker({
                     className="h-10 w-8 shrink-0 rounded object-cover"
                   />
                 ) : (
-                  <div className="flex h-10 w-8 shrink-0 items-center justify-center rounded bg-gray-100 dark:bg-slate-700">
-                    <Icon icon="lucide:gamepad-2" className="h-4 w-4 text-gray-400" />
+                  <div className="bg-editorial-3 flex h-10 w-8 shrink-0 items-center justify-center rounded">
+                    <Icon icon="lucide:gamepad-2" className="text-editorial-muted h-4 w-4" />
                   </div>
                 )}
                 <span className="truncate">{game.title}</span>
@@ -136,7 +138,7 @@ export function GameSearchPicker({
       )}
 
       {isOpen && !isLoading && query.trim().length >= 2 && results.length === 0 && (
-        <p className="mt-2 text-xs text-gray-500 dark:text-slate-400">{t("noResults")}</p>
+        <p className="text-editorial-muted mt-2 text-sm">{t("noResults")}</p>
       )}
     </div>
   );

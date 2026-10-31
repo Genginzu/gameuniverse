@@ -589,6 +589,12 @@
     }
   },
   "common": {
+    "datePicker": {
+      "openCalendar": "Choisir une date",
+      "previousMonth": "Mois précédent",
+      "nextMonth": "Mois suivant",
+      "today": "Aujourd'hui"
+    },
     "loading": "Chargement...",
     "error": "Une erreur est survenue",
     "retry": "Réessayer",
