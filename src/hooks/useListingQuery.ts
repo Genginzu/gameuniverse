@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useReducer } from "react";
+import { useCallback, useReducer, useState } from "react";
 import useSWR from "swr";
 
 import { fetcher } from "@/lib/swr/fetcher";
@@ -28,7 +28,15 @@ export function useListingQuery<TFilters extends object, TData>(
   const context = { locale, pathParams };
   const key = buildListingUrl(resource, state, context);
 
-  const resolvedFallback = resolveListingFallback(resource, state, context, fallbackData);
+  // ISR data only describes the first render: once the user leaves the initial view, coming back
+  // to it (e.g. page 1) must fetch, otherwise keepPreviousData keeps showing the other page.
+  const [initialKey] = useState(key);
+  const [leftInitialView, setLeftInitialView] = useState(false);
+  if (!leftInitialView && key !== initialKey) setLeftInitialView(true);
+
+  const resolvedFallback = leftInitialView
+    ? undefined
+    : resolveListingFallback(resource, state, context, fallbackData);
   const hasServerData = resolvedFallback !== undefined;
 
   const { data, error, isLoading, isValidating, mutate } = useSWR<TData>(key, fetcher, {

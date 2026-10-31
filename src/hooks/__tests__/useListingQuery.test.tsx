@@ -101,6 +101,24 @@ describe("useListingQuery", () => {
     expect(requestedUrls(mockFetch).some((url) => url.includes("esport=true&page=3"))).toBe(false);
   });
 
+  it("fetches page 1 when coming back to it after leaving the ISR view", async () => {
+    const { result } = renderListing(FALLBACK);
+
+    act(() => result.current.setPage(2));
+    await waitFor(() =>
+      expect(requestedUrls(mockFetch)).toContain(
+        "/api/games?locale=fr&page=2&limit=20&fields=description"
+      )
+    );
+
+    act(() => result.current.setPage(1));
+    await waitFor(() =>
+      expect(requestedUrls(mockFetch)).toContain(
+        buildDefaultListingUrl(gamesListing, { locale: "fr" })
+      )
+    );
+  });
+
   it("restores the default filters on reset", () => {
     const { result } = renderListing();
 
