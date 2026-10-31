@@ -1,6 +1,8 @@
 import type { ListingResource } from "@/types/listing";
 
-export const CHARACTERS_PAGE_SIZE = 20;
+// 24 = least common multiple of the character grid columns (2, 3, 4, 6):
+// every full page fills its last row whatever the screen width.
+export const CHARACTERS_PAGE_SIZE = 24;
 
 export interface CharactersListingFilters {
   roles: string[];

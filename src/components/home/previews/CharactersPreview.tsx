@@ -1,17 +1,10 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 
-import { characterEditorialCardConfig } from "@/components/characters/characterEditorialCardConfig";
-import { EntityCard, type EntityCardConfig } from "@/components/shared/EntityCard";
+import { CharacterCard } from "@/components/characters/CharacterCard";
 import type { CharacterSummary } from "@/types/character";
 import { PreviewPlaceholder } from "./PreviewFrame";
-
-/** Landing variant: no top badge (role / species / gender label). */
-const PREVIEW_CARD_CONFIG: EntityCardConfig<CharacterSummary> = {
-  ...characterEditorialCardConfig,
-  badge: undefined,
-};
 
 interface CharactersPreviewProps {
   characters: CharacterSummary[];
@@ -20,7 +13,6 @@ interface CharactersPreviewProps {
 /** Popular characters rendered with the editorial character card. */
 export function CharactersPreview({ characters }: CharactersPreviewProps) {
   const t = useTranslations("landing.previews.mockups");
-  const locale = useLocale();
   const items = characters.slice(0, 4);
 
   if (items.length === 0) {
@@ -30,12 +22,7 @@ export function CharactersPreview({ characters }: CharactersPreviewProps) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
       {items.map((character) => (
-        <EntityCard
-          key={character.id}
-          entity={character}
-          config={PREVIEW_CARD_CONFIG}
-          locale={locale}
-        />
+        <CharacterCard key={character.id} character={character} />
       ))}
     </div>
   );

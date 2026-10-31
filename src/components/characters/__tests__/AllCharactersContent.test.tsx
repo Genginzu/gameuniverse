@@ -18,8 +18,10 @@ vi.mock("@/hooks/useCharacterFilters", () => ({
 vi.mock("@/components/providers/CharacterFavoriteStatusProvider", () => ({
   CharacterFavoriteStatusProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
-vi.mock("@/components/shared/EntityCard", () => ({
-  EntityCard: ({ entity }: { entity: CharacterSummary }) => <div>card:{entity.name}</div>,
+vi.mock("../CharacterCard", () => ({
+  CharacterCard: ({ character }: { character: CharacterSummary }) => (
+    <div>card:{character.name}</div>
+  ),
 }));
 vi.mock("@/components/shared/GridSkeleton", () => ({ GridSkeleton: () => <div>skeleton</div> }));
 vi.mock("../CharacterFilters", () => ({
@@ -83,7 +85,7 @@ describe("AllCharactersContent", () => {
     renderContent({ locale: "en" });
 
     await waitFor(() =>
-      expect(requestedUrls()).toEqual(["/api/characters?locale=en&page=1&limit=20"])
+      expect(requestedUrls()).toEqual(["/api/characters?locale=en&page=1&limit=24"])
     );
   });
 
@@ -94,7 +96,7 @@ describe("AllCharactersContent", () => {
 
     await waitFor(() =>
       expect(requestedUrls()).toContain(
-        "/api/characters?locale=fr&page=1&limit=20&roles=protagonist&platforms=pc"
+        "/api/characters?locale=fr&page=1&limit=24&roles=protagonist&platforms=pc"
       )
     );
     expect(await screen.findByText("card:Zelda")).toBeInTheDocument();
@@ -104,14 +106,14 @@ describe("AllCharactersContent", () => {
     renderContent();
     fireEvent.click(await screen.findByText("go-page-3"));
     await waitFor(() =>
-      expect(requestedUrls()).toContain("/api/characters?locale=fr&page=3&limit=20")
+      expect(requestedUrls()).toContain("/api/characters?locale=fr&page=3&limit=24")
     );
     expect(window.scrollTo).toHaveBeenCalled();
 
     fireEvent.click(screen.getByText("pick-role"));
     await waitFor(() =>
       expect(requestedUrls()).toContain(
-        "/api/characters?locale=fr&page=1&limit=20&roles=protagonist"
+        "/api/characters?locale=fr&page=1&limit=24&roles=protagonist"
       )
     );
   });

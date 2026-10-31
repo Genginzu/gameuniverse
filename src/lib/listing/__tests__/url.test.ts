@@ -22,7 +22,7 @@ describe("buildDefaultListingUrl", () => {
     ["games", gamesListing, "/api/games?locale=fr&page=1&limit=20&fields=description"],
     ["trending", trendingListing, "/api/games/trending?locale=fr&limit=12"],
     ["upcoming", upcomingListing, "/api/games/upcoming?locale=fr&page=1&limit=60"],
-    ["characters", charactersListing, "/api/characters?locale=fr&page=1&limit=20"],
+    ["characters", charactersListing, "/api/characters?locale=fr&page=1&limit=24"],
     ["esport live", esportLiveListing, "/api/esport/live"],
     ["esport results", esportResultsListing, "/api/esport/results"],
     ["esport tournaments", esportTournamentsListing, "/api/esport/tournaments"],

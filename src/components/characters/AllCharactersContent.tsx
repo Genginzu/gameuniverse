@@ -5,9 +5,8 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
 import { Button } from "@/components/ui/button";
-import { EntityCard } from "@/components/shared/EntityCard";
+import { CharacterCard } from "./CharacterCard";
 import { CharacterFilters } from "./CharacterFilters";
-import { characterEditorialCardConfig } from "./characterEditorialCardConfig";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
@@ -25,8 +24,8 @@ interface AllCharactersContentProps {
   initialData?: CharactersApiResponse;
 }
 
-const GRID =
-  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-6 lg:grid-cols-5 xl:grid-cols-6";
+// Column counts must divide CHARACTERS_PAGE_SIZE so full pages never leave a ragged last row.
+const GRID = "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-6 xl:grid-cols-6";
 
 export function AllCharactersContent({ locale = "fr", initialData }: AllCharactersContentProps) {
   const t = useTranslations("characters");
@@ -106,13 +105,7 @@ export function AllCharactersContent({ locale = "fr", initialData }: AllCharacte
             >
               <div className={GRID}>
                 {characters.map((character, index) => (
-                  <EntityCard
-                    key={character.id}
-                    entity={character}
-                    config={characterEditorialCardConfig}
-                    locale={locale}
-                    priority={index < 6}
-                  />
+                  <CharacterCard key={character.id} character={character} priority={index < 6} />
                 ))}
               </div>
             </div>
