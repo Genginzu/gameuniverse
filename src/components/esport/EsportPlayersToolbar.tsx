@@ -45,7 +45,7 @@ export function PlayersSkeleton() {
       {Array.from({ length: 10 }).map((_, i) => (
         <div
           key={i}
-          className="border-editorial-line bg-editorial-2 flex flex-col items-center rounded-2xl border p-4 sm:p-5"
+          className="border-editorial-line bg-editorial-2 flex min-h-[218px] flex-col items-center rounded-2xl border p-4 sm:min-h-[226px] sm:p-5"
         >
           <div className="mb-3 h-20 w-20 animate-pulse rounded-full bg-white/[0.06]" />
           <div className="mb-2 h-4 w-24 animate-pulse rounded bg-white/[0.06]" />
