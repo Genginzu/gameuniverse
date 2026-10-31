@@ -128,7 +128,7 @@ export class AchievementEngine {
 
   /**
    * Récupère le compteur actuel d'un joueur pour une catégorie donnée.
-   * - library : nombre de jeux dans user_library
+   * - library : nombre de jeux dans user_library (hors liste de souhaits)
    * - playtime : total d'heures de jeu (game_sessions.duration_minutes / 60)
    * - reviews : nombre d'avis dans game_reviews
    * - social : nombre d'amis acceptés dans friendships
@@ -140,7 +140,7 @@ export class AchievementEngine {
 
       switch (category) {
         case "library":
-          return await countRows(supabase, "user_library", userId);
+          return await countLibraryGames(supabase, userId);
 
         case "playtime":
           return await sumPlaytimeHours(supabase, userId);
@@ -232,7 +232,7 @@ type SupabaseClient = ReturnType<typeof getSupabaseAdmin>;
 /** Compte les lignes d'une table filtrées par user_id. */
 async function countRows(
   supabase: SupabaseClient,
-  table: "user_library" | "game_reviews" | "game_collections",
+  table: "game_reviews" | "game_collections",
   userId: string
 ): Promise<number> {
   const { count, error } = await supabase
@@ -242,6 +242,22 @@ async function countRows(
 
   if (error) {
     logger.error(`Failed to count rows in ${table}`, { error, userId });
+    return 0;
+  }
+
+  return count ?? 0;
+}
+
+/** Counts the games of a player's library; wished games are not owned yet. */
+async function countLibraryGames(supabase: SupabaseClient, userId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from("user_library")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .or("status.is.null,status.neq.wishlist");
+
+  if (error) {
+    logger.error("Failed to count rows in user_library", { error, userId });
     return 0;
   }
 

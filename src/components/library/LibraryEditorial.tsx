@@ -148,13 +148,22 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
             </div>
           }
         >
-          <Link
-            href="/library/backlog"
-            className="border-editorial-line text-editorial-muted mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 py-2 text-sm hover:text-white"
-          >
-            <Icon icon="lucide:list-checks" className="h-4 w-4" />
-            {t("backlog.openManager")}
-          </Link>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Link
+              href="/library/backlog"
+              className="border-editorial-line text-editorial-muted inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 py-2 text-sm hover:text-white"
+            >
+              <Icon icon="lucide:list-checks" className="h-4 w-4" />
+              {t("backlog.openManager")}
+            </Link>
+            <Link
+              href="/library/wishlist"
+              className="border-editorial-line text-editorial-muted inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 py-2 text-sm hover:text-white"
+            >
+              <Icon icon="lucide:star" className="h-4 w-4" />
+              {t("wishlist.open")}
+            </Link>
+          </div>
         </EditorialPageHeader>
 
         {/* Controls */}

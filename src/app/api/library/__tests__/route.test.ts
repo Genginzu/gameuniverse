@@ -874,5 +874,17 @@ describe("/api/library", () => {
       expect(data.success).toBe(true);
       expect(data.data.status).toBe("wishlist");
     });
+
+    it("rejects an unknown library status", async () => {
+      const request = new NextRequest("http://localhost:3000/api/library", {
+        method: "POST",
+        body: JSON.stringify({ gameId: "game-123", status: "stolen" }),
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(400);
+      expect(mockFrom).not.toHaveBeenCalled();
+    });
   });
 });

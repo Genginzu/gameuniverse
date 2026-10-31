@@ -20,6 +20,7 @@ const entry = vi.hoisted(() => ({
     loading: false,
     adding: false,
     addToLibrary: (() => Promise.resolve(true)) as () => Promise<boolean>,
+    addToWishlist: (() => Promise.resolve(true)) as () => Promise<boolean>,
     removeFromLibrary: (() => Promise.resolve(true)) as () => Promise<boolean>,
     setStatus: ((_status: LibraryStatus) => Promise.resolve(true)) as (
       status: LibraryStatus
@@ -36,6 +37,7 @@ beforeEach(() => {
     loading: false,
     adding: false,
     addToLibrary: vi.fn().mockResolvedValue(true),
+    addToWishlist: vi.fn().mockResolvedValue(true),
     removeFromLibrary: vi.fn().mockResolvedValue(true),
     setStatus: vi.fn().mockResolvedValue(true),
   };
@@ -52,6 +54,15 @@ describe("HeroLibraryControl", () => {
     fireEvent.click(screen.getByRole("button", { name: /libraryAdd/ }));
 
     expect(entry.state.addToLibrary).toHaveBeenCalled();
+  });
+
+  it("adds a game that is not in the library to the wishlist", () => {
+    render(<HeroLibraryControl gameId="g1" />);
+
+    fireEvent.click(screen.getByRole("button", { name: /wishlistAdd/ }));
+
+    expect(entry.state.addToWishlist).toHaveBeenCalled();
+    expect(entry.state.addToLibrary).not.toHaveBeenCalled();
   });
 
   it("shows the current status and changes it from the menu", () => {

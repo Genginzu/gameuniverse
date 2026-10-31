@@ -10,7 +10,8 @@ Les jeux « En cours » alimentent le rail « Reprendre » de l'accueil.
 
 - **Fiche jeu** (`/games/[slug]`) : quand le jeu est dans la bibliothèque, le
   bouton du hero affiche le statut courant et ouvre un menu (statuts + « Retirer
-  de ma bibliothèque »). Sinon, « Ajouter à ma bibliothèque ».
+  de ma bibliothèque »). Sinon, « Ajouter à ma bibliothèque » et « Ajouter à ma
+  liste de souhaits » (voir [wishlist.md](wishlist.md)).
 - **`/library`** : bouton rond en haut à gauche de chaque carte (icône du
   statut), toujours visible ; une légende des icônes est affichée au-dessus de
   la barre de recherche (`LibraryStatusLegend`). Passer un jeu « Terminé » ouvre

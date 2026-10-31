@@ -93,8 +93,10 @@ bout, puis la page reprend (`useHorizontalWheelScroll`).
 Recommandations : le moteur SQL note tout le catalogue en une passe (≈ 1 s,
 voir [Recommandations](games/recommendations.md)), sans cache serveur. Pendant
 le chargement, `HomeLoadingNotice` affiche un message (plus un second après
-6 s). « Recalculer » relance le calcul. Chaque carte propose « Pas intéressé »
-(avec « Annuler ») et « + » pour l'ajouter directement à la bibliothèque.
+6 s). « Recalculer » relance le calcul. Chaque carte est la `GameCard` commune
+avec son ajout rapide (bibliothèque + liste de souhaits, voir
+[quick-add.md](library/quick-add.md)) et un bouton « Pas intéressé » (avec
+« Annuler ») empilé au-dessus.
 
 Reprendre : tant que le rail a moins de 5 jeux « En cours », il est complété
 jusqu'à 5 par les derniers jeux « Possédé » (`usePlayingSuggestions`,

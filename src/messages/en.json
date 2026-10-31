@@ -551,6 +551,7 @@
       "library": {
         "myLibrary": "My library",
         "backlog": "My backlog",
+        "wishlist": "My wishlist",
         "collections": "My collections",
         "favoriteCharacters": "Favorite characters",
         "connections": "Connections & sync"
@@ -1170,6 +1171,32 @@
       "title": "Add a game to your library",
       "addButton": "Add to library"
     },
+    "wishlist": {
+      "open": "My wishlist",
+      "kicker": "Wishlist",
+      "titlePrefix": "The games you",
+      "titleAccent": "want",
+      "subtitle": "Games you'd like to play but haven't bought yet. Come back here when you're looking for your next purchase.",
+      "metaTitle": "My wishlist",
+      "metaDescription": "The games you want to play but haven't bought yet.",
+      "backToLibrary": "Back to my library",
+      "count": "{count, plural, one {# game wished} other {# games wished}}",
+      "markOwnedLabel": "I bought {title}: move it to my library",
+      "markedOwned": "{title} moved to your library",
+      "removeLabel": "Remove {title} from my wishlist",
+      "removed": "{title} removed from your wishlist",
+      "error": "Unable to update your wishlist, please try again.",
+      "empty": {
+        "title": "Your wishlist is empty",
+        "description": "Add the games you'd like to play from their page with \"Add to wishlist\" and find them here when it's time to buy.",
+        "exploreGames": "Browse games"
+      },
+      "authRequired": {
+        "title": "Your wishlist is waiting for you",
+        "description": "Sign in to keep track of the games you want to buy.",
+        "signIn": "Sign in"
+      }
+    },
     "backlog": {
       "openManager": "Manage my backlog",
       "kicker": "Backlog",
@@ -1270,8 +1297,13 @@
     "readMore": "Discover",
     "quickAdd": {
       "add": "Add {title} to my library",
-      "inLibrary": "{title} is in your library",
-      "error": "Unable to add this game to your library, please try again."
+      "remove": "Remove {title} from my library",
+      "error": "Unable to add this game to your library, please try again.",
+      "removeError": "Unable to remove this game from your library, please try again.",
+      "wishlistAdd": "Add {title} to my wishlist",
+      "wishlistRemove": "Remove {title} from my wishlist",
+      "wishlistError": "Unable to add this game to your wishlist, please try again.",
+      "wishlistRemoveError": "Unable to remove this game from your wishlist, please try again."
     },
     "noGamesFound": "No games found",
     "modifySearch": "Try modifying your search criteria or explore other categories",
@@ -1525,6 +1557,7 @@
       "heroPlatformsCount": "{count} platforms",
       "heroPlatformsOne": "1 platform",
       "libraryAdd": "Add to library",
+      "wishlistAdd": "Add to wishlist",
       "liveTicker": "{players} playing now · {streams} streams · {tournaments} tournaments this week",
       "score": "Score",
       "from": "From",
@@ -5042,9 +5075,8 @@
       "dismissed": "<game>{title}</game> won't be suggested again.",
       "undo": "Undo",
       "dismissError": "Unable to save your choice, please try again.",
-      "addToLibrary": "Add {title} to my library",
       "added": "<game>{title}</game> was added to your library.",
-      "addError": "Unable to add this game to your library, please try again.",
+      "wishlisted": "<game>{title}</game> was added to your wishlist.",
       "error": "Recommendations are unavailable right now."
     },
     "friendsActivity": {

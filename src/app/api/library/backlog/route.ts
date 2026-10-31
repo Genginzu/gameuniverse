@@ -5,8 +5,9 @@ import { estimateGameHours, computeRemainingHours } from "@/lib/services/backlog
 import { logger } from "@/lib/logger";
 import type { BacklogGame, BacklogPriority } from "@/types/backlog";
 
-// Statuses excluded from the backlog: a completed game is no longer "to play".
-const EXCLUDED_STATUSES = ["completed"];
+// Statuses excluded from the backlog: a completed game is no longer "to play",
+// a wished game is not owned yet.
+const EXCLUDED_STATUSES = ["completed", "wishlist"];
 
 interface GameTranslationRow {
   title: string;

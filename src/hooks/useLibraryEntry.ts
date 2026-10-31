@@ -39,7 +39,8 @@ export function useLibraryEntry(gameId: string, signedIn: boolean) {
   );
 
   const setInLibrary = useCallback(
-    async (inLibrary: boolean) => enabled && succeeded(toggle({ gameId, inLibrary })),
+    async (inLibrary: boolean, status?: LibraryStatus) =>
+      enabled && succeeded(toggle({ gameId, inLibrary, status })),
     [enabled, gameId, toggle]
   );
 
@@ -49,6 +50,7 @@ export function useLibraryEntry(gameId: string, signedIn: boolean) {
   );
 
   const addToLibrary = useCallback(() => setInLibrary(true), [setInLibrary]);
+  const addToWishlist = useCallback(() => setInLibrary(true, "wishlist"), [setInLibrary]);
   const removeFromLibrary = useCallback(() => setInLibrary(false), [setInLibrary]);
 
   return {
@@ -57,6 +59,7 @@ export function useLibraryEntry(gameId: string, signedIn: boolean) {
     loading: seeding || isLoading,
     adding: toggling || changing,
     addToLibrary,
+    addToWishlist,
     removeFromLibrary,
     setStatus,
   };

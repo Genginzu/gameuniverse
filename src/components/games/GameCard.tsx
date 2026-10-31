@@ -37,6 +37,7 @@ import { hasTopLeftBadges } from "@/lib/utils/gameCardBadges";
 import { toHiResCover } from "@/lib/utils/igdbImage";
 import { formatReleaseMonthYear } from "@/lib/utils/releaseMonthYear";
 import type { GameSummary } from "@/types/game";
+import type { QuickAddCallbacks } from "@/types/library";
 import { GameCardQuickAdd } from "./GameCardQuickAdd";
 import { MetascoreBadge } from "./MetascoreBadge";
 
@@ -72,6 +73,10 @@ interface GameCardProps {
    * for a signed-in player; disable it where every game is already owned.
    */
   quickAdd?: boolean;
+  /** Context-specific buttons stacked above the quick add ones (e.g. "not interested"). */
+  quickAddLeading?: ReactNode;
+  /** Caller reactions to a quick add (e.g. drop a recommendation from its rail). */
+  quickAddCallbacks?: QuickAddCallbacks;
   /** Extra controls layered over the card (positioned by the caller); replaces the quick add. */
   actions?: ReactNode;
 }
@@ -84,6 +89,8 @@ export function GameCard({
   className = "",
   overlay,
   quickAdd = true,
+  quickAddLeading,
+  quickAddCallbacks,
   actions,
 }: GameCardProps) {
   return (
@@ -96,6 +103,8 @@ export function GameCard({
             gameId={game.id}
             title={game.title}
             belowBadges={hasTopLeftBadges(game, overlay)}
+            leading={quickAddLeading}
+            callbacks={quickAddCallbacks}
           />
         ))}
     </div>

@@ -81,9 +81,10 @@ recommandations), page détail d'un jeu (repli de « Jeux similaires »).
 - **Pas intéressé** : bouton (œil barré) en haut à gauche d'une carte de la
   section Recommandations. Le jeu disparaît aussitôt et n'est plus proposé ;
   « Annuler » le rétablit.
-- **Ajouter à la bibliothèque** : bouton « + » sous le précédent. Le jeu est
-  ajouté en « possédé » (`POST /api/library`), quitte le rail et un message
-  avec un lien vers sa fiche confirme l'ajout.
+- **Bibliothèque / liste de souhaits** : l'ajout rapide commun des cartes
+  ([quick-add.md](../library/quick-add.md)), sous le précédent. Le jeu ajouté
+  (`POST /api/library`, statut « possédé » ou `wishlist`) quitte aussitôt le rail
+  et un message avec un lien vers sa fiche confirme l'ajout.
 - **Recalculer** : relance le calcul (pas de cache serveur, donc toujours à
   jour).
 

@@ -36,15 +36,18 @@ vi.mock("@/hooks/useDismissWithUndo", () => ({
 }));
 const addition = vi.hoisted(() => ({
   state: {
-    add: (() => Promise.resolve()) as (rec: unknown) => Promise<void>,
-    lastAdded: null as { id: string; slug: string; title: string } | null,
-    failed: false,
-    isPending: false,
+    lastAdded: null as {
+      id: string;
+      slug: string;
+      title: string;
+      list: "library" | "wishlist";
+    } | null,
+    callbacksFor: (() => ({})) as (rec: unknown) => Record<string, unknown>,
   },
 }));
 
-vi.mock("@/hooks/useAddRecommendationToLibrary", () => ({
-  useAddRecommendationToLibrary: () => addition.state,
+vi.mock("@/hooks/useRecommendationQuickAdd", () => ({
+  useRecommendationQuickAdd: () => addition.state,
 }));
 
 vi.mock("next-intl", () => {
@@ -57,13 +60,31 @@ vi.mock("next-intl", () => {
   return { useTranslations: () => t };
 });
 
+const cardProps = vi.hoisted(() => ({ calls: [] as Array<Record<string, unknown>> }));
+
 vi.mock("@/components/games/GameCard", () => ({
-  GameCard: ({ game, actions }: { game: GameSummary; actions?: React.ReactNode }) =>
-    React.createElement("div", { "data-testid": "game-card" }, game.title, actions),
+  GameCard: (props: {
+    game: GameSummary;
+    quickAdd?: boolean;
+    quickAddLeading?: React.ReactNode;
+    quickAddCallbacks?: unknown;
+  }) => {
+    cardProps.calls.push(props);
+    return React.createElement(
+      "div",
+      { "data-testid": "game-card" },
+      props.game.title,
+      props.quickAddLeading
+    );
+  },
 }));
 
 vi.mock("@/components/games/GameCardSkeleton", () => ({
   GameCardSkeleton: () => React.createElement("div", { "data-testid": "card-skeleton" }),
+}));
+
+vi.mock("@/components/providers/LibraryStatusProvider", () => ({
+  LibraryStatusProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 const REC: GameRecommendation = {
@@ -94,11 +115,10 @@ beforeEach(() => {
     isPending: false,
   };
   addition.state = {
-    add: vi.fn().mockResolvedValue(undefined),
     lastAdded: null,
-    failed: false,
-    isPending: false,
+    callbacksFor: vi.fn(() => ({ onAdd: vi.fn() })),
   };
+  cardProps.calls = [];
 });
 
 describe("RecommendationsSection feedback", () => {
@@ -133,20 +153,21 @@ describe("RecommendationsSection feedback", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("dismissError");
   });
 
-  it("adds a pick to the library from its card", () => {
+  it("uses the shared card quick add, wired to the recommendation", () => {
     recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
     render(<RecommendationsSection />);
 
-    fireEvent.click(screen.getByRole("button", { name: "addToLibrary" }));
-
-    expect(addition.state.add).toHaveBeenCalledWith(REC);
+    const props = cardProps.calls.at(-1);
+    expect(props?.quickAdd).toBe(true);
+    expect(addition.state.callbacksFor).toHaveBeenCalledWith(REC);
+    expect(props?.quickAddCallbacks).toEqual({ onAdd: expect.any(Function) });
   });
 
   it("confirms an addition with a link to the added game, without undo", () => {
     recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 5 };
     addition.state = {
       ...addition.state,
-      lastAdded: { id: "a", slug: "added-slug", title: "Added" },
+      lastAdded: { id: "a", slug: "added-slug", title: "Added", list: "library" },
     };
     render(<RecommendationsSection />);
 
@@ -156,21 +177,27 @@ describe("RecommendationsSection feedback", () => {
     expect(screen.queryByText("basedOn")).not.toBeInTheDocument();
   });
 
-  it("disables both card actions while an action is pending", () => {
-    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
-    addition.state = { ...addition.state, isPending: true };
+  it("confirms an addition to the wishlist", () => {
+    recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 5 };
+    addition.state = {
+      ...addition.state,
+      lastAdded: { id: "a", slug: "wished-slug", title: "Wished", list: "wishlist" },
+    };
     render(<RecommendationsSection />);
 
-    expect(screen.getByRole("button", { name: "addToLibrary" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "dismiss" })).toBeDisabled();
+    expect(screen.getByRole("status")).toHaveTextContent("wishlisted");
+    expect(screen.getByRole("link", { name: "Wished" })).toHaveAttribute(
+      "href",
+      "/games/wished-slug"
+    );
   });
 
-  it("reports a failed addition", () => {
+  it("disables the dismiss button while a dismissal is pending", () => {
     recs.state = { ...recs.state, recommendations: [REC], basedOnGameCount: 4 };
-    addition.state = { ...addition.state, failed: true };
+    dismissal.state = { ...dismissal.state, isPending: true };
     render(<RecommendationsSection />);
 
-    expect(screen.getByRole("alert")).toHaveTextContent("addError");
+    expect(screen.getByRole("button", { name: "dismiss" })).toBeDisabled();
   });
 });
 

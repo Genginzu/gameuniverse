@@ -26,18 +26,34 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
-// Stateful fake server: a confirmed POST /api/library puts the game in the library.
-function routeFetch(initialInLibrary: boolean, postStatus = 201) {
-  let inLibrary = initialInLibrary;
+// Stateful fake server: a confirmed POST /api/library puts the game in the
+// library (or the wishlist), PATCH changes its status, DELETE takes it out.
+function routeFetch(initialInLibrary: boolean, postStatus = 201, deleteStatus = 200) {
+  let entry: { status: string } | null = initialInLibrary ? { status: "owned" } : null;
+  const state = () => (entry ? { inLibrary: true, status: entry.status } : { inLibrary: false });
   return vi.fn((url: string, init?: RequestInit) => {
     if (url === "/api/library/batch-status") {
-      return Promise.resolve(jsonResponse({ statuses: { g1: inLibrary } }));
+      return Promise.resolve(
+        jsonResponse({
+          statuses: { g1: !!entry },
+          libraryStatuses: entry ? { g1: entry.status } : {},
+        })
+      );
     }
     if (url === "/api/library" && init?.method === "POST") {
-      if (postStatus < 400) inLibrary = true;
+      const body = JSON.parse(String(init.body)) as { status?: string };
+      if (postStatus < 400) entry = { status: body.status ?? "owned" };
       return Promise.resolve(jsonResponse({}, postStatus));
     }
-    return Promise.resolve(jsonResponse({ inLibrary }));
+    if (url === "/api/library/g1" && init?.method === "PATCH") {
+      entry = { status: (JSON.parse(String(init.body)) as { status: string }).status };
+      return Promise.resolve(jsonResponse(state()));
+    }
+    if (url === "/api/library/g1" && init?.method === "DELETE") {
+      if (deleteStatus < 400) entry = null;
+      return Promise.resolve(jsonResponse({}, deleteStatus));
+    }
+    return Promise.resolve(jsonResponse(state()));
   });
 }
 
@@ -70,7 +86,7 @@ describe("GameCardQuickAdd", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "add:Hades" }));
 
-    expect(await screen.findByRole("img", { name: "inLibrary:Hades" })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "remove:Hades" })).toBeInTheDocument();
     expect(mockFetch).toHaveBeenCalledWith("/api/library", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -78,13 +94,40 @@ describe("GameCardQuickAdd", () => {
     });
   });
 
-  it("shows a check instead of the button when the game is already owned", async () => {
+  it("shows the remove button when the game is already owned", async () => {
     mockFetch = routeFetch(true);
     globalThis.fetch = mockFetch as unknown as typeof fetch;
     renderQuickAdd();
 
-    expect(await screen.findByRole("img", { name: "inLibrary:Hades" })).toBeInTheDocument();
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "remove:Hades" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "add:Hades" })).not.toBeInTheDocument();
+  });
+
+  it("removes an owned game from the library in one click", async () => {
+    mockFetch = routeFetch(true);
+    globalThis.fetch = mockFetch as unknown as typeof fetch;
+    renderQuickAdd();
+
+    fireEvent.click(await screen.findByRole("button", { name: "remove:Hades" }));
+
+    expect(await screen.findByRole("button", { name: "add:Hades" })).toBeInTheDocument();
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/library/g1",
+      expect.objectContaining({ method: "DELETE" })
+    );
+  });
+
+  it("reports a failed removal and keeps the game in the library", async () => {
+    mockFetch = routeFetch(true, 201, 500);
+    globalThis.fetch = mockFetch as unknown as typeof fetch;
+    renderQuickAdd();
+
+    fireEvent.click(await screen.findByRole("button", { name: "remove:Hades" }));
+
+    await waitFor(() =>
+      expect(toastMock).toHaveBeenCalledWith({ title: "removeError", variant: "destructive" })
+    );
+    expect(screen.getByRole("button", { name: "remove:Hades" })).toBeInTheDocument();
   });
 
   it("seeds the status in batch instead of one request per card", async () => {
@@ -104,6 +147,52 @@ describe("GameCardQuickAdd", () => {
 
     await waitFor(() => expect(toastMock).toHaveBeenCalledWith({ title: "error", variant: "destructive" }));
     expect(screen.getByRole("button", { name: "add:Hades" })).toBeInTheDocument();
+  });
+
+  it("adds the game to the wishlist, then removes it with the same button", async () => {
+    renderQuickAdd();
+
+    fireEvent.click(await screen.findByRole("button", { name: "wishlistAdd:Hades" }));
+
+    expect(await screen.findByRole("button", { name: "wishlistRemove:Hades" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "add:Hades" })).toBeInTheDocument();
+    expect(mockFetch).toHaveBeenCalledWith("/api/library", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gameId: "g1", status: "wishlist" }),
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "wishlistRemove:Hades" }));
+
+    expect(await screen.findByRole("button", { name: "wishlistAdd:Hades" })).toBeInTheDocument();
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/library/g1",
+      expect.objectContaining({ method: "DELETE" })
+    );
+  });
+
+  it("moves a wished game into the library and back to the wishlist", async () => {
+    renderQuickAdd();
+    fireEvent.click(await screen.findByRole("button", { name: "wishlistAdd:Hades" }));
+    await screen.findByRole("button", { name: "wishlistRemove:Hades" });
+
+    fireEvent.click(screen.getByRole("button", { name: "add:Hades" }));
+
+    expect(await screen.findByRole("button", { name: "remove:Hades" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "wishlistAdd:Hades" })).toBeInTheDocument();
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/library/g1",
+      expect.objectContaining({ method: "PATCH", body: JSON.stringify({ status: "owned" }) })
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "wishlistAdd:Hades" }));
+
+    expect(await screen.findByRole("button", { name: "wishlistRemove:Hades" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "add:Hades" })).toBeInTheDocument();
+    expect(mockFetch).toHaveBeenCalledWith(
+      "/api/library/g1",
+      expect.objectContaining({ method: "PATCH", body: JSON.stringify({ status: "wishlist" }) })
+    );
   });
 
   it("renders nothing for a signed-out visitor", () => {

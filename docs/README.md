@@ -66,6 +66,7 @@
 | [comparison.md](features/library/comparison.md) | Comparaison de bibliothèques  |
 | [quick-add.md](features/library/quick-add.md)   | Ajout rapide depuis une carte |
 | [status.md](features/library/status.md)         | Statut des jeux (en cours…)   |
+| [wishlist.md](features/library/wishlist.md)     | Liste de souhaits             |
 
 ## 🏆 Features — Esport
 

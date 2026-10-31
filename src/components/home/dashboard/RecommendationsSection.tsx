@@ -2,21 +2,22 @@
 
 /**
  * RecommendationsSection : personal recommendations scored from the library
- * (SQL, one pass), each with "not interested" (undoable) and "add to library".
+ * (SQL, one pass). Cards use the shared quick add (library + wishlist) with a
+ * "not interested" (undoable) button stacked above.
  */
 
 import { useTranslations } from "next-intl";
 
-import { useAddRecommendationToLibrary } from "@/hooks/useAddRecommendationToLibrary";
+import { CardActionButton } from "@/components/games/CardActionButton";
 import { useDismissWithUndo } from "@/hooks/useDismissWithUndo";
 import { usePersonalRecommendations } from "@/hooks/usePersonalRecommendations";
+import { useRecommendationQuickAdd } from "@/hooks/useRecommendationQuickAdd";
 import { recommendationToGameSummary } from "@/lib/utils/recommendationToGameSummary";
 import type { GameRecommendation } from "@/types/recommendation";
 import { HomeEmptyState } from "./HomeEmptyState";
 import { HomeGameRail, type HomeRailItem } from "./HomeGameRail";
 import { HomeLoadingNotice } from "./HomeLoadingNotice";
 import { HomeSection } from "./HomeSection";
-import { RecommendationCardActions } from "./RecommendationCardActions";
 import { RecommendationFeedback } from "./RecommendationFeedback";
 import { RecomputeButton } from "./RecomputeButton";
 
@@ -25,21 +26,20 @@ export function RecommendationsSection() {
   const { recommendations, basedOnGameCount, loading, recomputing, error, recompute } =
     usePersonalRecommendations();
   const dismissal = useDismissWithUndo();
-  const addition = useAddRecommendationToLibrary();
+  const addition = useRecommendationQuickAdd();
 
   const isBusy = loading || recomputing;
-  const actionPending = dismissal.isPending || addition.isPending;
   const toItem = (rec: GameRecommendation): HomeRailItem => ({
     game: recommendationToGameSummary(rec),
-    action: (
-      <RecommendationCardActions
-        dismissLabel={t("dismiss", { title: rec.title })}
-        addLabel={t("addToLibrary", { title: rec.title })}
-        disabled={actionPending}
-        onDismiss={() => dismissal.dismiss(rec)}
-        onAdd={() => addition.add(rec)}
+    quickAddLeading: (
+      <CardActionButton
+        icon="lucide:eye-off"
+        label={t("dismiss", { title: rec.title })}
+        disabled={dismissal.isPending}
+        onClick={() => dismissal.dismiss(rec)}
       />
     ),
+    quickAddCallbacks: addition.callbacksFor(rec),
   });
   // Hide stale cards while recomputing so the rail shows skeletons.
   const items = recomputing ? [] : recommendations.map(toItem);
@@ -68,7 +68,6 @@ export function RecommendationsSection() {
         dismissed={dismissal.lastDismissed}
         added={addition.lastAdded}
         dismissFailed={dismissal.failed}
-        addFailed={addition.failed}
         onUndo={dismissal.undo}
       />
       {basedOnGameCount > 0 && !isBusy && !error && !hasNotice && (
@@ -80,6 +79,7 @@ export function RecommendationsSection() {
         label={t("title")}
         items={items}
         isLoading={isBusy}
+        quickAdd
         empty={
           <HomeEmptyState
             icon="lucide:sparkles"

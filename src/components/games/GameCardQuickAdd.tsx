@@ -1,52 +1,97 @@
 "use client";
 
 /**
- * GameCardQuickAdd : "+" button over a GameCard that adds the game to the
- * player's library in one click; shows a check once the game is in it.
+ * GameCardQuickAdd : quick library / wishlist toggles over a GameCard, stacked
+ * one below the other.
+ *   - Library icon adds the game to the library; once owned, the accent
+ *     library icon removes it again.
+ *   - Below it, a star adds the game to the wishlist (wanted, not bought yet);
+ *     once wished, an accent star removes it. Both buttons are always shown,
+ *     so the stack never changes shape: wishing an owned game moves it to the
+ *     wishlist, adding a wished game to the library makes it owned.
+ * The clicked button shows a spinner while its request runs.
  * Revealed on hover / focus on desktop, always visible on touch devices.
  * Renders nothing outside a LibraryStatusProvider or when signed out.
  */
 
-import { Icon } from "@iconify/react";
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 
 import { useQuickAddToLibrary } from "@/hooks/useQuickAddToLibrary";
+import type { QuickAddCallbacks } from "@/types/library";
 import { CardActionButton } from "./CardActionButton";
+import { CardActiveToggleButton } from "./CardActiveToggleButton";
+
+// Same icons as the "My library" navigation link and the wishlist status.
+const LIBRARY_ICON = "lucide:library";
+const WISHLIST_ICON = "lucide:star";
 
 interface GameCardQuickAddProps {
   gameId: string;
   title: string;
   /** Pushed below the top-left badges (platforms, library status). */
   belowBadges: boolean;
+  /** Context-specific buttons stacked above (e.g. "not interested"). */
+  leading?: ReactNode;
+  /** Caller reactions to an addition (e.g. drop a recommendation). */
+  callbacks?: QuickAddCallbacks;
 }
 
-export function GameCardQuickAdd({ gameId, title, belowBadges }: GameCardQuickAddProps) {
+export function GameCardQuickAdd({
+  gameId,
+  title,
+  belowBadges,
+  leading,
+  callbacks,
+}: GameCardQuickAddProps) {
   const t = useTranslations("games.quickAdd");
-  const { available, inLibrary, loading, isPending, add } = useQuickAddToLibrary(gameId);
+  const { available, owned, wished, loading, pending, toggleLibrary, toggleWishlist } =
+    useQuickAddToLibrary(gameId, callbacks);
 
   if (!available || loading) return null;
 
   const position = belowBadges ? "top-9" : "top-2";
+  const libraryBusy = pending === "library";
+  const wishlistBusy = pending === "wishlist";
 
   return (
     <div
-      className={`pointer-events-none absolute left-2 z-[5] opacity-0 transition group-focus-within/card:pointer-events-auto group-focus-within/card:opacity-100 group-hover/card:pointer-events-auto group-hover/card:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100 ${position}`}
+      className={`pointer-events-none absolute left-2 z-[5] flex flex-col items-start gap-3 opacity-0 transition group-focus-within/card:pointer-events-auto group-focus-within/card:opacity-100 group-hover/card:pointer-events-auto group-hover/card:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100 ${position}`}
     >
-      {inLibrary ? (
-        <span
-          role="img"
-          aria-label={t("inLibrary", { title })}
-          title={t("inLibrary", { title })}
-          className="bg-editorial-accent grid size-11 place-items-center rounded-full text-white"
-        >
-          <Icon icon="lucide:check" className="size-4" aria-hidden />
-        </span>
+      {leading}
+      {owned ? (
+        <CardActiveToggleButton
+          icon={LIBRARY_ICON}
+          label={t("remove", { title })}
+          busy={libraryBusy}
+          disabled={wishlistBusy}
+          onClick={toggleLibrary}
+        />
       ) : (
         <CardActionButton
-          icon="lucide:plus"
+          icon={LIBRARY_ICON}
           label={t("add", { title })}
-          disabled={isPending}
-          onClick={add}
+          busy={libraryBusy}
+          disabled={wishlistBusy}
+          onClick={toggleLibrary}
+        />
+      )}
+
+      {wished ? (
+        <CardActiveToggleButton
+          icon={WISHLIST_ICON}
+          label={t("wishlistRemove", { title })}
+          busy={wishlistBusy}
+          disabled={libraryBusy}
+          onClick={toggleWishlist}
+        />
+      ) : (
+        <CardActionButton
+          icon={WISHLIST_ICON}
+          label={t("wishlistAdd", { title })}
+          busy={wishlistBusy}
+          disabled={libraryBusy}
+          onClick={toggleWishlist}
         />
       )}
     </div>

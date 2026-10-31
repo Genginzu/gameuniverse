@@ -17,6 +17,7 @@ import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { useHorizontalWheelScroll } from "@/hooks/useHorizontalWheelScroll";
 import type { GameSummary } from "@/types/game";
+import type { QuickAddCallbacks } from "@/types/library";
 import { HOME_RAIL_ITEM as ITEM_CLASSES } from "./layout";
 
 export interface HomeRailItem {
@@ -24,6 +25,10 @@ export interface HomeRailItem {
   overlay?: GameCardOverlay;
   /** Controls layered over the card (positioned absolutely by the caller). */
   action?: ReactNode;
+  /** Buttons stacked above the quick add ones (rails with `quickAdd`). */
+  quickAddLeading?: ReactNode;
+  /** Caller reactions to the quick add of this card. */
+  quickAddCallbacks?: QuickAddCallbacks;
 }
 
 interface HomeGameRailProps {
@@ -87,7 +92,10 @@ export function HomeGameRail({
 
   if (allItems.length === 0) return <>{empty}</>;
 
-  const renderItem = ({ game, overlay, action }: HomeRailItem, index: number) => (
+  const renderItem = (
+    { game, overlay, action, quickAddLeading, quickAddCallbacks }: HomeRailItem,
+    index: number
+  ) => (
     <li key={game.id} className={ITEM_CLASSES}>
       <GameCard
         game={game}
@@ -95,6 +103,8 @@ export function HomeGameRail({
         priority={index < priorityCount}
         actions={action}
         quickAdd={quickAdd}
+        quickAddLeading={quickAddLeading}
+        quickAddCallbacks={quickAddCallbacks}
       />
     </li>
   );

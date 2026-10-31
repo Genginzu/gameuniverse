@@ -1,6 +1,17 @@
 /** Status a player can give a game of their library. */
 export type LibraryStatus = "owned" | "playing" | "completed" | "wishlist";
 
+/** List a game card quick action puts a game in (or takes it out of). */
+export type QuickAction = "library" | "wishlist";
+
+/** Reactions of a caller to the quick add of a game card. */
+export interface QuickAddCallbacks {
+  /** The game is being added to `list` (optimistic, before the server confirms). */
+  onAdd?: (list: QuickAction) => void;
+  /** That addition failed (already rolled back and reported to the player). */
+  onAddFailed?: (list: QuickAction) => void;
+}
+
 /** Statut « dans ma bibliothèque » d'un jeu (clé SWR `/api/library/{gameId}`) */
 export interface LibraryStatusResponse {
   inLibrary: boolean;

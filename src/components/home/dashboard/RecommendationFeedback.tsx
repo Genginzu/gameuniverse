@@ -1,14 +1,16 @@
 "use client";
 
 /**
- * RecommendationFeedback : outcome of the card actions — errors, then the
- * "not interested" notice (with undo) and the "added to library" notice.
+ * RecommendationFeedback : outcome of the card actions — dismissal error, then
+ * the "not interested" notice (with undo) and the "added to library / to the
+ * wishlist" notice. Quick add errors are reported by the quick add itself.
  */
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
+import type { QuickAction } from "@/types/library";
 import { RecommendationNotice } from "./RecommendationNotice";
 
 interface NoticeGame {
@@ -18,9 +20,8 @@ interface NoticeGame {
 
 interface RecommendationFeedbackProps {
   dismissed: NoticeGame | null;
-  added: NoticeGame | null;
+  added: (NoticeGame & { list: QuickAction }) | null;
   dismissFailed: boolean;
-  addFailed: boolean;
   onUndo: () => void;
 }
 
@@ -49,7 +50,6 @@ export function RecommendationFeedback({
   dismissed,
   added,
   dismissFailed,
-  addFailed,
   onUndo,
 }: RecommendationFeedbackProps) {
   const t = useTranslations("homeDashboard.recommendations");
@@ -57,7 +57,6 @@ export function RecommendationFeedback({
   return (
     <>
       {dismissFailed && <ErrorLine message={t("dismissError")} />}
-      {addFailed && <ErrorLine message={t("addError")} />}
       {dismissed && (
         <RecommendationNotice
           icon="lucide:eye-off"
@@ -67,8 +66,11 @@ export function RecommendationFeedback({
       )}
       {added && (
         <RecommendationNotice
-          icon="lucide:library-big"
-          message={t.rich("added", { game: gameLink(added.slug), title: added.title })}
+          icon={added.list === "wishlist" ? "lucide:star" : "lucide:library"}
+          message={t.rich(added.list === "wishlist" ? "wishlisted" : "added", {
+            game: gameLink(added.slug),
+            title: added.title,
+          })}
         />
       )}
     </>

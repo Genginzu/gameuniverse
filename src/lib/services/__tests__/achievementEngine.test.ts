@@ -41,6 +41,7 @@ function buildChain(result: { data?: unknown; count?: number | null; error?: unk
   const resolver = () => Promise.resolve(result);
   chain.select = vi.fn(() => chain);
   chain.eq = vi.fn(() => chain);
+  chain.or = vi.fn(() => chain);
   chain.order = vi.fn(resolver);
   chain.single = vi.fn(resolver);
   chain.insert = vi.fn(resolver);

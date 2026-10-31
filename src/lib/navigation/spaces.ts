@@ -51,6 +51,7 @@ export const EDITORIAL_SPACES: readonly NavSpaceDefinition[] = [
     links: [
       LIBRARY_HOME,
       { href: "/library/backlog", labelKey: "backlog", icon: "lucide:list-checks" },
+      { href: "/library/wishlist", labelKey: "wishlist", icon: "lucide:star" },
       { href: "/collections", labelKey: "collections", icon: "lucide:folder-heart" },
       { href: "/favorites/characters", labelKey: "favoriteCharacters", icon: "lucide:heart" },
       { href: "/library/connections", labelKey: "connections", icon: "lucide:plug-zap" },

@@ -5,6 +5,14 @@ import { conflict, defineRoute, notFound, validationError } from "@/lib/api/rout
 import { rewardActivity } from "@/lib/services/activityRewards";
 import { logger } from "@/lib/logger";
 import { parseLibraryQueryParams } from "@/lib/utils/libraryQueryParams";
+import { libraryStatusSchema } from "@/lib/validations/library";
+import { routing } from "@/i18n/routing";
+
+/** Translation locale of `GET /api/library` (`?locale=`), the default locale otherwise. */
+function resolveLocale(searchParams: URLSearchParams): string {
+  const requested = searchParams.get("locale");
+  return routing.locales.find((locale) => locale === requested) ?? routing.defaultLocale;
+}
 
 // Type definitions for Supabase query results
 interface GameTranslation {
@@ -94,6 +102,7 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createRouteHandlerClient();
     const { status, limit } = parseLibraryQueryParams(request.nextUrl.searchParams);
+    const locale = resolveLocale(request.nextUrl.searchParams);
 
     // Get authenticated user
     const {
@@ -191,9 +200,9 @@ export async function GET(request: NextRequest) {
         const game = item.games;
         if (!game) return null;
 
-        // Get French translation first, fallback to English
+        // Requested locale first, fallback to any translation
         const translation =
-          game.game_translations?.find((t) => t.language_code === "fr") ||
+          game.game_translations?.find((t) => t.language_code === locale) ||
           game.game_translations?.[0];
 
         // Transform genres
@@ -201,7 +210,7 @@ export async function GET(request: NextRequest) {
           game.game_genres?.map((gg) => {
             const genre = gg.genres;
             const genreTranslation =
-              genre?.genre_translations?.find((gt) => gt.language_code === "fr") ||
+              genre?.genre_translations?.find((gt) => gt.language_code === locale) ||
               genre?.genre_translations?.[0];
 
             return {
@@ -275,16 +284,23 @@ const addToLibrarySchema = z.object({
   status: z.any().optional(),
 });
 
-// POST /api/library - Add game to user's library
+// POST /api/library - Add game to user's library (or to the wishlist with
+// `status: "wishlist"`: wanted but not bought yet).
 export const POST = defineRoute(
   { auth: "required", rateLimit: "library", body: addToLibrarySchema },
   async ({ user, body }) => {
     const supabase = await createRouteHandlerClient();
-    const { gameId, status = "owned" } = body;
+    const { gameId } = body;
 
     if (!gameId) {
       throw validationError(undefined, "Game ID is required");
     }
+
+    const parsedStatus = libraryStatusSchema.safeParse(body.status ?? "owned");
+    if (!parsedStatus.success) {
+      throw validationError(parsedStatus.error.issues, "Invalid library status");
+    }
+    const status = parsedStatus.data;
 
     // Check if game exists
     const { data: game, error: gameError } = await supabase
@@ -325,7 +341,10 @@ export const POST = defineRoute(
       return NextResponse.json({ error: "Failed to add game to library" }, { status: 500 });
     }
 
-    await rewardActivity({ kind: "library_game_added", userId: user.id, gameId });
+    // A wished game is not owned yet: no library reward until it is bought.
+    if (status !== "wishlist") {
+      await rewardActivity({ kind: "library_game_added", userId: user.id, gameId });
+    }
 
     return NextResponse.json({ success: true, data });
   }

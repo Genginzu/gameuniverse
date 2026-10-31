@@ -2,8 +2,9 @@
 
 /**
  * HeroLibraryControl : library CTA of the game-detail hero.
- * Not in the library → "Add to my library". In the library → the current
- * status, opening a menu to change it (playing, completed…) or remove the game.
+ * Not in the library → "Add to my library" and "Add to my wishlist" (wanted,
+ * not bought yet). In the library → the current status, opening a menu to
+ * change it (playing, completed…) or remove the game.
  */
 
 import { Icon } from "@iconify/react";
@@ -18,8 +19,16 @@ const CTA = "editorial-game-detail-cta-ghost min-w-[16rem] justify-center whites
 export function HeroLibraryControl({ gameId }: { gameId: string }) {
   const tEd = useTranslations("gameDetails.editorial");
   const tStatus = useTranslations("libraryStatus");
-  const { inLibrary, status, loading, adding, addToLibrary, removeFromLibrary, setStatus } =
-    useGameLibraryStatus(gameId);
+  const {
+    inLibrary,
+    status,
+    loading,
+    adding,
+    addToLibrary,
+    addToWishlist,
+    removeFromLibrary,
+    setStatus,
+  } = useGameLibraryStatus(gameId);
   const busy = loading || adding;
 
   const reportFailure = async (action: () => Promise<boolean>) => {
@@ -28,15 +37,26 @@ export function HeroLibraryControl({ gameId }: { gameId: string }) {
 
   if (!inLibrary) {
     return (
-      <button
-        type="button"
-        onClick={() => reportFailure(addToLibrary)}
-        disabled={busy}
-        className={CTA}
-      >
-        <Icon icon={busy ? "svg-spinners:ring-resize" : "mdi:heart"} className="h-4 w-4" />
-        {tEd("libraryAdd")}
-      </button>
+      <>
+        <button
+          type="button"
+          onClick={() => reportFailure(addToLibrary)}
+          disabled={busy}
+          className={CTA}
+        >
+          <Icon icon={busy ? "svg-spinners:ring-resize" : "mdi:heart"} className="h-4 w-4" />
+          {tEd("libraryAdd")}
+        </button>
+        <button
+          type="button"
+          onClick={() => reportFailure(addToWishlist)}
+          disabled={busy}
+          className="editorial-game-detail-cta-ghost justify-center whitespace-nowrap"
+        >
+          <Icon icon={LIBRARY_STATUS_ICONS.wishlist} className="h-4 w-4" aria-hidden />
+          {tEd("wishlistAdd")}
+        </button>
+      </>
     );
   }
 

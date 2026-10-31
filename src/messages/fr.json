@@ -551,6 +551,7 @@
       "library": {
         "myLibrary": "Ma bibliothèque",
         "backlog": "Mon backlog",
+        "wishlist": "Ma liste de souhaits",
         "collections": "Mes collections",
         "favoriteCharacters": "Personnages favoris",
         "connections": "Connexions & sync"
@@ -1170,6 +1171,32 @@
       "title": "Ajouter un jeu à votre bibliothèque",
       "addButton": "Ajouter à la bibliothèque"
     },
+    "wishlist": {
+      "open": "Ma liste de souhaits",
+      "kicker": "Liste de souhaits",
+      "titlePrefix": "Les jeux qui te",
+      "titleAccent": "font envie",
+      "subtitle": "Les jeux que tu aimerais faire mais que tu n'as pas encore achetés. Reviens ici quand tu cherches ton prochain achat.",
+      "metaTitle": "Ma liste de souhaits",
+      "metaDescription": "Les jeux que tu as envie de jouer mais que tu n'as pas encore achetés.",
+      "backToLibrary": "Retour à ma bibliothèque",
+      "count": "{count, plural, one {# jeu souhaité} other {# jeux souhaités}}",
+      "markOwnedLabel": "J'ai acheté {title} : le passer dans ma bibliothèque",
+      "markedOwned": "{title} ajouté à ta bibliothèque",
+      "removeLabel": "Retirer {title} de ma liste de souhaits",
+      "removed": "{title} retiré de ta liste de souhaits",
+      "error": "Impossible de modifier ta liste de souhaits, réessaie.",
+      "empty": {
+        "title": "Ta liste de souhaits est vide",
+        "description": "Ajoute les jeux qui te font envie depuis leur page avec « Ajouter à ma liste de souhaits » et retrouve-les ici au moment d'acheter.",
+        "exploreGames": "Explorer les jeux"
+      },
+      "authRequired": {
+        "title": "Ta liste de souhaits t'attend",
+        "description": "Connecte-toi pour garder une trace des jeux que tu veux acheter.",
+        "signIn": "Se connecter"
+      }
+    },
     "backlog": {
       "openManager": "Gérer mon backlog",
       "kicker": "Backlog",
@@ -1270,8 +1297,13 @@
     "readMore": "Découvrir",
     "quickAdd": {
       "add": "Ajouter {title} à ma bibliothèque",
-      "inLibrary": "{title} est dans ta bibliothèque",
-      "error": "Impossible d'ajouter ce jeu à ta bibliothèque, réessaie."
+      "remove": "Retirer {title} de ma bibliothèque",
+      "error": "Impossible d'ajouter ce jeu à ta bibliothèque, réessaie.",
+      "removeError": "Impossible de retirer ce jeu de ta bibliothèque, réessaie.",
+      "wishlistAdd": "Ajouter {title} à ma liste de souhaits",
+      "wishlistRemove": "Retirer {title} de ma liste de souhaits",
+      "wishlistError": "Impossible d'ajouter ce jeu à ta liste de souhaits, réessaie.",
+      "wishlistRemoveError": "Impossible de retirer ce jeu de ta liste de souhaits, réessaie."
     },
     "noGamesFound": "Aucun jeu trouvé",
     "modifySearch": "Essayez de modifier vos critères de recherche ou explorez d'autres catégories",
@@ -1525,6 +1557,7 @@
       "heroPlatformsCount": "{count} plateformes",
       "heroPlatformsOne": "1 plateforme",
       "libraryAdd": "Ajouter à la bibliothèque",
+      "wishlistAdd": "Ajouter à ma liste de souhaits",
       "liveTicker": "{players} en jeu · {streams} streams · {tournaments} tournois cette semaine",
       "score": "Score",
       "from": "À partir de",
@@ -5045,9 +5078,8 @@
       "dismissed": "<game>{title}</game> ne te sera plus proposé.",
       "undo": "Annuler",
       "dismissError": "Impossible d'enregistrer ton choix, réessaie.",
-      "addToLibrary": "Ajouter {title} à ma bibliothèque",
       "added": "<game>{title}</game> a été ajouté à ta bibliothèque.",
-      "addError": "Impossible d'ajouter ce jeu à ta bibliothèque, réessaie.",
+      "wishlisted": "<game>{title}</game> a été ajouté à ta liste de souhaits.",
       "error": "Les recommandations sont indisponibles pour le moment."
     },
     "friendsActivity": {
