@@ -32,13 +32,10 @@ function TrendingSection({ titleKey, games }: { titleKey: string; games: GameSum
 
   return (
     <section className="mb-12 md:mb-16">
-      <header className="mb-6 flex items-baseline gap-4">
+      <header className="mb-6">
         <h2 className="font-display text-2xl font-bold tracking-tight text-white">
           {t(`sections.${titleKey}`)}
         </h2>
-        <span className="text-editorial-accent font-mono text-sm">
-          {t("count", { count: games.length })}
-        </span>
       </header>
       <div className={GRID}>
         {games.filter(Boolean).map((game, i) => (

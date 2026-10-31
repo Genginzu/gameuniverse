@@ -12,9 +12,8 @@ export function TrendingSectionsSkeleton() {
     <>
       {TRENDING_SECTION_KEYS.map((key) => (
         <section key={key} className="mb-12 md:mb-16">
-          <div className="mb-6 flex items-baseline gap-4">
+          <div className="mb-6">
             <div className={`${BLOCK} h-8 w-56`} />
-            <div className={`${BLOCK} h-4 w-16`} />
           </div>
           <div className={TRENDING_GRID}>
             {Array.from({ length: TRENDING_SECTION_SIZE }).map((_, index) => (
