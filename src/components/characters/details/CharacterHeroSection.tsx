@@ -4,6 +4,7 @@ import { LazyImage } from "@/components/ui/lazy-image";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import type { CharacterDetails } from "@/types/character";
+import { CharacterPortrait } from "./CharacterPortrait";
 import { FavoriteCharacterButton } from "./FavoriteCharacterButton";
 
 interface CharacterHeroSectionProps {
@@ -47,16 +48,10 @@ export function CharacterHeroSection({
               style={{ background: "rgb(var(--accent-rgb, var(--neon-primary)))" }}
               aria-hidden="true"
             />
-            <div className="relative h-[320px] w-[240px] sm:h-[400px] sm:w-[300px] lg:h-[480px] lg:w-[360px]">
-              <LazyImage
-                src={character.media.mainImage}
-                alt={character.name}
-                fill
-                className="object-contain object-bottom drop-shadow-2xl"
-                sizes="(max-width: 768px) 375px, 450px"
-                priority
-                showSkeleton={true}
-              />
+            <div className="relative flex h-[320px] w-[240px] items-end justify-center sm:h-[400px] sm:w-[300px] lg:h-[480px] lg:w-[360px]">
+              {character.media.mainImage && (
+                <CharacterPortrait src={character.media.mainImage} alt={character.name} />
+              )}
             </div>
           </div>
 
