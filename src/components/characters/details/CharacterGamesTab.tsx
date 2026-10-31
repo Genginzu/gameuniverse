@@ -44,7 +44,7 @@ function GameCard({ game, locale: _locale }: { game: CharacterGame; locale: stri
   return (
     <Link
       href={`/games/${game.slug}`}
-      className={`group relative overflow-hidden rounded-2xl border transition-transform hover:scale-[1.02] ${
+      className={`group relative overflow-hidden rounded-lg border transition-transform hover:scale-[1.02] ${
         game.isPrimary ? "border-2" : "border-editorial-line hover:border-white/20"
       }`}
       style={game.isPrimary ? { borderColor: ACCENT } : undefined}

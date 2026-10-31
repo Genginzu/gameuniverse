@@ -33,9 +33,9 @@ export function HomeShortcuts({ userId }: HomeShortcutsProps) {
           <li key={shortcut.href}>
             <Link
               href={shortcut.href}
-              className="group border-editorial-line bg-editorial-2 hover:border-editorial-accent hover:bg-editorial-3 flex min-h-11 items-center gap-3 rounded-2xl border p-3 text-white transition-all duration-200 hover:-translate-y-0.5 sm:p-4"
+              className="group border-editorial-line bg-editorial-2 hover:border-editorial-accent hover:bg-editorial-3 flex min-h-11 items-center gap-3 rounded-lg border p-3 text-white transition-all duration-200 hover:-translate-y-0.5 sm:p-4"
             >
-              <span className="bg-editorial-accent/15 text-editorial-accent grid size-9 shrink-0 place-items-center rounded-xl">
+              <span className="bg-editorial-accent/15 text-editorial-accent grid size-9 shrink-0 place-items-center rounded-md">
                 <Icon icon={shortcut.icon} className="size-5" aria-hidden />
               </span>
               <span className="min-w-0 flex-1 truncate text-sm font-semibold sm:text-base">

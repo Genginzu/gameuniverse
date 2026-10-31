@@ -24,7 +24,7 @@ export function MentionSuggestions({
   return (
     <div
       role="listbox"
-      className="glass-dropdown absolute bottom-full left-0 z-50 mb-1 w-64 overflow-hidden rounded-xl border border-white/20 shadow-lg shadow-black/10 dark:border-slate-700/50 dark:shadow-black/30"
+      className="border-editorial-line bg-editorial-2 absolute bottom-full left-0 z-50 mb-1 w-64 overflow-hidden rounded-md border shadow-lg shadow-black/40"
     >
       {isLoading && suggestions.length === 0 && (
         <div className="flex items-center justify-center py-3">

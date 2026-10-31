@@ -19,7 +19,7 @@ export function PlayerCard({ player, locale: _locale = "fr", priority = false }:
 
   return (
     <Link href={`/players/${player.id}`} className="group block">
-      <div className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/50 relative overflow-hidden rounded-2xl border shadow-md transition-all duration-300 hover:scale-[1.02]">
+      <div className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/55 relative overflow-hidden rounded-lg border transition-all duration-300 hover:scale-[1.02]">
         {/* Banner */}
         {player.bannerUrl ? (
           <div className="relative h-20">

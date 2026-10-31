@@ -8,7 +8,7 @@ import { useSubscriptionRelationship } from "@/hooks/useSubscriptionRelationship
 
 /** Editorial override for outline buttons (avoid the default white bg-background). */
 const EDITORIAL_OUTLINE =
-  "border-editorial-line bg-editorial-3 text-white hover:bg-editorial-3 hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:text-[rgb(var(--accent-rgb,var(--neon-primary)))]";
+  "rounded-md border-editorial-line bg-editorial-3 text-white hover:bg-editorial-3 hover:border-editorial-accent/55 hover:text-editorial-accent";
 
 
 interface SubscribeButtonProps {
@@ -48,7 +48,12 @@ export function SubscribeButton({ targetId, isAuthenticated, isOwner }: Subscrib
   return (
     <div aria-live="polite">
       {!isSubscribed && (
-        <Button size="sm" onClick={() => handleAction(subscribe)} disabled={busy}>
+        <Button
+          size="sm"
+          className="rounded-md"
+          onClick={() => handleAction(subscribe)}
+          disabled={busy}
+        >
           {busy ? (
             <Icon icon="lucide:loader-2" className="animate-spin" />
           ) : (

@@ -87,7 +87,7 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
                 <button
                   type="button"
                   onClick={() => setIsOpen(true)}
-                  className="btn-filled inline-flex h-14 items-center justify-center gap-2 rounded-[14px] px-6 text-[0.95rem] font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+                  className="btn-filled inline-flex h-14 items-center justify-center gap-2 rounded-md px-6 text-[0.95rem] font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
                 >
                   <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
                   {t("createButton")}
@@ -102,7 +102,7 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
 
         {/* Content */}
         {collections.length === 0 ? (
-          <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-3xl border px-8 py-16 text-center">
+          <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-lg border px-8 py-16 text-center">
             <div className="bg-editorial-accent/15 text-editorial-accent grid size-16 place-items-center rounded-full">
               <Icon icon="lucide:layers" className="h-7 w-7" aria-hidden="true" />
             </div>

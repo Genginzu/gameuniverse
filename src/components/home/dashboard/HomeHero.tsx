@@ -62,14 +62,14 @@ function Avatar({ url, name }: { url: string | null; name: string }) {
       <img
         src={url}
         alt={name}
-        className="border-editorial-line size-14 shrink-0 rounded-2xl border object-cover sm:size-20"
+        className="border-editorial-line size-14 shrink-0 rounded-lg border object-cover sm:size-20"
       />
     );
   }
 
   return (
     <span
-      className="border-editorial-line bg-editorial-2 text-editorial-accent grid size-14 shrink-0 place-items-center rounded-2xl border sm:size-20"
+      className="border-editorial-line bg-editorial-2 text-editorial-accent grid size-14 shrink-0 place-items-center rounded-lg border sm:size-20"
       aria-hidden
     >
       <Icon icon="lucide:user-round" className="size-7 sm:size-9" />

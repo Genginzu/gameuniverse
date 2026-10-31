@@ -107,7 +107,7 @@ export function PostComposer({
   };
 
   return (
-    <div className="rounded-2xl bg-white/80 p-4 shadow-md backdrop-blur-xl transition-all duration-300 dark:bg-slate-800/60 dark:shadow-lg dark:shadow-black/20">
+    <div className="border-editorial-line bg-editorial-2 rounded-lg border p-4">
       <div className="flex gap-3">
         <div className="from-palette-primary-100 to-palette-accent-100 dark:from-palette-primary-900/30 dark:to-palette-accent-900/30 relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br">
           {playerAvatar ? (
@@ -142,7 +142,7 @@ export function PostComposer({
               aria-label={t("placeholder")}
               maxLength={MAX_LENGTH}
               rows={3}
-              className="border-palette-primary-300 focus:border-palette-primary-400 focus:ring-palette-primary-400/20 dark:border-palette-primary-500/50 dark:focus:border-palette-primary-400/60 dark:focus:ring-palette-primary-400/15 w-full resize-none rounded-xl border-2 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-xs transition-all duration-200 focus:ring-2 focus:outline-hidden dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500"
+              className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted w-full resize-none rounded-md border p-3 pb-7 text-base text-white transition focus:border-editorial-accent focus:outline-none"
             />
             <span
               className={`absolute right-3 bottom-2 text-xs ${remaining < 0 ? "text-red-500" : "text-gray-400 dark:text-slate-500"}`}

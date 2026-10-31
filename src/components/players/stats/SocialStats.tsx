@@ -22,9 +22,9 @@ interface SocialMetricCardProps {
 
 function SocialMetricCard({ icon, label, value, iconColorClass }: SocialMetricCardProps) {
   return (
-    <div className="glass-card flex items-center gap-3 rounded-xl p-4 transition-all duration-300">
+    <div className="glass-card flex items-center gap-3 rounded-lg p-4 transition-all duration-300">
       <div
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${iconColorClass}`}
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${iconColorClass}`}
       >
         {icon}
       </div>

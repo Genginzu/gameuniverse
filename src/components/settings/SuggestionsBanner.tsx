@@ -41,7 +41,7 @@ export function SuggestionsBanner({
   if (suggestions.length === 0) return null;
 
   return (
-    <div className="border-editorial-accent/20 bg-editorial-accent/8 flex flex-col gap-2 rounded-xl border p-3">
+    <div className="border-editorial-accent/20 bg-editorial-accent/8 flex flex-col gap-2 rounded-lg border p-3">
       <div className="flex items-center gap-2">
         <Icon icon="lucide:sparkles" className="text-editorial-accent h-4 w-4" />
         <p className="text-editorial-accent text-sm">{t("suggestionsTitle")}</p>
@@ -53,7 +53,7 @@ export function SuggestionsBanner({
           return (
             <div
               key={s.platform}
-              className="border-editorial-line bg-editorial-3 flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm"
+              className="border-editorial-line bg-editorial-3 flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm"
             >
               <Icon icon={meta.icon} className={`h-4 w-4 ${meta.color}`} />
               <span className="font-medium text-white">{t(`names.${s.platform}`)}</span>
@@ -62,7 +62,7 @@ export function SuggestionsBanner({
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="hover:bg-editorial-accent/12 hover:text-editorial-accent h-7 px-2 text-xs text-white/70"
+                  className="hover:bg-editorial-accent/12 hover:text-editorial-accent h-7 rounded-md px-2 text-xs text-white/70"
                   onClick={() => {
                     window.location.href = oauthRoute;
                   }}

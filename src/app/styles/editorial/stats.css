@@ -38,7 +38,7 @@
 
 /* ===== Card override (used by StatsDashboard for empty/error/private states) ===== */
 .editorial-stats-card {
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--editorial-line);
   background: var(--editorial-bg-3);
   color: #fff;
@@ -50,22 +50,21 @@
 .editorial-stats .glass-card {
   background: var(--editorial-bg-3);
   border: 1px solid var(--editorial-line);
+  border-radius: 0.5rem;
   backdrop-filter: none;
   color: #fff;
-  transition:
-    border-color 150ms ease,
-    box-shadow 200ms ease;
+  transition: border-color 150ms ease;
 }
 
 .editorial-stats .glass-card:hover {
-  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.4);
-  box-shadow: 0 8px 24px -12px rgb(var(--accent-rgb, var(--neon-primary)) / 0.25);
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.55);
 }
 
 /* Override Card chrome under .editorial-stats so all sub-sections look consistent */
 .editorial-stats [data-slot="card"] {
   background: var(--editorial-bg-3);
   border: 1px solid var(--editorial-line);
+  border-radius: 0.5rem;
   color: #fff;
 }
 

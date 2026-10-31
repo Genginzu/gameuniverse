@@ -35,7 +35,7 @@ export function AccountDeletionSection({ user }: { user: User | null }) {
         type="button"
         onClick={() => setOpen(true)}
         disabled={!user}
-        className="min-h-[44px] w-full rounded-lg border border-red-500/40 bg-red-500/10 px-4 text-sm font-semibold text-red-300 transition-all duration-300 hover:bg-red-500/20 disabled:opacity-50 sm:w-auto"
+        className="min-h-[44px] w-full rounded-md border border-red-500/40 bg-red-500/10 px-4 text-sm font-semibold text-red-300 transition-all duration-300 hover:bg-red-500/20 disabled:opacity-50 sm:w-auto"
       >
         {t("button")}
       </button>

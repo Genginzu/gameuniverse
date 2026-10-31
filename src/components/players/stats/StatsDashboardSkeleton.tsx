@@ -10,8 +10,8 @@ export function StatsDashboardSkeleton() {
       {/* Overview cards — 6 cards in 2x3 grid */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="glass-card flex animate-pulse items-center gap-3 rounded-xl p-4">
-            <div className="h-10 w-10 shrink-0 rounded-xl bg-white/10" />
+          <div key={i} className="glass-card flex animate-pulse items-center gap-3 rounded-lg p-4">
+            <div className="h-10 w-10 shrink-0 rounded-lg bg-white/10" />
             <div className="min-w-0 flex-1 space-y-2">
               <Skeleton className="h-3.5 w-20 bg-white/10" />
               <Skeleton className="h-6 w-14 bg-white/10" />
@@ -25,7 +25,7 @@ export function StatsDashboardSkeleton() {
         {Array.from({ length: 2 }).map((_, i) => (
           <div key={i} className="space-y-3">
             <Skeleton className="h-5 w-40 bg-white/10" />
-            <div className="glass-card animate-pulse rounded-xl p-6">
+            <div className="glass-card animate-pulse rounded-lg p-6">
               <div className="flex flex-col items-center gap-4 md:flex-row">
                 {/* Pie chart placeholder */}
                 <div className="h-48 w-48 rounded-full bg-white/10" />
@@ -47,7 +47,7 @@ export function StatsDashboardSkeleton() {
       {/* Completion tracker */}
       <div className="space-y-3">
         <Skeleton className="h-5 w-36 bg-white/10" />
-        <div className="glass-card animate-pulse space-y-4 rounded-xl p-6">
+        <div className="glass-card animate-pulse space-y-4 rounded-lg p-6">
           <div className="flex items-baseline gap-2">
             <Skeleton className="h-8 w-16 bg-white/10" />
             <Skeleton className="h-3.5 w-20 bg-white/10" />
@@ -71,7 +71,7 @@ export function StatsDashboardSkeleton() {
       {Array.from({ length: 5 }).map((_, i) => (
         <div key={i} className="space-y-3">
           <Skeleton className="h-5 w-44 bg-white/10" />
-          <div className="glass-card animate-pulse space-y-3 rounded-xl p-6">
+          <div className="glass-card animate-pulse space-y-3 rounded-lg p-6">
             <Skeleton className="h-4 w-3/4 bg-white/10" />
             <Skeleton className="h-4 w-1/2 bg-white/10" />
             <Skeleton className="h-32 w-full rounded-lg bg-white/10" />

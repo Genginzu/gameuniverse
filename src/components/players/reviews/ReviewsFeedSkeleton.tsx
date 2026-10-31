@@ -11,11 +11,11 @@ export function ReviewsFeedSkeleton() {
   return (
     <div className="space-y-6">
       {/* Stats block skeleton */}
-      <div className="glass-card animate-pulse rounded-2xl p-6">
+      <div className="border-editorial-line bg-editorial-2 animate-pulse rounded-lg border p-6">
         <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* Total reviews metric */}
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-xl bg-white/10" />
+            <Skeleton className="h-10 w-10 rounded-md bg-white/10" />
             <div className="space-y-1.5">
               <Skeleton className="h-3 w-24 bg-white/10" />
               <Skeleton className="h-6 w-12 bg-white/10" />
@@ -23,7 +23,7 @@ export function ReviewsFeedSkeleton() {
           </div>
           {/* Average rating metric */}
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-xl bg-white/10" />
+            <Skeleton className="h-10 w-10 rounded-md bg-white/10" />
             <div className="space-y-1.5">
               <Skeleton className="h-3 w-24 bg-white/10" />
               <Skeleton className="h-6 w-16 bg-white/10" />
@@ -49,7 +49,7 @@ export function ReviewsFeedSkeleton() {
 
       {/* Review cards */}
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="glass-card animate-pulse rounded-xl p-5">
+        <div key={i} className="border-editorial-line bg-editorial-3 animate-pulse rounded-lg border p-5">
           <div className="mb-4 flex gap-4">
             <div className="h-20 w-14 rounded-lg bg-white/10" />
             <div className="flex-1 space-y-2">

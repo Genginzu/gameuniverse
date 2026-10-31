@@ -41,7 +41,7 @@ export function CollectionForm({
   const t = useTranslations("collections.form");
 
   const inputClass =
-    "border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted hover:border-editorial-line focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] focus-visible:outline-none! focus-visible:ring-0 focus-visible:ring-offset-0";
+    "border-editorial-line bg-editorial-3 rounded-md text-base text-white placeholder:text-editorial-muted hover:border-editorial-line focus-visible:border-editorial-accent focus-visible:outline-none! focus-visible:ring-0 focus-visible:ring-offset-0";
 
   const schema = mode === "create" ? createCollectionSchema : updateCollectionSchema;
 
@@ -148,7 +148,7 @@ export function CollectionForm({
           loading={isSubmitting}
           loadingText={t("submitting")}
           disabled={!form.formState.isDirty}
-          className="border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.15)] text-[rgb(var(--accent-rgb,var(--neon-primary)))] shadow-none hover:border-[rgb(var(--accent-rgb,var(--neon-primary)))] hover:bg-[rgb(var(--accent-rgb,var(--neon-primary)))] hover:text-white"
+          className="btn-filled h-11 w-full rounded-md px-5 text-[0.9rem] font-semibold shadow-none sm:w-auto"
         >
           {mode === "create" ? t("submit") : t("submitEdit")}
         </LoadingButton>

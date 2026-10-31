@@ -34,7 +34,7 @@ export function HomeLoadingNotice({
     <div
       role="status"
       aria-live="polite"
-      className="border-editorial-line bg-editorial-2 flex items-start gap-3 rounded-2xl border px-4 py-3 sm:items-center"
+      className="border-editorial-line bg-editorial-2 flex items-start gap-3 rounded-lg border px-4 py-3 sm:items-center"
     >
       <Icon
         icon="lucide:loader-circle"

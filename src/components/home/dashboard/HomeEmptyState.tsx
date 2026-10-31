@@ -14,7 +14,7 @@ interface HomeEmptyStateProps {
 
 export function HomeEmptyState({ icon, message, action }: HomeEmptyStateProps) {
   return (
-    <div className="border-editorial-line flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed px-6 py-10 text-center">
+    <div className="border-editorial-line flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed px-6 py-10 text-center">
       <Icon icon={icon} className="text-editorial-muted size-8" aria-hidden />
       <p className="text-editorial-muted text-sm leading-relaxed text-balance sm:text-base">
         {message}

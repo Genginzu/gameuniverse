@@ -12,22 +12,19 @@
 /* ===== Review card ===== */
 .editorial-review-card {
   padding: 1.25rem;
-  border-radius: 0.875rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--editorial-line);
-  /* Fond plus clair par défaut (anciennement le hover) pour une meilleure
-     lisibilité du texte sur la page sombre. */
+  /* Lighter surface by default (formerly the hover state) for better text
+     readability on the dark page. */
   background: var(--editorial-bg-3);
   color: #fff;
-  transition:
-    border-color 150ms ease,
-    box-shadow 200ms ease;
+  transition: border-color 150ms ease;
 }
 
-/* Hover : pas de changement de fond, on met en valeur la bordure + une légère
-   ombre. Texte déjà blanc, donc pas d'override nécessaire. */
+/* Hover: no background change and no glow, only the accent border
+   (game detail recipe). */
 .editorial-review-card:hover {
-  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.4);
-  box-shadow: 0 8px 24px -12px rgb(var(--accent-rgb, var(--neon-primary)) / 0.25);
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.55);
 }
 
 /* Header : cover + game name + rating */
@@ -143,7 +140,7 @@
   cursor: pointer;
   height: 40px;
   padding: 0 2.25rem 0 1rem;
-  border-radius: 10px;
+  border-radius: 0.375rem;
   border: 1px solid var(--editorial-line);
   background-color: var(--editorial-bg-3);
   color: #fff;
@@ -159,8 +156,7 @@
   background-size: 12px 12px;
   transition:
     border-color 150ms ease,
-    background-color 150ms ease,
-    box-shadow 150ms ease;
+    background-color 150ms ease;
 }
 
 .editorial-reviews-sort:hover {
@@ -171,7 +167,7 @@
 .editorial-reviews-sort:focus-visible {
   outline: none;
   border-color: rgb(var(--accent-rgb, var(--neon-primary)));
-  box-shadow: 0 0 0 3px rgb(var(--accent-rgb, var(--neon-primary)) / 0.15);
+  box-shadow: none;
 }
 
 /* Options : style natif (limite contrôle CSS) — on force au moins le bg
@@ -184,7 +180,7 @@
 /* ===== Stats recap card ===== */
 .editorial-reviews-stats {
   padding: 1.5rem;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--editorial-line);
   background: var(--editorial-bg-3);
   color: #fff;
@@ -320,6 +316,7 @@
 .editorial-reviews .glass-card {
   background: var(--editorial-bg-2);
   border: 1px solid var(--editorial-line);
+  border-radius: 0.5rem;
   backdrop-filter: none;
 }
 

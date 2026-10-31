@@ -22,7 +22,7 @@ export function HomeDashboardSkeleton({ className = "" }: HomeDashboardSkeletonP
     >
       <div className={`${HOME_DASHBOARD_STACK} animate-pulse`}>
         <div className="flex items-start gap-4 sm:gap-5">
-          <div className="bg-editorial-2 size-14 shrink-0 rounded-2xl sm:size-20" />
+          <div className="bg-editorial-2 size-14 shrink-0 rounded-lg sm:size-20" />
           <div className="flex flex-1 flex-col gap-3">
             <div className="h-3 w-24 rounded bg-white/[0.06]" />
             <div className="h-10 w-3/4 max-w-md rounded-lg bg-white/[0.06]" />
@@ -31,7 +31,7 @@ export function HomeDashboardSkeleton({ className = "" }: HomeDashboardSkeletonP
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
           {Array.from({ length: 4 }, (_, index) => (
-            <div key={index} className="bg-editorial-2 h-14 rounded-2xl sm:h-[4.5rem]" />
+            <div key={index} className="bg-editorial-2 h-14 rounded-lg sm:h-[4.5rem]" />
           ))}
         </div>
         {Array.from({ length: RAIL_COUNT }, (_, rail) => (

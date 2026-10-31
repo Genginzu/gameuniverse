@@ -228,9 +228,9 @@ function PlatformsCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border-editorial-line bg-editorial-2 overflow-hidden rounded-xl border">
+    <div className="border-editorial-line bg-editorial-2 overflow-hidden rounded-lg border">
       <div className="flex items-center p-4">
-        <div className="bg-editorial-accent/12 rounded-xl p-2">
+        <div className="bg-editorial-accent/12 rounded-md p-2">
           <Icon icon="lucide:gamepad-2" className="text-editorial-accent h-4 w-4 sm:h-5 sm:w-5" />
         </div>
         <div className="ml-3">
@@ -249,7 +249,7 @@ function PlatformsSkeleton() {
   return (
     <div className="space-y-2">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="h-14 animate-pulse rounded-xl bg-white/[0.06]" />
+        <div key={i} className="border-editorial-line h-14 animate-pulse rounded-md border bg-white/[0.06]" />
       ))}
     </div>
   );

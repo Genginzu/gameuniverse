@@ -30,12 +30,12 @@ export function FriendsPageContent() {
 
         {/* Content */}
         {authLoading ? null : !user ? (
-          <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-4 rounded-3xl border px-8 py-16 text-center">
+          <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-4 rounded-lg border px-8 py-16 text-center">
             <h2 className="font-display text-2xl font-bold text-white">
               {t("authRequired.title")}
             </h2>
             <p className="text-editorial-muted max-w-[50ch]">{t("authRequired.description")}</p>
-            <Button asChild>
+            <Button asChild className="rounded-md">
               <Link href="/auth">{t("authRequired.signIn")}</Link>
             </Button>
           </div>

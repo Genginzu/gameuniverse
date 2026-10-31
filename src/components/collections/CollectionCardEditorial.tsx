@@ -47,7 +47,7 @@ export function CollectionCardEditorial({
   return (
     <Link
       href={href}
-      className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/50 hover:bg-editorial-3 group relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+      className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/50 hover:bg-editorial-3 group relative flex flex-col overflow-hidden rounded-lg border transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
       aria-label={collection.name}
     >
       <div className="from-editorial-accent/[0.18] to-editorial-accent/[0.06] relative aspect-[16/10] overflow-hidden bg-gradient-to-br">

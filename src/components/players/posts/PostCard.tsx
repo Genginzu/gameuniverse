@@ -38,7 +38,7 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
   };
 
   return (
-    <article className="rounded-2xl bg-white/80 p-5 shadow-md backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:bg-slate-800/60 dark:shadow-lg dark:shadow-black/20 dark:hover:shadow-xl dark:hover:shadow-black/30">
+    <article className="border-editorial-line bg-editorial-2 rounded-lg border p-5">
       <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-palette-primary-100 to-palette-accent-100 dark:from-palette-primary-900/30 dark:to-palette-accent-900/30">
@@ -82,7 +82,7 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
 
       <div className="pl-[52px]">
         {post.imageUrl && !imageError && (
-          <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-xl">
+          <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-md">
             <AppImage src={post.imageUrl} alt="" fill onError={() => setImageError(true)} className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
           </div>
         )}

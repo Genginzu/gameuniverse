@@ -33,7 +33,7 @@ export function PasswordResetSection({
         loading={isLoading}
         loadingText={t("requestReset")}
         variant="outline"
-        className="border-editorial-line bg-editorial-2 hover:border-editorial-accent hover:bg-editorial-3 hover:text-editorial-accent text-white/90"
+        className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/55 hover:bg-editorial-3 hover:text-editorial-accent rounded-md text-white/90"
       >
         {t("requestReset")}
       </LoadingButton>

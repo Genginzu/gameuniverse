@@ -116,7 +116,7 @@ export function CollectionDetailPageContent({
       {/* Navigation */}
       <div className="mb-6 flex items-center gap-4">
         <Link href={`/players/${playerId}/collections`}>
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" className="rounded-md">
             <Icon icon="lucide:arrow-left" className="mr-1.5 h-4 w-4" />
             {t("backToCollections")}
           </Button>
@@ -132,7 +132,12 @@ export function CollectionDetailPageContent({
             onDelete={handleDelete}
             onToggleVisibility={handleToggleVisibility}
           />
-          <Button variant="outline" size="sm" onClick={() => setShowAddGameDialog(true)}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="rounded-md"
+            onClick={() => setShowAddGameDialog(true)}
+          >
             <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
             {t("addGame")}
           </Button>

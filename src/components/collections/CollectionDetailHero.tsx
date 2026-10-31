@@ -8,6 +8,7 @@
  * Style : Tailwind inline + tokens éditoriaux.
  */
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { AppImage } from "@/components/ui/app-image";
@@ -19,7 +20,7 @@ import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { CollectionDetail, CollectionItem } from "@/types/collection";
 
 const ACTION_BASE =
-  "border-editorial-line bg-editorial-2 hover:bg-editorial-3 hover:border-editorial-accent/50 inline-flex h-10 items-center gap-2 rounded-[10px] border px-4 text-[0.85rem] font-medium text-white transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]";
+  "border-editorial-line bg-editorial-2 hover:bg-editorial-3 hover:border-editorial-accent/55 inline-flex h-10 items-center gap-2 rounded-md border px-4 text-[0.85rem] font-medium text-white transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]";
 
 interface CollectionDetailHeroProps {
   collection: CollectionDetail;
@@ -29,7 +30,7 @@ interface CollectionDetailHeroProps {
   locale: string;
   onAddGame: () => void;
   onEdit: () => void;
-  onToggleVisibility: () => void;
+  onToggleVisibility: () => void | Promise<unknown>;
   onCopyLink: () => void;
   onDelete: () => void;
 }
@@ -49,6 +50,16 @@ export function CollectionDetailHero({
   const t = useTranslations("collections.editorial.detail");
   const tPage = useTranslations("collections.page");
   const tActions = useTranslations("collections.actions");
+  const [isTogglingVisibility, setIsTogglingVisibility] = useState(false);
+
+  const handleToggleVisibility = async () => {
+    setIsTogglingVisibility(true);
+    try {
+      await onToggleVisibility();
+    } finally {
+      setIsTogglingVisibility(false);
+    }
+  };
 
   return (
     <header className="mb-12 grid grid-cols-1 gap-6 lg:grid-cols-[5fr_7fr] lg:items-stretch lg:gap-12">
@@ -90,7 +101,7 @@ export function CollectionDetailHero({
             <button
               type="button"
               onClick={onAddGame}
-              className="btn-filled inline-flex h-10 items-center gap-2 rounded-[10px] px-4 text-[0.85rem] font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+              className="btn-filled inline-flex h-10 items-center gap-2 rounded-md px-4 text-[0.85rem] font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
             >
               <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
               {tPage("addGame")}
@@ -99,10 +110,22 @@ export function CollectionDetailHero({
               <Icon icon="lucide:pencil" className="h-4 w-4" aria-hidden="true" />
               {tActions("edit")}
             </button>
-            <button type="button" onClick={onToggleVisibility} className={ACTION_BASE}>
+            <button
+              type="button"
+              onClick={handleToggleVisibility}
+              disabled={isTogglingVisibility}
+              aria-busy={isTogglingVisibility}
+              className={`${ACTION_BASE} disabled:cursor-wait disabled:opacity-70`}
+            >
               <Icon
-                icon={collection.isPublic ? "lucide:eye-off" : "lucide:eye"}
-                className="h-4 w-4"
+                icon={
+                  isTogglingVisibility
+                    ? "lucide:loader-2"
+                    : collection.isPublic
+                      ? "lucide:eye-off"
+                      : "lucide:eye"
+                }
+                className={`h-4 w-4 ${isTogglingVisibility ? "animate-spin" : ""}`}
                 aria-hidden="true"
               />
               {collection.isPublic ? tActions("makePrivate") : tActions("makePublic")}
@@ -114,7 +137,7 @@ export function CollectionDetailHero({
             <button
               type="button"
               onClick={onDelete}
-              className="border-editorial-line bg-editorial-2 inline-flex h-10 items-center gap-2 rounded-[10px] border px-4 text-[0.85rem] font-medium text-red-300 transition hover:border-red-600/50 hover:bg-red-600/10 hover:text-red-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
+              className="border-editorial-line bg-editorial-2 inline-flex h-10 items-center gap-2 rounded-md border px-4 text-[0.85rem] font-medium text-red-300 transition hover:border-red-600/50 hover:bg-red-600/10 hover:text-red-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
             >
               <Icon icon="lucide:trash-2" className="h-4 w-4" aria-hidden="true" />
               {tActions("delete")}
@@ -140,7 +163,7 @@ function CollectionCover({
     .filter((c): c is string => Boolean(c));
 
   return (
-    <div className="border-editorial-line from-editorial-accent/[0.18] to-editorial-accent/[0.04] relative aspect-[16/10] overflow-hidden rounded-[1.25rem] border bg-gradient-to-br lg:aspect-auto lg:min-h-[320px]">
+    <div className="border-editorial-line from-editorial-accent/[0.18] to-editorial-accent/[0.04] relative aspect-[16/10] overflow-hidden rounded-lg border bg-gradient-to-br lg:aspect-auto lg:min-h-[320px]">
       {collection.coverImageUrl ? (
         <LazyImage
           src={collection.coverImageUrl}

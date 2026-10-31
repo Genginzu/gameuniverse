@@ -102,10 +102,10 @@ export function EntitySkeleton({ config, className = "" }: EntitySkeletonProps) 
   return (
     <div className={`group relative ${className}`}>
       <div
-        className={`border-editorial-line bg-editorial-2 relative ${aspectRatioClass} overflow-hidden rounded-2xl border`}
+        className={`border-editorial-line bg-editorial-2 relative ${aspectRatioClass} overflow-hidden rounded-lg border`}
       >
         {/* Cover Image Skeleton */}
-        <Skeleton className="h-full w-full rounded-2xl bg-white/10" />
+        <Skeleton className="h-full w-full rounded-lg bg-white/10" />
 
         {/* Badge skeleton */}
         {config.showBadge && (

@@ -98,7 +98,7 @@ export const PlayerReviewsFeed = memo(function PlayerReviewsFeed({
 
 function SkeletonCard() {
   return (
-    <div className="glass-card animate-pulse rounded-xl p-5">
+    <div className="border-editorial-line bg-editorial-3 animate-pulse rounded-lg border p-5">
       <div className="mb-4 flex gap-4">
         <div className="h-20 w-14 rounded-lg bg-gray-200 dark:bg-slate-700" />
         <div className="flex-1 space-y-2">
@@ -125,7 +125,7 @@ function ReviewsFeedEmpty() {
   const t = useTranslations("players.reviews");
 
   return (
-    <div className="glass-card flex flex-col items-center justify-center rounded-2xl py-12 text-center">
+    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-lg border py-12 text-center">
       <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
         <Icon
           icon="lucide:message-square-off"

@@ -27,17 +27,17 @@ export function CollectionAdvancedStatsSection({
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="glass-card h-20 animate-pulse rounded-xl" />
+            <div key={i} className="border-editorial-line bg-editorial-3 rounded-lg border h-20 animate-pulse " />
           ))}
         </div>
-        <div className="glass-card h-64 animate-pulse rounded-xl" />
+        <div className="border-editorial-line bg-editorial-3 rounded-lg border h-64 animate-pulse " />
       </div>
     );
   }
 
   if (!stats || stats.totalGames === 0) {
     return (
-      <div className="glass-card flex flex-col items-center justify-center rounded-xl py-8 text-center">
+      <div className="border-editorial-line bg-editorial-3 rounded-lg border flex flex-col items-center justify-center  py-8 text-center">
         <Icon icon="lucide:chart-pie" className="mb-2 h-8 w-8 text-gray-400 dark:text-slate-500" />
         <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
       </div>

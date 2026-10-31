@@ -25,7 +25,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   const data = payload[0].payload;
 
   return (
-    <div className="glass-card rounded-lg border border-white/20 px-3 py-2 shadow-lg dark:border-slate-700/50">
+    <div className="rounded-lg border border-editorial-line bg-editorial-2 px-3 py-2 shadow-lg shadow-black/30">
       <p className="text-sm font-semibold text-gray-900 dark:text-white">{data.label}</p>
       <p className="text-xs text-gray-500 dark:text-slate-400">
         {data.gamesAdded} {t("activityTimeline.gamesAdded")}
@@ -56,7 +56,7 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
   return (
     <div>
       <StatsSectionTitle>{t("activityTimeline.title")}</StatsSectionTitle>
-      <div className="glass-card rounded-xl p-6 transition-all duration-300">
+      <div className="glass-card rounded-lg p-6 transition-all duration-300">
         <div className="h-52">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={timeline}>

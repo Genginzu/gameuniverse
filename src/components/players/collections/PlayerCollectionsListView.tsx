@@ -52,7 +52,7 @@ function ListSkeleton() {
   return (
     <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="overflow-hidden rounded-xl">
+        <div key={i} className="border-editorial-line overflow-hidden rounded-lg border">
           <Skeleton className="aspect-video w-full bg-gray-200 dark:bg-slate-700" />
           <div className="space-y-2 p-3">
             <Skeleton className="h-4 w-3/4 bg-gray-200 dark:bg-slate-700" />
@@ -68,7 +68,7 @@ function EmptyState() {
   const t = useTranslations("players.collectionsTab");
 
   return (
-    <div className="glass-card flex flex-col items-center justify-center rounded-2xl py-12 text-center">
+    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-lg border py-12 text-center">
       <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
         <Icon icon="lucide:folder-open" className="h-10 w-10 text-gray-400 dark:text-slate-400" />
       </div>

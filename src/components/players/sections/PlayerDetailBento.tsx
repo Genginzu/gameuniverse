@@ -19,6 +19,7 @@ import { Link } from "@/i18n/navigation";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { useAchievements } from "@/hooks/useAchievements";
+import { resolveAchievementIcon } from "@/lib/utils/achievementIcon";
 import { usePlayerPosts } from "@/hooks/usePlayerPosts";
 import type { PlayerDetails } from "@/types/player";
 
@@ -37,13 +38,13 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
   const { posts } = usePlayerPosts(player.id);
   const latestPost = posts[0] ?? null;
 
-  const recentGames = player.library.slice(0, 4);
+  const recentGames = player.library.slice(0, 6);
 
   return (
     <section className="mx-auto w-full max-w-[1600px] px-6 pt-4 pb-16 lg:px-12 lg:pb-20">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {/* Recent games (XL) */}
-        <SpotlightCard className="p-6 md:col-span-2 lg:row-span-2 lg:p-8">
+        <SpotlightCard className="!rounded-lg p-6 md:col-span-2 lg:row-span-2 lg:p-8">
           <div className="mb-6 flex items-center justify-between gap-3">
             <div>
               <KickerLabel className="mb-2">{t("recentKicker")}</KickerLabel>
@@ -60,34 +61,40 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
           </div>
 
           {recentGames.length > 0 ? (
-            <ul className="m-0 list-none p-0">
+            <ul className="m-0 grid list-none grid-cols-1 gap-x-6 p-0 sm:grid-cols-2">
               {recentGames.map((g) => (
                 <li
                   key={g.id}
-                  className="border-editorial-line flex items-center gap-5 border-t py-4 first:border-t-0"
+                  className="border-editorial-line border-t first:border-t-0 sm:[&:nth-child(2)]:border-t-0"
                 >
-                  <Link
-                    href={`/games/${g.slug}`}
-                    className="bg-editorial-3 relative size-16 flex-shrink-0 overflow-hidden rounded-[0.875rem]"
-                    aria-label={g.title}
-                  >
-                    {g.coverImage ? (
-                      <AppImage src={g.coverImage} alt={g.title} fill sizes="64px" className="object-cover" />
-                    ) : (
-                      <Icon
-                        icon="lucide:gamepad-2"
-                        className="absolute inset-0 m-auto h-6 w-6 text-zinc-500"
-                      />
-                    )}
+                  <Link href={`/games/${g.slug}`} className="group flex items-center gap-4 py-4">
+                    <span className="bg-editorial-3 relative aspect-[3/4] w-20 flex-shrink-0 overflow-hidden rounded-md">
+                      {g.coverImage ? (
+                        <AppImage
+                          src={g.coverImage}
+                          alt=""
+                          fill
+                          sizes="80px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <Icon
+                          icon="lucide:gamepad-2"
+                          className="absolute inset-0 m-auto h-6 w-6 text-zinc-500"
+                        />
+                      )}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="font-display group-hover:text-editorial-accent line-clamp-2 text-lg leading-snug text-white transition-colors">
+                        {g.title}
+                      </span>
+                      <span className="mt-1 block font-mono text-xs text-white/50">
+                        {g.playTimeHours > 0
+                          ? `${g.playTimeHours.toFixed(0)}h · ${g.status}`
+                          : g.status}
+                      </span>
+                    </span>
                   </Link>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-display truncate text-lg text-white">{g.title}</p>
-                    <p className="mt-1 font-mono text-xs text-white/50">
-                      {g.playTimeHours > 0
-                        ? `${g.playTimeHours.toFixed(0)}h · ${g.status}`
-                        : g.status}
-                    </p>
-                  </div>
                 </li>
               ))}
             </ul>
@@ -97,9 +104,9 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
         </SpotlightCard>
 
         {/* Achievements */}
-        <SpotlightCard className="p-6 lg:p-8">
+        <SpotlightCard className="!rounded-lg p-6 lg:p-8">
           <KickerLabel className="mb-2">{t("achievementsKicker")}</KickerLabel>
-          <h2 className="mb-5 font-display text-3xl leading-none font-bold tracking-tight text-white">
+          <h2 className="font-display mb-5 text-3xl leading-none font-bold tracking-tight text-white">
             {t("achievementsTitle")}
           </h2>
 
@@ -108,10 +115,10 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
               {unlocked.slice(0, 3).map((a) => (
                 <li
                   key={a.key}
-                  className="border-editorial-line flex items-center gap-3 rounded-[0.875rem] border bg-white/[0.02] p-3"
+                  className="border-editorial-line flex items-center gap-3 rounded-md border bg-white/[0.02] p-3"
                 >
                   <span className="bg-editorial-accent/20 text-editorial-accent grid size-10 flex-shrink-0 place-items-center rounded-full">
-                    <Icon icon={a.icon} className="h-5 w-5" />
+                    <Icon icon={resolveAchievementIcon(a.icon)} className="h-5 w-5" />
                   </span>
                   <div className="min-w-0">
                     <p className="font-display truncate text-[0.95rem] text-white">{a.name}</p>
@@ -128,7 +135,7 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
         </SpotlightCard>
 
         {/* Average rating (replaces win rate) */}
-        <SpotlightCard className="p-6 lg:p-8">
+        <SpotlightCard className="!rounded-lg p-6 lg:p-8">
           <KickerLabel className="mb-3">{t("winRateKicker")}</KickerLabel>
           {player.stats.averageRating !== null ? (
             <>
@@ -146,7 +153,7 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
         </SpotlightCard>
 
         {/* Latest post (wide) */}
-        <SpotlightCard className="p-6 md:col-span-2 lg:p-8">
+        <SpotlightCard className="!rounded-lg p-6 md:col-span-2 lg:p-8">
           <KickerLabel className="mb-2">{t("postKicker")}</KickerLabel>
           {latestPost ? (
             <>
@@ -163,7 +170,7 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
         </SpotlightCard>
 
         {/* Friends count */}
-        <SpotlightCard className="p-6 lg:p-8">
+        <SpotlightCard className="!rounded-lg p-6 lg:p-8">
           <KickerLabel className="mb-3">{t("friendsKicker")}</KickerLabel>
           <p className="font-display text-5xl leading-none font-bold tracking-tight text-white">
             {friendCount}

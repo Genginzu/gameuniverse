@@ -18,7 +18,7 @@ export function PlayerCardSocialLinks({ socialLinks }: PlayerCardSocialLinksProp
     {
       key: "twitter" as const,
       href: socialLinks.twitter,
-      color: "bg-brand-x ring-1 ring-white/20",
+      color: "bg-brand-x border border-editorial-line",
       icon: XIcon,
     },
     {

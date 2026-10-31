@@ -38,7 +38,7 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
   };
 
   return (
-    <div className="border-editorial-line bg-editorial-3 group flex items-center rounded-[0.875rem] border p-3 text-white transition hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:shadow-[0_8px_24px_-12px_rgba(var(--accent-rgb,var(--neon-primary)),0.25)]">
+    <div className="border-editorial-line bg-editorial-3 group flex items-center rounded-md border p-3 text-white transition hover:border-editorial-accent/55">
       <Link href={`/players/${friend.id}`} className="flex min-w-0 flex-1 items-center gap-3">
         {/* Avatar */}
         <div className="bg-editorial-accent/[0.18] text-editorial-accent relative size-10 flex-shrink-0 overflow-hidden rounded-full">

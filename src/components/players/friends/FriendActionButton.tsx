@@ -9,7 +9,7 @@ import type { RelationshipStatus } from "@/types/friendship";
 
 /** Editorial override for outline buttons (avoid the default white bg-background). */
 const EDITORIAL_OUTLINE =
-  "border-editorial-line bg-editorial-3 text-white hover:bg-editorial-3 hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:text-[rgb(var(--accent-rgb,var(--neon-primary)))]";
+  "rounded-md border-editorial-line bg-editorial-3 text-white hover:bg-editorial-3 hover:border-editorial-accent/55 hover:text-editorial-accent";
 
 
 interface FriendActionButtonProps {
@@ -61,7 +61,12 @@ export function FriendActionButton({
   return (
     <div aria-live="polite">
       {buttonState === "add_friend" && (
-        <Button size="sm" onClick={() => handleAction(sendRequest)} disabled={isProcessing}>
+        <Button
+          size="sm"
+          className="rounded-md"
+          onClick={() => handleAction(sendRequest)}
+          disabled={isProcessing}
+        >
           {isProcessing ? (
             <Icon icon="lucide:loader-2" className="animate-spin" />
           ) : (
@@ -72,7 +77,7 @@ export function FriendActionButton({
       )}
 
       {buttonState === "request_sent" && (
-        <Button size="sm" variant="secondary" disabled>
+        <Button size="sm" variant="secondary" className="rounded-md" disabled>
           {t("requestSent")}
         </Button>
       )}
@@ -81,6 +86,7 @@ export function FriendActionButton({
         <div className="flex gap-2">
           <Button
             size="sm"
+            className="rounded-md"
             onClick={() => handleAction(() => acceptRequest(friendshipId))}
             disabled={isProcessing}
           >

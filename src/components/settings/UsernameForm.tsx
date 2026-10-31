@@ -27,7 +27,7 @@ export const usernameSchema = z.object({
 export type UsernameFormValues = z.infer<typeof usernameSchema>;
 
 const editorialInputClass =
-  "h-11 rounded-[10px] border-editorial-line bg-editorial-2 text-white transition-colors placeholder:text-editorial-muted hover:border-white/20 focus-visible:border-editorial-accent focus-visible:ring-2 focus-visible:ring-editorial-accent/15 focus-visible:ring-offset-0";
+  "h-11 rounded-md border-editorial-line bg-editorial-2 text-white transition-colors placeholder:text-editorial-muted hover:border-white/20 focus-visible:border-editorial-accent focus-visible:ring-0 focus-visible:ring-offset-0";
 
 interface UsernameFormProps {
   currentUsername: string | null;

@@ -255,7 +255,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         <div
           id={resultsId}
           aria-live="polite"
-          className="search-overlay-content"
+          className="search-overlay-content editorial-scrollbar-accent"
           data-loading={isLoading || undefined}
           data-state={contentState}
         >

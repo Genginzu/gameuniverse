@@ -54,7 +54,7 @@ export function PlayerLibraryGrid({
 
   if (sortedGames.length === 0) {
     return (
-      <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-3xl border px-8 py-16 text-center">
+      <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-lg border px-8 py-16 text-center">
         <div className="bg-editorial-accent/15 text-editorial-accent grid size-16 place-items-center rounded-full">
           <Icon icon="lucide:gamepad-2" className="h-7 w-7" />
         </div>

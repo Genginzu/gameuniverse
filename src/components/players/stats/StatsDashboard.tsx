@@ -117,7 +117,7 @@ export function StatsDashboard({
           <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
             <Icon icon="lucide:alert-circle" className="h-8 w-8 text-red-400" />
             <p className="text-sm text-gray-500 dark:text-slate-400">{t("dashboard.error")}</p>
-            <Button variant="outline" size="sm" onClick={() => mutate()}>
+            <Button variant="outline" size="sm" className="rounded-md" onClick={() => mutate()}>
               {t("dashboard.retry")}
             </Button>
           </CardContent>

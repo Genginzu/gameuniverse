@@ -15,7 +15,7 @@ export function SkeletonCards({ count }: { count: number }) {
 
 function SkeletonCard() {
   return (
-    <div className="animate-pulse rounded-2xl bg-white/80 p-5 shadow-md backdrop-blur-xl dark:bg-slate-800/60 dark:shadow-lg dark:shadow-black/20">
+    <div className="border-editorial-line bg-editorial-2 animate-pulse rounded-lg border p-5">
       <div className="mb-4 flex items-center gap-3">
         <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-slate-700" />
         <div className="space-y-1.5">
@@ -35,7 +35,7 @@ export function PostsFeedEmpty() {
   const t = useTranslations("players.posts");
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl bg-white/80 py-12 text-center shadow-md backdrop-blur-xl dark:bg-slate-800/60 dark:shadow-lg dark:shadow-black/20">
+    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-lg border py-12 text-center">
       <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
         <Icon
           icon="lucide:message-square-off"

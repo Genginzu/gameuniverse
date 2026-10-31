@@ -16,8 +16,8 @@ interface SubscriptionListTabProps {
 }
 
 /**
- * Onglet listant les abonnés (followers) ou les abonnements (following)
- * d'un joueur. Publique — s'appuie sur les endpoints
+ * Onglet listant les abonnÃ©s (followers) ou les abonnements (following)
+ * d'un joueur. Publique â€” s'appuie sur les endpoints
  * `/subscribers` et `/subscriptions`.
  */
 export function SubscriptionListTab({ playerId, variant }: SubscriptionListTabProps) {
@@ -40,7 +40,7 @@ export function SubscriptionListTab({ playerId, variant }: SubscriptionListTabPr
 
   if (entries.length === 0) {
     return (
-      <div className="border-editorial-line bg-editorial-3 flex flex-col items-center justify-center rounded-[1.25rem] border border-dashed px-8 py-12 text-center">
+      <div className="border-editorial-line bg-editorial-3 flex flex-col items-center justify-center rounded-lg border px-8 py-12 text-center">
         <div className="bg-editorial-accent/12 text-editorial-accent mb-4 grid size-16 place-items-center rounded-full">
           <Icon
             icon={variant === "followers" ? "lucide:user-plus" : "lucide:rss"}
@@ -83,7 +83,7 @@ function SubscriptionCard({
   return (
     <Link
       href={`/players/${profile.id}`}
-      className="border-editorial-line bg-editorial-3 group flex items-center gap-3 rounded-[0.875rem] border p-3 text-white transition hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:shadow-[0_8px_24px_-12px_rgba(var(--accent-rgb,var(--neon-primary)),0.25)]"
+      className="border-editorial-line bg-editorial-3 group flex items-center gap-3 rounded-md border p-3 text-white transition hover:border-editorial-accent/55"
     >
       <div className="bg-editorial-accent/[0.18] text-editorial-accent relative size-10 flex-shrink-0 overflow-hidden rounded-full">
         {profile.avatarUrl ? (
@@ -115,7 +115,7 @@ function SubscriptionListSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
-        <Skeleton key={i} className="h-16 w-full rounded-[0.875rem] bg-white/[0.06]" />
+        <Skeleton key={i} className="h-16 w-full rounded-md bg-white/[0.06]" />
       ))}
     </div>
   );

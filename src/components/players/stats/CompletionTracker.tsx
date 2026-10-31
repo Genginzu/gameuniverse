@@ -39,7 +39,7 @@ export function CompletionTracker({ completion }: CompletionTrackerProps) {
   return (
     <div>
       <StatsSectionTitle>{t("completion.title")}</StatsSectionTitle>
-      <div className="glass-card rounded-xl p-6 transition-all duration-300">
+      <div className="glass-card rounded-lg p-6 transition-all duration-300">
         {/* Percentage label */}
         <div className="mb-3 flex items-baseline gap-2">
           <span className="text-3xl font-bold text-gray-900 dark:text-white">

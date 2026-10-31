@@ -26,7 +26,7 @@ const KNOWN_ERRORS = [
 ];
 
 const INPUT_CLASS =
-  "h-11 rounded-[10px] border-editorial-line bg-editorial-2 text-base text-white placeholder:text-editorial-muted focus-visible:border-red-400 focus-visible:ring-2 focus-visible:ring-red-400/20 focus-visible:ring-offset-0";
+  "h-11 rounded-md border-editorial-line bg-editorial-2 text-base text-white placeholder:text-editorial-muted focus-visible:border-red-400 focus-visible:ring-0 focus-visible:ring-offset-0";
 
 interface AccountDeletionDialogProps {
   open: boolean;
@@ -116,7 +116,7 @@ export function AccountDeletionDialog({
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="border-editorial-line bg-editorial-2 min-h-[44px] w-full rounded-lg border px-4 text-sm text-white/90 sm:w-auto"
+              className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/55 min-h-[44px] w-full rounded-md border px-4 text-sm text-white/90 transition-colors sm:w-auto"
             >
               {t("cancel")}
             </button>

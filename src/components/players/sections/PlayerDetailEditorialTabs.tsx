@@ -47,7 +47,7 @@ export function PlayerDetailEditorialTabs({
   return (
     <div className="border-editorial-line mb-10 border-b">
       <div
-        className="-mb-px flex items-center gap-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="-mb-px flex [scrollbar-width:none] items-center gap-6 overflow-x-auto lg:flex-wrap lg:gap-y-4 lg:overflow-visible [&::-webkit-scrollbar]:hidden"
         role="tablist"
       >
         {visibleTabs.map(({ id, icon }) => {

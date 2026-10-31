@@ -20,10 +20,10 @@ export function SettingsSkeleton() {
         {Array.from({ length: 4 }).map((_, i) => (
           <section
             key={i}
-            className="border-editorial-line bg-editorial-3 overflow-hidden rounded-2xl border"
+            className="border-editorial-line bg-editorial-3 overflow-hidden rounded-lg border"
           >
             <header className="flex items-start gap-4 px-6 pt-6 md:px-8 md:pt-7">
-              <Block className="h-10 w-10 shrink-0 !rounded-[0.625rem]" />
+              <Block className="h-10 w-10 shrink-0 !rounded-md" />
               <div className="flex-1 space-y-2">
                 <Block className="h-5 w-28" />
                 <Block className="h-4 w-56" />

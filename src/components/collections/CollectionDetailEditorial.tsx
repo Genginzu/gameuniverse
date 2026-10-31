@@ -285,7 +285,7 @@ function CollectionDetailEmptyState({ isOwner, onAdd }: { isOwner: boolean; onAd
   const t = useTranslations("collections.editorial.detail");
 
   return (
-    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-3xl border border-dashed px-8 py-16 text-center">
+    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-lg border border-dashed px-8 py-16 text-center">
       <div className="bg-editorial-accent/15 text-editorial-accent grid size-16 place-items-center rounded-full">
         <Icon icon="lucide:gamepad-2" className="h-7 w-7" aria-hidden="true" />
       </div>
@@ -294,7 +294,7 @@ function CollectionDetailEmptyState({ isOwner, onAdd }: { isOwner: boolean; onAd
         {isOwner ? t("emptyDescriptionOwner") : t("emptyDescriptionViewer")}
       </p>
       {isOwner && (
-        <Button onClick={onAdd}>
+        <Button onClick={onAdd} className="rounded-md">
           <Icon icon="lucide:plus" className="mr-2 h-4 w-4" aria-hidden="true" />
           {t("emptyCta")}
         </Button>

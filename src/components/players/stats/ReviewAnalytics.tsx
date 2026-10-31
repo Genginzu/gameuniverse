@@ -26,7 +26,7 @@ function CustomTooltip({ active, payload, gameLabel, gamesLabel }: CustomTooltip
   const data = payload[0].payload;
   const suffix = data.count > 1 ? gamesLabel : gameLabel;
   return (
-    <div className="glass-card rounded-lg border border-white/20 px-3 py-2 shadow-lg dark:border-slate-700/50">
+    <div className="rounded-lg border border-editorial-line bg-editorial-2 px-3 py-2 shadow-lg shadow-black/30">
       <p className="text-sm font-semibold text-gray-900 dark:text-white">{data.range}</p>
       <p className="text-xs text-gray-500 dark:text-slate-400">
         {data.count} {suffix}
@@ -53,7 +53,7 @@ export function ReviewAnalytics({ analytics, locale }: ReviewAnalyticsProps) {
   return (
     <div>
       <StatsSectionTitle>{t("reviewAnalytics.title")}</StatsSectionTitle>
-      <div className="glass-card rounded-xl p-6 transition-all duration-300">
+      <div className="glass-card rounded-lg p-6 transition-all duration-300">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
           {/* Radial gauges à gauche */}
           <div className="shrink-0 lg:w-auto">

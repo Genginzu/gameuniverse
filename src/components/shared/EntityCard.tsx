@@ -146,14 +146,14 @@ function EntityCardInner<T extends object>({
 
     if (config.customHoverRenderer) {
       return (
-        <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-linear-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
+        <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-lg bg-linear-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
           <div className="p-4">{config.customHoverRenderer(entity, t)}</div>
         </div>
       );
     }
 
     return (
-      <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-linear-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
+      <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-lg bg-linear-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
         <div className="p-4">
           {config.hoverOverlay.showTitle !== false && (
             <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white">{title}</h3>
@@ -189,7 +189,7 @@ function EntityCardInner<T extends object>({
     <div className="group relative">
       <Link href={config.linkTemplate(entity, locale)}>
         <div
-          className={`relative ${aspectRatioClass} hover:ring-neon-primary/30 bg-editorial-3 cursor-pointer overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgb(var(--neon-primary)/0.3),0_0_40px_rgb(var(--neon-secondary)/0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100`}
+          className={`relative ${aspectRatioClass} hover:ring-neon-primary/30 bg-editorial-3 cursor-pointer overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgb(var(--neon-primary)/0.3),0_0_40px_rgb(var(--neon-secondary)/0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100`}
         >
           {needsFallbackAvatar ? (
             <div className="from-palette-primary-100 to-palette-accent-100 dark:from-palette-primary-900/30 dark:to-palette-accent-900/30 flex h-full w-full items-center justify-center bg-linear-to-br">
@@ -200,7 +200,7 @@ function EntityCardInner<T extends object>({
               src={imageUrl}
               alt={title}
               fill
-              className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+              className="rounded-lg object-cover transition-all duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
               showSkeleton={true}
               priority={priority}

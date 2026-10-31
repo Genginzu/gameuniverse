@@ -8,7 +8,7 @@ export function CollectionDetailSkeleton() {
   return (
     <div className="space-y-8">
       {/* Header card */}
-      <div className="border-editorial-line bg-editorial-2 rounded-2xl border p-6">
+      <div className="border-editorial-line bg-editorial-2 rounded-lg border p-6">
         {/* Title */}
         <Skeleton className="h-7 w-1/2 bg-white/10" />
 
@@ -34,7 +34,7 @@ export function CollectionDetailSkeleton() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="border-editorial-line bg-editorial-2 overflow-hidden rounded-2xl border"
+              className="border-editorial-line bg-editorial-2 overflow-hidden rounded-lg border"
             >
               <Skeleton className="aspect-3/4 w-full rounded-none bg-white/10" />
               <div className="space-y-2 p-4">

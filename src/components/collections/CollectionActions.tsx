@@ -53,12 +53,12 @@ export function CollectionActions({
   return (
     <>
       <div className="flex flex-wrap items-center gap-2">
-        <Button variant="outline" size="sm" onClick={onEdit}>
+        <Button variant="outline" size="sm" className="rounded-md" onClick={onEdit}>
           <Icon icon="lucide:pencil" className="mr-1.5 h-4 w-4" />
           {t("edit")}
         </Button>
 
-        <Button variant="outline" size="sm" onClick={onToggleVisibility}>
+        <Button variant="outline" size="sm" className="rounded-md" onClick={onToggleVisibility}>
           {collection.isPublic ? (
             <Icon icon="lucide:eye-off" className="mr-1.5 h-4 w-4" />
           ) : (
@@ -67,12 +67,17 @@ export function CollectionActions({
           {collection.isPublic ? t("makePrivate") : t("makePublic")}
         </Button>
 
-        <Button variant="outline" size="sm" onClick={handleCopyLink}>
+        <Button variant="outline" size="sm" className="rounded-md" onClick={handleCopyLink}>
           <Icon icon="lucide:link-2" className="mr-1.5 h-4 w-4" />
           {t("copyLink")}
         </Button>
 
-        <Button variant="destructive" size="sm" onClick={() => setShowDeleteDialog(true)}>
+        <Button
+            variant="destructive"
+            size="sm"
+            className="rounded-md"
+            onClick={() => setShowDeleteDialog(true)}
+          >
           <Icon icon="lucide:trash-2" className="mr-1.5 h-4 w-4" />
           {t("delete")}
         </Button>
@@ -92,6 +97,7 @@ export function CollectionActions({
           <DialogFooter>
             <Button
               variant="outline"
+              className="rounded-md"
               onClick={() => setShowDeleteDialog(false)}
               disabled={isDeleting}
             >

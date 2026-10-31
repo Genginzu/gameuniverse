@@ -110,7 +110,12 @@ export function CollectionDetailDialogs({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteDialog(false)} disabled={isDeleting}>
+            <Button
+              variant="outline"
+              className="rounded-md"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
+            >
               {tActions("deleteCancel")}
             </Button>
             <LoadingButton
@@ -137,7 +142,12 @@ export function CollectionDetailDialogs({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setItemToRemove(null)} disabled={isRemovingItem}>
+            <Button
+              variant="outline"
+              className="rounded-md"
+              onClick={() => setItemToRemove(null)}
+              disabled={isRemovingItem}
+            >
               {t("removeItem.confirmCancel")}
             </Button>
             <LoadingButton

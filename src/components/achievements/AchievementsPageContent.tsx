@@ -75,9 +75,9 @@ function AchievementsSkeleton() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="glass-card flex animate-pulse items-center gap-3 rounded-xl p-4"
+              className="glass-card flex animate-pulse items-center gap-3 rounded-lg p-4"
             >
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-gray-200 dark:bg-slate-700" />
+              <div className="h-10 w-10 shrink-0 rounded-lg bg-gray-200 dark:bg-slate-700" />
               <div className="min-w-0 flex-1 space-y-2">
                 <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-slate-700" />
                 <div className="h-3 w-1/2 rounded bg-gray-200 dark:bg-slate-700" />
@@ -100,9 +100,9 @@ function AchievementsSkeleton() {
       {/* Achievement cards grid */}
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="glass-card animate-pulse rounded-xl p-4">
+          <div key={i} className="glass-card animate-pulse rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <div className="h-10 w-10 shrink-0 rounded-xl bg-gray-200 dark:bg-slate-700" />
+              <div className="h-10 w-10 shrink-0 rounded-lg bg-gray-200 dark:bg-slate-700" />
               <div className="min-w-0 flex-1 space-y-2">
                 <div className="flex items-center gap-2">
                   <div className="h-4 w-2/3 rounded bg-gray-200 dark:bg-slate-700" />

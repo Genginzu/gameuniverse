@@ -67,13 +67,13 @@ export function SuggestionCard({ suggestion, onAccept, onIgnore }: SuggestionCar
 
   return (
     <article
-      className={`border-editorial-line bg-editorial-2 relative flex flex-col gap-4 rounded-2xl border p-4 transition-all duration-500 ${
+      className={`border-editorial-line bg-editorial-2 relative flex flex-col gap-4 rounded-lg border p-4 transition-all duration-500 ${
         isCreated ? "scale-95 opacity-0" : "opacity-100"
       }`}
       aria-busy={isCreating}
     >
       {isCreated && (
-        <div className="bg-editorial-accent/10 absolute inset-0 z-10 grid place-items-center rounded-2xl">
+        <div className="bg-editorial-accent/10 absolute inset-0 z-10 grid place-items-center rounded-lg">
           <Icon icon="lucide:check-circle-2" className="text-editorial-accent h-10 w-10" />
         </div>
       )}
@@ -92,7 +92,7 @@ export function SuggestionCard({ suggestion, onAccept, onIgnore }: SuggestionCar
           type="button"
           onClick={handleCreate}
           disabled={isCreating}
-          className="btn-filled inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-xl px-4 text-sm font-semibold transition disabled:opacity-60"
+          className="btn-filled inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-md px-4 text-sm font-semibold transition disabled:opacity-60"
         >
           {isCreating ? (
             <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
@@ -105,7 +105,7 @@ export function SuggestionCard({ suggestion, onAccept, onIgnore }: SuggestionCar
           type="button"
           onClick={onIgnore}
           disabled={isCreating}
-          className="border-editorial-line text-editorial-muted inline-flex h-11 items-center justify-center rounded-xl border px-4 text-sm font-medium transition hover:text-white disabled:opacity-60"
+          className="border-editorial-line text-editorial-muted inline-flex h-11 items-center justify-center rounded-md border px-4 text-sm font-medium transition hover:text-white disabled:opacity-60"
         >
           {t("ignore")}
         </button>

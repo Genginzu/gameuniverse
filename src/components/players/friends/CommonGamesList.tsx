@@ -74,7 +74,7 @@ export function CommonGamesList({
             type="button"
             disabled={!hasPreviousPage}
             onClick={() => onPageChange(currentPage - 1)}
-            className="flex items-center gap-1 rounded-lg border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] px-3 py-2 text-sm text-zinc-300 transition-colors hover:border-zinc-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex items-center gap-1 rounded-md border border-editorial-line bg-editorial-2 px-3 py-2 text-sm text-zinc-300 transition-colors hover:border-editorial-accent/55 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Icon icon="lucide:chevron-left" className="h-4 w-4" />
             {t("pagination.previous")}
@@ -88,7 +88,7 @@ export function CommonGamesList({
             type="button"
             disabled={!hasNextPage}
             onClick={() => onPageChange(currentPage + 1)}
-            className="flex items-center gap-1 rounded-lg border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] px-3 py-2 text-sm text-zinc-300 transition-colors hover:border-zinc-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex items-center gap-1 rounded-md border border-editorial-line bg-editorial-2 px-3 py-2 text-sm text-zinc-300 transition-colors hover:border-editorial-accent/55 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             {t("pagination.next")}
             <Icon icon="lucide:chevron-right" className="h-4 w-4" />

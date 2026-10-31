@@ -73,7 +73,7 @@ export const FriendList = memo(function FriendList({
       {isLoadingMore && (
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-[0.875rem] bg-white/[0.06]" />
+            <Skeleton key={i} className="h-16 w-full rounded-md bg-white/[0.06]" />
           ))}
         </div>
       )}
@@ -88,7 +88,7 @@ function FriendListSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
-        <Skeleton key={i} className="h-16 w-full rounded-[0.875rem] bg-white/[0.06]" />
+        <Skeleton key={i} className="h-16 w-full rounded-md bg-white/[0.06]" />
       ))}
     </div>
   );
@@ -98,7 +98,7 @@ function FriendListEmpty() {
   const t = useTranslations("friends");
 
   return (
-    <div className="border-editorial-line bg-editorial-3 flex flex-col items-center justify-center rounded-[1.25rem] border border-dashed px-8 py-12 text-center">
+    <div className="border-editorial-line bg-editorial-3 flex flex-col items-center justify-center rounded-lg border px-8 py-12 text-center">
       <div className="bg-editorial-accent/12 text-editorial-accent mb-4 grid size-16 place-items-center rounded-full">
         <Icon icon="lucide:users" className="h-10 w-10" aria-hidden="true" />
       </div>

@@ -16,7 +16,7 @@ export function CollectionDetailEditorialSkeleton() {
         <div className={`mb-6 h-3 w-32 ${PULSE}`} />
 
         <header className="mb-12 grid grid-cols-1 gap-6 lg:grid-cols-[5fr_7fr] lg:items-stretch lg:gap-12">
-          <div className="border-editorial-line aspect-[16/10] animate-pulse rounded-[1.25rem] border bg-white/[0.03] lg:aspect-auto lg:min-h-[320px]" />
+          <div className="border-editorial-line aspect-[16/10] animate-pulse rounded-lg border bg-white/[0.03] lg:aspect-auto lg:min-h-[320px]" />
 
           <div className="flex flex-col justify-between gap-6">
             <div>
@@ -48,7 +48,7 @@ export function CollectionDetailEditorialSkeleton() {
         <div className="grid grid-cols-2 gap-4 min-[475px]:grid-cols-3 md:grid-cols-4 md:gap-5 lg:grid-cols-5 xl:grid-cols-6 min-[1536px]:grid-cols-7">
           {Array.from({ length: GAME_COUNT }).map((_, i) => (
             <div key={i} className="flex flex-col gap-2">
-              <div className="border-editorial-line aspect-[3/4] animate-pulse rounded-[0.625rem] border bg-white/[0.06]" />
+              <div className="border-editorial-line aspect-[3/4] animate-pulse rounded-lg border bg-white/[0.06]" />
               <div className={`h-3 w-3/4 ${PULSE}`} />
             </div>
           ))}

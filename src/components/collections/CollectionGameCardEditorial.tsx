@@ -60,10 +60,10 @@ export function CollectionGameCardEditorial({
     <div className="group/card relative">
       <Link
         href={`/games/${item.slug}`}
-        className="flex flex-col gap-2 overflow-hidden rounded-[0.875rem] transition-transform duration-200 group-hover/card:-translate-y-[3px] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+        className="flex flex-col gap-2 overflow-hidden rounded-lg transition-transform duration-200 group-hover/card:-translate-y-[3px] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
         aria-label={item.title}
       >
-        <div className="border-editorial-line bg-editorial-2 group-hover/card:border-editorial-accent/60 relative aspect-[3/4] overflow-hidden rounded-[0.625rem] border transition-all duration-200">
+        <div className="border-editorial-line bg-editorial-2 group-hover/card:border-editorial-accent/55 relative aspect-[3/4] overflow-hidden rounded-lg border transition-all duration-200">
           <LazyImage
             src={item.coverImage ?? undefined}
             alt=""

@@ -63,7 +63,7 @@ export function EditItemNoteDialog({ item, isSaving, onClose, onSave }: EditItem
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={isSaving}>
+          <Button variant="outline" className="rounded-md" onClick={onClose} disabled={isSaving}>
             {t("cancel")}
           </Button>
           <LoadingButton

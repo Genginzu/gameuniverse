@@ -187,7 +187,7 @@ export function AddGameToCollection({
             onChange={(e) => setNote(e.target.value)}
             maxLength={NOTE_MAX_LENGTH}
             rows={2}
-            className="border-editorial-line bg-editorial-3 resize-none text-white placeholder:text-editorial-muted"
+            className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted focus-visible:border-editorial-accent resize-none rounded-md text-base text-white focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none!"
           />
           <p className="text-editorial-muted mt-1 text-xs">
             {note.length}/{NOTE_MAX_LENGTH}
@@ -201,7 +201,7 @@ export function AddGameToCollection({
           loading={submitting}
           loadingText={submitText}
           disabled={!selectedGame}
-          className="w-full border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.15)] text-[rgb(var(--accent-rgb,var(--neon-primary)))] shadow-none hover:bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.25)]"
+          className="btn-filled h-11 w-full rounded-md px-5 text-[0.9rem] font-semibold shadow-none"
         >
           <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
           {addButtonLabel ?? t("addButton")}

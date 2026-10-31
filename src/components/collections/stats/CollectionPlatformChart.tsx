@@ -18,7 +18,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
   const data = payload[0].payload;
   return (
-    <div className="glass-card rounded-lg border border-white/20 px-3 py-2 shadow-lg dark:border-slate-700/50">
+    <div className="border-editorial-line bg-editorial-2 rounded-lg border px-3 py-2 shadow-lg shadow-black/30">
       <p className="text-sm font-semibold text-gray-900 dark:text-white">{data.platform}</p>
       <p className="text-xs text-gray-500 dark:text-slate-400">
         {data.count} — {data.percentage}%
@@ -32,7 +32,7 @@ export function CollectionPlatformChart({ distribution }: CollectionPlatformChar
   const t = useTranslations("collections.stats");
 
   return (
-    <div className="glass-card rounded-xl p-6 transition-all duration-300">
+    <div className="border-editorial-line bg-editorial-3 rounded-lg border  p-6 transition-all duration-300">
       <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
         {t("platformDistribution")}
       </h3>

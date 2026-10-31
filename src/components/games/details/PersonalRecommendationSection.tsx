@@ -8,7 +8,7 @@ import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvi
 import { Icon } from "@iconify/react";
 import { recommendationToGameSummary } from "@/lib/utils/recommendationToGameSummary";
 
-const SKELETON_COUNT = 4;
+const SKELETON_COUNT = 12;
 
 export function PersonalRecommendationSection() {
   const t = useTranslations("recommendations");
@@ -36,7 +36,7 @@ export function PersonalRecommendationSection() {
       </div>
 
       {loading && (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
           {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
             <GameCardSkeleton key={index} />
           ))}
@@ -49,7 +49,7 @@ export function PersonalRecommendationSection() {
 
       {!loading && hasRecommendations && (
         <LibraryStatusProvider gameIds={recommendations.map((rec) => rec.id)}>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
             {recommendations.map((rec) => (
               <GameCard key={rec.id} game={recommendationToGameSummary(rec)} />
             ))}

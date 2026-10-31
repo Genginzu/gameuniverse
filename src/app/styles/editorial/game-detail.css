@@ -1175,8 +1175,6 @@
 }
 
 /* ===== Rayons resserrés (cartes 0.5rem, boutons/pastilles 0.375rem) ===== */
-.editorial-game-detail .spotlight-card,
-.editorial-game-detail .editorial-card,
-.editorial-game-detail .editorial-card-skeleton {
+.editorial-game-detail .spotlight-card {
   border-radius: 0.5rem;
 }

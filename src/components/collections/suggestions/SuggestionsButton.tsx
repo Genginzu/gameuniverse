@@ -21,7 +21,7 @@ export function SuggestionsButton({ controller }: SuggestionsButtonProps) {
       type="button"
       onClick={generate}
       disabled={isLoading}
-      className="border-editorial-line text-editorial-muted inline-flex h-14 items-center justify-center gap-2 rounded-[14px] border px-5 text-[0.95rem] font-semibold transition hover:-translate-y-px hover:text-white disabled:opacity-60"
+      className="border-editorial-line text-editorial-muted inline-flex h-14 items-center justify-center gap-2 rounded-md border px-5 text-[0.95rem] font-semibold transition hover:-translate-y-px hover:text-white disabled:opacity-60"
     >
       {isLoading ? (
         <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" aria-hidden="true" />

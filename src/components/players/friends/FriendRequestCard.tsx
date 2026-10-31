@@ -24,7 +24,7 @@ export function FriendRequestCard({
   const { sender } = request;
 
   return (
-    <div className="border-editorial-line bg-editorial-3 flex items-center gap-3 rounded-[0.875rem] border p-3 text-white">
+    <div className="border-editorial-line bg-editorial-3 flex items-center gap-3 rounded-md border p-3 text-white">
       {/* Sender avatar */}
       <div className="bg-editorial-accent/[0.18] text-editorial-accent relative size-10 flex-shrink-0 overflow-hidden rounded-full">
         {sender.avatarUrl ? (
@@ -56,6 +56,7 @@ export function FriendRequestCard({
         <Button
           size="sm"
           variant="default"
+          className="rounded-md"
           onClick={() => onAccept(request.friendshipId)}
           disabled={isProcessing}
           aria-label={getAriaLabel(t("accept"), sender.displayName)}
@@ -69,6 +70,7 @@ export function FriendRequestCard({
         <Button
           size="sm"
           variant="outline"
+          className="rounded-md"
           onClick={() => onDecline(request.friendshipId)}
           disabled={isProcessing}
           aria-label={getAriaLabel(t("decline"), sender.displayName)}

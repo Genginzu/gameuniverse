@@ -46,8 +46,9 @@ interface HomeGameRailProps {
 
 const SKELETON_COUNT = 6;
 
+// pt-2/-mt-2: headroom for the card hover lift (translateY), which overflow-x-auto would clip.
 const RAIL_CLASSES =
-  "editorial-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 pointer-fine:snap-none md:-mx-8 md:gap-5 md:px-8 lg:mx-0 lg:px-0";
+  "editorial-scrollbar -mx-4 -mt-2 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pt-2 pb-4 pointer-fine:snap-none md:-mx-8 md:gap-5 md:px-8 lg:mx-0 lg:px-0";
 
 /** Vertical separator announcing the suggestion cards that follow. */
 function SuggestionsSeparator({ label }: { label: string }) {

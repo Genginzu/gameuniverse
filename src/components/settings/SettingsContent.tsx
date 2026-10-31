@@ -234,10 +234,10 @@ function SettingsSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-editorial-line bg-editorial-3 overflow-hidden rounded-2xl border">
+    <section className="border-editorial-line bg-editorial-3 overflow-hidden rounded-lg border">
       <header className="flex items-start gap-4 px-6 pt-6 md:px-8 md:pt-7">
         <div
-          className="bg-editorial-accent/12 text-editorial-accent grid size-10 shrink-0 place-items-center rounded-[0.625rem]"
+          className="bg-editorial-accent/12 text-editorial-accent grid size-10 shrink-0 place-items-center rounded-md"
           aria-hidden="true"
         >
           <Icon icon={icon} className="h-5 w-5" />

@@ -13,7 +13,7 @@ export default function CharactersLoading() {
       <Skeleton className="h-10 w-full rounded-md bg-white/10" />
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6">
         {Array.from({ length: 12 }).map((_, i) => (
-          <Skeleton key={i} className="aspect-[3/4] rounded-2xl bg-white/10" />
+          <Skeleton key={i} className="aspect-[3/4] rounded-lg bg-white/10" />
         ))}
       </div>
     </div>

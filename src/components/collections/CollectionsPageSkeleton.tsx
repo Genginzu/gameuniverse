@@ -42,7 +42,7 @@ export function CollectionsPageSkeleton() {
           {Array.from({ length: SKELETON_CARD_COUNT }).map((_, i) => (
             <div
               key={i}
-              className="border-editorial-line bg-editorial-2 animate-pulse overflow-hidden rounded-2xl border"
+              className="border-editorial-line bg-editorial-2 animate-pulse overflow-hidden rounded-lg border"
               style={{ animationDelay: `${i * 80}ms` }}
             >
               <div className="aspect-[16/10] bg-white/[0.03]" />

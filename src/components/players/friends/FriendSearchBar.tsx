@@ -22,7 +22,7 @@ export function FriendSearchBar({ value, onChange }: FriendSearchBarProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={t("searchPlaceholder")}
-        className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted h-11 w-full rounded-[0.875rem] border pr-4 pl-10 text-base text-white transition focus:border-[rgb(var(--accent-rgb,var(--neon-primary)))] focus:shadow-[0_0_0_3px_rgba(var(--accent-rgb,var(--neon-primary)),0.15)] focus:outline-none"
+        className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted h-11 w-full rounded-md border pr-4 pl-10 text-base text-white transition focus:border-editorial-accent focus:outline-none"
       />
     </div>
   );

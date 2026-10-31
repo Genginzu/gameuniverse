@@ -20,7 +20,7 @@ interface StatCardProps {
 
 function StatCard({ icon, label, children }: StatCardProps) {
   return (
-    <Card className="rounded-2xl border-[var(--editorial-line)] bg-[var(--editorial-bg-3)]">
+    <Card className="border-editorial-line bg-editorial-3 rounded-lg border shadow-none hover:shadow-none">
       <CardContent className="p-6">
         <div className="mb-2 flex items-center gap-2 text-[var(--editorial-muted)]">
           {icon}

@@ -91,7 +91,7 @@ function EmptyState() {
   const t = useTranslations("collections.detail");
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 py-10 text-center dark:border-gray-600">
+    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 py-10 text-center dark:border-gray-600">
       <svg
         className="mb-3 h-8 w-8 text-gray-400 dark:text-gray-500"
         fill="none"

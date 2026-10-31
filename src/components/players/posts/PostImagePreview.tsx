@@ -24,10 +24,10 @@ export function PostImagePreview({
   return (
     <>
       {previewUrl && (
-        <div className="relative mt-2 overflow-hidden rounded-xl">
-          <img src={previewUrl} alt="" className="max-h-48 w-full rounded-xl object-cover" />
+        <div className="relative mt-2 overflow-hidden rounded-md">
+          <img src={previewUrl} alt="" className="max-h-48 w-full rounded-md object-cover" />
           {uploading && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40">
+            <div className="absolute inset-0 flex items-center justify-center rounded-md bg-black/40">
               <div className="flex items-center gap-2 text-sm text-white">
                 <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
                 {progress}%

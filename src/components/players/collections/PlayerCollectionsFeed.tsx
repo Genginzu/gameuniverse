@@ -61,7 +61,7 @@ export function PlayerCollectionsFeed({ playerId, locale, isOwner }: PlayerColle
       {/* Create button — owner only */}
       {isOwner && (
         <div className="flex justify-end">
-          <Button onClick={() => setShowCreateDialog(true)} size="sm">
+          <Button onClick={() => setShowCreateDialog(true)} className="h-11 rounded-md px-5">
             <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
             {t("createButton")}
           </Button>

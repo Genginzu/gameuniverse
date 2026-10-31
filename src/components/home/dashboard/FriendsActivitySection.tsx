@@ -33,7 +33,7 @@ export function FriendsActivitySection() {
       {!data && !error ? (
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2" aria-busy="true">
           {Array.from({ length: MAX_EVENTS }, (_, index) => (
-            <div key={index} className="bg-editorial-2 h-24 animate-pulse rounded-2xl" />
+            <div key={index} className="bg-editorial-2 h-24 animate-pulse rounded-lg" />
           ))}
         </div>
       ) : events.length === 0 ? (

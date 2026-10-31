@@ -12,6 +12,7 @@
 .editorial-player-collections .glass-card {
   background: var(--editorial-bg-3);
   border: 1px solid var(--editorial-line);
+  border-radius: 0.5rem;
   backdrop-filter: none;
   color: #fff;
 }

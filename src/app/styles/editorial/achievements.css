@@ -13,16 +13,14 @@
 .editorial-achievements .glass-card {
   background: var(--editorial-bg-3);
   border: 1px solid var(--editorial-line);
+  border-radius: 0.5rem;
   backdrop-filter: none;
   color: #fff;
-  transition:
-    border-color 150ms ease,
-    box-shadow 200ms ease;
+  transition: border-color 150ms ease;
 }
 
 .editorial-achievements .glass-card:hover {
-  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.4);
-  box-shadow: 0 8px 24px -12px rgb(var(--accent-rgb, var(--neon-primary)) / 0.25);
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.55);
 }
 
 /* Skeleton + progress bar adjustments */
@@ -42,8 +40,8 @@
 /* Empty state */
 .editorial-achievements-empty {
   padding: 2rem 1.5rem;
-  border-radius: 1rem;
-  border: 1px dashed var(--editorial-line);
+  border-radius: 0.5rem;
+  border: 1px solid var(--editorial-line);
   background: var(--editorial-bg-3);
   text-align: center;
   color: var(--editorial-muted);
@@ -53,7 +51,7 @@
 /* Error state */
 .editorial-achievements-error {
   padding: 1.5rem;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   border: 1px solid rgba(220, 38, 38, 0.4);
   background: rgba(220, 38, 38, 0.08);
   text-align: center;

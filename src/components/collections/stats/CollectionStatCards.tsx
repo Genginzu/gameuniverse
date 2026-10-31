@@ -44,10 +44,10 @@ export function CollectionStatCards({ stats }: CollectionStatCardsProps) {
       {cards.map((card) => (
         <div
           key={card.label}
-          className="glass-card flex items-center gap-3 rounded-xl p-4 transition-all duration-300"
+          className="border-editorial-line bg-editorial-3 rounded-lg border flex items-center gap-3  p-4 transition-all duration-300"
         >
           <div
-            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${card.iconBg} ${card.iconColor}`}
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${card.iconBg} ${card.iconColor}`}
           >
             <Icon icon={card.icon} className="h-5 w-5" />
           </div>

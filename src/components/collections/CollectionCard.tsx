@@ -38,9 +38,9 @@ export function CollectionCard({
     : `/players/${playerId}/collections/${collection.slug}`;
 
   const cardContent = (
-    <div className="hover:shadow-palette-primary-500/10 relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-xs transition-all duration-300 hover:scale-[1.02] hover:shadow-lg dark:bg-gray-800">
+    <div className="border-editorial-line bg-editorial-3 group-hover:border-editorial-accent/55 relative cursor-pointer overflow-hidden rounded-lg border transition-colors duration-300">
       {/* Cover: image personnalisée ou grille auto */}
-      <div className="from-palette-primary-100 to-palette-accent-100 dark:from-palette-primary-900/30 dark:to-palette-accent-900/30 relative aspect-video bg-linear-to-br">
+      <div className="from-editorial-accent/20 to-editorial-accent/5 relative aspect-video bg-linear-to-br">
         {collection.coverImageUrl ? (
           <LazyImage
             src={collection.coverImageUrl}
@@ -70,7 +70,7 @@ export function CollectionCard({
 
         {/* Games count badge */}
         <div className="absolute top-2 right-2 z-20">
-          <div className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-gray-900 shadow-sm backdrop-blur-xs">
+          <div className="rounded-full bg-black/65 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-xs">
             {t("gamesCount", { count: collection.gamesCount })}
           </div>
         </div>
@@ -78,13 +78,13 @@ export function CollectionCard({
 
       {/* Info section */}
       <div className="p-3">
-        <h3 className="group-hover:text-palette-primary-600 dark:group-hover:text-palette-primary-400 line-clamp-1 text-sm font-semibold text-gray-900 transition-colors dark:text-white">
+        <h3 className="group-hover:text-editorial-accent line-clamp-1 text-sm font-semibold text-white transition-colors">
           {collection.name}
         </h3>
-        <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">
+        <p className="text-editorial-muted mt-0.5 line-clamp-1 text-xs">
           {collection.description || t("noDescription")}
         </p>
-        <p className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">
+        <p className="text-editorial-muted mt-1 text-[10px]">
           {t("updatedAt", { date: formattedDate })}
         </p>
       </div>
@@ -139,7 +139,7 @@ function CoverGrid({ images, name }: { images: string[]; name: string }) {
       ))}
       {/* Fill empty slots with placeholder backgrounds */}
       {Array.from({ length: 4 - images.length }).map((_, index) => (
-        <div key={`empty-${index}`} className="bg-gray-200 dark:bg-gray-700" />
+        <div key={`empty-${index}`} className="bg-white/[0.06]" />
       ))}
     </div>
   );
@@ -150,7 +150,7 @@ function EmptyCovers() {
   return (
     <div className="flex h-full w-full items-center justify-center">
       <svg
-        className="text-palette-primary-300 dark:text-palette-primary-600 h-8 w-8"
+        className="text-editorial-accent h-8 w-8"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

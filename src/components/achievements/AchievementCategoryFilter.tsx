@@ -32,15 +32,12 @@ export function AchievementCategoryFilter({
           <button
             key={key}
             type="button"
+            aria-pressed={isActive}
             onClick={() => onCategoryChange(value)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${
+            className={`min-h-[44px] rounded-full border px-4 py-1.5 text-sm font-medium transition-colors duration-300 sm:min-h-0 ${
               isActive
-                ? "border-palette-accent-500 bg-palette-accent-500/10 text-palette-accent-600 dark:border-palette-accent-400 dark:bg-palette-accent-500/15 dark:text-palette-accent-300"
-                : "bg-white/40 text-gray-700 hover:bg-white/60 dark:bg-slate-800/50 dark:text-slate-300 dark:hover:bg-slate-700/60"
-            } border ${
-              isActive
-                ? "border-palette-accent-500 dark:border-palette-accent-400"
-                : "border-white/20 dark:border-slate-700/50"
+                ? "border-editorial-accent/60 bg-editorial-accent/15 text-editorial-accent"
+                : "border-editorial-line bg-editorial-3 hover:border-editorial-accent/55 text-zinc-300 hover:text-white"
             }`}
           >
             {t(`categories.${key}`)}

@@ -42,7 +42,7 @@ export function PlatformRow(props: PlatformRowProps) {
   const job = props.job ?? null;
 
   return (
-    <div className="border-editorial-line bg-editorial-3 flex flex-col gap-2 rounded-xl border p-3 transition-all">
+    <div className="border-editorial-line bg-editorial-3 flex flex-col gap-2 rounded-md border p-3 transition-all">
       <div className="flex items-center gap-3">
         <PlatformIdentity platform={platform} t={t} />
 
@@ -196,14 +196,14 @@ function EditingRow({
         value={editValue}
         onChange={(e) => onEditValueChange(e.target.value)}
         placeholder={placeholder}
-        className="border-editorial-line bg-editorial-2 placeholder:text-editorial-muted focus-visible:border-editorial-accent focus-visible:ring-editorial-accent/15 h-9 flex-1 text-base text-white transition-colors hover:border-white/20 focus-visible:ring-2 focus-visible:ring-offset-0"
+        className="border-editorial-line bg-editorial-2 placeholder:text-editorial-muted focus-visible:border-editorial-accent h-9 flex-1 rounded-md text-base text-white transition-colors hover:border-white/20 focus-visible:ring-0 focus-visible:ring-offset-0"
         onKeyDown={(e) => e.key === "Enter" && onSave()}
         autoFocus
       />
-      <Button size="sm" onClick={onSave} disabled={saving || !editValue.trim()}>
+      <Button size="sm" className="rounded-md" onClick={onSave} disabled={saving || !editValue.trim()}>
         <Icon icon="lucide:check" className="h-4 w-4" />
       </Button>
-      <Button size="sm" variant="ghost" onClick={onCancel}>
+      <Button size="sm" variant="ghost" className="rounded-md" onClick={onCancel}>
         <Icon icon="lucide:x" className="h-4 w-4" />
       </Button>
     </div>
@@ -298,7 +298,7 @@ function DisplayRow({
             size="sm"
             variant="ghost"
             onClick={handleConnect}
-            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
+            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] rounded-md text-white/70"
           >
             <Icon icon={connectIcon} className="h-4 w-4" />
           </Button>
@@ -308,7 +308,7 @@ function DisplayRow({
             size="sm"
             variant="ghost"
             onClick={onStartEdit}
-            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
+            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] rounded-md text-white/70"
           >
             <Icon icon="lucide:pencil" className="h-4 w-4" />
           </Button>
@@ -319,7 +319,7 @@ function DisplayRow({
             variant="ghost"
             onClick={() => isSyncablePlatform(platform) && onSyncLibrary(platform)}
             disabled={syncBusy || saving}
-            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
+            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] rounded-md text-white/70"
             title={t("syncLibrary")}
           >
             <Icon
@@ -334,7 +334,7 @@ function DisplayRow({
             variant="ghost"
             onClick={onToggleVisibility}
             disabled={saving}
-            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
+            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] rounded-md text-white/70"
             title={linked?.isPublic ? t("makePrivate") : t("makePublic")}
           >
             <Icon icon={linked?.isPublic ? "lucide:eye" : "lucide:eye-off"} className="h-4 w-4" />
@@ -346,7 +346,7 @@ function DisplayRow({
             variant="ghost"
             onClick={onRemove}
             disabled={saving}
-            className="min-h-[44px] min-w-[44px] text-red-500 hover:text-red-600"
+            className="min-h-[44px] min-w-[44px] rounded-md text-red-500 hover:text-red-600"
           >
             <Icon icon="lucide:trash-2" className="h-4 w-4" />
           </Button>

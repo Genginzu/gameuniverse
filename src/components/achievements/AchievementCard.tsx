@@ -3,39 +3,23 @@
 import { useLocale, useTranslations } from "next-intl";
 import type { PlayerAchievementWithDetails } from "@/types/achievement";
 import { Icon } from "@iconify/react";
-
-const ICON_MAP: Record<string, string> = {
-  BookOpen: "lucide:book-open",
-  Library: "lucide:library",
-  BookMarked: "lucide:book-marked",
-  Clock: "lucide:clock",
-  Timer: "lucide:timer",
-  Hourglass: "lucide:hourglass",
-  Star: "lucide:star",
-  MessageSquare: "lucide:message-square",
-  PenLine: "lucide:pen-line",
-  UserPlus: "lucide:user-plus",
-  Users: "lucide:users",
-  FolderPlus: "lucide:folder-plus",
-  Layers: "lucide:layers",
-  Grid3X3: "lucide:grid-3x3",
-};
+import { resolveAchievementIcon } from "@/lib/utils/achievementIcon";
 
 const TIER_STYLES = {
   bronze: {
-    bg: "bg-amber-100 dark:bg-amber-900/30",
-    text: "text-amber-700 dark:text-amber-400",
-    border: "border-amber-300 dark:border-amber-700",
+    bg: "bg-orange-700/20",
+    text: "text-orange-300",
+    border: "border-orange-500/40",
   },
   silver: {
-    bg: "bg-slate-100 dark:bg-slate-700/40",
-    text: "text-slate-600 dark:text-slate-300",
-    border: "border-slate-300 dark:border-slate-600",
+    bg: "bg-white/10",
+    text: "text-zinc-200",
+    border: "border-zinc-300/40",
   },
   gold: {
-    bg: "bg-yellow-100 dark:bg-yellow-900/30",
-    text: "text-yellow-700 dark:text-yellow-400",
-    border: "border-yellow-300 dark:border-yellow-700",
+    bg: "bg-yellow-500/15",
+    text: "text-yellow-300",
+    border: "border-yellow-400/50",
   },
 } as const;
 
@@ -56,19 +40,19 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
   const locale = useLocale();
 
   const isUnlocked = achievement.unlockedAt !== null;
-  const iconName = ICON_MAP[achievement.icon] ?? "lucide:trophy";
+  const iconName = resolveAchievementIcon(achievement.icon);
   const tierStyle = TIER_STYLES[achievement.tier];
 
   return (
     <div
-      className={`glass-card rounded-xl p-4 transition-all duration-300 ${
+      className={`glass-card rounded-lg p-4 transition-all duration-300 ${
         isUnlocked ? "" : "opacity-60"
       }`}
     >
       <div className="flex items-start gap-3">
         {/* Icon */}
         <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
             isUnlocked
               ? "from-palette-primary-500 via-palette-accent-600 to-palette-accent-700 bg-linear-to-br text-white"
               : "bg-gray-200 text-gray-400 dark:bg-slate-700 dark:text-slate-500"

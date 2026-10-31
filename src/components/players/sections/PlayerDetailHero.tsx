@@ -58,7 +58,7 @@ export function PlayerDetailHero({
     <section className="mx-auto w-full max-w-[1600px] px-6 pt-16 pb-8 lg:px-12 lg:pt-24 lg:pb-12">
       <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[5fr_7fr] lg:gap-16">
         {/* Avatar + frame */}
-        <div className="relative mx-auto aspect-square w-full max-w-[460px] overflow-hidden rounded-3xl border border-white/10 lg:mx-0">
+        <div className="relative mx-auto aspect-square w-full max-w-[460px] overflow-hidden rounded-lg border border-editorial-line lg:mx-0">
           {player.avatarUrl ? (
             <LazyImage
               src={player.avatarUrl}

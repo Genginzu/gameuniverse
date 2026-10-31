@@ -48,7 +48,7 @@ export function PlayerLibraryTab({ player, locale, t, tCommon, isOwner }: Player
           />
           {t("details.library")}
         </h2>
-        <span className="bg-editorial-accent/12 text-editorial-accent inline-flex items-center rounded-full border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.25)] px-3 py-1 font-mono text-[0.7rem] font-semibold tracking-[0.1em] whitespace-nowrap uppercase">
+        <span className="bg-editorial-accent/12 text-editorial-accent inline-flex items-center rounded-full border border-editorial-line px-3 py-1 font-mono text-[0.7rem] font-semibold tracking-[0.1em] whitespace-nowrap uppercase">
           {totalCount} {tCommon("games")} {t("details.inLibrary")}
         </span>
       </div>
@@ -59,7 +59,7 @@ export function PlayerLibraryTab({ player, locale, t, tCommon, isOwner }: Player
             type="button"
             onClick={loadMore}
             disabled={isLoadingMore}
-            className="bg-editorial-3 border-editorial-line inline-flex h-11 items-center gap-2 rounded-xl border px-6 text-sm font-medium text-white transition hover:not-disabled:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:not-disabled:text-[rgb(var(--accent-rgb,var(--neon-primary)))] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))] disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-editorial-3 border-editorial-line inline-flex h-11 items-center gap-2 rounded-md border px-6 text-sm font-medium text-white transition hover:not-disabled:border-editorial-accent/55 hover:not-disabled:text-editorial-accent focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoadingMore ? (
               <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" aria-hidden="true" />

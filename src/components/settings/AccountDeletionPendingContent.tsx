@@ -38,9 +38,9 @@ export function AccountDeletionPendingContent({ scheduledFor }: { scheduledFor: 
 
   return (
     <EditorialContainer as="section">
-      <div className="border-editorial-line bg-editorial-3 mx-auto max-w-2xl rounded-2xl border p-6 md:p-8">
+      <div className="border-editorial-line bg-editorial-3 mx-auto max-w-2xl rounded-lg border p-6 md:p-8">
         <div
-          className="mb-5 grid size-12 place-items-center rounded-xl bg-red-500/15 text-red-300"
+          className="mb-5 grid size-12 place-items-center rounded-md bg-red-500/15 text-red-300"
           aria-hidden="true"
         >
           <Icon icon="lucide:user-x" className="size-6" />
@@ -67,7 +67,7 @@ export function AccountDeletionPendingContent({ scheduledFor }: { scheduledFor: 
           <button
             type="button"
             onClick={() => void signOut()}
-            className="border-editorial-line bg-editorial-2 min-h-[44px] w-full rounded-lg border px-4 text-sm text-white/90 sm:w-auto"
+            className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/55 min-h-[44px] w-full rounded-md border px-4 text-sm text-white/90 transition-colors sm:w-auto"
           >
             {t("signOut")}
           </button>

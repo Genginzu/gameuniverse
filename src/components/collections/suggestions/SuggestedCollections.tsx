@@ -39,7 +39,7 @@ export function SuggestedCollections({ controller, onCreated }: SuggestedCollect
       {isLoading && <p className="text-editorial-muted text-sm">{t("loading")}</p>}
 
       {!isLoading && suggestions.length === 0 && (
-        <div className="border-editorial-line bg-editorial-2 rounded-2xl border px-6 py-10 text-center">
+        <div className="border-editorial-line bg-editorial-2 rounded-lg border px-6 py-10 text-center">
           <p className="text-editorial-muted">{t("empty")}</p>
         </div>
       )}

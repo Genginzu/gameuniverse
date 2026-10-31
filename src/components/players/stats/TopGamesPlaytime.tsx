@@ -20,7 +20,7 @@ export function TopGamesPlaytime({ games, locale }: TopGamesPlaytimeProps) {
   const maxHours = games[0].playTimeHours;
 
   return (
-    <div className="glass-card flex flex-1 flex-col rounded-xl p-5 transition-all duration-300">
+    <div className="glass-card flex flex-1 flex-col rounded-lg p-5 transition-all duration-300">
       <p className="mb-3 text-sm font-medium text-gray-500 dark:text-slate-400">
         {t("playtime.topGames")}
       </p>

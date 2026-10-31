@@ -25,7 +25,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
   const data = payload[0].payload;
   return (
-    <div className="glass-card rounded-lg border border-white/20 px-3 py-2 shadow-lg dark:border-slate-700/50">
+    <div className="rounded-lg border border-editorial-line bg-editorial-2 px-3 py-2 shadow-lg shadow-black/30">
       <p className="text-sm font-semibold text-gray-900 dark:text-white">{data.genre}</p>
       <p className="text-xs text-gray-500 dark:text-slate-400">
         {data.count} — {data.percentage}%
@@ -53,11 +53,11 @@ export function GenreDistributionChart({
   }
 
   return (
-    <div>
+    <div className="flex h-full flex-col">
       <StatsSectionTitle>{t("genreDistribution.title")}</StatsSectionTitle>
-      <div className="glass-card rounded-xl p-6 transition-all duration-300">
+      <div className="glass-card flex flex-1 items-center justify-center rounded-lg p-6 transition-all duration-300">
         <div className="flex flex-col items-center gap-4 md:flex-row">
-          <div className="h-64 w-64">
+          <div className="h-56 w-56 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -66,8 +66,8 @@ export function GenreDistributionChart({
                   nameKey="genre"
                   cx="50%"
                   cy="50%"
-                  innerRadius={55}
-                  outerRadius={90}
+                  innerRadius={50}
+                  outerRadius={82}
                   paddingAngle={2}
                   strokeWidth={0}
                 >
@@ -79,7 +79,7 @@ export function GenreDistributionChart({
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex flex-wrap justify-center gap-3 md:flex-col">
+          <div className="flex flex-wrap justify-center gap-2 md:flex-col">
             {distribution.map((entry, index) => (
               <div key={entry.genre} className="flex items-center gap-2">
                 <span
