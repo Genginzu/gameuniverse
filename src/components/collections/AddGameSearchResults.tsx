@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { SearchResultItem } from "@/types/search";
 import type { UIEvent } from "react";
@@ -13,12 +12,12 @@ interface SelectedGamePreviewProps {
   onClear: () => void;
 }
 
-/** Compact preview of the selected game with source badge and clear button */
+/** Compact preview of the selected game with a clear button */
 export function SelectedGamePreview({ game, onClear }: SelectedGamePreviewProps) {
   const t = useTranslations("collections.addGame");
 
   return (
-    <div className="border-editorial-line bg-editorial-3 flex items-center gap-3 rounded-xl border p-3">
+    <div className="border-editorial-line bg-editorial-3 flex items-center gap-3 rounded-lg border p-3">
       {game.coverUrl ? (
         <AppImage
           src={game.coverUrl}
@@ -35,7 +34,6 @@ export function SelectedGamePreview({ game, onClear }: SelectedGamePreviewProps)
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="truncate text-sm font-medium text-white">{game.title}</p>
-          <SourceBadge source={game.source} />
         </div>
         {game.releaseYear && <p className="text-editorial-muted text-xs">{game.releaseYear}</p>}
       </div>
@@ -63,7 +61,7 @@ interface SearchInputProps {
   noResultsText: string;
 }
 
-/** Search input with dropdown results showing local and IGDB games */
+/** Search input with dropdown results of catalogue games */
 export function SearchInput({
   query,
   onChange,
@@ -98,14 +96,14 @@ export function SearchInput({
           placeholder={placeholder}
           value={query}
           onChange={(e) => onChange(e.target.value)}
-          className="border-editorial-line bg-editorial-3 pl-9 text-white placeholder:text-editorial-muted hover:border-editorial-line focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] focus-visible:outline-none! focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted hover:border-editorial-line h-11 rounded-md pl-9 text-base text-white focus-visible:border-editorial-accent focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none!"
         />
       </div>
 
       {showDropdown && (
         <div
           onScroll={handleScroll}
-          className="border-editorial-line bg-editorial-2 absolute top-full right-0 left-0 z-50 mt-1 max-h-[55vh] overflow-y-auto rounded-xl border shadow-lg"
+          className="editorial-scrollbar-accent border-editorial-line bg-editorial-2 absolute top-full right-0 left-0 z-50 mt-1 max-h-[55vh] overflow-y-auto rounded-lg border shadow-lg"
         >
           {isSearching ? (
             <div className="flex items-center justify-center p-4">
@@ -139,7 +137,6 @@ export function SearchInput({
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <p className="truncate text-sm font-medium text-white">{game.title}</p>
-                          <SourceBadge source={game.source} />
                         </div>
                         <p className="text-editorial-muted truncate text-xs">
                           {[game.releaseYear, game.developer].filter(Boolean).join(" · ")}
@@ -159,30 +156,5 @@ export function SearchInput({
         </div>
       )}
     </div>
-  );
-}
-
-/** Badge indicating whether a game is from local DB or IGDB */
-function SourceBadge({ source }: { source: "local" | "igdb" }) {
-  if (source === "local") {
-    return (
-      <Badge
-        variant="outline"
-        className="border-editorial-line text-editorial-muted shrink-0 gap-1 bg-white/[0.04] px-1.5 py-0 text-[10px]"
-      >
-        <Icon icon="lucide:database" className="h-2.5 w-2.5" />
-        Local
-      </Badge>
-    );
-  }
-
-  return (
-    <Badge
-      variant="outline"
-      className="shrink-0 gap-1 border-palette-accent-500/40 bg-palette-accent-500/10 px-1.5 py-0 text-[10px] text-palette-accent-300"
-    >
-      <Icon icon="lucide:globe" className="h-2.5 w-2.5" />
-      IGDB
-    </Badge>
   );
 }

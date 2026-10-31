@@ -1342,10 +1342,6 @@
     "noResults": "No games found",
     "seeAll": "See all results",
     "loading": "Loading...",
-    "source": {
-      "local": "In library",
-      "igdb": "IGDB"
-    },
     "importing": "Importing...",
     "importError": "Import failed"
   },
@@ -1637,7 +1633,7 @@
         "perspectives": "Perspective",
         "engines": "Engine",
         "multiplayer": "Multiplayer",
-        "multiplayerPlatforms": "IGDB details for: {platforms}",
+        "multiplayerPlatforms": "Platforms: {platforms}",
         "upToPlayers": "Up to {count, plural, one {# player} other {# players}}",
         "websites": "Links",
         "opensInNewTab": "(opens in a new tab)",
@@ -1888,7 +1884,7 @@
       "syncLibrary": "Sync library",
       "syncDone": "Library synced",
       "syncSummary": "{matched}/{total} games matched ({unmatched} not found)",
-      "syncImported": "{imported} new games imported from IGDB",
+      "syncImported": "{imported} new games added to the catalogue",
       "syncPrivateProfile": "Your Steam profile is private — make it public to sync",
       "syncEmpty": "No games found in your Steam library",
       "syncUnavailable": "Library sync isn't available for this platform",
@@ -1905,7 +1901,7 @@
         "starting": "Starting…",
         "fetching": "Fetching your library…",
         "resolving": "Matching games…",
-        "importing": "Importing new games from IGDB…",
+        "importing": "Adding new games to the catalogue…",
         "saving": "Saving…",
         "done": "Done",
         "failed": "Failed"
@@ -3919,7 +3915,7 @@
       "notePlaceholder": "Add a note (optional)...",
       "addButton": "Add to collection",
       "adding": "Adding...",
-      "importing": "Importing from IGDB...",
+      "importing": "Adding...",
       "changeGame": "Change"
     },
     "actions": {

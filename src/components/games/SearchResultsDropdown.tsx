@@ -2,7 +2,6 @@
 
 import { SearchResultItem } from "@/types/search";
 import { LazyImage } from "@/components/ui/lazy-image";
-import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";
 
 interface SearchResultsDropdownProps {
@@ -80,17 +79,6 @@ export function SearchResultsDropdown({
                     <h4 className="truncate text-sm font-medium text-gray-900 dark:text-white">
                       {item.title}
                     </h4>
-                    {/* Source indicator */}
-                    <Badge
-                      variant={item.source === "local" ? "default" : "secondary"}
-                      className={`shrink-0 text-xs ${
-                        item.source === "local"
-                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                          : "bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-400"
-                      }`}
-                    >
-                      {t(`source.${item.source}`)}
-                    </Badge>
                   </div>
 
                   <div className="mt-1 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">

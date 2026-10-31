@@ -115,7 +115,7 @@ describe("UniverseSection", () => {
 
     expect(screen.getByText("Jusqu'à 8 joueurs")).toBeTruthy();
     expect(screen.getByText("Écran partagé")).toBeTruthy();
-    expect(screen.getByText("Détails IGDB pour : PC, PS5")).toBeTruthy();
+    expect(screen.getByText("Plateformes concernées : PC, PS5")).toBeTruthy();
 
     const links = within(
       screen.getByRole("heading", { name: "Liens" }).parentElement as HTMLElement

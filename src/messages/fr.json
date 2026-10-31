@@ -1342,10 +1342,6 @@
     "noResults": "Aucun jeu trouvé",
     "seeAll": "Voir tous les résultats",
     "loading": "Chargement...",
-    "source": {
-      "local": "En bibliothèque",
-      "igdb": "IGDB"
-    },
     "importing": "Import en cours...",
     "importError": "Échec de l'import"
   },
@@ -1637,7 +1633,7 @@
         "perspectives": "Perspective",
         "engines": "Moteur",
         "multiplayer": "Multijoueur",
-        "multiplayerPlatforms": "Détails IGDB pour : {platforms}",
+        "multiplayerPlatforms": "Plateformes concernées : {platforms}",
         "upToPlayers": "Jusqu'à {count, plural, one {# joueur} other {# joueurs}}",
         "websites": "Liens",
         "opensInNewTab": "(s'ouvre dans un nouvel onglet)",
@@ -1888,7 +1884,7 @@
       "syncLibrary": "Synchroniser la bibliothèque",
       "syncDone": "Bibliothèque synchronisée",
       "syncSummary": "{matched}/{total} jeux associés ({unmatched} non trouvés)",
-      "syncImported": "{imported} nouveaux jeux importés depuis IGDB",
+      "syncImported": "{imported} nouveaux jeux ajoutés au catalogue",
       "syncPrivateProfile": "Votre profil Steam est privé — rendez-le public pour synchroniser",
       "syncEmpty": "Aucun jeu trouvé dans votre bibliothèque Steam",
       "syncUnavailable": "Synchronisation de bibliothèque non disponible pour cette plateforme",
@@ -1905,7 +1901,7 @@
         "starting": "Démarrage…",
         "fetching": "Récupération de la bibliothèque…",
         "resolving": "Association des jeux…",
-        "importing": "Import de nouveaux jeux depuis IGDB…",
+        "importing": "Ajout de nouveaux jeux au catalogue…",
         "saving": "Enregistrement…",
         "done": "Terminé",
         "failed": "Échec"
@@ -3922,7 +3918,7 @@
       "notePlaceholder": "Ajouter une note (optionnel)...",
       "addButton": "Ajouter à la collection",
       "adding": "Ajout en cours...",
-      "importing": "Import depuis IGDB...",
+      "importing": "Ajout en cours...",
       "changeGame": "Changer"
     },
     "actions": {
