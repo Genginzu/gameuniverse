@@ -93,6 +93,7 @@ const MOCK_STATS: DashboardStatsResponse = {
     averageDurationMinutes: 60,
     longestSessionMinutes: 120,
     frequencyByDayOfWeek: [],
+    dailyLast30Days: [],
   },
   goals: [],
 };

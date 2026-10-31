@@ -4,7 +4,10 @@ import { logger } from "@/lib/logger";
 import { ACHIEVEMENT_DEFINITIONS, type AchievementData, type AchievementDefinition, type CompletionStats, type DashboardStatsResponse, type GenreDistributionEntry, type MonthlyActivity, type OverviewMetrics, type PlatformDistributionEntry, type PlaytimeData, type PlayerGoal, type ReviewAnalyticsData, type SessionStatsData, type SocialStatsData } from "@/types/dashboard-stats";
 // prettier-ignore
 import { computeOverviewMetrics, computeGenreDistribution, computeCompletionStats, computeReviewDistribution, computeReviewStatistics, computeActivityByMonth, computeAveragePlaytime, computeTopGame, computeAchievementProgress, computeSessionFrequency, computePlatformDistribution } from "@/lib/services/dashboardStatsCompute";
+import { computeDailySessions } from "@/lib/services/sessionDailyStats";
 import { untypedTable } from "@/lib/utils/untypedTable";
+import { computeGoalProgress } from "@/lib/utils/playerGoalProgress";
+import { fetchGoalProgressSources } from "@/lib/services/playerGoalSources";
 
 type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
 
@@ -229,43 +232,52 @@ export class DashboardStatsService {
         averageDurationMinutes: null,
         longestSessionMinutes: null,
         frequencyByDayOfWeek: computeSessionFrequency([]),
+        dailyLast30Days: computeDailySessions([]),
       };
     }
     const durations = rows.map((r) => r.duration_minutes);
     const sum = durations.reduce((a, b) => a + b, 0);
+    const timedRows = rows.map((r) => ({ startedAt: r.started_at, durationMinutes: r.duration_minutes }));
     return {
       totalSessions: durations.length,
       averageDurationMinutes: Math.round(sum / durations.length),
       longestSessionMinutes: Math.max(...durations),
-      frequencyByDayOfWeek: computeSessionFrequency(rows.map((r) => ({ startedAt: r.started_at }))),
+      frequencyByDayOfWeek: computeSessionFrequency(timedRows),
+      dailyLast30Days: computeDailySessions(timedRows),
     };
   }
 
   /** Req 13 — Player goals */
   static async fetchPlayerGoals(playerId: string): Promise<PlayerGoal[]> {
     const supabase = await createRouteHandlerClient();
-    const { data, error } = await untypedTable(supabase, "player_goals")
-      .select("id, goal_type, target_value, current_value, created_at, deadline")
-      .eq("user_id", playerId)
-      .order("created_at", { ascending: false });
+    const [{ data, error }, sources] = await Promise.all([
+      untypedTable(supabase, "player_goals")
+        .select("id, goal_type, target_value, created_at, deadline")
+        .eq("user_id", playerId)
+        .order("created_at", { ascending: false }),
+      fetchGoalProgressSources(supabase, playerId),
+    ]);
     if (error && error.code !== "PGRST205") throw logAndThrow("fetchPlayerGoals", error);
-    return (
-      (data ?? []) as Array<{
-        id: string;
-        goal_type: string;
-        target_value: number;
-        current_value: number;
-        created_at: string;
-        deadline: string | null;
-      }>
-    ).map((r) => ({
-      id: r.id,
-      goalType: r.goal_type as PlayerGoal["goalType"],
-      targetValue: r.target_value,
-      currentValue: r.current_value,
-      deadline: r.deadline ?? null,
-      createdAt: r.created_at,
-    }));
+    const rows = (data ?? []) as Array<{
+      id: string;
+      goal_type: string;
+      target_value: number;
+      created_at: string;
+      deadline: string | null;
+    }>;
+    return rows.map((r) => {
+      const goal = {
+        goalType: r.goal_type as PlayerGoal["goalType"],
+        createdAt: r.created_at,
+        deadline: r.deadline ?? null,
+      };
+      return {
+        ...goal,
+        id: r.id,
+        targetValue: r.target_value,
+        currentValue: computeGoalProgress(goal, sources),
+      };
+    });
   }
 
   /** Req 5 (platforms) — Platform distribution from user library */

@@ -98,12 +98,21 @@ export interface SessionStatsData {
   averageDurationMinutes: number | null;
   longestSessionMinutes: number | null;
   frequencyByDayOfWeek: DayFrequency[];
+  /** One entry per calendar day (UTC) over the last 30 days, oldest first. */
+  dailyLast30Days: DailySessionStats[];
+}
+
+export interface DailySessionStats {
+  date: string; // YYYY-MM-DD
+  sessionCount: number;
+  totalMinutes: number;
 }
 
 export interface DayFrequency {
   day: number; // 0=lundi, 6=dimanche
   label: string;
   sessionCount: number;
+  totalMinutes: number;
 }
 
 /** Objectif personnel (Req 13) */

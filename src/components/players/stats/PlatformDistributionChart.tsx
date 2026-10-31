@@ -7,6 +7,8 @@ import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 import { chartColor } from "@/lib/utils/chart-colors";
 
+const TOP_PLATFORMS_LIMIT = 5;
+
 interface PlatformDistributionChartProps {
   distribution: PlatformDistributionEntry[];
   locale: string;
@@ -30,20 +32,24 @@ export function PlatformDistributionChart({
     );
   }
 
-  const maxCount = Math.max(...distribution.map((e) => e.count));
+  const topPlatforms = distribution.slice(0, TOP_PLATFORMS_LIMIT);
+  const maxCount = Math.max(...topPlatforms.map((e) => e.count));
 
   return (
-    <div>
+    <div className="flex h-full flex-col">
       <StatsSectionTitle>{t("platformDistribution.title")}</StatsSectionTitle>
-      <div className="glass-card rounded-xl p-6 transition-all duration-300">
-        <div className="space-y-4">
-          {distribution.map((entry, index) => (
-            <div key={entry.platform} className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
-                  {entry.platform}
+      <div className="glass-card flex-1 rounded-lg p-6 transition-all duration-300">
+        <ol className="space-y-4">
+          {topPlatforms.map((entry, index) => (
+            <li key={entry.platform} className="space-y-1.5">
+              <div className="flex items-center justify-between gap-3">
+                <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300">
+                  <span className="text-editorial-muted w-5 shrink-0 font-display tabular-nums">
+                    {index + 1}
+                  </span>
+                  <span className="truncate">{entry.platform}</span>
                 </span>
-                <span className="text-xs text-gray-500 dark:text-slate-400">
+                <span className="shrink-0 text-xs text-gray-500 dark:text-slate-400">
                   {entry.count} — {entry.percentage}%
                 </span>
               </div>
@@ -56,9 +62,9 @@ export function PlatformDistributionChart({
                   }}
                 />
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
     </div>
   );

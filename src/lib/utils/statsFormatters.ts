@@ -20,3 +20,10 @@ export function formatLocalizedNumber(value: number, locale: string): string {
 export function validatePlayerId(id: string): boolean {
   return UUID_V4_REGEX.test(id);
 }
+
+
+/** Splits a duration in minutes into whole hours and remaining minutes. */
+export function splitMinutes(totalMinutes: number): { hours: number; minutes: number } {
+  const safe = Math.max(0, Math.round(totalMinutes));
+  return { hours: Math.floor(safe / 60), minutes: safe % 60 };
+}

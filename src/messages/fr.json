@@ -4353,7 +4353,7 @@
       "empty": "Aucun genre dans la bibliothèque"
     },
     "platformDistribution": {
-      "title": "Répartition par plateforme",
+      "title": "Top 5 plateformes",
       "empty": "Aucune donnée de plateforme. Ajoutez des jeux à votre bibliothèque pour voir la répartition par plateforme."
     },
     "completion": {
@@ -4424,7 +4424,12 @@
       "averageDuration": "Durée moyenne",
       "longestSession": "Plus longue session",
       "minutes": "min",
-      "sessionsCount": "sessions",
+      "last30Days": "Sur les 30 derniers jours",
+      "tooltipSessions": "{count, plural, one {# session} other {# sessions}}",
+      "tooltipTotalTime": "Temps total : {duration}",
+      "durationMinutes": "{minutes} min",
+      "durationHours": "{hours} h",
+      "durationHoursMinutes": "{hours} h {minutes} min",
       "days": {
         "monday": "Lun",
         "tuesday": "Mar",

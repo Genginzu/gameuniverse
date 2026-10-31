@@ -4350,7 +4350,7 @@
       "empty": "No genres in library"
     },
     "platformDistribution": {
-      "title": "Platform Distribution",
+      "title": "Top 5 platforms",
       "empty": "No platform data. Add games to your library to see platform distribution."
     },
     "completion": {
@@ -4421,7 +4421,12 @@
       "averageDuration": "Average Duration",
       "longestSession": "Longest Session",
       "minutes": "min",
-      "sessionsCount": "sessions",
+      "last30Days": "Over the last 30 days",
+      "tooltipSessions": "{count, plural, one {# session} other {# sessions}}",
+      "tooltipTotalTime": "Total time: {duration}",
+      "durationMinutes": "{minutes} min",
+      "durationHours": "{hours} h",
+      "durationHoursMinutes": "{hours} h {minutes} min",
       "days": {
         "monday": "Mon",
         "tuesday": "Tue",

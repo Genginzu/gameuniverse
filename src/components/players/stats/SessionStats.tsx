@@ -2,38 +2,14 @@
 
 import { useTranslations, useLocale } from "next-intl";
 import { Icon } from "@iconify/react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import type { SessionStatsData, DayFrequency } from "@/types/dashboard-stats";
+import { SessionDailyChart } from "@/components/players/stats/SessionDailyChart";
+import type { SessionStatsData } from "@/types/dashboard-stats";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
-import { chartColor } from "@/lib/utils/chart-colors";
 
 interface SessionStatsProps {
   sessions: SessionStatsData;
-}
-
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: Array<{ payload: DayFrequency }>;
-}
-
-function CustomTooltip({ active, payload }: CustomTooltipProps) {
-  const t = useTranslations("playerStats");
-
-  if (!active || !payload?.length) return null;
-  const data = payload[0].payload;
-
-  return (
-    <div className="glass-card rounded-lg border border-white/20 px-3 py-2 shadow-lg dark:border-slate-700/50">
-      <p className="text-sm font-semibold text-gray-900 dark:text-white">
-        {t(`sessions.days.${data.label}`)}
-      </p>
-      <p className="text-xs text-gray-500 dark:text-slate-400">
-        {data.sessionCount} {t("sessions.sessionsCount")}
-      </p>
-    </div>
-  );
 }
 
 export function SessionStats({ sessions }: SessionStatsProps) {
@@ -85,7 +61,7 @@ export function SessionStats({ sessions }: SessionStatsProps) {
         {metrics.map((metric) => (
           <div
             key={metric.label}
-            className="glass-card flex flex-col items-center gap-1 rounded-xl p-4 text-center transition-all duration-300"
+            className="glass-card flex flex-col items-center gap-1 rounded-lg p-4 text-center transition-all duration-300"
           >
             {metric.icon}
             <span className="text-lg font-bold text-gray-900 dark:text-white">{metric.value}</span>
@@ -94,28 +70,7 @@ export function SessionStats({ sessions }: SessionStatsProps) {
         ))}
       </div>
 
-      {/* Frequency bar chart */}
-      <div className="glass-card rounded-xl p-6 transition-all duration-300">
-        <div className="h-52">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={sessions.frequencyByDayOfWeek}>
-              <XAxis
-                dataKey="label"
-                tickFormatter={(label) => t(`sessions.days.${label}`)}
-                tick={{ fontSize: 11 }}
-                className="text-gray-600 dark:text-slate-400"
-              />
-              <YAxis
-                allowDecimals={false}
-                tick={{ fontSize: 12 }}
-                className="text-gray-600 dark:text-slate-400"
-              />
-              <Tooltip content={<CustomTooltip />} cursor={false} />
-              <Bar dataKey="sessionCount" fill={chartColor(0)} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      <SessionDailyChart days={sessions.dailyLast30Days ?? []} />
     </div>
   );
 }

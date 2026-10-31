@@ -230,8 +230,11 @@ export function computeAchievementProgress(
 
 const DAY_LABELS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
-export function computeSessionFrequency(sessions: Array<{ startedAt: string }>): DayFrequency[] {
+export function computeSessionFrequency(
+  sessions: Array<{ startedAt: string; durationMinutes?: number }>
+): DayFrequency[] {
   const counts = new Array(7).fill(0) as number[];
+  const minutes = new Array(7).fill(0) as number[];
 
   for (const session of sessions) {
     const date = new Date(session.startedAt);
@@ -241,12 +244,14 @@ export function computeSessionFrequency(sessions: Array<{ startedAt: string }>):
     const jsDay = date.getDay();
     const idx = jsDay === 0 ? 6 : jsDay - 1;
     counts[idx]++;
+    minutes[idx] += session.durationMinutes ?? 0;
   }
 
   return counts.map((sessionCount, i) => ({
     day: i,
     label: DAY_LABELS[i],
     sessionCount,
+    totalMinutes: minutes[i],
   }));
 }
 
