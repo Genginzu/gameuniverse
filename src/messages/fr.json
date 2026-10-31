@@ -67,8 +67,8 @@
       "description": "Consultez l'historique de vos GU Coins gagnés et dépensés"
     },
     "feed": {
-      "title": "Fil d'actualité des amis",
-      "description": "Suivez l'activité de vos amis : reviews, posts, sessions de jeu et succès débloqués"
+      "title": "Fil d'actualité",
+      "description": "Suivez l'activité de vos amis et abonnements : bibliothèque, avis, commentaires, temps de jeu et succès"
     }
   },
   "header": {
@@ -883,8 +883,8 @@
       "following": "Abonnements"
     },
     "feed": {
-      "feedLabel": "Fil d'actualité des abonnements",
-      "empty": "Abonnez-vous à des joueurs pour voir leurs activités ici."
+      "feedLabel": "Fil d'actualité des amis et abonnements",
+      "empty": "Ajoutez des amis ou abonnez-vous à des joueurs pour voir leur activité ici."
     },
     "library": {
       "empty": "Bibliothèque vide",
@@ -5579,9 +5579,9 @@
   },
   "feedPage": {
     "title": "Fil d'actualité",
-    "subtitle": "L'activité de vos amis en temps réel",
-    "empty": "Ajoutez des amis pour voir leur activité ici.",
-    "emptyFiltered": "Aucun de vos amis n'a encore publié ce type de contenu.",
+    "subtitle": "L'activité de vos amis et abonnements en temps réel",
+    "empty": "Ajoutez des amis ou abonnez-vous à des joueurs pour voir leur activité ici.",
+    "emptyFiltered": "Aucun de vos amis ou abonnements n'a encore publié ce type de contenu.",
     "errorTitle": "Une erreur est survenue",
     "errorDescription": "Impossible de charger le fil d'actualité. Veuillez réessayer.",
     "filters": {

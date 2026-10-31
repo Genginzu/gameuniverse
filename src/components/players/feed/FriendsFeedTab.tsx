@@ -4,23 +4,16 @@ import { memo, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSubscribedFeed } from "@/hooks/useSubscribedFeed";
+import { useFriendsFeed } from "@/hooks/useFriendsFeed";
 import { FeedItem } from "./FeedItem";
 
-interface SubscribedFeedTabProps {
-  viewerId: string;
+interface FriendsFeedTabProps {
   locale: string;
 }
 
-export const SubscribedFeedTab = memo(function SubscribedFeedTab({
-  viewerId,
-  locale,
-}: SubscribedFeedTabProps) {
+export const FriendsFeedTab = memo(function FriendsFeedTab({ locale }: FriendsFeedTabProps) {
   const t = useTranslations("players.feed");
-  const { events, isLoading, isLoadingMore, hasNextPage, error, loadMore } = useSubscribedFeed(
-    viewerId,
-    locale
-  );
+  const { events, isLoading, isLoadingMore, hasNextPage, error, loadMore } = useFriendsFeed(locale);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
 

@@ -57,8 +57,8 @@ export const LazySettingsContent = dynamic(
   { loading: () => <SettingsSkeleton /> }
 );
 
-export const LazySubscribedFeedTab = dynamic(
-  () => import("./feed/SubscribedFeedTab").then((m) => ({ default: m.SubscribedFeedTab })),
+export const LazyFriendsFeedTab = dynamic(
+  () => import("./feed/FriendsFeedTab").then((m) => ({ default: m.FriendsFeedTab })),
   { loading: () => <TabSkeleton /> }
 );
 

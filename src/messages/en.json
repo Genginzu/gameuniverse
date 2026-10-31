@@ -67,8 +67,8 @@
       "description": "View your GU Coins earning and spending history"
     },
     "feed": {
-      "title": "Friends Activity Feed",
-      "description": "Follow your friends' activity: reviews, posts, gaming sessions and unlocked achievements"
+      "title": "Activity Feed",
+      "description": "Follow your friends' and subscriptions' activity: library, reviews, comments, playtime and achievements"
     }
   },
   "header": {
@@ -883,8 +883,8 @@
       "following": "Following"
     },
     "feed": {
-      "feedLabel": "Subscribed feed",
-      "empty": "Subscribe to players to see their activity here."
+      "feedLabel": "Friends and subscriptions feed",
+      "empty": "Add friends or subscribe to players to see their activity here."
     },
     "library": {
       "empty": "Empty library",
@@ -5574,9 +5574,9 @@
   },
   "feedPage": {
     "title": "Activity Feed",
-    "subtitle": "Your friends' activity in real time",
-    "empty": "Add friends to see their activity here.",
-    "emptyFiltered": "None of your friends have posted this type of content yet.",
+    "subtitle": "Your friends' and subscriptions' activity in real time",
+    "empty": "Add friends or subscribe to players to see their activity here.",
+    "emptyFiltered": "None of your friends or subscriptions have posted this type of content yet.",
     "errorTitle": "An error occurred",
     "errorDescription": "Failed to load the activity feed. Please try again.",
     "filters": {

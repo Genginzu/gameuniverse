@@ -9,7 +9,7 @@ import {
   LazyFriendsTab,
   LazyPersonalRecommendationSection,
   LazySettingsContent,
-  LazySubscribedFeedTab,
+  LazyFriendsFeedTab,
   LazyGoalsTab,
   LazySubscriptionListTab,
 } from "./PlayerLazyTabs";
@@ -59,7 +59,7 @@ export function PlayerTabContent({
     <>
       {isOwner && (
         <TabPanel visible={activeTab === "feed"} mounted={visitedTabs.has("feed")}>
-          <LazySubscribedFeedTab viewerId={player.id} locale={locale} />
+          <LazyFriendsFeedTab locale={locale} />
         </TabPanel>
       )}
 
