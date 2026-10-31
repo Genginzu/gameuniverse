@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { transformGames } from "@/lib/services/gameListingHelpers";
 import { parsePaginationParams, calculateOffset } from "@/lib/api-utils";
+import { UPCOMING_PAGE_SIZE } from "@/lib/listing/resources/games";
 import { logger } from "@/lib/logger";
 
 const GAME_SELECT = `
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const locale = searchParams.get("locale") || "fr";
-    const { page, limit } = parsePaginationParams(searchParams);
+    const { page, limit } = parsePaginationParams(searchParams, { maxLimit: UPCOMING_PAGE_SIZE });
     const offset = calculateOffset(page, limit);
     const genre = searchParams.get("genre") || "";
     const platform = searchParams.get("platform") || "";

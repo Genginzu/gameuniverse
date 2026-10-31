@@ -3,7 +3,9 @@ import type { ListingResource } from "@/types/listing";
 
 export const GAMES_PAGE_SIZE = 20;
 export const TRENDING_SECTION_SIZE = 12;
-export const UPCOMING_PAGE_SIZE = 24;
+// 60 = least common multiple of the upcoming grid columns (2, 3, 4, 5, 6):
+// every full page fills its last row whatever the screen width.
+export const UPCOMING_PAGE_SIZE = 60;
 
 export interface GamesListingFilters {
   genres: string[];
