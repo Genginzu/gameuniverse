@@ -73,6 +73,7 @@ export function PlayerRecentMatches({
             totalCount={total}
             onPageChange={onPageChange}
             loading={isLoading}
+            variant="editorial"
           />
         </div>
       )}

@@ -110,6 +110,7 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
                 totalCount={total}
                 onPageChange={setPage}
                 loading={isLoading}
+                variant="editorial"
               />
             </div>
           )}
