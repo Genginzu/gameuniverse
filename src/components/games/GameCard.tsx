@@ -34,7 +34,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getDistinctPlatformIcons } from "@/lib/utils/platform-icons";
 import { hasTopLeftBadges } from "@/lib/utils/gameCardBadges";
-import { toHiResCover } from "@/lib/utils/igdbImage";
+import { DEFAULT_GAME_COVER, toHiResCover } from "@/lib/utils/igdbImage";
 import { formatReleaseMonthYear } from "@/lib/utils/releaseMonthYear";
 import type { GameSummary } from "@/types/game";
 import type { QuickAddCallbacks } from "@/types/library";
@@ -131,20 +131,14 @@ function GameCardLink({
       data-overlay={overlay?.type ?? "default"}
     >
       <div className="editorial-card-media">
-        {game.coverImage ? (
-          <AppImage
-            src={toHiResCover(game.coverImage)}
-            alt={game.title}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-            priority={priority}
-            className="editorial-card-image"
-          />
-        ) : (
-          <div className="editorial-card-placeholder">
-            <Icon icon="lucide:gamepad-2" className="size-12" aria-hidden />
-          </div>
-        )}
+        <AppImage
+          src={game.coverImage ? toHiResCover(game.coverImage) : DEFAULT_GAME_COVER}
+          alt={game.title}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+          priority={priority}
+          className="editorial-card-image"
+        />
 
         {/* Gradient localisé sur la moitié basse pour la lisibilité du footer */}
         <div className="editorial-card-gradient" aria-hidden="true" />

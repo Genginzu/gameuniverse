@@ -1,6 +1,9 @@
 const IGDB_COVER_BIG = "/t_cover_big/";
 const IGDB_COVER_BIG_2X = "/t_cover_big_2x/";
 
+/** Gamers Universe "cover unavailable" artwork, shown for games without a cover. */
+export const DEFAULT_GAME_COVER = "/assets/no-cover.png";
+
 /**
  * Upgrades a stored IGDB cover URL (`t_cover_big`, 264×374) to the retina
  * variant (`t_cover_big_2x`, 528×748). Cards are often wider than 264 px and
