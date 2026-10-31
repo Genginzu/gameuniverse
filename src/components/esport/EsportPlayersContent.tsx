@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Icon } from "@iconify/react";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { FilterChip } from "@/components/shared/FilterChip";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { Pagination } from "@/components/shared/Pagination";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
 import { useEsportGameOptions } from "@/hooks/useEsportGameOptions";
 import { useListingQuery } from "@/hooks/useListingQuery";
 import { esportPlayersListing } from "@/lib/listing/resources/esport";
-import { getGameIcon } from "@/lib/utils/esport-utils";
 import { EsportPlayerCard, type EsportPlayerCardData } from "./EsportPlayerCard";
+import { EsportPlayersFilters } from "./EsportPlayersFilters";
 import { PlayersSkeleton, PlayersToolbar } from "./EsportPlayersToolbar";
 
 interface PlayerSummary extends EsportPlayerCardData {
@@ -34,6 +33,7 @@ interface EsportPlayersContentProps {
 export function EsportPlayersContent({ initialData }: EsportPlayersContentProps) {
   const t = useTranslations("esport.players");
   const [search, setSearch] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const games = useEsportGameOptions("players");
   const { filters, setFilters, page, setPage, data, isLoading } = useListingQuery(
     esportPlayersListing,
@@ -52,39 +52,26 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
     applySearch(e.target.value);
   };
 
-  const handleGameFilter = (game: string) =>
-    setFilters({ game: selectedGame === game ? null : game });
-
   const showSkeleton = isLoading && players.length === 0;
   const isFiltered = Boolean(selectedGame || filters.search);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+    <EditorialContainer>
       <PlayersToolbar
         search={search}
         onSearch={handleSearch}
         total={total}
         isFiltered={isFiltered}
+        filterCount={selectedGame ? 1 : 0}
+        onToggleFilters={() => setShowFilters((visible) => !visible)}
       />
 
-      {games.length > 0 && (
-        <div className="mb-6 flex flex-wrap gap-2">
-          <FilterChip
-            label={t("allGames")}
-            selected={selectedGame === null}
-            onClick={() => setFilters({ game: null })}
-          />
-          {games.map((game) => (
-            <FilterChip
-              key={game}
-              label={game}
-              selected={selectedGame === game}
-              onClick={() => handleGameFilter(game)}
-              icon={<Icon icon={getGameIcon(game)} className="h-3.5 w-3.5" />}
-            />
-          ))}
-        </div>
-      )}
+      <EsportPlayersFilters
+        games={games}
+        selectedGame={selectedGame}
+        onGameChange={(game) => setFilters({ game })}
+        showPanel={showFilters}
+      />
 
       {showSkeleton ? (
         <PlayersSkeleton />
@@ -116,6 +103,6 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
           )}
         </>
       )}
-    </div>
+    </EditorialContainer>
   );
 }

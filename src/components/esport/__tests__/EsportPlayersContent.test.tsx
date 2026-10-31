@@ -60,6 +60,7 @@ describe("EsportPlayersContent", () => {
   it("uses the ISR payload on the default view without refetching it, and loads the game chips", async () => {
     renderContent(PLAYERS);
     expect(screen.getByText("player:Faker")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("filter"));
     expect(await screen.findByText("CS2")).toBeInTheDocument();
     expect(playerUrls()).toEqual([]);
   });
@@ -69,6 +70,7 @@ describe("EsportPlayersContent", () => {
     fireEvent.click(await screen.findByText("go-page-2"));
     await waitFor(() => expect(playerUrls()).toContain("/api/esport/players?page=2"));
 
+    fireEvent.click(screen.getByText("filter"));
     fireEvent.click(await screen.findByText("CS2"));
     await waitFor(() => expect(playerUrls()).toContain("/api/esport/players?game=CS2"));
     expect(playerUrls()).not.toContain("/api/esport/players?game=CS2&page=2");
