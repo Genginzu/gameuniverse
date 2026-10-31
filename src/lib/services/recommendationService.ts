@@ -17,7 +17,7 @@ export interface RecommendationOptions {
   locale?: string;
 }
 
-export const DEFAULT_RECOMMENDATION_LIMIT = 10;
+export const DEFAULT_RECOMMENDATION_LIMIT = 12;
 export const MAX_RECOMMENDATION_LIMIT = 50;
 
 function clampLimit(limit: number | undefined): number {

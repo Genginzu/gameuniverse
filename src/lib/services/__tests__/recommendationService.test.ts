@@ -118,7 +118,7 @@ describe("getRecommendationsForGame", () => {
 
     const recs = await getRecommendationsForGame(client, "game-1");
 
-    expect(rpc).toHaveBeenCalledWith("recommend_similar_games", { p_game_id: "game-1", p_limit: 10 });
+    expect(rpc).toHaveBeenCalledWith("recommend_similar_games", { p_game_id: "game-1", p_limit: 12 });
     expect(recs).toEqual([expect.objectContaining({ id: "pick", title: "Pick EN" })]);
     expect(recs[0]).not.toHaveProperty("reason");
   });
