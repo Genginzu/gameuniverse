@@ -5,7 +5,7 @@
  *
  * Ce composant est **volontairement** un simple trigger visuel — pas un input
  * fonctionnel. Toute la saisie et l'affichage des résultats se feront dans
- * l'overlay full-page (F0-07c). Au clic, focus, ou raccourci clavier
+ * l'overlay full-page (F0-07c). Au clic (souris, Entrée, Espace) ou raccourci clavier
  * `Ctrl+K` / `Cmd+K`, le composant appelle `onActivate` et le parent
  * (l'EditorialMegaMenu) ouvre l'overlay.
  *
@@ -22,7 +22,10 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 interface HeaderSearchTriggerProps {
-  /** Appelé au clic, focus, ou Ctrl/Cmd+K. */
+  /**
+   * Appelé au clic ou Ctrl/Cmd+K. Pas au focus : l'overlay rend le focus au
+   * trigger à sa fermeture, ce qui le rouvrirait aussitôt.
+   */
   onActivate: () => void;
   /** Classe additionnelle. */
   className?: string;
@@ -66,7 +69,6 @@ export function HeaderSearchTrigger({
     <button
       type="button"
       onClick={onActivate}
-      onFocus={onActivate}
       aria-label={t("ariaLabel")}
       aria-haspopup="dialog"
       className={`header-search-trigger ${className}`.trim()}

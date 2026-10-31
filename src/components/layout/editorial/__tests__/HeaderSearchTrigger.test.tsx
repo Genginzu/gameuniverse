@@ -59,11 +59,11 @@ describe("HeaderSearchTrigger", () => {
       expect(onActivate).toHaveBeenCalledTimes(1);
     });
 
-    it("calls onActivate on focus", () => {
+    it("does not call onActivate on focus so focus restoration cannot reopen the overlay", () => {
       const onActivate = vi.fn();
       render(<HeaderSearchTrigger onActivate={onActivate} />);
       fireEvent.focus(screen.getByRole("button", { name: "Open search" }));
-      expect(onActivate).toHaveBeenCalledTimes(1);
+      expect(onActivate).not.toHaveBeenCalled();
     });
   });
 
