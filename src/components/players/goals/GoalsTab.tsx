@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import useSWR from "swr";
 import { SessionComposer } from "../sessions/SessionComposer";
 import { PersonalGoals } from "../stats/PersonalGoals";
+import { PersonalGoalForm } from "../stats/PersonalGoalForm";
 import { usePlayerSessions } from "@/hooks/usePlayerSessions";
 import type { DashboardStatsResponse } from "@/types/dashboard-stats";
 import type { CreateGamingSessionPayload } from "@/types/gaming-session";
@@ -34,11 +35,16 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
   const [showSessionComposer, setShowSessionComposer] = useState(false);
   const [showGoalForm, setShowGoalForm] = useState(false);
 
-  const { data } = useSWR<DashboardStatsResponse>(
+  const { data, mutate } = useSWR<DashboardStatsResponse>(
     `/api/players/${playerId}/stats/dashboard?locale=${locale}`,
     dashboardFetcher,
     { revalidateOnFocus: false }
   );
+
+  const handleGoalCreated = () => {
+    void mutate();
+    setShowGoalForm(false);
+  };
 
   const handleSessionCreated = async (payload: CreateGamingSessionPayload) => {
     await sessionHook.createSession(payload);
@@ -55,7 +61,7 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
             setShowSessionComposer((v) => !v);
             if (!showSessionComposer) setShowGoalForm(false);
           }}
-          className="btn-filled inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-transparent px-5 text-[0.9rem] font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+          className="btn-filled inline-flex h-11 items-center justify-center gap-2 rounded-md border border-transparent px-5 text-[0.9rem] font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
         >
           {showSessionComposer ? (
             <Icon icon="lucide:x" className="h-4 w-4" aria-hidden="true" />
@@ -70,7 +76,7 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
             setShowGoalForm((v) => !v);
             if (!showGoalForm) setShowSessionComposer(false);
           }}
-          className="bg-editorial-3 border-editorial-line inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-5 text-[0.9rem] font-semibold text-white transition hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:shadow-[0_8px_24px_-12px_rgba(var(--accent-rgb,var(--neon-primary)),0.25)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+          className="bg-editorial-3 border-editorial-line inline-flex h-11 items-center justify-center gap-2 rounded-md border px-5 text-[0.9rem] font-semibold text-white transition hover:border-editorial-accent/55 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
         >
           {showGoalForm ? (
             <Icon icon="lucide:x" className="h-4 w-4" aria-hidden="true" />
@@ -90,14 +96,16 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
         />
       )}
 
+      {showGoalForm && (
+        <PersonalGoalForm
+          playerId={playerId}
+          onCreated={handleGoalCreated}
+          onCancel={() => setShowGoalForm(false)}
+        />
+      )}
+
       {/* Goals section */}
-      <PersonalGoals
-        goals={data?.goals ?? []}
-        isOwnProfile
-        playerId={playerId}
-        showFormExternal={showGoalForm}
-        onFormClosed={() => setShowGoalForm(false)}
-      />
+      <PersonalGoals goals={data?.goals ?? []} isOwnProfile playerId={playerId} />
 
       {/* Session stats */}
       {data?.sessions && <SessionStats sessions={data.sessions} />}

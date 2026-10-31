@@ -6,15 +6,12 @@ import { Icon } from "@iconify/react";
 import type { PlayerGoal } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
-import { PersonalGoalForm } from "@/components/players/stats/PersonalGoalForm";
+import { isGoalExpired } from "@/lib/utils/playerGoalProgress";
 
 interface PersonalGoalsProps {
   goals: PlayerGoal[];
   isOwnProfile: boolean;
   playerId: string;
-  /** When provided, controls form visibility from parent (GoalsTab button) */
-  showFormExternal?: boolean;
-  onFormClosed?: () => void;
 }
 
 function formatDeadline(isoDate: string, locale: string): string {
@@ -29,19 +26,11 @@ export function PersonalGoals({
   goals: initialGoals,
   isOwnProfile,
   playerId,
-  showFormExternal,
-  onFormClosed,
 }: PersonalGoalsProps) {
   const t = useTranslations("playerStats");
   const locale = useLocale();
   const [goals, setGoals] = useState<PlayerGoal[]>(initialGoals);
-  const [showForm, setShowForm] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  // Sync with external form toggle
-  useEffect(() => {
-    if (showFormExternal !== undefined) setShowForm(showFormExternal);
-  }, [showFormExternal]);
 
   // Keep goals in sync when parent re-fetches
   useEffect(() => {
@@ -64,23 +53,12 @@ export function PersonalGoals({
     }
   }
 
-  function handleCreated(goal: PlayerGoal) {
-    setGoals((prev) => [...prev, goal]);
-    setShowForm(false);
-    onFormClosed?.();
-  }
-
-  function handleCancel() {
-    setShowForm(false);
-    onFormClosed?.();
-  }
-
   return (
     <section>
       <StatsSectionTitle>{t("goals.title")}</StatsSectionTitle>
 
-      <div className="glass-card rounded-xl p-6">
-        {goals.length === 0 && !showForm ? (
+      <div className="border-editorial-line bg-editorial-2 rounded-lg border p-6">
+        {goals.length === 0 ? (
           <StatsEmptyState
             icon={<Icon icon="lucide:target" className="h-8 w-8" />}
             message={t("goals.empty")}
@@ -91,11 +69,12 @@ export function PersonalGoals({
               const progress = Math.min(goal.currentValue / goal.targetValue, 1);
               const percent = Math.round(progress * 100);
               const isCompleted = goal.currentValue >= goal.targetValue;
+              const isExpired = isGoalExpired(goal);
 
               return (
                 <div
                   key={goal.id}
-                  className="rounded-xl bg-white/30 p-4 transition-all duration-300 dark:bg-slate-700/40"
+                  className={`border-editorial-line bg-editorial-3 rounded-md border p-4 ${isExpired ? "opacity-60" : ""}`}
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -110,6 +89,11 @@ export function PersonalGoals({
                       {isCompleted && (
                         <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
                           {t("goals.completed")}
+                        </span>
+                      )}
+                      {isExpired && (
+                        <span className="text-editorial-muted rounded-full bg-white/10 px-2 py-0.5 text-xs font-medium">
+                          {t("goals.expired")}
                         </span>
                       )}
                       <button
@@ -144,10 +128,6 @@ export function PersonalGoals({
               );
             })}
           </div>
-        )}
-
-        {showForm && (
-          <PersonalGoalForm playerId={playerId} onCreated={handleCreated} onCancel={handleCancel} />
         )}
       </div>
     </section>

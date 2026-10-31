@@ -4438,6 +4438,7 @@
       "addGoal": "Add Goal",
       "deleteGoal": "Delete",
       "completed": "Completed",
+      "expired": "Expired",
       "deadline": "Deadline",
       "targetValue": "Target Value",
       "goalTypes": {

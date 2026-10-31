@@ -12,6 +12,7 @@
 .editorial-goals .glass-card {
   background: var(--editorial-bg-3);
   border: 1px solid var(--editorial-line);
+  border-radius: 0.5rem;
   backdrop-filter: none;
   color: #fff;
 }
@@ -41,6 +42,24 @@
   backdrop-filter: none;
 }
 
+/* Fields and selects use the editorial control radius (checkboxes/radios keep theirs). */
+.editorial-goals input:not([type="checkbox"]):not([type="radio"]),
+.editorial-goals select,
+.editorial-goals textarea,
+.editorial-goals .glass-input {
+  border-radius: 0.375rem;
+}
+
+/* The override above outranks the global accent-on-focus rule (neon.css). */
+.editorial-goals input:focus,
+.editorial-goals select:focus,
+.editorial-goals textarea:focus,
+.editorial-goals .glass-input:focus {
+  outline: none;
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
+  box-shadow: none;
+}
+
 .editorial-goals input::placeholder,
 .editorial-goals textarea::placeholder {
   color: var(--editorial-muted);
@@ -63,6 +82,7 @@
 .editorial-goals [role="listbox"] {
   background-color: var(--editorial-bg-2) !important;
   border-color: var(--editorial-line) !important;
+  border-radius: 0.5rem;
 }
 
 .editorial-goals .text-gray-400 {

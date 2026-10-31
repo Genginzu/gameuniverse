@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { SESSION_INPUT_CLASS } from "@/components/players/sessions/session-field-classes";
 import type { PlayerGoal } from "@/types/dashboard-stats";
 
 type GoalType = PlayerGoal["goalType"];
@@ -63,22 +64,22 @@ export function PersonalGoalForm({ playerId, onCreated, onCancel }: PersonalGoal
   return (
     <form
       onSubmit={handleSubmit}
-      className="mt-4 rounded-xl border border-white/20 bg-white/20 p-4 dark:border-slate-700/50 dark:bg-slate-800/30"
+      className="border-editorial-line bg-editorial-2 rounded-lg border p-4 md:p-5"
     >
-      <h4 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
+      <h4 className="mb-3 text-sm font-semibold text-white">
         {t("goals.create.title")}
       </h4>
 
       <div className="grid gap-3">
         {/* Goal type select */}
         <div>
-          <label className="mb-1 block text-xs text-gray-500 dark:text-slate-400">
+          <label className="text-editorial-muted mb-1 block text-xs">
             {t("goals.create.type")}
           </label>
           <select
             value={goalType}
             onChange={(e) => setGoalType(e.target.value as GoalType)}
-            className="glass-input w-full rounded-lg px-3 py-2 text-sm"
+            className={SESSION_INPUT_CLASS}
           >
             {GOAL_TYPES.map((type) => (
               <option key={type} value={type}>
@@ -90,7 +91,7 @@ export function PersonalGoalForm({ playerId, onCreated, onCancel }: PersonalGoal
 
         {/* Target value */}
         <div>
-          <label className="mb-1 block text-xs text-gray-500 dark:text-slate-400">
+          <label className="text-editorial-muted mb-1 block text-xs">
             {t("goals.create.target")}
           </label>
           <input
@@ -99,20 +100,20 @@ export function PersonalGoalForm({ playerId, onCreated, onCancel }: PersonalGoal
             value={targetValue}
             onChange={(e) => setTargetValue(e.target.value)}
             required
-            className="glass-input w-full rounded-lg px-3 py-2 text-sm"
+            className={SESSION_INPUT_CLASS}
           />
         </div>
 
         {/* Optional deadline */}
         <div>
-          <label className="mb-1 block text-xs text-gray-500 dark:text-slate-400">
+          <label className="text-editorial-muted mb-1 block text-xs">
             {t("goals.create.deadline")}
           </label>
           <input
             type="date"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
-            className="glass-input w-full rounded-lg px-3 py-2 text-sm"
+            className={SESSION_INPUT_CLASS}
           />
         </div>
       </div>
@@ -122,14 +123,14 @@ export function PersonalGoalForm({ playerId, onCreated, onCancel }: PersonalGoal
         <button
           type="submit"
           disabled={submitting || !targetValue}
-          className="btn-filled rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50"
+          className="btn-filled rounded-md px-4 py-2 text-sm font-medium disabled:opacity-50"
         >
           {t("goals.create.submit")}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition-all duration-300 hover:bg-white/40 dark:text-slate-400 dark:hover:bg-slate-700/40"
+          className="text-editorial-muted rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-white/[0.06] hover:text-white"
         >
           {t("goals.create.cancel")}
         </button>

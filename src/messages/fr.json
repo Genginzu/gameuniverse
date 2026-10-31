@@ -4441,6 +4441,7 @@
       "addGoal": "Ajouter un objectif",
       "deleteGoal": "Supprimer",
       "completed": "Terminé",
+      "expired": "Expiré",
       "deadline": "Échéance",
       "targetValue": "Valeur cible",
       "goalTypes": {
